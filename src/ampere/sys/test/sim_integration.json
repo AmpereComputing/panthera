@@ -1,0 +1,104 @@
+[
+  {
+    "name": "sim_evp_start",
+    "exe": "{panthera_root}/bin/amperesys",
+    "parameters": [
+        "-cfg", "{panthera_root}/config/model/sys/domino.cfg",
+        "-sys.soc_0.core_0.instruction_stream_name", "{workload_path}",
+        "-sys.soc_0.core_0.gpc.max_instructions", "10000"
+    ],
+    "evp": [
+        "-i", "*.gpc.instruction_commit=100",
+        "--start", "*.gpc.instruction_commit=5000",
+        "@base.cfg"
+    ],
+    "post_sim": [
+        ["grep", "-q", "-E", ",50[01][0-9],", "{directory}/{name}.summary.csv"]
+    ]
+  },
+  {
+    "name": "sim_evp_start_end",
+    "exe": "{panthera_root}/bin/amperesys",
+    "parameters": [
+        "-cfg", "{panthera_root}/config/model/sys/domino.cfg",
+        "-sys.soc_0.core_0.instruction_stream_name", "{workload_path}",
+        "-sys.soc_0.core_0.gpc.max_instructions", "10000"
+    ],
+    "evp": [
+        "-i", "*.gpc.instruction_commit=100",
+        "--start", "*.gpc.instruction_commit=5000",
+        "--stop", "*.gpc.instruction_commit=7500",
+        "@base.cfg"
+    ],
+    "post_sim": [
+        ["grep", "-q", ",2500,", "{directory}/{name}.summary.csv"]
+    ]
+  },
+  {
+    "name": "sim_evp_start_stop_exit",
+    "exe": "{panthera_root}/bin/amperesys",
+    "parameters": [
+        "-cfg", "{panthera_root}/config/model/sys/domino.cfg",
+        "-sys.soc_0.core_0.instruction_stream_name", "{workload_path}",
+        "-sys.soc_0.core_0.gpc.max_instructions", "10000"
+    ],
+    "evp": [
+        "-i", "*.gpc.instruction_commit=100",
+        "--start", "*.gpc.instruction_commit=5000",
+        "--stop", "*.gpc.instruction_commit=7500",
+        "--exit",
+        "@base.cfg"
+    ],
+    "post_sim": [
+        ["grep", "-q", "-E", "S\\w+g: exiting on stop", "{directory}/{name}.log"],
+        ["grep", "-q", "-E", "S\\w+n complete: stopped by event stream processor", "{directory}/{name}.log"],
+        ["grep", "-q", ",2500,", "{directory}/{name}.summary.csv"]
+    ]
+  },
+  {
+    "name": "sim_evp_capture_event_trace",
+    "exe": "{panthera_root}/bin/amperesys",
+    "parameters": [
+        "-cfg", "{panthera_root}/config/model/sys/domino.cfg",
+        "-sys.soc_0.core_0.instruction_stream_name", "{workload_path}",
+        "-sys.soc_0.core_0.gpc.max_instructions", "10000"
+    ],
+    "evp": [
+        "-i", "*.gpc.instruction_commit=100",
+        "@base.cfg", "+capture", "{directory}/{name}.es"
+    ],
+    "post_sim": [
+        [
+            "{panthera_root}/bin/panthera", "events.tracing",
+            "--compress",
+            "--output", "{directory}/{name}.json.gz",
+            "@{panthera_root}/config/events.tracing/summary.cfg",
+            "{directory}/{name}.es"
+        ]
+    ]
+  },
+  {
+    "name": "sim_evp_start_stop_capture_event_trace",
+    "exe": "{panthera_root}/bin/amperesys",
+    "parameters": [
+        "-cfg", "{panthera_root}/config/model/sys/domino.cfg",
+        "-sys.soc_0.core_0.instruction_stream_name", "{workload_path}",
+        "-sys.soc_0.core_0.gpc.max_instructions", "10000"
+    ],
+    "evp": [
+        "-i", "*.gpc.instruction_commit=100",
+        "--start", "*.gpc.instruction_commit=5000",
+        "--stop", "*.gpc.instruction_commit=7500",
+        "@base.cfg", "+capture", "{directory}/{name}.es"
+    ],
+    "post_sim": [
+        [
+            "{panthera_root}/bin/panthera", "events.tracing",
+            "--compress",
+            "--output", "{directory}/{name}.json.gz",
+            "@{panthera_root}/config/events.tracing/summary.cfg",
+            "{directory}/{name}.es"
+        ]
+    ]
+  }
+]

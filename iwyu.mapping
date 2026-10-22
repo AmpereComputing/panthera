@@ -1,0 +1,26 @@
+# Copyright (c) 2023 Ampere Computing. All rights reserved.
+# SPDX-License-Identifier: BSD-3-Clause
+
+[
+    # C++
+    { include: ["<ext/alloc_traits.h>", "private", "<memory>", "public"] },
+    { include: ["<bits/exception.h>", "private", "<stdexcept>", "public"] },
+    { include: ["<bits/chrono.h>", "private", "<filesystem>", "public"] },
+    # Boost
+    { include: ["<boost/smart_ptr/make_unique.hpp>", "private", "<boost/make_unique.hpp>", "public"] },
+    { include: ["<boost/move/utility_core.hpp>", "private", "<utility>", "public"] },
+    { include: ["@<boost/optional/.*>", "private", "<boost/optional.hpp>", "public"] },
+    { include: ["@<boost/filesystem/.*>", "private", "<boost/filesystem.hpp>", "public"] },
+    { include: ["@<boost/format/.*>", "private", "<boost/format.hpp>", "public"] },
+    { include: ["@<boost/program_options/.*>", "private", "<boost/program_options.hpp>", "public"] },
+    # SystemC
+    { include: ["@<sysc/utils/.*>", "private", "<systemc>", "public"] },
+    { include: ["@<sysc/kernel/.*>", "private", "<systemc>", "public"] },
+    # Googletest
+    { include: ["@[<\"]gtest/gtest-.*[>\"]", "private", "<gtest/gtest.h>", "public"] },
+    { include: ["@[<\"]gmock/gmock-.*[>\"]", "private", "<gmock/gmock.h>", "public"] },
+    # ADIS
+    { include: ["@\"adis-.*\"", "private", "\"adis.h\"", "public"] },
+    # Ampere
+    { include: ["\"ampere/archx/bitfield.h\"", "private", "\"ampere/archx/addr.h\"", "public"] },
+]

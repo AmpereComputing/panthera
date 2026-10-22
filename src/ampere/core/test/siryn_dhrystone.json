@@ -1,0 +1,8 @@
+[
+  {
+      "name": "dhrystone",
+      "file": "dhrystone.is.xz",
+      "workload": "dhyrstone",
+      "weight": 1.0
+  }
+]

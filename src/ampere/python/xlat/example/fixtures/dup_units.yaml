@@ -1,0 +1,7 @@
+# Copyright (c) 2018 Ampere Computing. All rights reserved.
+# SPDX-License-Identifier: BSD-3-Clause
+
+unit_defaults:
+  ixu:
+    opcode_width: 0x08
+    opcode: 0x00

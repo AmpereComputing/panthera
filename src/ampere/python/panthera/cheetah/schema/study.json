@@ -1,0 +1,93 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "urn:panthera:cheetah:study",
+    "title": "Study",
+    "description": "Definition of a cheetah study",
+    "type": "object",
+    "properties": {
+        "name": {
+            "type": "string",
+            "description": "Study name"
+        },
+        "study_directory": {
+            "type": "string",
+            "description": "Absolute study directory path (may be inaccurate if moved)"
+        },
+        "study_creator": {
+            "type": "string",
+            "description": "Tool used for study creation (i.e. cheater or cheetah)"
+        },
+        "job_list": {
+            "type": "string",
+            "description": "Path to job list file (i.e. jobs.txt)"
+        },
+        "cmd_pool": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "description": "Job name"
+                    },
+                    "directory": {
+                        "type": "string",
+                        "description": "Job directory (i.e. configuration) relative to study_directory"
+                    },
+                    "cmds": {
+                        "type": "array",
+                        "description": "Job commands (in run order)",
+                        "items": {
+                            "type": "array",
+                            "description": "Command arguments",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "meta": {
+                        "type": "object",
+                        "description": "Job metadata (including all variables used for subsitution",
+                        "properties": {
+                            "configuration": {
+                                "type": "string",
+                                "description": "Job configuration name"
+                            },
+                            "suite": {
+                                "type": "string",
+                                "description": "Job suite name"
+                            },
+                            "workload": {
+                                "type": "string",
+                                "description": "Job workload name"
+                            },
+                            "weight": {
+                                "type": "number",
+                                "description": "Job weight within workload"
+                            }
+                        }
+                    },
+                    "cmds_meta": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "description": "Metadata per command (including all variables used for subsitution. May only include variables *different* from meta"
+                        }
+                    },
+                    "required": [
+                        "name",
+                        "directory",
+                        "cmds",
+                        "meta"
+                    ]
+                }
+            }
+        }
+    },
+    "required": [
+        "name",
+        "study_directory",
+        "job_list",
+        "cmd_pool"
+    ]
+}

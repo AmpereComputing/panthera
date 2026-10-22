@@ -1,0 +1,346 @@
+00001000010xxxxx0xxxxxxxxxxxxxxx # ldxrb  w0 : mem0 ign10 ign16
+00001000010xxxxx1xxxxxxxxxxxxxxx # ldaxrb w0 : mem0 ign10 ign16
+0000100011011111111111xxxxxxxxxx # ldarb  w0 : mem0
+01001000010xxxxx0xxxxxxxxxxxxxxx # ldxrh  w0 : mem0 ign10 ign16
+01001000010xxxxx1xxxxxxxxxxxxxxx # ldaxrh w0 : mem0 ign10 ign16
+0100100011011111111111xxxxxxxxxx # ldarh  w0 : mem0
+10001000010xxxxx0xxxxxxxxxxxxxxx # ldxr   w0 : mem0 ign10 ign16
+10001000010xxxxx1xxxxxxxxxxxxxxx # ldaxr  w0 : mem0 ign10 ign16
+10001000011xxxxx0xxxxxxxxxxxxxxx # ldxp   w0 w10 : mem0p ign16
+10001000011xxxxx1xxxxxxxxxxxxxxx # ldaxp  w0 w10 : mem0p ign16
+1000100011011111111111xxxxxxxxxx # ldar   w0 : mem0
+11001000010xxxxx0xxxxxxxxxxxxxxx # ldxr   x0 : mem0 ign10 ign16
+11001000010xxxxx1xxxxxxxxxxxxxxx # ldaxr  x0 : mem0 ign10 ign16
+11001000011xxxxx0xxxxxxxxxxxxxxx # ldxp   x0 x10 : mem0p ign16
+11001000011xxxxx1xxxxxxxxxxxxxxx # ldaxp  x0 x10 : mem0p ign16
+1100100011011111111111xxxxxxxxxx # ldar   x0 : mem0
+00001000101xxxxx011111xxxxxxxxxx # casb    w16 mem0 : w16 w0 mem0
+00001000101xxxxx111111xxxxxxxxxx # caslb   w16 mem0 : w16 w0 mem0
+00001000111xxxxx011111xxxxxxxxxx # casab   w16 mem0 : w16 w0 mem0
+00001000111xxxxx111111xxxxxxxxxx # casalb  w16 mem0 : w16 w0 mem0
+01001000101xxxxx011111xxxxxxxxxx # cash    w16 mem0 : w16 w0 mem0
+01001000101xxxxx111111xxxxxxxxxx # caslh   w16 mem0 : w16 w0 mem0
+01001000111xxxxx011111xxxxxxxxxx # casah   w16 mem0 : w16 w0 mem0
+01001000111xxxxx111111xxxxxxxxxx # casalh  w16 mem0 : w16 w0 mem0
+10001000101xxxxx011111xxxxxxxxxx # cas     w16 mem0 : w16 w0 mem0
+10001000101xxxxx111111xxxxxxxxxx # casl    w16 mem0 : w16 w0 mem0
+10001000111xxxxx011111xxxxxxxxxx # casa    w16 mem0 : w16 w0 mem0
+10001000111xxxxx111111xxxxxxxxxx # casal   w16 mem0 : w16 w0 mem0
+11001000101xxxxx011111xxxxxxxxxx # cas     x16 mem0 : x16 x0 mem0
+11001000101xxxxx111111xxxxxxxxxx # casl    x16 mem0 : x16 x0 mem0
+11001000111xxxxx011111xxxxxxxxxx # casa    x16 mem0 : x16 x0 mem0
+11001000111xxxxx111111xxxxxxxxxx # casal   x16 mem0 : x16 x0 mem0
+00001000001xxxxx011111xxxxxxxxxx # casp    w16p0 w16p1 mem0p : w16p0 w16p1 w0p0 w0p1 mem0p
+00001000001xxxxx111111xxxxxxxxxx # caspl   w16p0 w16p1 mem0p : w16p0 w16p1 w0p0 w0p1 mem0p
+00001000011xxxxx011111xxxxxxxxxx # caspa   w16p0 w16p1 mem0p : w16p0 w16p1 w0p0 w0p1 mem0p
+00001000011xxxxx111111xxxxxxxxxx # caspal  w16p0 w16p1 mem0p : w16p0 w16p1 w0p0 w0p1 mem0p
+01001000001xxxxx011111xxxxxxxxxx # casp    x16p0 x16p1 mem0p : x16p0 x16p1 x0p0 x0p1 mem0p
+01001000001xxxxx111111xxxxxxxxxx # caspl   x16p0 x16p1 mem0p : x16p0 x16p1 x0p0 x0p1 mem0p
+01001000011xxxxx011111xxxxxxxxxx # caspa   x16p0 x16p1 mem0p : x16p0 x16p1 x0p0 x0p1 mem0p
+01001000011xxxxx111111xxxxxxxxxx # caspal  x16p0 x16p1 mem0p : x16p0 x16p1 x0p0 x0p1 mem0p
+00011000xxxxxxxxxxxxxxxxxxxxxxxx # ldr    w0 : memlit
+00011100xxxxxxxxxxxxxxxxxxxxxxxx # ldr    s0 : memlit
+01011000xxxxxxxxxxxxxxxxxxxxxxxx # ldr    x0 : memlit
+01011100xxxxxxxxxxxxxxxxxxxxxxxx # ldr    d0 : memlit
+10011000xxxxxxxxxxxxxxxxxxxxxxxx # ldrsw  x0 : memlit
+10011100xxxxxxxxxxxxxxxxxxxxxxxx # ldr    q0 : memlit
+0010100001xxxxxxxxxxxxxxxxxxxxxx # ldnp   w0 w10 : mem7
+0010110001xxxxxxxxxxxxxxxxxxxxxx # ldnp   s0 s10 : mem7
+0110110001xxxxxxxxxxxxxxxxxxxxxx # ldnp   d0 d10 : mem7
+1010100001xxxxxxxxxxxxxxxxxxxxxx # ldnp   x0 x10 : mem7
+1010110001xxxxxxxxxxxxxxxxxxxxxx # ldnp   q0 q10 : mem7
+0010100011xxxxxxxxxxxxxxxxxxxxxx # ldp    w0 w10 x5sp : mem7post x5sp mem7off
+0010110011xxxxxxxxxxxxxxxxxxxxxx # ldp    s0 s10 x5sp : mem7post x5sp mem7off
+0110100011xxxxxxxxxxxxxxxxxxxxxx # ldpsw  x0 x10 x5sp : mem7post x5sp mem7off
+0110110011xxxxxxxxxxxxxxxxxxxxxx # ldp    d0 d10 x5sp : mem7post x5sp mem7off
+1010100011xxxxxxxxxxxxxxxxxxxxxx # ldp    x0 x10 x5sp : mem7post x5sp mem7off
+1010110011xxxxxxxxxxxxxxxxxxxxxx # ldp    q0 q10 x5sp : mem7post x5sp mem7off
+0010100101xxxxxxxxxxxxxxxxxxxxxx # ldp    w0 w10 : mem7
+0010110101xxxxxxxxxxxxxxxxxxxxxx # ldp    s0 s10 : mem7
+0110100101xxxxxxxxxxxxxxxxxxxxxx # ldpsw  x0 x10 : mem7
+0110110101xxxxxxxxxxxxxxxxxxxxxx # ldp    d0 d10 : mem7
+1010100101xxxxxxxxxxxxxxxxxxxxxx # ldp    x0 x10 : mem7
+1010110101xxxxxxxxxxxxxxxxxxxxxx # ldp    q0 q10 : mem7
+0010100111xxxxxxxxxxxxxxxxxxxxxx # ldp    w0 w10 x5sp : mem7 x5sp mem7off
+0010110111xxxxxxxxxxxxxxxxxxxxxx # ldp    s0 s10 x5sp : mem7 x5sp mem7off
+0110100111xxxxxxxxxxxxxxxxxxxxxx # ldpsw  x0 x10 x5sp : mem7 x5sp mem7off
+0110110111xxxxxxxxxxxxxxxxxxxxxx # ldp    d0 d10 x5sp : mem7 x5sp mem7off
+1010100111xxxxxxxxxxxxxxxxxxxxxx # ldp    x0 x10 x5sp : mem7 x5sp mem7off
+1010110111xxxxxxxxxxxxxxxxxxxxxx # ldp    q0 q10 x5sp : mem7 x5sp mem7off
+00111000010xxxxxxxxx00xxxxxxxxxx # ldurb  w0 : mem9
+00111000100xxxxxxxxx00xxxxxxxxxx # ldursb x0 : mem9
+00111000110xxxxxxxxx00xxxxxxxxxx # ldursb w0 : mem9
+00111100010xxxxxxxxx00xxxxxxxxxx # ldur   b0 : mem9
+00111100110xxxxxxxxx00xxxxxxxxxx # ldur   q0 : mem9
+01111000010xxxxxxxxx00xxxxxxxxxx # ldurh  w0 : mem9
+01111000100xxxxxxxxx00xxxxxxxxxx # ldursh x0 : mem9
+01111000110xxxxxxxxx00xxxxxxxxxx # ldursh w0 : mem9
+01111100010xxxxxxxxx00xxxxxxxxxx # ldur   h0 : mem9
+10111000010xxxxxxxxx00xxxxxxxxxx # ldur   w0 : mem9
+10111000100xxxxxxxxx00xxxxxxxxxx # ldursw x0 : mem9
+10111100010xxxxxxxxx00xxxxxxxxxx # ldur   s0 : mem9
+11111000010xxxxxxxxx00xxxxxxxxxx # ldur   x0 : mem9
+11111100010xxxxxxxxx00xxxxxxxxxx # ldur   d0 : mem9
+00111000010xxxxxxxxx01xxxxxxxxxx # ldrb  w0 x5sp : mem9post x5sp mem9off
+00111000100xxxxxxxxx01xxxxxxxxxx # ldrsb x0 x5sp : mem9post x5sp mem9off
+00111000110xxxxxxxxx01xxxxxxxxxx # ldrsb w0 x5sp : mem9post x5sp mem9off
+00111100010xxxxxxxxx01xxxxxxxxxx # ldr   b0 x5sp : mem9post x5sp mem9off
+00111100110xxxxxxxxx01xxxxxxxxxx # ldr   q0 x5sp : mem9qpost x5sp mem9off
+01111000010xxxxxxxxx01xxxxxxxxxx # ldrh  w0 x5sp : mem9post x5sp mem9off
+01111000100xxxxxxxxx01xxxxxxxxxx # ldrsh x0 x5sp : mem9post x5sp mem9off
+01111000110xxxxxxxxx01xxxxxxxxxx # ldrsh w0 x5sp : mem9post x5sp mem9off
+01111100010xxxxxxxxx01xxxxxxxxxx # ldr   h0 x5sp : mem9post x5sp mem9off
+10111000010xxxxxxxxx01xxxxxxxxxx # ldr   w0 x5sp : mem9post x5sp mem9off
+10111000100xxxxxxxxx01xxxxxxxxxx # ldrsw x0 x5sp : mem9post x5sp mem9off
+10111100010xxxxxxxxx01xxxxxxxxxx # ldr   s0 x5sp : mem9post x5sp mem9off
+11111000010xxxxxxxxx01xxxxxxxxxx # ldr   x0 x5sp : mem9post x5sp mem9off
+11111100010xxxxxxxxx01xxxxxxxxxx # ldr   d0 x5sp : mem9post x5sp mem9off
+00111000010xxxxxxxxx10xxxxxxxxxx # ldtrb  w0 : mem9
+00111000100xxxxxxxxx10xxxxxxxxxx # ldtrsb x0 : mem9
+00111000110xxxxxxxxx10xxxxxxxxxx # ldtrsb w0 : mem9
+01111000010xxxxxxxxx10xxxxxxxxxx # ldtrh  w0 : mem9
+01111000100xxxxxxxxx10xxxxxxxxxx # ldtrsh x0 : mem9
+01111000110xxxxxxxxx10xxxxxxxxxx # ldtrsh w0 : mem9
+10111000010xxxxxxxxx10xxxxxxxxxx # ldtr   w0 : mem9
+10111000100xxxxxxxxx10xxxxxxxxxx # ldtrsw x0 : mem9
+11111000010xxxxxxxxx10xxxxxxxxxx # ldtr   x0 : mem9
+00111000010xxxxxxxxx11xxxxxxxxxx # ldrb   w0 x5sp : mem9 x5sp mem9off
+00111000100xxxxxxxxx11xxxxxxxxxx # ldrsb  x0 x5sp : mem9 x5sp mem9off
+00111000110xxxxxxxxx11xxxxxxxxxx # ldrsb  w0 x5sp : mem9 x5sp mem9off
+00111100010xxxxxxxxx11xxxxxxxxxx # ldr    b0 x5sp : mem9 x5sp mem9off
+00111100110xxxxxxxxx11xxxxxxxxxx # ldr    q0 x5sp : mem9q x5sp mem9off
+01111000010xxxxxxxxx11xxxxxxxxxx # ldrh   w0 x5sp : mem9 x5sp mem9off
+01111000100xxxxxxxxx11xxxxxxxxxx # ldrsh  x0 x5sp : mem9 x5sp mem9off
+01111000110xxxxxxxxx11xxxxxxxxxx # ldrsh  w0 x5sp : mem9 x5sp mem9off
+01111100010xxxxxxxxx11xxxxxxxxxx # ldr    h0 x5sp : mem9 x5sp mem9off
+10111000010xxxxxxxxx11xxxxxxxxxx # ldr    w0 x5sp : mem9 x5sp mem9off
+10111000100xxxxxxxxx11xxxxxxxxxx # ldrsw  x0 x5sp : mem9 x5sp mem9off
+10111100010xxxxxxxxx11xxxxxxxxxx # ldr    s0 x5sp : mem9 x5sp mem9off
+11111000010xxxxxxxxx11xxxxxxxxxx # ldr    x0 x5sp : mem9 x5sp mem9off
+11111100010xxxxxxxxx11xxxxxxxxxx # ldr    d0 x5sp : mem9 x5sp mem9off
+00111000001xxxxx000000xxxxxxxxxx # ldaddb    w0 mem0 : w16 mem0
+00111000001xxxxx000100xxxxxxxxxx # ldclrb    w0 mem0 : w16 mem0
+00111000001xxxxx001000xxxxxxxxxx # ldeorb    w0 mem0 : w16 mem0
+00111000001xxxxx001100xxxxxxxxxx # ldsetb    w0 mem0 : w16 mem0
+00111000001xxxxx010000xxxxxxxxxx # ldsmaxb   w0 mem0 : w16 mem0
+00111000001xxxxx010100xxxxxxxxxx # ldsminb   w0 mem0 : w16 mem0
+00111000001xxxxx011000xxxxxxxxxx # ldumaxb   w0 mem0 : w16 mem0
+00111000001xxxxx011100xxxxxxxxxx # lduminb   w0 mem0 : w16 mem0
+00111000011xxxxx000000xxxxxxxxxx # ldaddlb   w0 mem0 : w16 mem0
+00111000011xxxxx000100xxxxxxxxxx # ldclrlb   w0 mem0 : w16 mem0
+00111000011xxxxx001000xxxxxxxxxx # ldeorlb   w0 mem0 : w16 mem0
+00111000011xxxxx001100xxxxxxxxxx # ldsetlb   w0 mem0 : w16 mem0
+00111000011xxxxx010000xxxxxxxxxx # ldsmaxlb  w0 mem0 : w16 mem0
+00111000011xxxxx010100xxxxxxxxxx # ldsminlb  w0 mem0 : w16 mem0
+00111000011xxxxx011000xxxxxxxxxx # ldumaxlb  w0 mem0 : w16 mem0
+00111000011xxxxx011100xxxxxxxxxx # lduminlb  w0 mem0 : w16 mem0
+00111000101xxxxx000000xxxxxxxxxx # ldaddab   w0 mem0 : w16 mem0
+00111000101xxxxx000100xxxxxxxxxx # ldclrab   w0 mem0 : w16 mem0
+00111000101xxxxx001000xxxxxxxxxx # ldeorab   w0 mem0 : w16 mem0
+00111000101xxxxx001100xxxxxxxxxx # ldsetab   w0 mem0 : w16 mem0
+00111000101xxxxx010000xxxxxxxxxx # ldsmaxab  w0 mem0 : w16 mem0
+00111000101xxxxx010100xxxxxxxxxx # ldsminab  w0 mem0 : w16 mem0
+00111000101xxxxx011000xxxxxxxxxx # ldumaxab  w0 mem0 : w16 mem0
+00111000101xxxxx011100xxxxxxxxxx # lduminab  w0 mem0 : w16 mem0
+00111000111xxxxx000000xxxxxxxxxx # ldaddalb  w0 mem0 : w16 mem0
+00111000111xxxxx000100xxxxxxxxxx # ldclralb  w0 mem0 : w16 mem0
+00111000111xxxxx001000xxxxxxxxxx # ldeoralb  w0 mem0 : w16 mem0
+00111000111xxxxx001100xxxxxxxxxx # ldsetalb  w0 mem0 : w16 mem0
+00111000111xxxxx010000xxxxxxxxxx # ldsmaxalb w0 mem0 : w16 mem0
+00111000111xxxxx010100xxxxxxxxxx # ldsminalb w0 mem0 : w16 mem0
+00111000111xxxxx011000xxxxxxxxxx # ldumaxalb w0 mem0 : w16 mem0
+00111000111xxxxx011100xxxxxxxxxx # lduminalb w0 mem0 : w16 mem0
+01111000001xxxxx000000xxxxxxxxxx # ldaddh    w0 mem0 : w16 mem0
+01111000001xxxxx000100xxxxxxxxxx # ldclrh    w0 mem0 : w16 mem0
+01111000001xxxxx001000xxxxxxxxxx # ldeorh    w0 mem0 : w16 mem0
+01111000001xxxxx001100xxxxxxxxxx # ldseth    w0 mem0 : w16 mem0
+01111000001xxxxx010000xxxxxxxxxx # ldsmaxh   w0 mem0 : w16 mem0
+01111000001xxxxx010100xxxxxxxxxx # ldsminh   w0 mem0 : w16 mem0
+01111000001xxxxx011000xxxxxxxxxx # ldumaxh   w0 mem0 : w16 mem0
+01111000001xxxxx011100xxxxxxxxxx # lduminh   w0 mem0 : w16 mem0
+01111000011xxxxx000000xxxxxxxxxx # ldaddlh   w0 mem0 : w16 mem0
+01111000011xxxxx000100xxxxxxxxxx # ldclrlh   w0 mem0 : w16 mem0
+01111000011xxxxx001000xxxxxxxxxx # ldeorlh   w0 mem0 : w16 mem0
+01111000011xxxxx001100xxxxxxxxxx # ldsetlh   w0 mem0 : w16 mem0
+01111000011xxxxx010000xxxxxxxxxx # ldsmaxlh  w0 mem0 : w16 mem0
+01111000011xxxxx010100xxxxxxxxxx # ldsminlh  w0 mem0 : w16 mem0
+01111000011xxxxx011000xxxxxxxxxx # ldumaxlh  w0 mem0 : w16 mem0
+01111000011xxxxx011100xxxxxxxxxx # lduminlh  w0 mem0 : w16 mem0
+01111000101xxxxx000000xxxxxxxxxx # ldaddah   w0 mem0 : w16 mem0
+01111000101xxxxx000100xxxxxxxxxx # ldclrah   w0 mem0 : w16 mem0
+01111000101xxxxx001000xxxxxxxxxx # ldeorah   w0 mem0 : w16 mem0
+01111000101xxxxx001100xxxxxxxxxx # ldsetah   w0 mem0 : w16 mem0
+01111000101xxxxx010000xxxxxxxxxx # ldsmaxah  w0 mem0 : w16 mem0
+01111000101xxxxx010100xxxxxxxxxx # ldsminah  w0 mem0 : w16 mem0
+01111000101xxxxx011000xxxxxxxxxx # ldumaxah  w0 mem0 : w16 mem0
+01111000101xxxxx011100xxxxxxxxxx # lduminah  w0 mem0 : w16 mem0
+01111000111xxxxx000000xxxxxxxxxx # ldaddalh  w0 mem0 : w16 mem0
+01111000111xxxxx000100xxxxxxxxxx # ldclralh  w0 mem0 : w16 mem0
+01111000111xxxxx001000xxxxxxxxxx # ldeoralh  w0 mem0 : w16 mem0
+01111000111xxxxx001100xxxxxxxxxx # ldsetalh  w0 mem0 : w16 mem0
+01111000111xxxxx010000xxxxxxxxxx # ldsmaxalh w0 mem0 : w16 mem0
+01111000111xxxxx010100xxxxxxxxxx # ldsminalh w0 mem0 : w16 mem0
+01111000111xxxxx011000xxxxxxxxxx # ldumaxalh w0 mem0 : w16 mem0
+01111000111xxxxx011100xxxxxxxxxx # lduminalh w0 mem0 : w16 mem0
+10111000001xxxxx000000xxxxxxxxxx # ldadd     w0 mem0 : w16 mem0
+10111000001xxxxx000100xxxxxxxxxx # ldclr     w0 mem0 : w16 mem0
+10111000001xxxxx001000xxxxxxxxxx # ldeor     w0 mem0 : w16 mem0
+10111000001xxxxx001100xxxxxxxxxx # ldset     w0 mem0 : w16 mem0
+10111000001xxxxx010000xxxxxxxxxx # ldsmax    w0 mem0 : w16 mem0
+10111000001xxxxx010100xxxxxxxxxx # ldsmin    w0 mem0 : w16 mem0
+10111000001xxxxx011000xxxxxxxxxx # ldumax    w0 mem0 : w16 mem0
+10111000001xxxxx011100xxxxxxxxxx # ldumin    w0 mem0 : w16 mem0
+10111000011xxxxx000000xxxxxxxxxx # ldaddl    w0 mem0 : w16 mem0
+10111000011xxxxx000100xxxxxxxxxx # ldclrl    w0 mem0 : w16 mem0
+10111000011xxxxx001000xxxxxxxxxx # ldeorl    w0 mem0 : w16 mem0
+10111000011xxxxx001100xxxxxxxxxx # ldsetl    w0 mem0 : w16 mem0
+10111000011xxxxx010000xxxxxxxxxx # ldsmaxl   w0 mem0 : w16 mem0
+10111000011xxxxx010100xxxxxxxxxx # ldsminl   w0 mem0 : w16 mem0
+10111000011xxxxx011000xxxxxxxxxx # ldumaxl   w0 mem0 : w16 mem0
+10111000011xxxxx011100xxxxxxxxxx # lduminl   w0 mem0 : w16 mem0
+10111000101xxxxx000000xxxxxxxxxx # ldadda    w0 mem0 : w16 mem0
+10111000101xxxxx000100xxxxxxxxxx # ldclra    w0 mem0 : w16 mem0
+10111000101xxxxx001000xxxxxxxxxx # ldeora    w0 mem0 : w16 mem0
+10111000101xxxxx001100xxxxxxxxxx # ldseta    w0 mem0 : w16 mem0
+10111000101xxxxx010000xxxxxxxxxx # ldsmaxa   w0 mem0 : w16 mem0
+10111000101xxxxx010100xxxxxxxxxx # ldsmina   w0 mem0 : w16 mem0
+10111000101xxxxx011000xxxxxxxxxx # ldumaxa   w0 mem0 : w16 mem0
+10111000101xxxxx011100xxxxxxxxxx # ldumina   w0 mem0 : w16 mem0
+10111000111xxxxx000000xxxxxxxxxx # ldaddal   w0 mem0 : w16 mem0
+10111000111xxxxx000100xxxxxxxxxx # ldclral   w0 mem0 : w16 mem0
+10111000111xxxxx001000xxxxxxxxxx # ldeoral   w0 mem0 : w16 mem0
+10111000111xxxxx001100xxxxxxxxxx # ldsetal   w0 mem0 : w16 mem0
+10111000111xxxxx010000xxxxxxxxxx # ldsmaxal  w0 mem0 : w16 mem0
+10111000111xxxxx010100xxxxxxxxxx # ldsminal  w0 mem0 : w16 mem0
+10111000111xxxxx011000xxxxxxxxxx # ldumaxal  w0 mem0 : w16 mem0
+10111000111xxxxx011100xxxxxxxxxx # lduminal  w0 mem0 : w16 mem0
+11111000001xxxxx000000xxxxxxxxxx # ldadd     x0 mem0 : x16 mem0
+11111000001xxxxx000100xxxxxxxxxx # ldclr     x0 mem0 : x16 mem0
+11111000001xxxxx001000xxxxxxxxxx # ldeor     x0 mem0 : x16 mem0
+11111000001xxxxx001100xxxxxxxxxx # ldset     x0 mem0 : x16 mem0
+11111000001xxxxx010000xxxxxxxxxx # ldsmax    x0 mem0 : x16 mem0
+11111000001xxxxx010100xxxxxxxxxx # ldsmin    x0 mem0 : x16 mem0
+11111000001xxxxx011000xxxxxxxxxx # ldumax    x0 mem0 : x16 mem0
+11111000001xxxxx011100xxxxxxxxxx # ldumin    x0 mem0 : x16 mem0
+11111000011xxxxx000000xxxxxxxxxx # ldaddl    x0 mem0 : x16 mem0
+11111000011xxxxx000100xxxxxxxxxx # ldclrl    x0 mem0 : x16 mem0
+11111000011xxxxx001000xxxxxxxxxx # ldeorl    x0 mem0 : x16 mem0
+11111000011xxxxx001100xxxxxxxxxx # ldsetl    x0 mem0 : x16 mem0
+11111000011xxxxx010000xxxxxxxxxx # ldsmaxl   x0 mem0 : x16 mem0
+11111000011xxxxx010100xxxxxxxxxx # ldsminl   x0 mem0 : x16 mem0
+11111000011xxxxx011000xxxxxxxxxx # ldumaxl   x0 mem0 : x16 mem0
+11111000011xxxxx011100xxxxxxxxxx # lduminl   x0 mem0 : x16 mem0
+11111000101xxxxx000000xxxxxxxxxx # ldadda    x0 mem0 : x16 mem0
+11111000101xxxxx000100xxxxxxxxxx # ldclra    x0 mem0 : x16 mem0
+11111000101xxxxx001000xxxxxxxxxx # ldeora    x0 mem0 : x16 mem0
+11111000101xxxxx001100xxxxxxxxxx # ldseta    x0 mem0 : x16 mem0
+11111000101xxxxx010000xxxxxxxxxx # ldsmaxa   x0 mem0 : x16 mem0
+11111000101xxxxx010100xxxxxxxxxx # ldsmina   x0 mem0 : x16 mem0
+11111000101xxxxx011000xxxxxxxxxx # ldumaxa   x0 mem0 : x16 mem0
+11111000101xxxxx011100xxxxxxxxxx # ldumina   x0 mem0 : x16 mem0
+11111000111xxxxx000000xxxxxxxxxx # ldaddal   x0 mem0 : x16 mem0
+11111000111xxxxx000100xxxxxxxxxx # ldclral   x0 mem0 : x16 mem0
+11111000111xxxxx001000xxxxxxxxxx # ldeoral   x0 mem0 : x16 mem0
+11111000111xxxxx001100xxxxxxxxxx # ldsetal   x0 mem0 : x16 mem0
+11111000111xxxxx010000xxxxxxxxxx # ldsmaxal  x0 mem0 : x16 mem0
+11111000111xxxxx010100xxxxxxxxxx # ldsminal  x0 mem0 : x16 mem0
+11111000111xxxxx011000xxxxxxxxxx # ldumaxal  x0 mem0 : x16 mem0
+11111000111xxxxx011100xxxxxxxxxx # lduminal  x0 mem0 : x16 mem0
+00111000001xxxxx100000xxxxxxxxxx # swpb   w0 mem0 : w16 mem0
+00111000011xxxxx100000xxxxxxxxxx # swplb  w0 mem0 : w16 mem0
+00111000101xxxxx100000xxxxxxxxxx # swpab  w0 mem0 : w16 mem0
+00111000111xxxxx100000xxxxxxxxxx # swpalb w0 mem0 : w16 mem0
+01111000001xxxxx100000xxxxxxxxxx # swph   w0 mem0 : w16 mem0
+01111000011xxxxx100000xxxxxxxxxx # swplh  w0 mem0 : w16 mem0
+01111000101xxxxx100000xxxxxxxxxx # swpah  w0 mem0 : w16 mem0
+01111000111xxxxx100000xxxxxxxxxx # swpalh w0 mem0 : w16 mem0
+10111000001xxxxx100000xxxxxxxxxx # swp    w0 mem0 : w16 mem0
+10111000011xxxxx100000xxxxxxxxxx # swpl   w0 mem0 : w16 mem0
+10111000101xxxxx100000xxxxxxxxxx # swpa   w0 mem0 : w16 mem0
+10111000111xxxxx100000xxxxxxxxxx # swpal  w0 mem0 : w16 mem0
+11111000001xxxxx100000xxxxxxxxxx # swp    x0 mem0 : x16 mem0
+11111000011xxxxx100000xxxxxxxxxx # swpl   x0 mem0 : x16 mem0
+11111000101xxxxx100000xxxxxxxxxx # swpa   x0 mem0 : x16 mem0
+11111000111xxxxx100000xxxxxxxxxx # swpal  x0 mem0 : x16 mem0
+00111000011xxxxxxxxx10xxxxxxxxxx # ldrb   w0 : memreg
+00111000101xxxxxxxxx10xxxxxxxxxx # ldrsb  x0 : memreg
+00111000111xxxxxxxxx10xxxxxxxxxx # ldrsb  w0 : memreg
+00111100011xxxxxxxxx10xxxxxxxxxx # ldr    b0 : memreg
+00111100111xxxxxxxxx10xxxxxxxxxx # ldr    q0 : memregq
+01111000011xxxxxxxxx10xxxxxxxxxx # ldrh   w0 : memreg
+01111000101xxxxxxxxx10xxxxxxxxxx # ldrsh  x0 : memreg
+01111000111xxxxxxxxx10xxxxxxxxxx # ldrsh  w0 : memreg
+01111100011xxxxxxxxx10xxxxxxxxxx # ldr    h0 : memreg
+10111000011xxxxxxxxx10xxxxxxxxxx # ldr    w0 : memreg
+10111000101xxxxxxxxx10xxxxxxxxxx # ldrsw  x0 : memreg
+10111100011xxxxxxxxx10xxxxxxxxxx # ldr    s0 : memreg
+11111000011xxxxxxxxx10xxxxxxxxxx # ldr    x0 : memreg
+11111100011xxxxxxxxx10xxxxxxxxxx # ldr    d0 : memreg
+0011100101xxxxxxxxxxxxxxxxxxxxxx # ldrb   w0 : mem12
+0011100110xxxxxxxxxxxxxxxxxxxxxx # ldrsb  x0 : mem12
+0011100111xxxxxxxxxxxxxxxxxxxxxx # ldrsb  w0 : mem12
+0011110101xxxxxxxxxxxxxxxxxxxxxx # ldr    b0 : mem12
+0011110111xxxxxxxxxxxxxxxxxxxxxx # ldr    q0 : mem12q
+0111100101xxxxxxxxxxxxxxxxxxxxxx # ldrh   w0 : mem12
+0111100110xxxxxxxxxxxxxxxxxxxxxx # ldrsh  x0 : mem12
+0111100111xxxxxxxxxxxxxxxxxxxxxx # ldrsh  w0 : mem12
+0111110101xxxxxxxxxxxxxxxxxxxxxx # ldr    h0 : mem12
+1011100101xxxxxxxxxxxxxxxxxxxxxx # ldr    w0 : mem12
+1011100110xxxxxxxxxxxxxxxxxxxxxx # ldrsw  x0 : mem12
+1011110101xxxxxxxxxxxxxxxxxxxxxx # ldr    s0 : mem12
+1111100101xxxxxxxxxxxxxxxxxxxxxx # ldr    x0 : mem12
+1111110101xxxxxxxxxxxxxxxxxxxxxx # ldr    d0 : mem12
+0x001100010000000000xxxxxxxxxxxx # ld4    vt0 vt1 vt2 vt3 : memvm vmsz
+0x001100010000000010xxxxxxxxxxxx # ld1    vt0 vt1 vt2 vt3 : memvm vmsz
+0x001100010000000100xxxxxxxxxxxx # ld3    vt0 vt1 vt2 : memvm vmsz
+0x001100010000000110xxxxxxxxxxxx # ld1    vt0 vt1 vt2 : memvm vmsz
+0x001100010000000111xxxxxxxxxxxx # ld1    vt0 : memvm vmsz
+0x001100010000001000xxxxxxxxxxxx # ld2    vt0 vt1 : memvm vmsz
+0x001100010000001010xxxxxxxxxxxx # ld1    vt0 vt1 : memvm vmsz
+0x001100110xxxxx0000xxxxxxxxxxxx # ld4    vt0 vt1 vt2 vt3 x5sp : memvm vmsz x5sp x16imm
+0x001100110xxxxx0010xxxxxxxxxxxx # ld1    vt0 vt1 vt2 vt3 x5sp : memvm vmsz x5sp x16imm
+0x001100110xxxxx0100xxxxxxxxxxxx # ld3    vt0 vt1 vt2 x5sp : memvm vmsz x5sp x16imm
+0x001100110xxxxx0110xxxxxxxxxxxx # ld1    vt0 vt1 vt2 x5sp : memvm vmsz x5sp x16imm
+0x001100110xxxxx0111xxxxxxxxxxxx # ld1    vt0 x5sp : memvm vmsz x5sp x16imm
+0x001100110xxxxx1000xxxxxxxxxxxx # ld2    vt0 vt1 x5sp : memvm vmsz x5sp x16imm
+0x001100110xxxxx1010xxxxxxxxxxxx # ld1    vt0 vt1 x5sp : memvm vmsz x5sp x16imm
+0x00110101000000000xxxxxxxxxxxxx # ld1    q0 : memvs index0
+0x00110101000000001xxxxxxxxxxxxx # ld3    q0 q0p1 q0p2 : memvs index0
+0x00110101000000010xx0xxxxxxxxxx # ld1    q0 : memvs index1
+0x00110101000000011xx0xxxxxxxxxx # ld3    q0 q0p1 q0p2 : memvs index1
+0x00110101000000100x00xxxxxxxxxx # ld1    q0 : memvs index2
+0x00110101000000100001xxxxxxxxxx # ld1    q0 : memvs index3
+0x00110101000000101x00xxxxxxxxxx # ld3    q0 q0p1 q0p2 : memvs index2
+0x00110101000000101001xxxxxxxxxx # ld3    q0 q0p1 q0p2 : memvs index3
+0x001101010000001100xxxxxxxxxxxx # ld1r   dq0 : memvr
+0x001101010000001110xxxxxxxxxxxx # ld3r   dq0 dq0p1 dq0p2 : memvr
+0x00110101100000000xxxxxxxxxxxxx # ld2    q0 q0p1 : memvs index0
+0x00110101100000001xxxxxxxxxxxxx # ld4    q0 q0p1 q0p2 q0p3 : memvs index0
+0x00110101100000010xx0xxxxxxxxxx # ld2    q0 q0p1 : memvs index1
+0x00110101100000011xx0xxxxxxxxxx # ld4    q0 q0p1 q0p2 q0p3 : memvs index1
+0x00110101100000100x00xxxxxxxxxx # ld2    q0 q0p1 : memvs index2
+0x00110101100000100001xxxxxxxxxx # ld2    q0 q0p1 : memvs index3
+0x00110101100000101x00xxxxxxxxxx # ld4    q0 q0p1 q0p2 q0p3 : memvs index2
+0x00110101100000101001xxxxxxxxxx # ld4    q0 q0p1 q0p2 q0p3 : memvs index3
+0x001101011000001100xxxxxxxxxxxx # ld2r   dq0 dq0p1 : memvr
+0x001101011000001110xxxxxxxxxxxx # ld4r   dq0 dq0p1 dq0p2 dq0p3 : memvr
+0x001101110xxxxx000xxxxxxxxxxxxx # ld1    q0 x5sp : q0 memvs index0 x5sp x16immvs
+0x001101110xxxxx001xxxxxxxxxxxxx # ld3    q0 q0p1 q0p2 x5sp : q0 q0p1 q0p2 memvs index0 x5sp x16immvs
+0x001101110xxxxx010xx0xxxxxxxxxx # ld1    q0 x5sp : q0 memvs index1 x5sp x16immvs
+0x001101110xxxxx011xx0xxxxxxxxxx # ld3    q0 q0p1 q0p2 x5sp : q0 q0p1 q0p2 memvs index1 x5sp x16immvs
+0x001101110xxxxx100x00xxxxxxxxxx # ld1    q0 x5sp : q0 memvs index2 x5sp x16immvs
+0x001101110xxxxx100001xxxxxxxxxx # ld1    q0 x5sp : q0 memvs index3 x5sp x16immvs
+0x001101110xxxxx101x00xxxxxxxxxx # ld3    q0 q0p1 q0p2 x5sp : q0 q0p1 q0p2 memvs index2 x5sp x16immvs
+0x001101110xxxxx101001xxxxxxxxxx # ld3    q0 q0p1 q0p2 x5sp : q0 q0p1 q0p2 memvs index3 x5sp x16immvs
+0x001101110xxxxx1100xxxxxxxxxxxx # ld1r   dq0 x5sp : memvr x5sp x16immvr
+0x001101110xxxxx1110xxxxxxxxxxxx # ld3r   dq0 dq0p1 dq0p2 x5sp : memvr x5sp x16immvr
+0x001101111xxxxx000xxxxxxxxxxxxx # ld2    q0 q0p1 x5sp : q0 q0p1 memvs index0 x5sp x16immvs
+0x001101111xxxxx001xxxxxxxxxxxxx # ld4    q0 q0p1 q0p2 q0p3 x5sp : q0 q0p1 q0p2 q0p3 memvs index0 x5sp x16immvs
+0x001101111xxxxx010xx0xxxxxxxxxx # ld2    q0 q0p1 x5sp : q0 q0p1 memvs index1 x5sp x16immvs
+0x001101111xxxxx011xx0xxxxxxxxxx # ld4    q0 q0p1 q0p2 q0p3 x5sp : q0 q0p1 q0p2 q0p3 memvs index1 x5sp x16immvs
+0x001101111xxxxx100x00xxxxxxxxxx # ld2    q0 q0p1 x5sp : q0 q0p1 memvs index2 x5sp x16immvs
+0x001101111xxxxx100001xxxxxxxxxx # ld2    q0 q0p1 x5sp : q0 q0p1 memvs index3 x5sp x16immvs
+0x001101111xxxxx101x00xxxxxxxxxx # ld4    q0 q0p1 q0p2 q0p3 x5sp : q0 q0p1 q0p2 q0p3 memvs index2 x5sp x16immvs
+0x001101111xxxxx101001xxxxxxxxxx # ld4    q0 q0p1 q0p2 q0p3 x5sp : q0 q0p1 q0p2 q0p3 memvs index3 x5sp x16immvs
+0x001101111xxxxx1100xxxxxxxxxxxx # ld2r   dq0 dq0p1 x5sp : memvr x5sp x16immvr
+0x001101111xxxxx1110xxxxxxxxxxxx # ld4r   dq0 dq0p1 dq0p2 dq0p3 x5sp : memvr x5sp x16immvr

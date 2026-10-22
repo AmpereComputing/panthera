@@ -1,0 +1,198 @@
+# Copyright (c) 2022-2023 Ampere Computing. All rights reserved.
+# SPDX-License-Identifier: BSD-3-Clause
+
+uops:
+  b:
+    unit: idr
+    opcode: 0x9040
+    opcode_width: 0x10
+    dest_type: none
+    src1_type: none
+    src2_type: none
+    src3_type: none
+  nop:
+    unit: idr
+    opcode: 0x9AAA
+    opcode_width: 0x10
+    dest_type: none
+    src1_type: none
+    src2_type: none
+    src3_type: none
+  wfi:
+    unit: idr
+    opcode: 0x9BBB
+    opcode_width: 0x10
+    dest_type: none
+    src1_type: none
+    src2_type: none
+    src3_type: none
+  wfit:
+    unit: idr
+    opcode: 0x9BAB
+    opcode_width: 0x10
+    dest_type: none
+    src1_type: none
+    src2_type: none
+    src3_type: none
+  wfe:
+    unit: idr
+    opcode: 0x9CCC
+    opcode_width: 0x10
+    dest_type: none
+    src1_type: none
+    src2_type: none
+    src3_type: none
+  wfet:
+    unit: idr
+    opcode: 0x9CDC
+    opcode_width: 0x10
+    dest_type: none
+    src1_type: none
+    src2_type: none
+    src3_type: none
+  svc:
+    unit: idr
+    opcode: 0x9AAB
+    opcode_width: 0x10
+    dest_type: none
+    src1_type: none
+    src2_type: none
+    src3_type: none
+  hvc:
+    unit: idr
+    opcode: 0x9AAC
+    opcode_width: 0x10
+    dest_type: none
+    src1_type: none
+    src2_type: none
+    src3_type: none
+  smc:
+    unit: idr
+    opcode: 0x9AAD
+    opcode_width: 0x10
+    dest_type: none
+    src1_type: none
+    src2_type: none
+    src3_type: none
+  isb:
+    unit: idr
+    opcode: 0x9AAF
+    opcode_width: 0x10
+    dest_type: none
+    src1_type: none
+    src2_type: none
+    src3_type: none
+  esb:
+    unit: idr
+    opcode: 0x9BAA
+    opcode_width: 0x10
+    dest_type: none
+    src1_type: none
+    src2_type: none
+    src3_type: none
+  not_implemented:
+    unit: idr
+    opcode: 0x9FFF
+    opcode_width: 0x10
+    src1_type: none
+    src2_type: none
+    src3_type: none
+  daif_set:
+    unit: idr
+    opcode: 0x9AF5
+    opcode_width: 0x10
+    src1_type: none
+    src2_type: none
+    src3_type: none
+  daif_clr:
+    unit: idr
+    opcode: 0x9AFC
+    opcode_width: 0x10
+    src1_type: none
+    src2_type: none
+    src3_type: none
+  spsel:
+    unit: idr
+    opcode: 0x95E1
+    opcode_width: 0x10
+    src1_type: none
+    src2_type: none
+    src3_type: none
+  sev:
+    unit: idr
+    opcode: 0x9ABA
+    opcode_width: 0x10
+    src1_type: none
+    src2_type: none
+    src3_type: none
+  sevl:
+    unit: idr
+    opcode: 0x9ABB
+    opcode_width: 0x10
+    src1_type: none
+    src2_type: none
+    src3_type: none
+  brk:
+    unit: idr
+    opcode: 0x9ABD
+    opcode_width: 0x10
+    src1_type: none
+    src2_type: none
+    src3_type: none
+  tsb:
+    unit: idr
+    opcode: 0x9ABE
+    opcode_width: 0x10
+    src1_type: none
+    src2_type: none
+    src3_type: none
+  psb:
+    unit: idr
+    opcode: 0x9ABF
+    opcode_width: 0x10
+    src1_type: none
+    src2_type: none
+    src3_type: none
+  hlt:
+    unit: idr
+    opcode: 0x9AC0
+    opcode_width: 0x10
+    src1_type: none
+    src2_type: none
+    src3_type: none
+  bti:
+    unit: idr
+    opcode: 0x9AC1
+    opcode_width: 0x10
+    src1_type: none
+    src2_type: none
+    src3_type: none
+  dcps1:
+    unit: idr
+    opcode: 0x9AD1
+    opcode_width: 0x10
+    src1_type: none
+    src2_type: none
+    src3_type: none
+  dcps2:
+    unit: idr
+    opcode: 0x9AD2
+    opcode_width: 0x10
+    src1_type: none
+    src2_type: none
+    src3_type: none
+  dcps3:
+    unit: idr
+    opcode: 0x9AD3
+    opcode_width: 0x10
+    src1_type: none
+    src2_type: none
+    src3_type: none
+  eret:
+    unit: idr
+    opcode: 0x9A39
+    opcode_width: 0x10
+    src1_type: none
+    src2_type: none
+    src3_type: none
+

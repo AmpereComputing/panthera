@@ -1,0 +1,10 @@
+{
+    "name": "nothing",
+    "directory": ".",
+    "cmds": [
+        ["/bin/true"]
+    ],
+    "meta": {
+        "panthera_root": "install"
+    }
+}

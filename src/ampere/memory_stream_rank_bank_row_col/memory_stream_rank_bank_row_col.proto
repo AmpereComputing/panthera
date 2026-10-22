@@ -1,0 +1,31 @@
+/*
+ * Copyright (c) 2022 Ampere Computing. All rights reserved.
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+
+syntax = "proto3";
+
+package ampere.msrbrc;
+
+// The Filter message will be present once as the first message in the stream
+message Filter {
+    uint32 cache_size = 1;  // Size of cache (in bytes) that this memory trace was 'filtered' through
+}
+
+// The Access message will be repeated until the end of the stream
+message Access_rbrc {
+    enum Type {
+        READ = 0;
+        WRITE = 1;
+        READUNIQUE = 2;
+    }
+
+    Type type = 1;          // Type of access
+    uint32 rank = 2;        // Rank number
+    uint32 bank = 3;        // Bank number
+    uint32 row = 4;         // Row number
+    uint32 col = 5;         // Col number
+    uint32 offset = 6;      // offset
+    uint32 mc = 7;          // Memory controller id
+    uint64 pa = 8;          // Physical address of the first byte
+}

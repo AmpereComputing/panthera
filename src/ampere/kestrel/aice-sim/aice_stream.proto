@@ -1,0 +1,139 @@
+/*
+ * Copyright (c) 2025 Ampere Computing. All rights reserved.
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+
+syntax = "proto3";
+
+package ampere.kestrel.aice.is;
+/* this must be kept in sync with the values in aice_instruction.h  using gen_inst.py*/
+enum Opcode {
+    UNDEFINED=0;
+    ADD=1;
+    AND=2;
+    MUL=3;
+    SUB=4;
+    LSHIFT=5;
+    RASHIFT=6;
+    ADDI=7;
+    ANDI=8;
+    MULI=9;
+    LSHIFTI=10;
+    RASHIFTI=11;
+    BLT=12;
+    BGE=13;
+    BIR=14;
+    CSELGTZ=15;
+    CSELZ=16;
+    LOADMX=17;
+    LOADMXU_FP8=18;
+    LOADMXU_BF16=19;
+    LOADSCALE_128=20;
+    LOADSCALE_256=21;
+    LOADSCALE_512=22;
+    LOADIMR=23;
+    STOREIMR=24;
+    STOREAMRV=25;
+    STOREAMR64=26;
+    STOREAMR32=27;
+    STOREAMR16=28;
+    STOREAMR8=29;
+    MOVB=30;
+    MATMULA=31;
+    SYNCWAIT=32;
+    SYNCREADDONE=33;
+    SYNCWRITEDONE=34;
+    SYNCHALT=35;
+    RESTARTABLE=36;
+    DEBUG=37;
+}
+
+
+message Address {
+    uint32 pa = 2;
+}
+message MEM {
+    uint32 number = 1;
+    uint32 pa = 2;
+}
+message GPR {
+    uint32 number = 1;
+    int32 value = 2;
+}
+message IMR {
+    uint32 number = 1;
+    int32 value = 2;
+}
+message AMR {
+    uint32 number = 1;
+    int32 value = 2;
+}
+message BREG {
+    uint32 number = 1;
+    int32 value = 2;
+}
+message SCALE {
+    uint32 number = 1;
+    int32 value = 2;
+}
+
+enum dtype {
+ no_d_type  = 0;
+ fp32       = 1;
+ bf16       = 2;
+ s8         = 3;
+ u8         = 4;
+ fp8_e5m2   = 5;
+ fp8_e4m3   = 6;
+ mxfp8_e5m2 = 7;
+ mxfp8_e4m3 = 8;
+ mxfp6_e3m2 = 9;
+ mxfp6_e2m3 = 10;
+ mxfp4_e2m1 = 11;
+ mxint8     = 12;
+ mxint4     = 13;
+}
+
+message Instruction {
+    Address program_counter  = 1;
+    Opcode opcode            = 2;
+    dtype dtype              = 4;
+    bool transpose           = 6;
+    bool atype               = 7; 
+    repeated GPR gpr_src     = 8; 
+    repeated GPR gpr_dst     = 9; 
+    repeated int32 imm_src   = 10;
+    repeated IMR imr_src     = 11;
+    repeated IMR imr_dst     = 12;
+    repeated AMR amr_src     = 13;
+    repeated AMR amr_dst     = 14;
+    repeated BREG breg_src   = 15;
+    repeated BREG breg_dst   = 16;
+    repeated SCALE scale_src = 17;
+    repeated SCALE scale_dst = 18;
+    repeated MEM mem_src     = 19;
+    repeated MEM mem_dst     = 20;
+}
+
+/* Out-of-band controls for the model itself */
+message Control {
+    enum Type {
+        START_MEASUREMENT = 0;
+        STOP_MEASUREMENT = 1;
+    }
+    Type type = 1;
+}
+
+message Features {
+    uint32 format_version = 1;
+}
+
+message Event {
+    oneof event {
+        Instruction instruction = 1;
+        /* Protobuf uses one byte for fields <= 15; We're placing
+         * infrequently-used fields above 15 to allow for adding additional
+         * frequently-used fields later */
+        Control control = 16;
+    }
+}

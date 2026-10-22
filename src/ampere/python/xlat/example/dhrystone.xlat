@@ -1,0 +1,425 @@
+# Copyright (c) 2019 Ampere Computing. All rights reserved.
+# SPDX-License-Identifier: BSD-3-Clause
+
+from uop import *
+from ampere.xlat import Signal, Translation
+
+
+class ADD_32_addsub_imm(Translation):
+    """Add (immediate)"""
+    pattern = '0  0  0 10001 --    ------------ ----- -----'
+    pfields = 'sf op S       shift    imm12      Rn    Rd  '
+
+    asmtemplate = 'ADD  <Wd|WSP>, <Wn|WSP>, #<imm>{, <shift>}'
+
+    def decode(self, f):
+        add32(f.Rd, f.Rn, imm=f.imm12, shift=f.shift)
+
+
+class ADD_64_addsub_imm(Translation):
+    """Add (immediate)"""
+    pattern = '1  0  0 10001 --    ------------ ----- -----'
+    pfields = 'sf op S       shift    imm12      Rn    Rd  '
+
+    asmtemplate = 'ADD  <Xd|SP>, <Xn|SP>, #<imm>{, <shift>}'
+
+    def decode(self, f):
+        add64(f.Rd, f.Rn, imm=f.imm12, shift=f.shift)
+
+
+class ADDS_32S_addsub_imm(Translation):
+    """Add (immediate), setting flags"""
+    pattern = '0  0  1 10001 --    ------------ ----- -----'
+    pfields = 'sf op S       shift    imm12      Rn    Rd  '
+
+    asmtemplate = 'ADDS  <Wd>, <Wn|WSP>, #<imm>{, <shift>}'
+
+    def decode(self, f):
+        add32(f.Rd, f.Rn, imm=f.imm12, shift=f.shift, set_flags=True)
+
+
+class ADDS_64S_addsub_imm(Translation):
+    """Add (immediate), setting flags"""
+    pattern = '1  0  1 10001 --    ------------ ----- -----'
+    pfields = 'sf op S       shift    imm12      Rn    Rd  '
+
+    asmtemplate = 'ADDS  <Xd>, <Xn|SP>, #<imm>{, <shift>}'
+
+    def decode(self, f):
+        add64(f.Rd, f.Rn, imm=f.imm12, shift=f.shift, set_flags=True)
+
+
+class ADD_32_addsub_shift(Translation):
+    """Add (shifted register)"""
+    pattern = '0  0  0 01011 --    0 ----- ------ ----- -----'
+    pfields = 'sf op S       shift    Rm    imm6   Rn    Rd  '
+
+    asmtemplate = 'ADD  <Wd>, <Wn>, <Wm>{, <shift> #<amount>}'
+
+    def decode(self, f):
+        add32(f.Rd, f.Rn, f.Rm, imm=f.imm6, shift=f.shift)
+
+
+class ADD_64_addsub_shift(Translation):
+    """Add (shifted register)"""
+    pattern = '1  0  0 01011 --    0 ----- ------ ----- -----'
+    pfields = 'sf op S       shift    Rm    imm6   Rn    Rd  '
+
+    asmtemplate = 'ADD  <Xd>, <Xn>, <Xm>{, <shift> #<amount>}'
+
+    def decode(self, f):
+        add32(f.Rd, f.Rn, f.Rm, imm=f.imm6, shift=f.shift)
+
+
+class ADRP_only_pcreladdr(Translation):
+    """Form PC-relative address to 4KB page"""
+    pattern = '1  --    10000 ------------------- -----'
+    pfields = 'op immlo              immhi         Rd  '
+
+    asmtemplate = 'ADRP  <Xd>, <label>'
+
+    def decode(self, f):
+        adrp(imm_signext=(f.immhi, f.immlo), imm_use_pc=True)
+
+
+class B_only_condbranch(Translation):
+    """Branch conditionally"""
+    pattern = '0101010 0  ------------------- 0  ----'
+    pfields = '        o1        imm19        o0 cond'
+
+    asmtemplate = 'B.<cond>  <label>'
+
+    def decode(self, f):
+        b_op = {
+            0b0000: bc_eq, 0b0001: bc_ne,
+            0b0010: bc_cs, 0b0011: bc_cc,
+            0b0100: bc_mi, 0b0101: bc_pl,
+            0b0110: bc_vs, 0b0111: bc_vc,
+            0b1000: bc_hi, 0b1001: bc_ls,
+            0b1010: bc_ge, 0b1011: bc_lt,
+            0b1100: bc_gt, 0b1101: bc_le,
+            0b1111: bc_al
+        }
+        if f.cond.value in b_op:
+            b_op[f.cond.value](imm=f.imm19)
+
+
+class B_only_branch_imm(Translation):
+    """Branch"""
+    pattern = '0  00101 --------------------------'
+    pfields = 'op                 imm26           '
+
+    asmtemplate = 'B  <label>'
+
+    def decode(self, f):
+        b(imm=f.imm26, imm_use_pc=True)
+
+
+class BL_only_branch_imm(Translation):
+    """Branch with Link"""
+    pattern = '1  00101 --------------------------'
+    pfields = 'op                 imm26           '
+
+    asmtemplate = 'BL  <label>'
+
+    def decode(self, f):
+        b(imm=f.imm26, imm_use_pc=True)  # FIXME: how to indicate branch with link?
+
+
+class SUBS_32S_addsub_imm(Translation):  # Alias: CMP (immediate)
+    """Subtract (immediate), setting flags"""
+    pattern = '0  1  1 10001 --    ------------ ----- -----'
+    pfields = 'sf op S       shift    imm12      Rn    Rd  '
+
+    asmtemplate = 'SUBS  <Wd>, <Wn|WSP>, #<imm>{, <shift>}'
+
+    def decode(self, f):
+        return NotImplemented
+
+
+class SUBS_64S_addsub_imm(Translation):  # Alias: CMP (immediate)
+    """Subtract (immediate), setting flags"""
+    pattern = '1  1  1 10001 --    ------------ ----- -----'
+    pfields = 'sf op S       shift    imm12      Rn    Rd  '
+
+    asmtemplate = 'SUBS  <Xd>, <Xn|SP>, #<imm>{, <shift>}'
+
+    def decode(self, f):
+        return NotImplemented
+
+
+class SUBS_32_addsub_shift(Translation):  # Alias: CMP (shifted register)
+    """Subtract (shifted register), setting flags"""
+    pattern = '0  1  1 01011 --    0 ----- ------ ----- -----'
+    pfields = 'sf op S       shift    Rm    imm6   Rn    Rd  '
+
+    asmtemplate = 'SUBS  <Wd>, <Wn>, <Wm>{, <shift> #<amount>}'
+
+    def decode(self, f):
+        return NotImplemented
+
+
+class LDP_64_ldstpair_post(Translation):
+    """Load Pair of Registers"""
+    pattern = '1-  101 0 001 1 ------- ----- ----- -----'
+    pfields = 'opc     V     L  imm7    Rt2   Rn    Rt  '
+
+    asmtemplate = 'LDP  <Xt1>, <Xt2>, [<Xn|SP>], #<imm>'
+
+    def decode(self, f):
+        ## FIXME: not real
+        ldrb(f.Rt, f.Rn, f.Rt2)
+
+
+class LDP_64_ldstpair_off(Translation):
+    """Load Pair of Registers"""
+    pattern = '1-  101 0 010 1 ------- ----- ----- -----'
+    pfields = 'opc     V     L  imm7    Rt2   Rn    Rt  '
+
+    asmtemplate = 'LDP  <Xt1>, <Xt2>, [<Xn|SP>{, #<imm>}]'
+
+    def decode(self, f):
+        return NotImplemented
+
+
+class LDR_32_ldst_pos(Translation):
+    """Load Register (immediate)"""
+    pattern = '10   111 0 01 01  ------------ ----- -----'
+    pfields = 'size     V    opc    imm12      Rn    Rt  '
+
+    asmtemplate = 'LDR  <Wt>, [<Xn|SP>{, #<pimm>}]'
+
+    def decode(self, f):
+        ldrw(f.Rt, f.Rn, imm=(f.imm12, Signal('00')))
+
+
+class LDR_64_ldst_pos(Translation):
+    """Load Register (immediate)"""
+    pattern = '11   111 0 01 01  ------------ ----- -----'
+    pfields = 'size     V    opc    imm12      Rn    Rt  '
+
+    asmtemplate = 'LDR  <Xt>, [<Xn|SP>{, #<pimm>}]'
+
+    def decode(self, f):
+        ldrx(f.Rt, f.Rn, imm=(f.imm12, Signal('000')))
+
+
+class LDR_32_ldst_regoff(Translation):
+    """Load Register (register)"""
+    pattern = '10   111 0 00 01  1 ----- -1-    - 10 ----- -----'
+    pfields = 'size     V    opc    Rm   option S     Rn    Rt  '
+
+    asmtemplate = 'LDR  <Wt>, [<Xn|SP>, (<Wm>|<Xm>){, <extend> {<amount>}}]'
+
+    def decode(self, f):
+        return NotImplemented
+
+
+class LDR_64_ldst_regoff(Translation):
+    """Load Register (register)"""
+    pattern = '-1   111 0 00 01  1 ----- ---    - 10 ----- -----'
+    pfields = 'size     V    opc    Rm   option S     Rn    Rt  '
+
+    asmtemplate = 'LDR  <Xt>, [<Xn|SP>, (<Wm>|<Xm>){, <extend> {<amount>}}]'
+
+    def decode(self, f):
+        return NotImplemented
+
+
+class LDRB_32_ldst_immpost(Translation):
+    """Load Register Byte (immediate)"""
+    pattern = '00   111 0 00 01  0 --------- 01 ----- -----'
+    pfields = 'size     V    opc     imm9        Rn    Rt  '
+
+    asmtemplate = 'LDRB  <Wt>, [<Xn|SP>], #<simm>'
+
+    def decode(self, f):
+        return NotImplemented
+
+
+class LDRSW_64_ldst_immpost(Translation):
+    """Load Register Signed Word (immediate)"""
+    pattern = '10   111 0 00 10  0 --------- 01 ----- -----'
+    pfields = 'size     V    opc     imm9        Rn    Rt  '
+
+    asmtemplate = 'LDRSW  <Xt>, [<Xn|SP>], #<simm>'
+
+    def decode(self, f):
+        return NotImplemented
+
+
+class UBFM_64M_bitfield(Translation):  # Alias: LSL
+    """Unsigned Bitfield Move"""
+    pattern = '1  10  100110 1 ------ ------ ----- -----'
+    pfields = 'sf opc        N  immr   imms   Rn    Rd  '
+
+    asmtemplate = 'UBFM  <Xd>, <Xn>, #<immr>, #<imms>'
+
+    def decode(self, f):
+        return NotImplemented
+
+
+class ORR_32_log_imm(Translation):  # Alias: MOV (bitmask immediate)
+    """Bitwise OR (immediate)"""
+    pattern = '0  01  100100 0 ------ ------ ----- -----'
+    pfields = 'sf opc        N  immr   imms   Rn    Rd  '
+
+    asmtemplate = 'ORR  <Wd|WSP>, <Wn>, #<imm>'
+
+    def decode(self, f):
+        return NotImplemented
+
+
+class ORR_32_log_shift(Translation):  # Alias: MOV (register)
+    """Bitwise OR (shifted register)"""
+    pattern = '0  01  01010 --    0 ----- ------ ----- -----'
+    pfields = 'sf opc       shift N  Rm    imm6   Rn    Rd  '
+
+    asmtemplate = 'ORR  <Wd>, <Wn>, <Wm>{, <shift> #<amount>}'
+
+    def decode(self, f):
+        return NotImplemented
+
+
+class ORR_64_log_shift(Translation):  # Alias: MOV (register)
+    """Bitwise OR (shifted register)"""
+    pattern = '1  01  01010 --    0 ----- ------ ----- -----'
+    pfields = 'sf opc       shift N  Rm    imm6   Rn    Rd  '
+
+    asmtemplate = 'ORR  <Xd>, <Xn>, <Xm>{, <shift> #<amount>}'
+
+    def decode(self, f):
+        return NotImplemented
+
+
+class STP_64_ldstpair_pre(Translation):
+    """Store Pair of Registers"""
+    pattern = '1-  101 0 011 0 ------- ----- ----- -----'
+    pfields = 'opc     V     L  imm7    Rt2   Rn    Rt  '
+
+    asmtemplate = 'STP  <Xt1>, <Xt2>, [<Xn|SP>, #<imm>]!'
+
+    def decode(self, f):
+        return NotImplemented
+
+
+class STP_32_ldstpair_off(Translation):
+    """Store Pair of Registers"""
+    pattern = '0-  101 0 010 0 ------- ----- ----- -----'
+    pfields = 'opc     V     L  imm7    Rt2   Rn    Rt  '
+
+    asmtemplate = 'STP  <Wt1>, <Wt2>, [<Xn|SP>{, #<imm>}]'
+
+    def decode(self, f):
+        return NotImplemented
+
+
+class STR_32_ldst_pos(Translation):
+    """Store Register (immediate)"""
+    pattern = '-0   111 0 01 00  ------------ ----- -----'
+    pfields = 'size     V    opc    imm12      Rn    Rt  '
+
+    asmtemplate = 'STR  <Wt>, [<Xn|SP>{, #<pimm>}]'
+
+    def decode(self, f):
+        return NotImplemented
+
+
+class STR_64_ldst_pos(Translation):
+    """Store Register (immediate)"""
+    pattern = '-1   111 0 01 00  ------------ ----- -----'
+    pfields = 'size     V    opc    imm12      Rn    Rt  '
+
+    asmtemplate = 'STR  <Xt>, [<Xn|SP>{, #<pimm>}]'
+
+    def decode(self, f):
+        return NotImplemented
+
+
+class STR_32_ldst_regoff(Translation):
+    """Store Register (register)"""
+    pattern = '-0   111 0 00 00  1 ----- ---    - 10 ----- -----'
+    pfields = 'size     V    opc    Rm   option S     Rn    Rt  '
+
+    asmtemplate = 'STR  <Wt>, [<Xn|SP>, (<Wm>|<Xm>){, <extend> {<amount>}}]'
+
+    def decode(self, f):
+        return NotImplemented
+
+
+class STR_64_ldst_regoff(Translation):
+    """Store Register (register)"""
+    pattern = '-1   111 0 00 00  1 ----- ---    - 10 ----- -----'
+    pfields = 'size     V    opc    Rm   option S     Rn    Rt  '
+
+    asmtemplate = 'STR  <Xt>, [<Xn|SP>, (<Wm>|<Xm>){, <extend> {<amount>}}]'
+
+    def decode(self, f):
+        return NotImplemented
+
+
+class STRB_32_ldst_pos(Translation):
+    """Store Register Byte (immediate)"""
+    pattern = '00   111 0 01 00  ------------ ----- -----'
+    pfields = 'size     V    opc    imm12      Rn    Rt  '
+
+    asmtemplate = 'STRB  <Wt>, [<Xn|SP>{, #<pimm>}]'
+
+    def decode(self, f):
+        return NotImplemented
+
+
+class SUB_32_addsub_imm(Translation):
+    """Subtract (immediate)"""
+    pattern = '0  1  0 10001 --    ------------ ----- -----'
+    pfields = 'sf op S       shift    imm12      Rn    Rd  '
+
+    asmtemplate = 'SUB  <Wd|WSP>, <Wn|WSP>, #<imm>{, <shift>}'
+
+    def decode(self, f):
+        return NotImplemented
+
+
+class SUB_64_addsub_imm(Translation):
+    """Subtract (immediate)"""
+    pattern = '1  1  0 10001 --    ------------ ----- -----'
+    pfields = 'sf op S       shift    imm12      Rn    Rd  '
+
+    asmtemplate = 'SUB  <Xd|SP>, <Xn|SP>, #<imm>{, <shift>}'
+
+    def decode(self, f):
+        return NotImplemented
+
+
+class SBFM_64M_bitfield(Translation):  # Alias: SXTW
+    """Signed Bitfield Move"""
+    pattern = '1  00  100110 1 ------ ------ ----- -----'
+    pfields = 'sf opc        N  immr   imms   Rn    Rd  '
+
+    asmtemplate = 'SBFM  <Xd>, <Xn>, #<immr>, #<imms>'
+
+    def decode(self, f):
+        return NotImplemented
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,64 @@
+# Copyright (c) 2021-2025 Ampere Computing. All rights reserved.
+# SPDX-License-Identifier: BSD-3-Clause
+
+@namespace "ampere::core::l2"
+
+Opcode         | needs_fill_buffer
+===============|==================
+BLKRD          |        Y
+BLKRDUNIQUE    |        Y
+BLKRDEXCL      |        Y
+SUBWR          |        Y
+SUBWREXCL      |        Y
+CLREX          |
+ATOMIC_LOAD    |        Y
+ATOMIC_STORE   |        Y
+ATOMIC_CAS     |        Y
+CMO            |
+TMO            |
+INIT           |
+ECC_CORRECT    |
+FILL_FIRSTFLIT |
+FILL           |
+FILLEXCL       |
+READEXCL       |
+FB_DEALLOCEXCL |
+READ_VICTIM    |
+READ_DEALLOC   |
+FB_DEALLOC     |
+SNP_FWD        |
+SNP_CLN        |
+SNP_SHD        |
+SNP_INV        |
+DFT_RD         |
+DFT_WR         |
+ALLOC_L3       |        Y
+===============|==================
+@event_data {"name": "l2_opcode", "description": "L2C pipeline opcode"}
+
+
+RequestQueueName
+================
+IMMU
+DMMU
+ICF
+LSU_READ
+LSU_EVICT
+PWC
+PREFETCH
+SYSTEM_DEALLOC
+SYSTEM_FILL
+SNOOP
+================
+@event_data {"name": "l2_req_q", "description": "L2C request queue name"}
+
+
+ArbConflict
+==============
+NONE
+ADDRESS_FILTER
+PIPE
+BANK
+LD_ST_ORDER
+==============
+@event_data {"name": "l2_arb_conflict", "description": "L2C arbitor conflict cause"}

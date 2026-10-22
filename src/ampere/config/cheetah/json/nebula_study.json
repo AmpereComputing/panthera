@@ -1,0 +1,12 @@
+[
+    {
+        "name": "Nebula",
+        "exe": "{panthera_root}/bin/amperesys",
+        "parameters": [
+            "-cfg", "{panthera_root}/config/model/sys/nebula.cfg",
+            "-sys.soc_0.core_0.instruction_stream_name", "{workload_path}",
+            ["-sys.soc_0.warmup_ms", "{memstream_path}"],
+            "-sys.soc_0.core_0.gpc.max_instructions", "10000000"
+        ]
+    }
+]

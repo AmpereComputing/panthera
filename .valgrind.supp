@@ -1,0 +1,28 @@
+{
+  protobuf_reader_uninit
+  Memcheck:Cond
+  ...
+  fun:_ZN6ampere20ProtobufStreamReader*
+  ...
+}
+{
+  protobuf_writer_uninit
+  Memcheck:Cond
+  ...
+  fun:_ZN6ampere20ProtobufStreamWriter*
+  ...
+}
+{
+  event_stream_reader_uninit
+  Memcheck:Cond
+  ...
+  fun:_ZN6ampere*EventStreamReader*
+  ...
+}
+{
+  adis_sysreg
+  Memcheck:Cond
+  ...
+  src:adis-sysreg.cc
+  ...
+}

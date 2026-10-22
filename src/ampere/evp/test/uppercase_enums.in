@@ -1,0 +1,3 @@
+enum myenum RED_FISH=1 BLUE_FISH=2
+100 ev myenum=1
+200 ev myenum=2

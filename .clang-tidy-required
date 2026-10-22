@@ -1,0 +1,14 @@
+# Copyright (c) 2025 Ampere Computing. All rights reserved.
+# SPDX-License-Identifier: BSD-3-Clause
+
+---
+FormatStyle: file
+Checks: "-*,
+  modernize-use-bool-literals,
+  modernize-use-emplace,
+  modernize-use-equals-default,
+  modernize-use-equals-delete,
+  modernize-use-nullptr,
+  modernize-use-override,
+  modernize-use-starts-ends-with,
+  readability-container-contains"

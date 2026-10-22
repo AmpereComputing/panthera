@@ -1,0 +1,34 @@
+package variant;
+
+function automatic logic IxuVld_even(input logic [31:0] Instruction0, input logic [1:0] QuadNum, input logic [1:0] UopNum);
+  IxuVld_even = Instruction0[21] & ~Instruction0[22] & ~Instruction0[23] & Instruction0[24] & Instruction0[25] & ~Instruction0[26] & Instruction0[27] & ~Instruction0[28] & Instruction0[29] & ~Instruction0[30] & Instruction0[31] & ~QuadNum[0] & ~QuadNum[1] & ~UopNum[0] & ~UopNum[1];
+endfunction
+
+
+function automatic logic IxuVld_odd(input logic [31:0] Instruction0, input logic [1:0] QuadNum, input logic [1:0] UopNum);
+  IxuVld_odd = ~Instruction0[13] & Instruction0[15] & Instruction0[21] & ~Instruction0[22] & ~Instruction0[23] & Instruction0[24] & Instruction0[25] & ~Instruction0[26] & Instruction0[27] & ~Instruction0[28] & Instruction0[29] & ~Instruction0[30] & Instruction0[31] & ~QuadNum[0] & ~QuadNum[1] & UopNum[0] & ~UopNum[1] |
+               ~Instruction0[14] & Instruction0[15] & Instruction0[21] & ~Instruction0[22] & ~Instruction0[23] & Instruction0[24] & Instruction0[25] & ~Instruction0[26] & Instruction0[27] & ~Instruction0[28] & Instruction0[29] & ~Instruction0[30] & Instruction0[31] & ~QuadNum[0] & ~QuadNum[1] & UopNum[0] & ~UopNum[1];
+endfunction
+
+
+function automatic logic IsAdd_even(input logic [31:0] Instruction0, input logic [1:0] QuadNum, input logic [1:0] UopNum);
+  IsAdd_even = Instruction0[13] & Instruction0[14] |
+               ~Instruction0[15];
+endfunction
+
+
+function automatic logic IsAdd_odd(input logic [31:0] Instruction0, input logic [1:0] QuadNum, input logic [1:0] UopNum);
+  IsAdd_odd = 1'b1;
+endfunction
+
+
+function automatic logic IsSxt32_even(input logic [31:0] Instruction0, input logic [1:0] QuadNum, input logic [1:0] UopNum);
+  IsSxt32_even = ~Instruction0[14] & Instruction0[15];
+endfunction
+
+
+function automatic logic IsSxt32_odd(input logic [31:0] Instruction0, input logic [1:0] QuadNum, input logic [1:0] UopNum);
+  IsSxt32_odd = 1'b0;
+endfunction
+
+endpackage

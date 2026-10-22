@@ -1,0 +1,12 @@
+*~
+*.o
+\#*
+.#*
+a.out
+*.pyc
+__pycache__/
+/build*/
+/debug/
+/install-*/
+/release/
+.sconsign.dblite

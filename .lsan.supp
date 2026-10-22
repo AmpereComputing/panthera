@@ -1,0 +1,5 @@
+leak:*event_timed*allocate*
+leak:*ConnectionSetup*make_and_bind
+leak:Py_InitializeEx
+leak:PyEval_EvalCodeEx
+leak:_PyEval_EvalCodeWithName

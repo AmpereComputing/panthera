@@ -1,0 +1,5 @@
+Info: /ampere/panthera: End of elaboration. Starting simulation.
+Info: /ampere/panthera: Start performance measurement after 999 instructions @ 20189 cycles, 6723270 ps
+Stopping: exiting on stop
+Simulation complete: stopped by event stream processor
+All commands exited successfully.

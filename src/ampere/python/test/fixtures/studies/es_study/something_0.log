@@ -1,0 +1,1 @@
+./install/bin/panthera sim ./install/bin/amperesys -sys.soc_0.core_0.instruction_stream_name ../../../../../src/ampere/instruction_stream/test/test.is.xz -cfg ./install/config/something.cfg

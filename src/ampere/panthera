@@ -1,0 +1,124 @@
+#!/bin/bash
+# Copyright (c) 2019-2026 Ampere Computing. All rights reserved.
+# SPDX-License-Identifier: BSD-3-Clause
+
+
+if [[ "$1" == "-h" || "$1" == "--help" ]]; then
+    echo "usage: $0 [-h|--help] [-v] [--without-nix] command [command options...]"
+    echo
+    echo "Run panthera python tool, run with no options to see available commands."
+    exit 0
+fi
+
+VERBOSE=
+WITHOUT_NIX=
+if [ "$1" == "-v" ]; then
+    VERBOSE=1
+    shift
+fi
+if [ "$1" == "--without-nix" ]; then
+    WITHOUT_NIX=1
+    shift
+fi
+
+panthera_root()
+{
+    scriptdir=$(dirname "$BASH_SOURCE")
+    echo $(cd ${scriptdir}/.. && pwd)
+}
+
+if [ -z "${PANTHERA_ROOT}" ]
+then
+    PANTHERA_ROOT=$(panthera_root)
+fi
+PANTHERA_ROOT="$(realpath $PANTHERA_ROOT)"
+
+# Perform a primitive check that the install directory looks sensible
+if [[ ! -d "${PANTHERA_ROOT}/lib" || ! -d "${PANTHERA_ROOT}/bin" || ! -d "${PANTHERA_ROOT}/config" ]]; then
+    echo "Error: ${PANTHERA_ROOT} does not look like a valid install directory, exiting"
+    exit 1
+fi
+
+if [[ -z "${HOST}" ]]; then
+    if [[ -e /usr/bin/hostname ]]; then
+        HOST="$(/usr/bin/hostname)"
+    elif [[ -e /bin/hostname ]]; then
+        HOST="$(/bin/hostname)"
+    elif [[ -x "$(command -v hostname)" ]]; then
+        HOST="$(hostname)"
+    fi
+fi
+
+# Detect whether the installed build needs to run inside its Nix environment.
+PREFIX=
+if [[ -f "${PANTHERA_ROOT}/shell.nix" && ( -z "${IN_NIX_SHELL}" || "${name}" != "panthera-dev"* ) ]]
+then
+    if [ -z "$WITHOUT_NIX" ]; then
+        PREFIX="nix-shell ${PANTHERA_ROOT}/shell.nix --run"
+    fi
+fi
+
+if [[ -z "${PYTHONPATH}" ]]
+then
+    PYTHONPATH="${PANTHERA_ROOT}/lib/python"
+else
+    PYTHONPATH="${PANTHERA_ROOT}/lib/python":${PYTHONPATH}
+fi
+
+export PANTHERA_ROOT
+if [[ -n "${PYTHONPATH}" ]]; then
+    export PYTHONPATH
+fi
+
+PYTHON_BIN=python3
+PYTHON_ARGS=
+if [[ -n "${COVERAGE_PROCESS_START}" ]]; then
+    # Without --timid there's sometimes errors ending the coverage file
+    PYTHON_ARGS="-m coverage run --timid -p"
+    COVERAGE_RC="$(dirname ${PANTHERA_ROOT})/.coveragerc"
+    if [[ -f "${COVERAGE_RC}" ]]; then
+        PYTHON_ARGS="${PYTHON_ARGS} --rcfile=${COVERAGE_RC}"
+    fi
+fi
+
+if [[ -n "$PDB" ]]; then
+    PYTHON_ARGS="-m pdb"
+fi
+
+if [[ -e /usr/bin/env ]]; then
+    ENV=/usr/bin/env
+elif [[ -e /bin/env ]]; then
+    ENV=/bin/env
+else
+    ENV=env
+fi
+
+CMD="${PYTHON_BIN}"
+if [[ $# == "0" || "$1" == -* || "$1" == "help" ]]
+then
+    CMD="${CMD} ${PYTHON_ARGS} -m panthera"
+elif [[ "$1" != "python" && "$1" != "study" && ( "$1" != "cheetah" || "$2" != *".py" ) ]]
+then
+    CMD="${CMD} ${PYTHON_ARGS} -m panthera.$1"
+fi
+shift
+
+if [[ "${PREFIX}" == "nix-shell"* ]]
+then
+    ESCAPED=$(printf '%q ' "$@")
+    if [ -n "$VERBOSE" ]; then
+        echo ${PREFIX} "${CMD} ${ESCAPED}"
+    fi
+    exec ${PREFIX} "${CMD} ${ESCAPED}"
+elif [[ -z "${PYTHONPATH}" ]]
+then
+    if [ -n "$VERBOSE" ]; then
+        echo ${PREFIX} ${CMD} "$@"
+    fi
+    exec ${PREFIX} ${CMD} "$@"
+else
+    if [ -n "$VERBOSE" ]; then
+        echo ${PREFIX} ${ENV} PYTHONPATH="$PYTHONPATH" ${CMD} "$@"
+    fi
+    exec ${PREFIX} ${ENV} PYTHONPATH="$PYTHONPATH" ${CMD} "$@"
+fi

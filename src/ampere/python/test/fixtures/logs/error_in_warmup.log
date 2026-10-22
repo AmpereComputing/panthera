@@ -1,0 +1,8 @@
+Info: /ampere/panthera: End of elaboration. Starting simulation.
+Error: /ampere/panthera: ../src/ampere/xxx.cc:123:void ampere::xxx::XXX::something(): some error
+
+In process: sys.soc_0.core_0.clock.sc_tick @ 1436487741 ps
+Warning: /ampere/panthera: No simulation cycles in measurement region. Ended after 905 cycles, 3425 warmup instructions.
+
+Panthera completed     :  905 cycles, 3,425 instructions total, in 11 cpu sec (13 wall sec)
+ Simulator warmup      :  905 cycles, 3,425 instructions, 1.856 IPC, 11.81 kHz,  41.53 kips, 159.66 MB virtmem

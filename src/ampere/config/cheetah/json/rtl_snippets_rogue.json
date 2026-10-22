@@ -1,0 +1,31 @@
+[
+    {
+        "name": "rtl_snippets",
+        "exe": "{panthera_root}/bin/amperesys",
+        "evp": [
+            "-i", "sys.soc_0.core_0.gpc.instruction_commit=100",
+            "--start", "sys.soc_0.core_0.gpc.instruction_commit=10000",
+            "--stop", "sys.soc_0.core_0.gpc.instruction_commit=30000",
+            "--exit",
+            "@base.cfg",
+            "+capture", "{name}.es"
+        ],
+        "parameters": [
+            "-cfg", "{panthera_root}/config/model/sys/rogue-core-rtl.cfg",
+            "-event_stream_always", "true",
+            "-sys.soc_0.core_0.instruction_stream_name", "{workload_path}",
+            "-sys.soc_0.core_0.l2c.warmup_ms", "{memstream_path}",
+            "-sys.soc_0.core_0.speculative_memory_image", "true",
+            "-sys.soc_0.core_0.gpc.max_instructions", "30000"
+        ],
+        "post_sim": [
+            [
+                "{panthera_root}/bin/panthera", "events.tracing",
+                "--compress",
+                "--output", "{name}.json.gz",
+                "@{panthera_root}/config/events.tracing/summary.cfg",
+                "{name}.es"
+            ]
+        ]
+    }
+]

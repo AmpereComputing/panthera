@@ -1,0 +1,404 @@
+From 62329d5c758ba72acd610082631a0210396748fb Mon Sep 17 00:00:00 2001
+From: Aaron Lindsay <aaron@os.amperecomputing.com>
+Date: Wed, 7 Nov 2018 18:46:42 +0000
+Subject: [PATCH] Emit AArch64 perf semihosting events
+SPDX-License-Identifier: GPL-2.0-only
+
+The changes in this patch are made available under GPL-2.0-only.
+
+---
+ arch/arm64/Kconfig         |  11 ++
+ include/linux/perf_event.h |  10 +-
+ kernel/events/core.c       | 208 ++++++++++++++++++++++++++++++++++---
+ 3 files changed, 212 insertions(+), 17 deletions(-)
+
+diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+index a6b5b7ef40ae..dc22e7790799 100644
+--- a/arch/arm64/Kconfig
++++ b/arch/arm64/Kconfig
+@@ -1049,6 +1049,17 @@ config HW_PERF_EVENTS
+ 	def_bool y
+ 	depends on ARM_PMU
+ 
++config ARM64_PERF_SEMIHOSTING
++	bool "Emit semihosting calls for side-band perf events"
++	depends on PERF_EVENTS
++	default n
++	help
++	  Select this option to allow calling 'hlt 0xf739' with a pointer to the
++	  structs representing PERF_EVENT_* events (see `man perf_event_open`) when
++	  'perf.semihosting' is enabled on the kernel command-line. Supported
++	  events: PERF_RECORD_COMM, PERF_RECORD_EXIT, PERF_RECORD_FORK,
++	  PERF_RECORD_MMAP2, PERF_RECORD_SWITCH_CPU_WIDE, PERF_RECORD_NAMESPACES.
++
+ config SYS_SUPPORTS_HUGETLBFS
+ 	def_bool y
+ 
+diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
+index 96450f6fb1de..0083b005b78e 100644
+--- a/include/linux/perf_event.h
++++ b/include/linux/perf_event.h
+@@ -1183,6 +1183,12 @@ perf_sw_event_sched(u32 event_id, u64 nr, u64 addr)
+ 	}
+ }
+ 
++#ifndef CONFIG_ARM64_PERF_SEMIHOSTING
++#define perf_semihosting_enabled 0
++#else
++extern int perf_semihosting_enabled;
++#endif
++
+ extern struct static_key_false perf_sched_events;
+ 
+ static __always_inline bool
+@@ -1202,7 +1208,7 @@ static inline void perf_event_task_migrate(struct task_struct *task)
+ static inline void perf_event_task_sched_in(struct task_struct *prev,
+ 					    struct task_struct *task)
+ {
+-	if (static_branch_unlikely(&perf_sched_events))
++	if (static_branch_unlikely(&perf_sched_events) || perf_semihosting_enabled)
+ 		__perf_event_task_sched_in(prev, task);
+ 
+ 	if (perf_sw_migrate_enabled() && task->sched_migrated) {
+@@ -1219,7 +1225,7 @@ static inline void perf_event_task_sched_out(struct task_struct *prev,
+ {
+ 	perf_sw_event_sched(PERF_COUNT_SW_CONTEXT_SWITCHES, 1, 0);
+ 
+-	if (static_branch_unlikely(&perf_sched_events))
++	if (static_branch_unlikely(&perf_sched_events) || perf_semihosting_enabled)
+ 		__perf_event_task_sched_out(prev, next);
+ }
+ 
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index dc568ca295bd..8e33a71c823c 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -56,6 +56,15 @@
+ 
+ #include <asm/irq_regs.h>
+ 
++#ifdef CONFIG_ARM64_PERF_SEMIHOSTING
++int perf_semihosting_enabled = 0;
++
++#undef MODULE_PARAM_PREFIX
++#define MODULE_PARAM_PREFIX "perf."
++postcore_param_cb(semihosting, &param_ops_bool,
++		&perf_semihosting_enabled, 0644);
++#endif
++
+ typedef int (*remote_function_f)(void *);
+ 
+ struct remote_function_call {
+@@ -3529,7 +3538,7 @@ void __perf_event_task_sched_out(struct task_struct *task,
+ {
+ 	int ctxn;
+ 
+-	if (atomic_read(&nr_switch_events))
++	if (atomic_read(&nr_switch_events) || perf_semihosting_enabled)
+ 		perf_event_switch(task, next, false);
+ 
+ 	for_each_task_context_nr(ctxn)
+@@ -3835,7 +3844,7 @@ void __perf_event_task_sched_in(struct task_struct *prev,
+ 		perf_event_context_sched_in(ctx, task);
+ 	}
+ 
+-	if (atomic_read(&nr_switch_events))
++	if (atomic_read(&nr_switch_events) || perf_semihosting_enabled)
+ 		perf_event_switch(task, prev, true);
+ }
+ 
+@@ -7511,6 +7520,35 @@ static int perf_event_task_match(struct perf_event *event)
+ 	       event->attr.task;
+ }
+ 
++#ifdef CONFIG_ARM64_PERF_SEMIHOSTING
++static inline void perf_event_semihosting_call(const void *ptr)
++{
++	register const void *localptr __asm__("x0") = ptr;
++	// The hardware can overwrite x0 on semihosting calls, so we make sure we
++	// preserve it
++	asm volatile ("stp x0, x1, [sp, #-16]!\n"
++			"hlt #0xf739\n"
++			"ldp x0, x1, [sp], #16\n"
++		  : // no output
++		  :"r" (localptr));
++}
++
++static void perf_event_task_semihosting(struct perf_task_event *task_event)
++{
++	struct task_struct *task = task_event->task;
++	struct perf_task_event semi_event = *task_event;
++
++	semi_event.event_id.pid = task_tgid_nr(task);
++	semi_event.event_id.ppid = task_tgid_nr(current);
++	semi_event.event_id.tid = task_pid_nr(task);
++	semi_event.event_id.ptid = task_pid_nr(current);
++	semi_event.event_id.time = perf_clock();
++
++	perf_event_semihosting_call(&semi_event.event_id);
++}
++
++#endif /* CONFIG_ARM64_PERF_SEMIHOSTING */
++
+ static void perf_event_task_output(struct perf_event *event,
+ 				   void *data)
+ {
+@@ -7560,9 +7598,10 @@ static void perf_event_task(struct task_struct *task,
+ {
+ 	struct perf_task_event task_event;
+ 
+-	if (!atomic_read(&nr_comm_events) &&
+-	    !atomic_read(&nr_mmap_events) &&
+-	    !atomic_read(&nr_task_events))
++	unsigned int events = atomic_read(&nr_comm_events) ||
++	    atomic_read(&nr_mmap_events) ||
++	    atomic_read(&nr_task_events);
++	if (!events && !perf_semihosting_enabled)
+ 		return;
+ 
+ 	task_event = (struct perf_task_event){
+@@ -7582,9 +7621,14 @@ static void perf_event_task(struct task_struct *task,
+ 		},
+ 	};
+ 
+-	perf_iterate_sb(perf_event_task_output,
+-		       &task_event,
+-		       task_ctx);
++#ifdef CONFIG_ARM64_PERF_SEMIHOSTING
++	if (perf_semihosting_enabled)
++		perf_event_task_semihosting(&task_event);
++	if (events)
++#endif
++		perf_iterate_sb(perf_event_task_output,
++				   &task_event,
++				   task_ctx);
+ }
+ 
+ void perf_event_fork(struct task_struct *task)
+@@ -7610,6 +7654,29 @@ struct perf_comm_event {
+ 	} event_id;
+ };
+ 
++#ifdef CONFIG_ARM64_PERF_SEMIHOSTING
++struct perf_comm_event_semi {
++	struct perf_event_header header;
++	u32    pid;
++	u32    tid;
++	char   comm[TASK_COMM_LEN];
++};
++
++static void perf_event_comm_semihosting(struct perf_comm_event *comm_event)
++{
++	struct perf_comm_event_semi semi_event;
++	semi_event.header = comm_event->event_id.header;
++
++	strlcpy(semi_event.comm, comm_event->task->comm, comm_event->comm_size);
++
++	semi_event.pid = task_tgid_nr(comm_event->task);
++	semi_event.tid = task_pid_nr(comm_event->task);
++
++	perf_event_semihosting_call(&semi_event);
++}
++
++#endif /* CONFIG_ARM64_PERF_SEMIHOSTING */
++
+ static int perf_event_comm_match(struct perf_event *event)
+ {
+ 	return event->attr.comm;
+@@ -7662,7 +7729,12 @@ static void perf_event_comm_event(struct perf_comm_event *comm_event)
+ 
+ 	comm_event->event_id.header.size = sizeof(comm_event->event_id) + size;
+ 
+-	perf_iterate_sb(perf_event_comm_output,
++#ifdef CONFIG_ARM64_PERF_SEMIHOSTING
++	if (perf_semihosting_enabled)
++		perf_event_comm_semihosting(comm_event);
++	if (atomic_read(&nr_comm_events))
++#endif
++		perf_iterate_sb(perf_event_comm_output,
+ 		       comm_event,
+ 		       NULL);
+ }
+@@ -7671,7 +7743,7 @@ void perf_event_comm(struct task_struct *task, bool exec)
+ {
+ 	struct perf_comm_event comm_event;
+ 
+-	if (!atomic_read(&nr_comm_events))
++	if (!atomic_read(&nr_comm_events) && !perf_semihosting_enabled)
+ 		return;
+ 
+ 	comm_event = (struct perf_comm_event){
+@@ -7714,6 +7786,19 @@ static int perf_event_namespaces_match(struct perf_event *event)
+ 	return event->attr.namespaces;
+ }
+ 
++#ifdef CONFIG_ARM64_PERF_SEMIHOSTING
++static void perf_event_namespaces_semihosting(
++		struct perf_namespaces_event *namespaces_event)
++{
++	struct perf_namespaces_event semi_event = *namespaces_event;
++
++	semi_event.event_id.pid = task_tgid_nr(namespaces_event->task);
++	semi_event.event_id.tid = task_pid_nr(namespaces_event->task);
++
++	perf_event_semihosting_call(&semi_event.event_id);
++}
++#endif
++
+ static void perf_event_namespaces_output(struct perf_event *event,
+ 					 void *data)
+ {
+@@ -7769,7 +7854,7 @@ void perf_event_namespaces(struct task_struct *task)
+ 	struct perf_namespaces_event namespaces_event;
+ 	struct perf_ns_link_info *ns_link_info;
+ 
+-	if (!atomic_read(&nr_namespaces_events))
++	if (!atomic_read(&nr_namespaces_events) && !perf_semihosting_enabled)
+ 		return;
+ 
+ 	namespaces_event = (struct perf_namespaces_event){
+@@ -7817,7 +7902,12 @@ void perf_event_namespaces(struct task_struct *task)
+ 			       task, &cgroupns_operations);
+ #endif
+ 
+-	perf_iterate_sb(perf_event_namespaces_output,
++#ifdef CONFIG_ARM64_PERF_SEMIHOSTING
++	if (perf_semihosting_enabled)
++		perf_event_namespaces_semihosting(&namespaces_event);
++	if (atomic_read(&nr_namespaces_events))
++#endif
++		perf_iterate_sb(perf_event_namespaces_output,
+ 			&namespaces_event,
+ 			NULL);
+ }
+@@ -7946,6 +8036,69 @@ struct perf_mmap_event {
+ 	} event_id;
+ };
+ 
++#ifdef CONFIG_ARM64_PERF_SEMIHOSTING
++
++struct perf_mmap_event_semi {
++	struct perf_event_header header;
++	u32    pid;
++	u32    tid;
++	u64    addr;
++	u64    len;
++	u64    pgoff;
++	u32    maj;
++	u32    min;
++	u64    ino;
++	u64    ino_generation;
++	u32    prot;
++	u32    flags;
++	char   filename[];
++};
++
++static void perf_event_mmap_semihosting(struct perf_mmap_event *mmap_event)
++{
++	struct perf_mmap_event_semi *semi_event;
++	semi_event = kmalloc(sizeof(struct perf_mmap_event_semi) +
++			mmap_event->file_size, GFP_KERNEL);
++
++	if (!semi_event) {
++		printk(KERN_WARNING "perf: Lost MMAP2 semihosting event to ENOMEM\n");
++		return;
++	}
++
++	*semi_event = (struct perf_mmap_event_semi) {
++		.header = mmap_event->event_id.header,
++		.pid = task_tgid_nr(current),
++		.tid = task_pid_nr(current),
++		.addr = mmap_event->event_id.start,
++		.len = mmap_event->event_id.len,
++		.pgoff = mmap_event->event_id.pgoff,
++		.maj = mmap_event->maj,
++		.min = mmap_event->min,
++		.ino = mmap_event->ino,
++		.ino_generation = mmap_event->ino_generation,
++		.prot = mmap_event->prot,
++		.flags = mmap_event->flags,
++	};
++
++	// Adjust header and size for MMAP2 event, since we always do that for
++	// semihosting
++	semi_event->header.type = PERF_RECORD_MMAP2;
++	semi_event->header.size += sizeof(semi_event->maj);
++	semi_event->header.size += sizeof(semi_event->min);
++	semi_event->header.size += sizeof(semi_event->ino);
++	semi_event->header.size += sizeof(semi_event->ino_generation);
++	semi_event->header.size += sizeof(semi_event->prot);
++	semi_event->header.size += sizeof(semi_event->flags);
++
++	strlcpy(&semi_event->filename[0], mmap_event->file_name,
++			mmap_event->file_size);
++
++	perf_event_semihosting_call(semi_event);
++
++	kfree(semi_event);
++}
++#endif
++
+ static int perf_event_mmap_match(struct perf_event *event,
+ 				 void *data)
+ {
+@@ -8124,7 +8277,12 @@ static void perf_event_mmap_event(struct perf_mmap_event *mmap_event)
+ 
+ 	mmap_event->event_id.header.size = sizeof(mmap_event->event_id) + size;
+ 
+-	perf_iterate_sb(perf_event_mmap_output,
++#ifdef CONFIG_ARM64_PERF_SEMIHOSTING
++	if (perf_semihosting_enabled)
++		perf_event_mmap_semihosting(mmap_event);
++	if (atomic_read(&nr_mmap_events))
++#endif
++		perf_iterate_sb(perf_event_mmap_output,
+ 		       mmap_event,
+ 		       NULL);
+ 
+@@ -8237,7 +8395,7 @@ void perf_event_mmap(struct vm_area_struct *vma)
+ {
+ 	struct perf_mmap_event mmap_event;
+ 
+-	if (!atomic_read(&nr_mmap_events))
++	if (!atomic_read(&nr_mmap_events) && !perf_semihosting_enabled)
+ 		return;
+ 
+ 	mmap_event = (struct perf_mmap_event){
+@@ -8350,6 +8508,21 @@ struct perf_switch_event {
+ 	} event_id;
+ };
+ 
++#ifdef CONFIG_ARM64_PERF_SEMIHOSTING
++static void perf_event_switch_semihosting(struct perf_switch_event *switch_event)
++{
++	struct perf_switch_event semi_event = *switch_event;
++
++	// always do cpu-wide version
++	semi_event.event_id.header.type = PERF_RECORD_SWITCH_CPU_WIDE;
++	semi_event.event_id.header.size = sizeof(semi_event.event_id);
++	semi_event.event_id.next_prev_pid = task_tgid_nr(switch_event->next_prev);
++	semi_event.event_id.next_prev_tid = task_pid_nr(switch_event->next_prev);
++
++	perf_event_semihosting_call(&semi_event.event_id);
++}
++#endif
++
+ static int perf_event_switch_match(struct perf_event *event)
+ {
+ 	return event->attr.context_switch;
+@@ -8419,7 +8592,12 @@ static void perf_event_switch(struct task_struct *task,
+ 		switch_event.event_id.header.misc |=
+ 				PERF_RECORD_MISC_SWITCH_OUT_PREEMPT;
+ 
+-	perf_iterate_sb(perf_event_switch_output,
++#ifdef CONFIG_ARM64_PERF_SEMIHOSTING
++	if (perf_semihosting_enabled)
++		perf_event_switch_semihosting(&switch_event);
++	if (atomic_read(&nr_switch_events))
++#endif
++		perf_iterate_sb(perf_event_switch_output,
+ 		       &switch_event,
+ 		       NULL);
+ }
+-- 
+2.43.5

@@ -1,0 +1,11 @@
+# Copyright (c) 2018 Ampere Computing. All rights reserved.
+# SPDX-License-Identifier: BSD-3-Clause
+
+uops:
+  xtnd:
+    opcode: 100
+    test_predicate: 1
+    unit: ixu
+  sxtnd:
+    opcode: 101
+    unit: ixu

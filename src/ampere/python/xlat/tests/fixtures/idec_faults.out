@@ -1,0 +1,8 @@
+package faults;
+
+function automatic logic UndefinedInstruction(input logic HaveFP16Ext, input logic [31:0] Instruction0);
+  UndefinedInstruction = Instruction0[10] & Instruction0[11] & ~Instruction0[12] & Instruction0[13] & ~Instruction0[14] & ~Instruction0[15] & ~Instruction0[21] & Instruction0[22] & ~Instruction0[23] & ~Instruction0[24] & Instruction0[25] & Instruction0[26] & Instruction0[27] & Instruction0[28] & ~Instruction0[29] & Instruction0[30] & ~Instruction0[31] |
+                         ~HaveFP16Ext & Instruction0[10] & Instruction0[11] & ~Instruction0[12] & Instruction0[13] & ~Instruction0[14] & ~Instruction0[15] & ~Instruction0[21] & Instruction0[22] & ~Instruction0[23] & ~Instruction0[24] & Instruction0[25] & Instruction0[26] & Instruction0[27] & Instruction0[28] & Instruction0[30] & ~Instruction0[31];
+endfunction
+
+endpackage

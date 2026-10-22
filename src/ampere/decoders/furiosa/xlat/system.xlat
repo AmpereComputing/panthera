@@ -1,0 +1,467 @@
+# -*- python -*-
+# Copyright (c) 2019, 2020, 2021, 2026 Ampere Computing. All rights reserved.
+# SPDX-License-Identifier: BSD-3-Clause
+
+from ampere.xlat import Signal, Translation
+from proj.uop import *
+from proj.xlat_register_constants import * # x30/ZR/xzr/SP_EL*/s0/s1/T0/T1/T2/T3/RGSR_EL1
+
+class HINT_ALL(Translation):
+                                                    #yield   #wfe     #wfi
+    pattern = '1101010100 0 00  011 0010 (((-------!0000001)!0000010)!0000011) 11111'
+    pfields = '           L op0 op1 CRn     CRmop2                             Rt   '
+    
+    asmtemplate = 'HINT'
+        
+    def decode(self, f):
+        if   f.CRmop2.value == 0b0001100:
+            autia(dest=Signal("10001"), src1=Signal("10001"), src2=Signal("10000"))
+        elif f.CRmop2.value == 0b0011101:
+            autia(dest=Signal("11110"), src1=Signal("11110"), src2=Signal("11111"), src2_is_stack_pointer=True)
+        elif f.CRmop2.value == 0b0011100:
+            autia(dest=Signal("11110"), src1=Signal("11110"), src2=Signal("11111"))
+        elif f.CRmop2.value == 0b0001110:
+            autib(dest=Signal("10001"), src1=Signal("10001"), src2=Signal("10000"))
+        elif f.CRmop2.value == 0b0011111:
+            autib(dest=Signal("11110"), src1=Signal("11110"), src2=Signal("11111"), src2_is_stack_pointer=True)
+        elif f.CRmop2.value == 0b0011110:
+            autib(dest=Signal("11110"), src1=Signal("11110"), src2=Signal("11111"))
+        elif f.CRmop2.value == 0b0001000:
+            pacia(dest=Signal("10001"), src1=Signal("10001"), src2=Signal("10000"))
+        elif f.CRmop2.value == 0b0011001:
+            pacia(dest=Signal("11110"), src1=Signal("11110"), src2=Signal("11111"), src2_is_stack_pointer=True, pacixsp=True)
+        elif f.CRmop2.value == 0b0011000:
+            pacia(dest=Signal("11110"), src1=Signal("11110"), src2=Signal("11111"))
+        elif f.CRmop2.value == 0b0001010:
+            pacib(dest=Signal("10001"), src1=Signal("10001"), src2=Signal("10000"))
+        elif f.CRmop2.value == 0b0011011:
+            pacib(dest=Signal("11110"), src1=Signal("11110"), src2=Signal("11111"), src2_is_stack_pointer=True, pacixsp=True)
+        elif f.CRmop2.value == 0b0011010:
+            pacib(dest=Signal("11110"), src1=Signal("11110"), src2=Signal("11111"))
+        elif f.CRmop2.value == 0b0000111:
+            xpaci(dest=Signal("11110"), src1=Signal("11110"))
+        elif f.CRmop2.value == 0b0010100:
+            nop()
+        elif f.CRmop2.value == 0b0010000:
+            # ESB will behave as a NOP in our implementation
+            esb()
+            nop()
+            nop()
+            nop()
+        elif f.CRmop2.value == 0b0000000:
+            nop()
+        elif f.CRmop2.value == 0b0010001:
+            psb()
+        elif f.CRmop2.value == 0b0000100:
+            sev()
+        elif f.CRmop2.value == 0b0000101:
+            sevl()
+        elif f.CRmop2.value == 0b0010010:
+            tsb()
+        elif f.CRmop2.value == 0b0100000 or f.CRmop2.value == 0b0100010 or f.CRmop2.value == 0b0100100 or f.CRmop2.value == 0b0100110:
+            # The CRmop2 was combined to allow the ! syntax, which means I have to write out all four values of f.CRmop2 that can be a BTI
+            bti()
+        else:
+            # These ones need to trap based on the control bit in imp def registers
+            nop(unallocated_hint=True)
+
+class BRK_EX_exception(_JSON_BRK_EX_exception):
+
+    def decode(self, f):
+        brk(imm=f.imm16)
+
+class CLREX_BN_barriers(_JSON_CLREX_BN_barriers):
+
+    def decode(self, f):
+        clrex(imm=Signal('0'))
+
+
+class DCPS1_DC_exception(_JSON_DCPS1_DC_exception):
+
+    isolate = True
+
+    def decode(self, f):
+        dcps1()
+
+
+class DCPS2_DC_exception(_JSON_DCPS2_DC_exception):
+
+    isolate = True
+
+    def decode(self, f):
+        dcps2()
+
+
+class DCPS3_DC_exception(_JSON_DCPS3_DC_exception):
+
+    isolate = True
+
+    def decode(self, f):
+        dcps3()
+
+
+class DMB_BO_barriers(_JSON_DMB_BO_barriers):
+
+    def decode(self, f):
+        # note: there are a whole bunch of other options here that
+        #       we're ignoring. Example: we only have one shareability
+        #       domain so outer/inner/full/non-shareable is meaningless
+        if (f.CRm.value & 0b0011) == 0b0001:
+            # DMB LD
+            nop(for_morse='LD')
+        elif (f.CRm.value & 0b0011) == 0b0010:
+            # DMB ST
+            dmb_st(imm=Signal('0'), for_morse='ST')
+        else:
+            dmb_all(imm=Signal('0'), for_morse='ALL')
+
+class DSB_BO_barriers(_JSON_DSB_BO_barriers):
+    # Keep Ampere's SSBB/PSSBB priority over the general DSB decoder.
+    pattern = _JSON_DSB_BO_barriers.pattern.replace('----', '(---- ! 0-00)', 1)
+    pfields = None
+    fields = dict(_JSON_DSB_BO_barriers._unified_fields)
+
+
+    isolate = True
+
+    def decode(self, f):
+        dsb(post_drain=True, imm=Signal('0'))
+
+class HLT_EX_exception(_JSON_HLT_EX_exception):
+
+    def decode(self, f):
+        hlt(imm=f.imm16)
+
+
+class HVC_EX_exception(_JSON_HVC_EX_exception):
+
+    isolate = True
+
+    def decode(self, f):
+        hvc(imm=f.imm16)
+
+        
+class ISB_BI_barriers(_JSON_ISB_BI_barriers):
+
+    isolate = True
+
+    def decode(self, f):
+        isb()
+
+
+class MRS_RS_systemmove(_JSON_MRS_RS_systemmove):
+
+    isolate = True
+
+    #       op0 CRn op1 op2 CRm
+    # FPSR  11 0100 011 001 0100
+
+    #                                                                address              o0 op1 CRn  CRm  op2
+    #localparam logic [15:0] RNDR_SPR_ADDR               = 16'hd920; 1101_1001_0010_0000 1 1 011 0010 0100 000
+    #localparam logic [15:0] RNDRRS_SPR_ADDR             = 16'hd921; 1101_1001_0010_0001 1 1 011 0010 0100 001
+
+    def decode(self, f):
+        if f.o0.value == 0b1 and f.CRn.value == 0b0100 and f.op1.value == 0b011 and f.op2.value == 0b000 and f.CRm.value == 0b0010:
+            # NZCV
+            rmig(dest=f.Rt, src1=ZR, src3='flag')
+        elif f.o0.value == 0b1 and f.CRn.value == 0b0100 and f.op1.value == 0b011 and f.op2.value == 0b001 and f.CRm.value == 0b0010:
+            # DAIF - intercept this MRS and read out of the IDR speculative copy instead and put that on the immediate bus
+            movz64_0b(dest=f.Rt, daif_read=True)
+        elif f.o0.value == 0b1 and f.CRn.value == 0b0100 and f.op1.value == 0b000 and f.op2.value == 0b000 and f.CRm.value == 0b0010:
+            # SpSel - intercept this MRS and read out of the IDR speculative copy instead and put that on the immediate bus
+            movz64_0b(dest=f.Rt, spsel_read=True)
+        elif f.o0.value == 0b1 and f.op1.value == 0b000 and f.CRn.value == 0b0100 and f.CRm.value == 0b0001 and f.op2.value == 0b000:
+            # SP is renamed, so turn MRS into an OR instruction where we OR the SP with the ZR and store to dest
+            orr64(dest=f.Rt, src1=SP_EL0, src2=ZR, imm=Signal("000"), src1_is_stack_pointer=True, no_sp_add=True)
+        elif f.o0.value == 0b1 and f.op1.value == 0b100 and f.CRn.value == 0b0100 and f.CRm.value == 0b0001 and f.op2.value == 0b000:
+            # SP is renamed, so turn MRS into an OR instruction where we OR the SP with the ZR and store to dest
+            orr64(dest=f.Rt, src1=SP_EL1, src2=ZR, imm=Signal("000"), src1_is_stack_pointer=True, no_sp_add=True)
+        elif f.o0.value == 0b1 and f.op1.value == 0b110 and f.CRn.value == 0b0100 and f.CRm.value == 0b0001 and f.op2.value == 0b000:
+            # SP is renamed, so turn MRS into an OR instruction where we OR the SP with the ZR and store to dest
+            orr64(dest=f.Rt, src1=SP_EL2, src2=ZR, imm=Signal("000"), src1_is_stack_pointer=True, no_sp_add=True)
+        elif f.o0.value == 0b1 and f.CRn.value == 0b0100 and f.op1.value == 0b011 and f.op2.value == 0b001 and f.CRm.value == 0b0100:
+            # FPSR
+            mfspr(dest=f.Rt, imm=(Signal("1"),f.o0,f.op1,f.CRn,f.CRm,f.op2), pre_drain=True)
+        elif f.o0.value == 0b1 and f.CRn.value == 0b0010 and f.op1.value == 0b011 and f.op2.value == 0b000 and f.CRm.value == 0b0100:
+            # RNDR - random number is very special case, MRS turns into a special uop to lsu to do a special load of a
+            #        special address which is intercepted by the SoC and turned into a read of a random number from the
+            #        RNG IP.  This load pair then writes two registers and IXU tests bit in the second one to set PSTATE.Z
+            #        which indicates whether or not the generation of a random number was successful or not
+            ldp_d_64_rndr(dest=f.Rt, src1=ZR, src2=ZR, imm=Signal('0'))
+            ldp_d_64_rndr(dest=s0,   src1=ZR, src2=ZR, ldp_2nd_uop=True, imm=Signal('0'))
+            tzs(src1=s0, flag_dest=1)
+        elif f.o0.value == 0b1 and f.CRn.value == 0b0010 and f.op1.value == 0b011 and f.op2.value == 0b001 and f.CRm.value == 0b0100:
+            # RNDRRS
+            ldp_d_64_rndrrs(dest=f.Rt, src1=ZR, src2=ZR, imm=Signal('0'))
+            ldp_d_64_rndrrs(dest=s0,   src1=ZR, src2=ZR, ldp_2nd_uop=True, imm=Signal('0'))
+            tzs(src1=s0, flag_dest=1)
+        elif f.o0.value == 0b1 and f.op1.value == 0b000 and f.CRn.value == 0b0001 and f.CRm.value == 0b0000 and f.op2.value == 0b101:
+            # RGSR is renamed, so turn MRS into an OR instruction where we OR the register with the ZR and store to RGSR
+            orr64(dest=f.Rt, src1=RGSR_EL1, src2=ZR, imm=Signal("000"))
+        else:
+            mfspr(dest=f.Rt, imm=(Signal("1"),f.o0,f.op1,f.CRn,f.CRm,f.op2))
+
+
+class MSR_SI_pstate(_JSON_MSR_SI_pstate):
+
+    isolate = True
+
+    # <pstatefield> op0 CRn op1 op2
+    # CFINV         00 0100 000 000
+    # XAFLAG        00 0100 000 001
+    # AXFLAG        00 0100 000 010
+    # UA0           00 0100 000 011 == op<0>
+    # PAN           00 0100 000 100 == op<0>
+    # SPSel         00 0100 000 101
+    # DIT           00 0100 011 010 == op<0>
+    # DAIFSet       00 0100 011 110
+    # DAIFClr       00 0100 011 111
+
+    def decode(self, f):
+        # For mtspr uops, the IXU will notice the lack of a src valid and know that it is the immediate version from that
+        if   f.op1.value == 0b011 and f.op2.value == 0b110:
+            # IDR will intercept and execute this instruction
+            if (f.CRm.value & 0b0001) == 0b0001 or (f.CRm.value & 0b0010) == 0b0010 or (f.CRm.value & 0b0100) == 0b0100:
+                # To solve problem in GPC, we will add 7 NOPs if we are setting the I or F or A bit
+                daif_set(imm=f.CRm)
+                nop()
+                nop()
+                nop()
+                #
+                nop()
+                nop()
+                nop()
+                nop()
+            else:
+                daif_set(imm=f.CRm)                
+        elif f.op1.value == 0b011 and f.op2.value == 0b111:
+            # IDR will intercept and execute this instruction
+            if (f.CRm.value & 0b0001) == 0b0001 or (f.CRm.value & 0b0010) == 0b0010 or (f.CRm.value & 0b0100) == 0b0100:
+                # To solve problem in GPC, we will add 7 NOPs if we are clearing the I or F or A bit
+                daif_clr(imm=f.CRm)
+                nop()
+                nop()
+                nop()
+            else:
+                daif_clr(imm=f.CRm)                
+        elif f.op1.value == 0b000 and f.op2.value == 0b101:
+            # IDR will intercept and execute this instruction
+            spsel(imm=f.CRm)
+        elif f.op1.value == 0b000 and f.op2.value == 0b000:
+            cfinv(flag_dest=1, src3="flag")
+        elif f.op1.value == 0b000 and f.op2.value == 0b001:
+            xaflag(flag_dest=1, src3="flag")
+        elif f.op1.value == 0b000 and f.op2.value == 0b010:
+            axflag(flag_dest=1, src3="flag")
+        elif f.op1.value == 0b000 and f.op2.value == 0b100:
+            # PAN needs to be shifted to bit 22 of the register
+            mtspr(imm=(Signal("000"), f.op1, Signal("0100"), f.CRm, f.op2))
+        elif f.op1.value == 0b000 and f.op2.value == 0b011:
+            # UAO needs to be shifted to bit 23 of the register
+            mtspr(imm=(Signal("000"), f.op1, Signal("0100"), f.CRm, f.op2))
+        elif f.op1.value == 0b011 and f.op2.value == 0b010:
+            # DIT needs to be shifted to bit 24 of the register
+            mtspr(imm=(Signal("000"), f.op1, Signal("0100"), f.CRm, f.op2))
+        elif f.op1.value == 0b011 and f.op2.value == 0b100:
+            # TCO needs to be shifted to bit 25 of the register
+            mtspr(imm=(Signal("000"), f.op1, Signal("0100"), f.CRm, f.op2))
+        elif f.op1.value == 0b011 and f.op2.value == 0b001:
+            # SSBS needs to be shifted to bit 12 of the register
+            mtspr(imm=(Signal("000"), f.op1, Signal("0100"), f.CRm, f.op2))
+        # We should not need this not_implemented because all other accesses should be handled by fault logic
+        # else:
+        #     not_implemented()
+
+
+class MSR_SR_systemmove(_JSON_MSR_SR_systemmove):
+
+    isolate = True
+
+    #<systemreg> op0 op1 CRn  CRm  op2
+    # NZCV       11  011 0100 0010 000
+    # DAIF       11  011 0100 0010 001
+    # SPSel      11  000 0100 0010 000
+    # SP_EL0     11  000 0100 0001 000
+    # SP_EL1     11  100 0100 0001 000
+    # SP_EL2     11  110 0100 0001 000
+    # RGSR_EL1   11  000 0001 0000 101
+    
+    def decode(self, f):
+        if f.o0.value == 0b1 and f.op1.value == 0b011 and f.CRn.value == 0b0100 and f.CRm.value == 0b0010 and f.op2.value == 0b000:
+            # NZCV - the bits need to be shifted from bits 31:28 of a GPR into the flag register
+            rmif(flag_dest=1, src2=f.Rt, imm=Signal('0111001111'))
+        elif f.o0.value == 0b1 and f.op1.value == 0b000 and f.CRn.value == 0b0100 and f.CRm.value == 0b0001 and f.op2.value == 0b000:
+            # SP is renamed, so turn MSR into an OR instruction where we OR the register with the ZR and store to SP
+            orr64(dest=SP_EL0, src1=ZR, src2=f.Rt, imm=Signal("000"), dest_is_stack_pointer=True, no_sp_add=True)
+        elif f.o0.value == 0b1 and f.op1.value == 0b100 and f.CRn.value == 0b0100 and f.CRm.value == 0b0001 and f.op2.value == 0b000:
+            # SP is renamed, so turn MSR into an OR instruction where we OR the register with the ZR and store to SP
+            orr64(dest=SP_EL1, src1=ZR, src2=f.Rt, imm=Signal("000"), dest_is_stack_pointer=True, no_sp_add=True)
+        elif f.o0.value == 0b1 and f.op1.value == 0b110 and f.CRn.value == 0b0100 and f.CRm.value == 0b0001 and f.op2.value == 0b000:
+            # SP is renamed, so turn MSR into an OR instruction where we OR the register with the ZR and store to SP
+            orr64(dest=SP_EL2, src1=ZR, src2=f.Rt, imm=Signal("000"), dest_is_stack_pointer=True, no_sp_add=True)
+        elif f.o0.value == 0b1 and f.op1.value == 0b000 and f.CRn.value == 0b0001 and f.CRm.value == 0b0000 and f.op2.value == 0b101:
+            # RGSR is renamed, so turn MSR into an OR instruction where we OR the register with the ZR and store to RGSR
+            orr64(dest=RGSR_EL1, src1=ZR, src2=f.Rt, imm=Signal("000"))  
+        else:
+            mtspr(src2=f.Rt, imm=(Signal("1"),f.o0,f.op1,f.CRn,f.CRm,f.op2))
+
+
+class PSSBB_only_barriers(Translation):
+    pattern = '1101010100 0 00  011 0011 0100 1 00  11111'
+    pfields = '           L op0 op1 CRn  CRm    opc  Rt  '
+
+    asmtemplate = 'PSSBB'
+
+    isolate = True
+
+    # This is intended to always be a NOP because LSU always operates in
+    # 'safe mode', but it needs to function as a YIELD instruction.
+    def decode(self, f):
+        nop(pre_drain=True)
+
+
+class SB_only_barriers(_JSON_SB_only_barriers):
+
+    isolate = True
+    
+    def decode(self, f):
+        nop(pre_drain=True)
+
+
+class SMC_EX_exception(_JSON_SMC_EX_exception):
+
+    isolate = True
+
+    def decode(self, f):
+        smc(imm=f.imm16)
+
+
+class SSBB_only_barriers(Translation):
+    pattern = '1101010100 0 00  011 0011 0000 1 00  11111'
+    pfields = '           L op0 op1 CRn  CRm    opc  Rt  '
+
+    asmtemplate = 'SSBB'
+
+    isolate = True
+
+    # This is intended to always be a NOP because LSU always operates in
+    # 'safe mode', but it needs to function as a YIELD instruction.
+    def decode(self, f):
+        nop(pre_drain=True)
+
+
+class SVC_EX_exception(_JSON_SVC_EX_exception):
+
+    isolate = True
+
+    def decode(self, f):
+        svc(imm=f.imm16)
+
+
+class SYS_TLBI(Translation):
+    pattern = '1101010100 0 01  --- 1000 ---- --- -----'
+    pfields = '           L op0 op1 CRn  CRm  op2  Rt  '
+
+    asmtemplate = 'SYS'
+
+    isolate = True
+
+    def decode(self, f):
+        # TLBI
+        sys_tlbi(src1=f.Rt, imm=(f.op1,f.CRm,f.op2), for_morse='TLBI')
+
+class SYS_NOT_TLBI_Predictions(Translation):
+    pattern = '1101010100 0 01  --- 0111 0011 --- -----'
+    pfields = '           L op0 op1 CRn  CRm  op2  Rt  '
+
+    asmtemplate = 'SYS'
+
+    isolate = True
+
+    def decode(self, f):
+        if   f.op1.value == 0b011 and f.op2.value == 0b100:
+            # CFP
+            mtspr(src2=ZR, imm=IMP_BPU_CLEAR_EL3, for_morse='CFP')
+        elif f.op1.value == 0b011 and f.op2.value == 0b101:
+            # DVP
+            mtspr(src2=ZR, imm=IMP_SFP_CLEAR_EL3, for_morse='DVP')
+        elif f.op1.value == 0b011 and f.op2.value == 0b111:
+            # CPP
+            mtspr(src2=ZR, imm=IMP_PREFETCH_CLEAR_EL3, for_morse='CPP')
+
+        
+class SYS_NOT_TLBI_NOT_Predictions(Translation):
+    pattern = '1101010100 0 01  --- 0111 (----!0011) --- -----'
+    pfields = '           L op0 op1 CRn   CRm        op2  Rt  '
+
+    asmtemplate = 'SYS'
+
+    def decode(self, f):
+        if (f.CRm.value & 0b1110) == 0b1000:
+            # AT
+            sys_at(src1=f.Rt, imm=(f.op1,f.CRm,f.op2), for_morse='AT')
+        #elif f.CRn.value == 0b0111 and (f.CRm.value == 0b0001 or f.CRm.value == 0b0101 or f.CRm.value == 0b1011):             
+            # IC (nop because we have a coherent icache)
+            # DCCVAU (CRm = 0b1011) (nop because we don't do unification)
+            # jperry - these are no longer NOPs because some of them need address translation. all VA flavors should
+            #          decode into sys_dc_va and the LSU will basically prevent them from doing anything in L1 or L2
+            #nop()
+        elif f.op1.value == 0b000 and f.op2.value == 0b000:
+            # ICALLU*
+            # this is REALLY a nop because it doesn't get an address translation
+            # (we could maybe alias this onto dc_sw?)
+            nop()
+        elif f.op1.value == 0b000 and (f.op2.value & 0b001) == 0b000:
+            # DC (intentionally after IC/TLBI because they all share the same CRn value)
+            # added explicit uops for several flavors of these to differentiate the ones that need address
+            # translation and MemTag checking
+            # note: i'm passing op on the immediate for all these flavors even though it's not strictly necessary
+            #       could remove if it helped decode. guessing it's better this way
+            sys_dc_sw(src1=f.Rt, imm=(f.op1,f.CRm,f.op2), for_morse='DCSW')
+        elif f.op1.value == 0b000:
+            # DC I*VA* must be separate uop because permission checks are different
+            sys_dc_iva(src1=f.Rt, imm=(f.op1,f.CRm,f.op2), for_morse='DCIVA')
+        elif f.op1.value == 0b011 and f.CRm.value == 0b0100:
+            if f.op2.value == 0b001:
+                sys_dc_zva(src1=f.Rt, imm=(f.op1,f.CRm,f.op2), spe_store=True, for_morse='DCZVA')
+            else:
+                sys_dc_gzva(src1=f.Rt, imm=(f.op1,f.CRm,f.op2), spe_store=True, for_morse='DCGZVA')
+        else:
+            sys_dc_va(src1=f.Rt, imm=(f.op1,f.CRm,f.op2), spe_store=True, for_morse='DCVA')
+
+
+class SYSL_RC_systeminstrs(_JSON_SYSL_RC_systeminstrs):
+
+    isolate = True
+
+    def decode(self, f):
+        # This class is confusing. The pseudocode has no information on system instructions (just a function stub).
+        # From reading through the spec, I think this class would only be used if we created implementation defined
+        # functions that had a return value. All the built-in system instructions fall under the class where L=0,
+        # which means they have no return values.
+        nop()
+
+
+class WFE_HI_hints(_JSON_WFE_HI_hints):
+
+    isolate = True
+
+    def decode(self, f):
+        wfe()
+
+
+class WFI_HI_hints(_JSON_WFI_HI_hints):
+
+    isolate = True
+
+    def decode(self, f):
+        wfi()
+
+
+
+class YIELD_HI_hints(_JSON_YIELD_HI_hints):
+
+    isolate = True
+
+    def decode(self, f):
+        nop(pre_drain=True)

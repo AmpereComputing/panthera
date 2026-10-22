@@ -1,0 +1,17 @@
+{#- Copyright (c) 2026 Ampere Computing. All rights reserved. -#}
+{#- SPDX-License-Identifier: BSD-3-Clause -#}
+
+# {{ title }}
+
+Data is at: `{{ data_path }}`
+
+* **{{ "%.2f%%" | format((1 - (filtered_traces / total_traces)) * 100) }}** of traces were excluded from filtered subset (failed or excluded due to speculation/matching/ignore)
+* **Within {{ threshold * 100 }}%**: {{ "%.2f%%" | format(within_threshold * 100) }} ({{ "%.2f%%" | format(filtered_within_threshold * 100) }} within filtered subset)
+* **Absolute geomean (|GM|)**: {{ "%.3f" | format(absolute_geomean) }} ({{ "%.3f" | format(filtered_absolute_geomean) }} within filtered subset)
+* **Geomean (GM)**: {{ "%.3f" | format(geomean) }} ({{ "%.3f" | format(filtered_geomean) }} within filtered subset)
+
+| Trace | RTL IPC | Panthera IPC | Speedup | Metric Guess |
+| --- | --- | --- | --- | --- |
+{%- for trace in traces %}
+| {{ trace.name }} | {{ "%.3f" | format(trace.rtl_ipc) }} | {{ "%.3f" | format(trace.panthera_ipc) }} | {{ "%.3f" | format(trace.speedup) }} | {{ trace.metric }} |
+{%- endfor %}

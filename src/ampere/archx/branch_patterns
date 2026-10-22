@@ -1,0 +1,21 @@
+# Copyright (c) 2019-2024 Ampere Computing. All rights reserved.
+# SPDX-License-Identifier: BSD-3-Clause
+
+# conditional (direct)
+(010 101 0-------------------------)|(-01 101 0-------------------------)|(-01 101 1-------------------------)
+
+# unconditional (direct; jump)
+000 101 --------------------------
+
+# unconditional (indirect)
+110 101 1 (0000|1000) ---------------------
+
+# unconditional (direct; call)
+100 101 --------------------------
+
+# unconditional (indirect; call)
+110 101 1 0001 ---------------------
+
+# unconditional (indirect; return)
+110 101 1 0010 ---------------------
+

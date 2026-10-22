@@ -1,0 +1,14 @@
+[
+    {
+        "name": "catus",
+        "exe": "{panthera_root}/bin/is_catus",
+        "parameters": [
+            "-instruction_stream", "{workload_path}",
+            "-max_instructions", "10000000"
+        ],
+        "evp": [
+            "-i", "top.instruction_commit=1000000",
+            "+count", "-a"
+        ]
+    }
+]

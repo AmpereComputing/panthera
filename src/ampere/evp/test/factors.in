@@ -1,0 +1,13 @@
+param machine_width=4
+param rob.size=192
+param sys.soc_0.core_0.scheduler_configuration=[7,4]
+100 ev a=1
+200 ev a=2 b=1
+300 ev a=3
+400 ev a=2 b=1
+500 ev a=4
+600 ev a=4 b=2
+700 ev a=3 b=2
+800 ev a=4
+900 ev a=3
+1000 ev a=4

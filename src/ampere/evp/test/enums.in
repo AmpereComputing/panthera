@@ -1,0 +1,4 @@
+enum myenum a=1 b=2 c=3
+100 ev myenum=1
+200 ev myenum=2
+300 ev myenum=3

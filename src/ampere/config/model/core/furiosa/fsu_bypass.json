@@ -1,0 +1,109 @@
+{
+    "latencies":
+    {
+        "BU": {
+            "unit": "BU",
+            "levels": {
+                "LATE": 2,
+                "LOCAL": 8,
+                "NORMAL": 8
+            }
+        },
+        "BY": {
+            "unit": "BY",
+            "levels": {
+                "LOCAL": 2,
+                "NORMAL": 2
+            }
+        },
+        "CU2": {
+            "unit": "CU",
+            "unit_suffix": 2,
+            "levels": {
+                "LATE": 4,
+                "LOCAL": 2,
+                "NORMAL": 3
+            }
+        },
+        "CU3": {
+            "unit": "CU",
+            "unit_suffix": 3,
+            "levels": {
+                "LATE": 7,
+                "LOCAL": 2,
+                "NORMAL": 6
+            }
+        },
+        "CU5": {
+            "unit": "CU",
+            "unit_suffix": 5,
+            "levels": {
+                "LATE": 7,
+                "LOCAL": 4,
+                "NORMAL": 6
+            }
+        },
+        "HP": {
+            "unit": "HP",
+            "levels": {
+                "LOCAL": 4,
+                "NORMAL": 6
+            }
+        },
+        "MA": {
+            "unit": "MA",
+            "levels": {
+                "LATE": 6,
+                "LOCAL": 5,
+                "UNROUNDED": 6,
+                "NORMAL": 8
+            }
+        },
+        "MASrc2": {
+            "unit": "MA",
+            "source": 2,
+            "levels": {
+                "LOCAL": 6
+            }
+        },
+        "MU": {
+            "unit": "MU",
+            "levels": {
+                "LATE": 3,
+                "LOCAL": 6,
+                "NORMAL": 7
+            }
+        },
+        "SI2": {
+            "unit": "SI",
+            "unit_suffix": 2,
+            "levels": {
+                "LATE": 2,
+                "LOCAL": 2,
+                "NORMAL": 3
+            }
+        },
+        "SI3": {
+            "unit": "SI",
+            "unit_suffix": 3,
+            "levels": {
+                "LATE": 3,
+                "LOCAL": 3,
+                "NORMAL": 4
+            }
+        },
+        "SI5": {
+            "unit": "SI",
+            "unit_suffix": 5,
+            "levels": {
+                "LATE": 6,
+                "LOCAL": 6,
+                "NORMAL": 6
+            }
+        }
+    },
+    "locality": {
+        "SI": ["MU"],
+        "MU": ["SI"]
+    }
+}

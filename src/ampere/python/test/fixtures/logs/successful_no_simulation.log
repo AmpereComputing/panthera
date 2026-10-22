@@ -1,0 +1,4 @@
+/nix/var/nix/profiles/default/bin/nix-shell --pure --run './install/bin/is_branch_csv voronoi-openv.9900_0.is.xz --max_instructions 10000000 > voronoi-openv_9900.
+csv' ./install/shell.nix
+Command successful exit.
+All commands exited successfully.

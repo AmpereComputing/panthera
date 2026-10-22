@@ -1,0 +1,47 @@
+# CMake
+cmake-build-*/
+crelease/
+cdebug/
+
+compile_commands.json
+
+# Local IDE configuration
+/.idea/
+/.vscode/
+
+*.swp
+
+*~
+/build/
+/build-*/
+/build_*/
+/install/
+/install-*/
+/install_*/
+__pycache__/
+/debug/
+/release/
+/*.snapshot
+/*.drift
+/.direnv/
+
+# Ignore auto-downloaded test collateral
+src/ampere/tracing_tools/test/test-collateral-*
+src/ampere/event_stream/test/*es
+src/ampere/evp/test/*es
+
+# clangd stuff
+/.clangd/
+/.cache/
+compile_commands.json
+
+# mkdocs
+/public/
+
+# Coverage
+.coverage
+coverage
+*.info
+
+# Temporary ipynb files
+.ipynb_checkpoints/

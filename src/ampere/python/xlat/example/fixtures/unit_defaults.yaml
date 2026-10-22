@@ -1,0 +1,56 @@
+# Copyright (c) 2018 Ampere Computing. All rights reserved.
+# SPDX-License-Identifier: BSD-3-Clause
+
+unit_defaults:
+  ixu:
+    opcode_width: 0x08
+    opcode: 0x00
+    opcode_mask: 0xFF
+    regs: [dest, src1, src2]
+    dest_type: gpr
+    src1_type: gpr
+    src2_type: gpr
+    src3_type: none
+    pred_src : false
+    flag_src : false
+    flag_dest : S
+    uses_LOB : false
+    uses_SOB : false
+    uses_VAT : false
+    is_branch: false
+    inh_lcl_byp2 : dont_care
+    inh_lcl_byp1 : dont_care
+    late_byp_src3 : dont_care
+    preop_stall : false
+    postop_stall : false
+    postop_abort : false
+    imm_mode : base
+    latency: 1
+    pipe: AB
+    size: sf
+    src1_lreg: from_inst
+    src2_lreg: from_inst
+    src3_lreg: none
+    desc: |
+      as per the instruction
+  ld:
+    opcode: 0
+    opcode_width: 7
+    opcode_mask: 0x7F
+    regs: [dest, src1, src2]
+    dest_type: dest
+    src1_type: reg/imm
+    src1_zext: by_size
+    src2_type: reg/imm
+    src2_zext: by_size
+    imm_width: by_size
+    prod: ""
+    cons: ""
+    can_skip: True        # Is false when specified by the op *or* if the load is conditional.
+    can_be_skipped: True  # Is false when specified by the op.
+    mem_width: 0
+    align_check: none
+    align_bound: 1
+    not_in_xlat: False
+    desc: |
+      as per the instruction

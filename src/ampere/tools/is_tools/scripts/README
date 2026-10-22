@@ -1,0 +1,9 @@
+The scripts in this directory can be used to collect data on a directory of instruction streams. This data can then be opened in excel and be used to create a pivot table where the data can be more easily used.
+
+mov_patterns.py:
+This script looks at an instruction stream and records all of the mov patterns with potential for fusion. This means it finds all patterns that begin with a movz, movn, or movk and is succeeded by movk instruction(s) to the same register. It will find these patterns within a specified instruction window. The script must be fed an absolute path to a directory as the first argument, an integer value to define the instruction window as the second argument, and can optionally have "-t" added as the third argument so that the type of mov instruction (z|n|k) that starts the pattern is recorded.
+Example call: python mov_patterns.py /path/to/instruction-streams 5 -t
+
+shift_data.py and shift_mov_data.py:
+These scripts both look at an instruction stream and record the instructions that have uops that must be executed by a shifter. These had to be put into 2 separate files since excel cannot open csv files with over ~1 million lines. Both scripts only take an absolute directory path as their only argument. shift_data.py will include some instructions that are not executed by a shifter (e.g. add with zero extend and a left shift of 2), but these can be filtered out using the different recorded columns.
+Example call: python shift_data.py /path/to/instruction-streams

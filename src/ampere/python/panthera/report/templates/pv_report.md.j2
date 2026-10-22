@@ -1,0 +1,37 @@
+{#- Copyright (c) 2025 Ampere Computing. All rights reserved. -#}
+{#- SPDX-License-Identifier: BSD-3-Clause -#}
+
+# {{ title }}
+
+## Overview
+
+{{ "%.2f%%" | format((1 - (filtered_traces / total_traces)) * 100) }} of traces were excluded from filtered subset
+(failed or excluded due to speculation/matching/ignore).
+
+### Overall
+
+Within {{ "{:<4.1%}".format(threshold) }}:     {{ "%.2f%%" | format(within_threshold * 100) }}
+Absolute geomean: {{ "%.3f" | format(absolute_geomean) }}
+Geomean:          {{ "%.3f" | format(geomean) }}
+
+### Filtered Subset
+
+Within {{ "{:<4.1%}".format(threshold) }}:     {{ "%.2f%%" | format(filtered_within_threshold * 100) }}
+Absolute geomean: {{ "%.3f" | format(filtered_absolute_geomean) }}
+Geomean:          {{ "%.3f" | format(filtered_geomean) }}
+
+## Outliers
+
+| Trace                                            | RTL IPC      | Panthera IPC | Speedup      | Metric Guess                     |
+| ------------------------------------------------ | ------------ | ------------ | ------------ | -------------------------------- |
+{%- for trace in traces %}
+| {{ "{:<48} | {:<12.3f} | {:<12.3f} | {:<12.3f} | {:<32}".format(trace.name, trace.rtl_ipc, trace.panthera_ipc, trace.speedup, trace.metric) }} |
+{%- endfor %}
+
+## Traces
+
+| Trace                                            | RTL IPC      | Panthera IPC | Speedup      |
+| ------------------------------------------------ | ------------ | ------------ | ------------ |
+{%- for trace in all_traces %}
+| {{ "{:<48} | {:<12.3f} | {:<12.3f} | {:<12.3f}".format(trace.name, trace.rtl_ipc, trace.panthera_ipc, trace.speedup) }} |
+{%- endfor %}

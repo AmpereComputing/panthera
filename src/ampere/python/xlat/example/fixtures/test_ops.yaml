@@ -1,0 +1,99 @@
+# Copyright (c) 2018-2019 Ampere Computing. All rights reserved.
+# SPDX-License-Identifier: BSD-3-Clause
+
+unit_defaults:
+  ixu:
+    opcode_width: 0x08
+    opcode: 0x00
+    opcode_mask: 0xFF
+    regs: [dest, src1, src2]
+    dest_type: gpr
+    src1_type: gpr
+    src2_type: gpr
+    src3_type: none
+    pred_src : false
+    flag_src : false
+    flag_dest : S
+    uses_LOB : false
+    uses_SOB : false
+    uses_VAT : false
+    is_branch: false
+    inh_lcl_byp2 : dont_care
+    inh_lcl_byp1 : dont_care
+    late_byp_src3 : dont_care
+    preop_stall : false
+    postop_stall : false
+    postop_abort : false
+    imm_mode : base
+    latency: 1
+    pipe: AB
+    size: sf
+    src1_lreg: from_inst
+    src2_lreg: from_inst
+    src3_lreg: none
+    desc: |
+      as per the instruction
+  ld:
+    opcode: 0
+    opcode_width: 7
+    opcode_mask: 0x7F
+    regs: [dest, src1, src2]
+    dest_type: dest
+    src1_type: reg/imm
+    src1_zext: by_size
+    src2_type: reg/imm
+    src2_zext: by_size
+    imm_width: by_size
+    prod: ""
+    cons: ""
+    can_skip: True        # Is false when specified by the op *or* if the load is conditional.
+    can_be_skipped: True  # Is false when specified by the op.
+    mem_width: 0
+    align_check: none
+    align_bound: 1
+    not_in_xlat: False
+    desc: |
+      as per the instruction
+
+uops:
+  add:
+    unit: ixu
+    opcode: 0x50
+    opcode_mask: 0xFC
+    test_predicate: 1
+    desc: |
+      dest = src1 + src2
+  xtnd:
+    opcode: 100
+    test_predicate: 1
+    unit: ixu
+  sxtnd:
+    opcode: 101
+    unit: ixu
+  lsl64:
+    unit: ixu
+    opcode: 118
+    opcode_mask: 0xFE # maps to sbfm or ubfm
+    alias: True
+    regs: [dest, src2, imm]
+    src2_type: reg
+    imm_width: 33
+    imm_fields: "[11:6,32:27]"
+    lat: 1or2
+    ixa: Maybe
+    desc: |
+      The sbfm and ubfm ops are equivalent implementations of lsl when immr == imms+1.
+
+      Note that the "lsl64" implies that it is used by AArch64, but it can still produce a 32-bit result if sf=0.
+  ldb:
+    unit: ld
+    opcode: 80
+    opcode_mask: 0x7C # either ldbw or ldbx
+    alias: True
+    desc: |
+      Bypasses a value from a previous store-bypass into an integer register.
+      ldb can be used when ldbw or ldbx are equivalent, either because:
+        - the upper 32 bits of the store data are known to be 0, or
+        - the upper 32 bits of the load bypass don't matter (e.g. in AArch32).
+      The address of the load must be the same as the store exclusive (or the 2nd address of a store exclusive pair)
+      to ensure that the load follows the store exclusive.

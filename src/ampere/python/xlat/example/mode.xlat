@@ -1,0 +1,20 @@
+# Copyright (c) 2022 Ampere Computing. All rights reserved.
+# SPDX-License-Identifier: BSD-3-Clause
+
+from uop import *
+from ampere.xlat import Translation
+
+class Modal(Translation):
+    """Borrowed from Move wide to demonstrate use of a mode in decode"""
+    pattern = '1  11  100101 -- ---------------- -----'
+    pfields = 'sf opc        hw      imm16        Rd  '
+
+    asmtemplate = 'MOVK  <Xd>, #<imm>{, LSL #<shift>}'
+
+    mode_bits = { 'WideMode': 1 }
+
+    def decode(self, f):
+        if self.mode_bits['WideMode'] == 1:
+            movk64_4b(dest=f.Rd, src2=f.Rd, imm=f.imm16)
+        else:
+            movk64_2b(dest=f.Rd, src2=f.Rd, imm=f.imm16)

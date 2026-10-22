@@ -1,0 +1,194 @@
+# Copyright (c) 2022-2026 Ampere Computing. All rights reserved.
+# SPDX-License-Identifier: BSD-3-Clause
+
+from ampere.xlat import Signal, Translation, Fusion
+from proj.uop import *
+from proj.xlat_register_constants import * # x30/ZR/xzr/SP_EL*/s0/s1/T0/T1/T2/T3/RGSR_EL1
+
+class ANDS_32_log_shift(_JSON_ANDS_32_log_shift):
+
+    pmu_bucket = 'dp'
+    fusion_delay_hint = True
+    flag_fuse_to_Bcond = True
+
+    def decode(self, f):
+        if f.shift.value == 0b00 and f.imm6.value <= 0b000100:
+            ands32(dest=f.Rd, flag_dest=1, src1=f.Rn, src2=f.Rm, imm=f.imm6)
+        elif f.shift.value == 0b00 and f.imm6.value > 0b000100:
+            lsl32_imm(dest=s0, src1=f.Rm, imm=f.imm6)
+            ands32(dest=f.Rd, flag_dest=1, src1=f.Rn, src2=s0, imm=Signal("000"))
+        elif f.shift.value == 0b01:
+            lsr32(dest=s0, src1=f.Rm, src2=f.Rm, imm=f.imm6)
+            ands32(dest=f.Rd, flag_dest=1, src1=f.Rn, src2=s0, imm=Signal("000"))
+        elif f.shift.value == 0b10:
+            asr32(dest=s0, src1=f.Rm, src2=f.Rm, imm=f.imm6)
+            ands32(dest=f.Rd, flag_dest=1, src1=f.Rn, src2=s0, imm=Signal("000"))
+        elif f.shift.value == 0b11:
+            extr32(dest=s0, src1=f.Rm, src2=f.Rm, imm=f.imm6)
+            ands32(dest=f.Rd, flag_dest=1, src1=f.Rn, src2=s0, imm=Signal("000"))
+
+class ANDS_32S_log_imm(_JSON_ANDS_32S_log_imm):
+
+    pmu_bucket = 'dp'
+    fusion_delay_hint = True
+    flag_fuse_to_Bcond = True
+
+    def decode(self, f):
+        ands32_imm(dest=f.Rd, flag_dest=1, src2=f.Rn, imm=(f.N,f.immr,f.imms))
+
+class ANDS_64_log_shift(_JSON_ANDS_64_log_shift):
+
+    pmu_bucket = 'dp'
+    fusion_delay_hint = True
+    flag_fuse_to_Bcond = True
+
+    def decode(self, f):
+        if f.shift.value == 0b00 and f.imm6.value <= 0b000100:
+            ands64(dest=f.Rd, flag_dest=1, src1=f.Rn, src2=f.Rm, imm=f.imm6)
+        elif f.shift.value == 0b00 and f.imm6.value > 0b000100:
+            lsl64_imm(dest=s0, src1=f.Rm, imm=f.imm6)
+            ands64(dest=f.Rd, flag_dest=1, src1=f.Rn, src2=s0, imm=Signal("000"))
+        elif f.shift.value == 0b01:
+            lsr64(dest=s0, src1=f.Rm, src2=f.Rm, imm=f.imm6)
+            ands64(dest=f.Rd, flag_dest=1, src1=f.Rn, src2=s0, imm=Signal("000"))
+        elif f.shift.value == 0b10:
+            asr64(dest=s0, src1=f.Rm, src2=f.Rm, imm=f.imm6)
+            ands64(dest=f.Rd, flag_dest=1, src1=f.Rn, src2=s0, imm=Signal("000"))
+        elif f.shift.value == 0b11:
+            extr64(dest=s0, src1=f.Rm, src2=f.Rm, imm=f.imm6)
+            ands64(dest=f.Rd, flag_dest=1, src1=f.Rn, src2=s0, imm=Signal("000"))
+
+class ANDS_64S_log_imm(_JSON_ANDS_64S_log_imm):
+
+    pmu_bucket = 'dp'
+    fusion_delay_hint = True
+    flag_fuse_to_Bcond = True
+
+    def decode(self, f):
+        ands64_imm(dest=f.Rd, flag_dest=1, src2=f.Rn, imm=(f.N,f.immr,f.imms))
+
+class SUBS_32_addsub_shift(_JSON_SUBS_32_addsub_shift):
+    fields  = {'opcBit12':[12,12],'opcBit11':[11,11],'opcBit10':[10,10]}
+
+
+    pmu_bucket = 'dp'
+    fusion_delay_hint = True
+    flag_fuse_to_Bcond = True
+
+    def decode(self, f):
+        if f.imm6.value == 0b000000:
+            subs32(dest=f.Rd, flag_dest=1, src1=f.Rn, src2=f.Rm, imm=(Signal("011"),f.opcBit12,f.opcBit11,f.opcBit10))
+        elif f.shift.value == 0b00 and f.imm6.value <= 0b000100:
+            uxt32(dest=s0, src1=f.Rm, imm=(f.imm6,Signal("010")))
+            subs32(dest=f.Rd, flag_dest=1, src1=f.Rn, src2=s0, imm=Signal("011000"))
+        elif f.shift.value == 0b00 and f.imm6.value > 0b000100:
+            lsl32_imm(dest=s0, src1=f.Rm, imm=f.imm6)
+            subs32(dest=f.Rd, flag_dest=1, src1=f.Rn, src2=s0, imm=Signal("011000"))
+        elif f.shift.value == 0b01:
+            lsr32(dest=s0, src1=f.Rm, src2=f.Rm, imm=f.imm6)
+            subs32(dest=f.Rd, flag_dest=1, src1=f.Rn, src2=s0, imm=Signal("011000"))
+        elif f.shift.value == 0b10:
+            asr32(dest=s0, src1=f.Rm, src2=f.Rm, imm=f.imm6)
+            subs32(dest=f.Rd, flag_dest=1, src1=f.Rn, src2=s0, imm=Signal("011000"))
+        elif f.shift.value == 0b11:
+            # This is an illegal/unused encoding
+            pass
+
+class SUBS_32S_addsub_ext(_JSON_SUBS_32S_addsub_ext):
+
+    pmu_bucket = 'dp'
+    fusion_delay_hint = True
+    flag_fuse_to_Bcond = True
+
+    def decode(self, f):
+      #shift of value of zero means we might just be a single uop flow
+      if f.imm3.value == 0b000:
+        #sign extend single/double word doesn't do anything so just a single uop flow
+        if f.option.value >= 0b110:
+          subs32(dest=f.Rd, src1=f.Rn, src2=f.Rm, imm=(f.option,f.imm3), src1_is_stack_pointer=True, flag_dest=1)
+        elif f.option.value >= 0b100:
+          sxt32(dest=s0, src1=f.Rm, imm=(f.imm3,f.option))
+          subs32(dest=f.Rd, src1=f.Rn, src2=s0, imm=(Signal("011"),f.imm3), src1_is_stack_pointer=True, flag_dest=1)
+        #zero extend can be done at the bypass mux, so just a single uop flow
+        else:
+          subs32(dest=f.Rd, src1=f.Rn, src2=f.Rm, imm=(f.option,f.imm3), src1_is_stack_pointer=True, flag_dest=1)
+      #non zero shift means it's always a 2 uop flow
+      else:
+        if f.option.value >= 0b100:
+          sxt32(dest=s0, src1=f.Rm, imm=(f.imm3,f.option))
+          subs32(dest=f.Rd, src1=f.Rn, src2=s0, imm=Signal("011000"), src1_is_stack_pointer=True, flag_dest=1)
+        else:
+          uxt32(dest=s0, src1=f.Rm, imm=(f.imm3,f.option))
+          subs32(dest=f.Rd, src1=f.Rn, src2=s0, imm=Signal("011000"), src1_is_stack_pointer=True, flag_dest=1)
+
+class SUBS_32S_addsub_imm(_JSON_SUBS_32S_addsub_imm):
+
+    pmu_bucket = 'dp'
+    fusion_delay_hint = True
+    flag_fuse_to_Bcond = True
+
+    def decode(self, f):
+        subs32(dest=f.Rd, flag_dest=1, src2=f.Rn, imm=(f.sh,f.imm12), src2_is_stack_pointer=True)
+
+class SUBS_64_addsub_shift(_JSON_SUBS_64_addsub_shift):
+    fields  = {'opcBit12':[12,12],'opcBit11':[11,11],'opcBit10':[10,10]}
+
+
+    pmu_bucket = 'dp'
+    fusion_delay_hint = True
+    flag_fuse_to_Bcond = True
+
+    def decode(self, f):
+        if f.imm6.value == 0b000000:
+            subs64(dest=f.Rd, flag_dest=1, src1=f.Rn, src2=f.Rm, imm=(Signal("011"),f.opcBit12,f.opcBit11,f.opcBit10))
+        elif f.shift.value == 0b00 and f.imm6.value <= 0b000100:
+            uxt64(dest=s0, src1=f.Rm, imm=(f.imm6,Signal("011")))
+            subs64(dest=f.Rd, flag_dest=1, src1=f.Rn, src2=s0, imm=Signal("011000"))
+        elif f.shift.value == 0b00 and f.imm6.value > 0b000100:
+            lsl64_imm(dest=s0, src1=f.Rm, imm=f.imm6)
+            subs64(dest=f.Rd, flag_dest=1, src1=f.Rn, src2=s0, imm=Signal("011000"))
+        elif f.shift.value == 0b01:
+            lsr64(dest=s0, src1=f.Rm, src2=f.Rm, imm=f.imm6)
+            subs64(dest=f.Rd, flag_dest=1, src1=f.Rn, src2=s0, imm=Signal("011000"))
+        elif f.shift.value == 0b10:
+            asr64(dest=s0, src1=f.Rm, src2=f.Rm, imm=f.imm6)
+            subs64(dest=f.Rd, flag_dest=1, src1=f.Rn, src2=s0, imm=Signal("011000"))
+        elif f.shift.value == 0b11:
+            # This is an illegal/unused encoding
+            pass
+
+class SUBS_64S_addsub_ext(_JSON_SUBS_64S_addsub_ext):
+
+    pmu_bucket = 'dp'
+    fusion_delay_hint = True
+    flag_fuse_to_Bcond = True
+
+    def decode(self, f):
+      #shift of value of zero means we might just be a single uop flow
+      if f.imm3.value == 0b000:
+        #sign extend double word doesn't do anything so just a single uop flow
+        if f.option.value >= 0b111:
+          subs64(dest=f.Rd, src1=f.Rn, src2=f.Rm, imm=(f.option,f.imm3), src1_is_stack_pointer=True, flag_dest=1)
+        elif f.option.value >= 0b100:
+          sxt64(dest=s0, src1=f.Rm, imm=(f.imm3,f.option))
+          subs64(dest=f.Rd, src1=f.Rn, src2=s0, imm=(Signal("011"),f.imm3), src1_is_stack_pointer=True, flag_dest=1)
+        #zero extend can be done at the bypass mux, so just a single uop flow
+        else:
+          subs64(dest=f.Rd, src1=f.Rn, src2=f.Rm, imm=(f.option,f.imm3), src1_is_stack_pointer=True, flag_dest=1)
+      #non zero shift means it's always a 2 uop flow
+      else:
+        if f.option.value >= 0b100:
+          sxt64(dest=s0, src1=f.Rm, imm=(f.imm3,f.option))
+          subs64(dest=f.Rd, src1=f.Rn, src2=s0, imm=(Signal("011"),Signal("000")), src1_is_stack_pointer=True, flag_dest=1)
+        else:
+          uxt64(dest=s0, src1=f.Rm, imm=(f.imm3,f.option))
+          subs64(dest=f.Rd, src1=f.Rn, src2=s0, imm=(Signal("011"),Signal("000")), src1_is_stack_pointer=True, flag_dest=1)
+
+class SUBS_64S_addsub_imm(_JSON_SUBS_64S_addsub_imm):
+
+    pmu_bucket = 'dp'
+    fusion_delay_hint = True
+    flag_fuse_to_Bcond = True
+
+    def decode(self, f):
+        subs64(dest=f.Rd, flag_dest=1, src2=f.Rn, imm=(f.sh,f.imm12), src2_is_stack_pointer=True)

@@ -1,0 +1,6 @@
+Info: /ampere/panthera: End of elaboration. Starting simulation.
+Fatal: /ampere/panthera: ../src/ampere/xxx.cc:123:void ampere::xxx::XXX::something(): some fatal error
+
+In file: ../src/ampere/core/xxx.cc:123
+In process: sys.soc_0.core_0.clock.sc_tick @ 71242353 ps
+Info: (I99) simulation aborted

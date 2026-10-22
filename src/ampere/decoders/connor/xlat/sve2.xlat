@@ -1,0 +1,4440 @@
+# Copyright (c) 2023-2026 Ampere Computing. All rights reserved.
+# SPDX-License-Identifier: BSD-3-Clause
+
+from ampere.xlat import Signal, Translation
+from proj.uop import *
+from proj.xlat_register_constants import * # x30/ZR/xzr/SP_EL*/s0/s1/T0/T1/T2/T3/RGSR_EL1
+
+class adclb_z_zzz_(_JSON_adclb_z_zzz_):
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 2: adclb_d_uv, adclb_s_uv
+        if f.sz.value == 0b0:
+            adclb_s_uv(dest=f.Zda, src1=f.Zda, src2=f.Zn, src3=f.Zm)
+        elif f.sz.value == 0b1:
+            adclb_d_uv(dest=f.Zda, src1=f.Zda, src2=f.Zn, src3=f.Zm)
+
+
+class adclt_z_zzz_(_JSON_adclt_z_zzz_):
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 2: adclt_d_uv, adclt_s_uv
+        if f.sz.value == 0b0:
+            adclt_s_uv(dest=f.Zda, src1=f.Zda, src2=f.Zn, src3=f.Zm, idx=(Signal('000010')))
+        elif f.sz.value == 0b1:
+            adclt_d_uv(dest=f.Zda, src1=f.Zda, src2=f.Zn, src3=f.Zm, idx=(Signal('001110')))
+
+
+class addhnb_z_zz_(_JSON_addhnb_z_zz_):
+
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 3: addhnb_d_uv, addhnb_h_uv, addhnb_s_uv
+        if f.size.value == 0b01:
+            addhnb_h_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm)
+        elif f.size.value == 0b10:
+            addhnb_s_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm)
+        elif f.size.value == 0b11:
+            addhnb_d_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm)
+
+
+class addhnt_z_zz_(_JSON_addhnt_z_zz_):
+
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 3: addhnt_d_uv, addhnt_h_uv, addhnt_s_uv
+        if f.size.value == 0b01:
+            addhnt_h_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm, src3=f.Zd)
+        elif f.size.value == 0b10:
+            addhnt_s_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm, src3=f.Zd)
+        elif f.size.value == 0b11:
+            addhnt_d_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm, src3=f.Zd)
+
+
+class addp_z_p_zz_(_JSON_addp_z_p_zz_):
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 4: addp_b_pv, addp_d_pv, addp_h_pv, addp_s_pv
+        if f.size.value == 0b00:
+            addp_b_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm)
+        elif f.size.value == 0b01:
+            addp_h_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm)
+        elif f.size.value == 0b10:
+            addp_s_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm, idx=(Signal('111000')))
+        elif f.size.value == 0b11:
+            addp_d_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm, idx=(Signal('000011')))
+
+
+class aesd_z_zz_(_JSON_aesd_z_zz_):
+
+    pmu_events = ['CRYPTO_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: aesd_b_uv
+        aesd_b_uv(dest=f.Zdn, src1=f.Zdn, src2=f.Zm)
+
+
+class aese_z_zz_(_JSON_aese_z_zz_):
+
+    pmu_events = ['CRYPTO_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: aese_b_uv
+        aese_b_uv(dest=f.Zdn, src1=f.Zdn, src2=f.Zm)
+
+
+class aesimc_z_z_(_JSON_aesimc_z_z_):
+
+    pmu_events = ['CRYPTO_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: aesimc_b_uv
+        aesimc_b_uv(dest=f.Zdn, src1=f.Zdn)
+
+
+class aesmc_z_z_(_JSON_aesmc_z_z_):
+
+    pmu_events = ['CRYPTO_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: aesmc_b_uv
+        aesmc_b_uv(dest=f.Zdn, src1=f.Zdn)
+
+
+class bcax_z_zzz_(_JSON_bcax_z_zzz_):
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: bcax_b_uv
+        bcax_b_uv(dest=f.Zdn, src1=f.Zdn, src2=f.Zm, src3=f.Zk)
+
+
+class bf1cvt_z_z8_b2bf(_JSON_bf1cvt_z_z8_b2bf):
+
+    pmu_events = ['FP_SPEC', 'SVE_FP_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: bf1cvt_b_uv
+        bf1cvt_b_uv(dest=f.Zd, src1=f.Zn)
+
+
+class bf2cvt_z_z8_b2bf(_JSON_bf2cvt_z_z8_b2bf):
+
+    pmu_events = ['FP_SPEC', 'SVE_FP_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: bf2cvt_b_uv
+        bf2cvt_b_uv(dest=f.Zd, src1=f.Zn)
+
+
+class bf1cvtlt_z_z8_b2bf(_JSON_bf1cvtlt_z_z8_b2bf):
+
+    pmu_events = ['FP_SPEC', 'SVE_FP_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: bf1cvtlt_b_uv
+        bf1cvtlt_b_uv(dest=f.Zd, src1=f.Zn)
+
+
+class bf2cvtlt_z_z8_b2bf(_JSON_bf2cvtlt_z_z8_b2bf):
+
+    pmu_events = ['FP_SPEC', 'SVE_FP_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: bf2cvtlt_b_uv
+        bf2cvtlt_b_uv(dest=f.Zd, src1=f.Zn)
+
+
+class bfcvtn_z8_mz2_bf2b(_JSON_bfcvtn_z8_mz2_bf2b):
+
+   pmu_events = ['FP_SPEC', 'SVE_FP_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+   def decode(self, f):
+        #Dont_touch
+        # Number of uops 1: bfcvtni_h_uv
+        bfcvtni_h_uv(dest=f.Zd, src1=(f.Zn, Signal('0')), src2=(f.Zn, Signal('0')), src2_inc=1)
+
+
+class bfadd_z_p_zz_(_JSON_bfadd_z_p_zz_):
+
+    movprfx_fusion = "predicated"
+    pmu_events = ['FP_SPEC', 'SVE_FP_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: bfadd_h_pv
+        bfadd_h_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm, src3=f.Zdn)
+
+
+class bfadd_z_zz_(_JSON_bfadd_z_zz_):
+
+    pmu_events = ['FP_SPEC', 'SVE_FP_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: bfadd_h_uv
+        bfadd_h_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm)
+
+
+class bfclamp_z_zz_(_JSON_bfclamp_z_zz_):
+
+    #movprfx_fusion = "unpredicated"
+    pmu_events = ['FP_SPEC', 'SVE_FP_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        bfmaxnm_h_uv(dest=T0, src1=f.Zn, src2=f.Zd)
+        bfminnm_h_uv(dest=f.Zd, src1=T0, src2=f.Zm)
+
+
+class bfmax_z_p_zz_(_JSON_bfmax_z_p_zz_):
+
+    movprfx_fusion = "predicated"
+    pmu_events = ['FP_SPEC', 'SVE_FP_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: bfmax_h_pv
+        bfmax_h_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm, src3=f.Zdn)
+
+
+class bfmaxnm_z_p_zz_(_JSON_bfmaxnm_z_p_zz_):
+
+    movprfx_fusion = "predicated"
+    pmu_events = ['FP_SPEC', 'SVE_FP_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: bfmaxnm_h_pv
+        bfmaxnm_h_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm, src3=f.Zdn)
+
+
+class bfmin_z_p_zz_(_JSON_bfmin_z_p_zz_):
+
+    movprfx_fusion = "predicated"
+    pmu_events = ['FP_SPEC', 'SVE_FP_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: bfmin_h_pv
+        bfmin_h_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm, src3=f.Zdn)
+
+
+class bfminnm_z_p_zz_(_JSON_bfminnm_z_p_zz_):
+
+    movprfx_fusion = "predicated"
+    pmu_events = ['FP_SPEC', 'SVE_FP_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: bfminnm_h_pv
+        bfminnm_h_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm, src3=f.Zdn)
+
+
+class bfmla_z_p_zzz_(_JSON_bfmla_z_p_zzz_):
+
+    movprfx_fusion = "predicated"
+    pmu_events = ['FP_SPEC', 'SVE_FP_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: bfmla_h_pv
+        bfmla_h_pv(dest=f.Zda, pred=f.Pg, src1=f.Zn, src2=f.Zm, src3=f.Zda)
+
+
+class bfmla_z_zzzi_h(_JSON_bfmla_z_zzzi_h):
+    fields = {'opcBit20':[20,20]}
+
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['FP_SPEC', 'SVE_FP_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 2: bfmla_idx0_h_uv, bfmla_idx1_h_uv
+        if (f.i3l.value & 0b01 ) == 0b00:
+            bfmla_idx0_h_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('0010'),f.i3h,f.opcBit20))
+        elif (f.i3l.value & 0b01 ) == 0b01:
+            bfmla_idx1_h_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('0010'),f.i3h,f.opcBit20))
+
+
+class bfmls_z_p_zzz_(_JSON_bfmls_z_p_zzz_):
+
+    movprfx_fusion = "predicated"
+    pmu_events = ['FP_SPEC', 'SVE_FP_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: bfmls_h_pv
+        bfmls_h_pv(dest=f.Zda, pred=f.Pg, src1=f.Zn, src2=f.Zm, src3=f.Zda)
+
+
+class bfmls_z_zzzi_h(_JSON_bfmls_z_zzzi_h):
+    fields = {'opcBit20':[20,20]}
+
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['FP_SPEC', 'SVE_FP_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 2: bfmls_idx0_h_uv, bfmls_idx1_h_uv
+        if (f.i3l.value & 0b01 ) == 0b00:
+            bfmls_idx0_h_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('0010'),f.i3h,f.opcBit20))
+        elif (f.i3l.value & 0b01 ) == 0b01:
+            bfmls_idx1_h_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('0010'),f.i3h,f.opcBit20))
+
+
+class bfmul_z_p_zz_(_JSON_bfmul_z_p_zz_):
+
+    movprfx_fusion = "predicated"
+    pmu_events = ['FP_SPEC', 'SVE_FP_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: bfmul_h_pv
+        bfmul_h_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm, src3=f.Zdn)
+
+
+class bfmul_z_zz_(_JSON_bfmul_z_zz_):
+
+    pmu_events = ['FP_SPEC', 'SVE_FP_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: bfmul_h_uv
+        bfmul_h_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm)
+
+
+class bfmul_z_zzi_h(_JSON_bfmul_z_zzi_h):
+    fields = {'opcBit20':[20,20]}
+
+
+    pmu_events = ['FP_SPEC', 'SVE_FP_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 2: bfmul_idx0_h_uv, bfmul_idx1_h_uv
+        if (f.i3l.value & 0b01 ) == 0b00:
+            bfmul_idx0_h_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm, idx=(Signal('0010'),f.i3h,f.opcBit20))
+        elif (f.i3l.value & 0b01 ) == 0b01:
+            bfmul_idx1_h_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm, idx=(Signal('0010'),f.i3h,f.opcBit20))
+
+
+class bfsub_z_p_zz_(_JSON_bfsub_z_p_zz_):
+
+    movprfx_fusion = "predicated"
+    pmu_events = ['FP_SPEC', 'SVE_FP_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: bfsub_h_pv
+        bfsub_h_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm, src3=f.Zdn)
+
+
+class bfsub_z_zz_(_JSON_bfsub_z_zz_):
+
+    pmu_events = ['FP_SPEC', 'SVE_FP_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: bfsub_h_uv
+        bfsub_h_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm)
+
+
+class bsl1n_z_zzz_(_JSON_bsl1n_z_zzz_):
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: bsl1n_b_uv
+        bsl1n_b_uv(dest=f.Zdn, src1=f.Zm, src2=f.Zdn, src3=f.Zk)
+
+
+class bsl2n_z_zzz_(_JSON_bsl2n_z_zzz_):
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: bsl2n_b_uv
+        bsl2n_b_uv(dest=f.Zdn, src1=f.Zm, src2=f.Zdn, src3=f.Zk)
+
+
+class bsl_z_zzz_(_JSON_bsl_z_zzz_):
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: bsl_b_uv
+        bsl_b_uv(dest=f.Zdn, src1=f.Zm, src2=f.Zdn, src3=f.Zk)
+
+
+class cadd_z_zz_(_JSON_cadd_z_zz_):
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 8: cadd270_b_uv, cadd270_d_uv, cadd270_h_uv, cadd270_s_uv, cadd90_b_uv, cadd90_d_uv, cadd90_h_uv, cadd90_s_uv
+        if f.size.value == 0b00:
+            if f.rot.value == 0b0:
+                cadd90_b_uv(dest=f.Zdn, src1=f.Zm, src2=f.Zdn)
+            elif f.rot.value == 0b1:
+                cadd270_b_uv(dest=f.Zdn, src1=f.Zm, src2=f.Zdn)
+        elif f.size.value == 0b01:
+            if f.rot.value == 0b0:
+                cadd90_h_uv(dest=f.Zdn, src1=f.Zm, src2=f.Zdn)
+            elif f.rot.value == 0b1:
+                cadd270_h_uv(dest=f.Zdn, src1=f.Zm, src2=f.Zdn)
+        elif f.size.value == 0b10:
+            if f.rot.value == 0b0:
+                cadd90_s_uv(dest=f.Zdn, src1=f.Zm, src2=f.Zdn, idx=(Signal('010011')))
+            elif f.rot.value == 0b1:
+                cadd270_s_uv(dest=f.Zdn, src1=f.Zm, src2=f.Zdn, idx=(Signal('010011')))
+        elif f.size.value == 0b11:
+            if f.rot.value == 0b0:
+                cadd90_d_uv(dest=f.Zdn, src1=f.Zm, src2=f.Zdn, idx=(Signal('010010')))
+            elif f.rot.value == 0b1:
+                cadd270_d_uv(dest=f.Zdn, src1=f.Zm, src2=f.Zdn, idx=(Signal('010010')))
+
+
+class cdot_z_zzzi_s(_JSON_cdot_z_zzzi_s):
+    fields = {'opcBit19':[19,19],'opcBit20':[20,20]}
+
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'PEM_ASE_SVE_INT_MUL_MMLA_DOT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 4: cdot0_idx_b_uv, cdot180_idx_b_uv, cdot270_idx_b_uv, cdot90_idx_b_uv
+        if f.rot.value == 0b00:
+            cdot0_idx_b_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('0010'),f.opcBit20,f.opcBit19))
+        elif f.rot.value == 0b01:
+            cdot90_idx_b_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('0010'),f.opcBit20,f.opcBit19))
+        elif f.rot.value == 0b10:
+            cdot180_idx_b_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('0010'),f.opcBit20,f.opcBit19))
+        elif f.rot.value == 0b11:
+            cdot270_idx_b_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('0010'),f.opcBit20,f.opcBit19))
+
+
+class cdot_z_zzzi_d(_JSON_cdot_z_zzzi_d):
+    fields = {'opcBit20':[20,20]}
+
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'PEM_ASE_SVE_INT_MUL_MMLA_DOT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 4: cdot0_idx_h_uv, cdot180_idx_h_uv, cdot270_idx_h_uv, cdot90_idx_h_uv
+        if f.rot.value == 0b00:
+            cdot0_idx_h_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('0011'),f.opcBit20,Signal('0')))
+        elif f.rot.value == 0b01:
+            cdot90_idx_h_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('0011'),f.opcBit20,Signal('0')))
+        elif f.rot.value == 0b10:
+            cdot180_idx_h_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('0011'),f.opcBit20,Signal('0')))
+        elif f.rot.value == 0b11:
+            cdot270_idx_h_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('0011'),f.opcBit20,Signal('0')))
+
+
+class cdot_z_zzz_(_JSON_cdot_z_zzz_):
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'PEM_ASE_SVE_INT_MUL_MMLA_DOT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 8: cdot0_b_uv, cdot0_h_uv, cdot180_b_uv, cdot180_h_uv, cdot270_b_uv, cdot270_h_uv, cdot90_b_uv, cdot90_h_uv
+        if f.size.value == 0b10:
+            if f.rot.value == 0b00:
+                cdot0_b_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda)
+            elif f.rot.value == 0b01:
+                cdot90_b_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda)
+            elif f.rot.value == 0b10:
+                cdot180_b_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda)
+            elif f.rot.value == 0b11:
+                cdot270_b_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda)
+        elif f.size.value == 0b11:
+            if f.rot.value == 0b00:
+                cdot0_h_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda)
+            elif f.rot.value == 0b01:
+                cdot90_h_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda)
+            elif f.rot.value == 0b10:
+                cdot180_h_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda)
+            elif f.rot.value == 0b11:
+                cdot270_h_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda)
+
+
+class cmla_z_zzzi_h(_JSON_cmla_z_zzzi_h):
+    fields = {'opcBit19':[19,19],'opcBit20':[20,20]}
+
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['PEM_ASE_SVE_INT_MUL_MMLA_DOT_SPEC', 'INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 4: cmla0_idx_h_uv, cmla180_idx_h_uv, cmla270_idx_h_uv, cmla90_idx_h_uv
+        if f.rot.value == 0b00:
+            cmla0_idx_h_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('0010'),f.opcBit20,f.opcBit19))
+        elif f.rot.value == 0b01:
+            cmla90_idx_h_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('0010'),f.opcBit20,f.opcBit19))
+        elif f.rot.value == 0b10:
+            cmla180_idx_h_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('0010'),f.opcBit20,f.opcBit19))
+        elif f.rot.value == 0b11:
+            cmla270_idx_h_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('0010'),f.opcBit20,f.opcBit19))
+
+
+class cmla_z_zzzi_s(_JSON_cmla_z_zzzi_s):
+    fields = {'opcBit20':[20,20]}
+
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['PEM_ASE_SVE_INT_MUL_MMLA_DOT_SPEC', 'INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 4: cmla0_idx_s_uv, cmla180_idx_s_uv, cmla270_idx_s_uv, cmla90_idx_s_uv
+        if f.rot.value == 0b00:
+            cmla0_idx_s_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('1011'),f.opcBit20,Signal('0')))
+        elif f.rot.value == 0b01:
+            cmla90_idx_s_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('1011'),f.opcBit20,Signal('1')))
+        elif f.rot.value == 0b10:
+            cmla180_idx_s_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('1011'),f.opcBit20,Signal('0')))
+        elif f.rot.value == 0b11:
+            cmla270_idx_s_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('1011'),f.opcBit20,Signal('1')))
+
+
+class cmla_z_zzz_(_JSON_cmla_z_zzz_):
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['PEM_ASE_SVE_INT_MUL_MMLA_DOT_SPEC', 'INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 16: cmla0_b_uv, cmla0_d_uv, cmla0_h_uv, cmla0_s_uv, cmla180_b_uv, cmla180_d_uv, cmla180_h_uv, cmla180_s_uv, cmla270_b_uv, cmla270_d_uv, cmla270_h_uv, cmla270_s_uv, cmla90_b_uv, cmla90_d_uv, cmla90_h_uv, cmla90_s_uv
+        if f.size.value == 0b00:
+            if f.rot.value == 0b00:
+                cmla0_b_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda)
+            elif f.rot.value == 0b01:
+                cmla90_b_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda)
+            elif f.rot.value == 0b10:
+                cmla180_b_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda)
+            elif f.rot.value == 0b11:
+                cmla270_b_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda)
+        elif f.size.value == 0b01:
+            if f.rot.value == 0b00:
+                cmla0_h_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda)
+            elif f.rot.value == 0b01:
+                cmla90_h_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda)
+            elif f.rot.value == 0b10:
+                cmla180_h_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda)
+            elif f.rot.value == 0b11:
+                cmla270_h_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda)
+        elif f.size.value == 0b10:
+            if f.rot.value == 0b00:
+                cmla0_s_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('000100')))
+            elif f.rot.value == 0b01:
+                cmla90_s_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('000101')))
+            elif f.rot.value == 0b10:
+                cmla180_s_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('000100')))
+            elif f.rot.value == 0b11:
+                cmla270_s_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('000101')))
+        elif f.size.value == 0b11:
+            if f.rot.value == 0b00:
+                cmla0_d_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('111001')))
+            elif f.rot.value == 0b01:
+                cmla90_d_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('111010')))
+            elif f.rot.value == 0b10:
+                cmla180_d_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('111001')))
+            elif f.rot.value == 0b11:
+                cmla270_d_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('111010')))
+
+
+class eor3_z_zzz_(_JSON_eor3_z_zzz_):
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: eor3_b_uv
+        eor3_b_uv(dest=f.Zdn, src1=f.Zdn, src2=f.Zm, src3=f.Zk)
+
+
+class eorbt_z_zz_(_JSON_eorbt_z_zz_):
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 4: eorbt_b_uv, eorbt_d_uv, eorbt_h_uv, eorbt_s_uv
+        if f.size.value == 0b00:
+            eorbt_b_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm, src3=f.Zd)
+        elif f.size.value == 0b01:
+            eorbt_h_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm, src3=f.Zd)
+        elif f.size.value == 0b10:
+            eorbt_s_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm, src3=f.Zd, idx=(Signal('000010')))
+        elif f.size.value == 0b11:
+            eorbt_d_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm, src3=f.Zd, idx=(Signal('001110')))
+
+
+class eortb_z_zz_(_JSON_eortb_z_zz_):
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 4: eortb_b_uv, eortb_d_uv, eortb_h_uv, eortb_s_uv
+        if f.size.value == 0b00:
+            eortb_b_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm, src3=f.Zd)
+        elif f.size.value == 0b01:
+            eortb_h_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm, src3=f.Zd)
+        elif f.size.value == 0b10:
+            eortb_s_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm, src3=f.Zd, idx=(Signal('111101')))
+        elif f.size.value == 0b11:
+            eortb_d_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm, src3=f.Zd, idx=(Signal('001100')))
+
+
+class ext_z_zi_con(_JSON_ext_z_zi_con):
+
+    pmu_events = ['SVE_PERM_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        #Dont_touch - constructive
+        ext_b_uv(dest=f.Zd, src1=f.Zn, src2=f.Zn, src2_inc=1)
+
+
+class f1cvt_z_z8_b2h(_JSON_f1cvt_z_z8_b2h):
+
+    pmu_events = ['FP_SPEC', 'SVE_FP_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: f1cvt_b_uv
+        f1cvt_b_uv(dest=f.Zd, src1=f.Zn)
+
+
+class f2cvt_z_z8_b2h(_JSON_f2cvt_z_z8_b2h):
+
+    pmu_events = ['FP_SPEC', 'SVE_FP_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: f2cvt_b_uv
+        f2cvt_b_uv(dest=f.Zd, src1=f.Zn)
+
+
+class f1cvtlt_z_z8_b2h(_JSON_f1cvtlt_z_z8_b2h):
+
+    pmu_events = ['FP_SPEC', 'SVE_FP_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: f1cvtlt_b_uv
+        f1cvtlt_b_uv(dest=f.Zd, src1=f.Zn)
+
+
+class f2cvtlt_z_z8_b2h(_JSON_f2cvtlt_z_z8_b2h):
+
+    pmu_events = ['FP_SPEC', 'SVE_FP_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: f2cvtlt_b_uv
+        f2cvtlt_b_uv(dest=f.Zd, src1=f.Zn)
+
+
+class faddp_z_p_zz_(_JSON_faddp_z_p_zz_):
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['FP_SPEC', 'SVE_FP_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 3: faddp_d_pv, faddp_h_pv, faddp_s_pv
+        if f.size.value == 0b01:
+            faddp_h_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm)
+        elif f.size.value == 0b10:
+            faddp_s_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm, idx=(Signal('111000')))
+        elif f.size.value == 0b11:
+            faddp_d_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm, idx=(Signal('000011')))
+
+
+class famax_z_p_zz_(_JSON_famax_z_p_zz_):
+
+    pmu_events = ['FP_SPEC', 'SVE_FP_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 3: famax_d_pv, famax_s_pv, famax_h_pv
+        if f.size.value == 0b01:
+            famax_h_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm, src3=f.Zdn)
+        elif f.size.value == 0b10:
+            famax_s_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm, src3=f.Zdn)
+        elif f.size.value == 0b11:
+            famax_d_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm, src3=f.Zdn)
+
+
+class famin_z_p_zz_(_JSON_famin_z_p_zz_):
+
+    pmu_events = ['FP_SPEC', 'SVE_FP_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 3: famin_d_pv, famin_s_pv, famin_h_pv
+        if f.size.value == 0b01:
+            famin_h_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm, src3=f.Zdn)
+        elif f.size.value == 0b10:
+            famin_s_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm, src3=f.Zdn)
+        elif f.size.value == 0b11:
+            famin_d_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm, src3=f.Zdn)
+
+
+class fcvtlt_z_p_z_h2s(_JSON_fcvtlt_z_p_z_h2s):
+
+    pmu_events = ['FP_SPEC', 'SVE_FP_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: fcvtlt_h_pv
+        fcvtlt_h_pv(dest=f.Zd, pred=f.Pg, src1=f.Zn, src2=f.Zd)
+
+
+class fcvtlt_z_p_z_s2d(_JSON_fcvtlt_z_p_z_s2d):
+
+    pmu_events = ['FP_SPEC', 'SVE_FP_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: fcvtlt_s_pv
+        fcvtlt_s_pv(dest=f.Zd, pred=f.Pg, src1=f.Zn, src2=f.Zd)
+
+
+class fcvtn_z8_mz2_h2b(_JSON_fcvtn_z8_mz2_h2b):
+
+   pmu_events = ['FP_SPEC', 'SVE_FP_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+   def decode(self, f):
+        #Dont_touch
+        # Number of uops 1: fcvtni_h_uv
+        fcvtni_h_uv(dest=f.Zd, src1=(f.Zn, Signal('0')), src2=(f.Zn, Signal('0')), src2_inc=1)
+
+
+class fcvtnb_z8_mz2_s2b(_JSON_fcvtnb_z8_mz2_s2b):
+
+   pmu_events = ['FP_SPEC', 'SVE_FP_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+   def decode(self, f):
+        #Dont_touch
+        # Number of uops 1: fcvtnbi_s_uv
+        fcvtnbi_s_uv(dest=f.Zd, src1=(f.Zn, Signal('0')), src2=(f.Zn, Signal('0')), src2_inc=1)
+
+
+class fcvtnt_z8_mz2_s2b(_JSON_fcvtnt_z8_mz2_s2b):
+
+   pmu_events = ['FP_SPEC', 'SVE_FP_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+   def decode(self, f):
+        #Dont_touch
+        # Number of uops 1: fcvtnti_s_uv
+        fcvtnti_s_uv(dest=f.Zd, src1=(f.Zn, Signal('0')), src2=(f.Zn, Signal('0')), src3=f.Zd, src2_inc=1)
+
+
+class fcvtnt_z_p_z_s2h(_JSON_fcvtnt_z_p_z_s2h):
+
+    pmu_events = ['FP_SPEC', 'SVE_FP_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: fcvtnt_s_pv
+        fcvtnt_s_pv(dest=f.Zd, pred=f.Pg, src1=f.Zn, src2=f.Zd)
+
+
+class fcvtnt_z_p_z_d2s(_JSON_fcvtnt_z_p_z_d2s):
+
+    pmu_events = ['FP_SPEC', 'SVE_FP_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: fcvtnt_d_pv
+        fcvtnt_d_pv(dest=f.Zd, pred=f.Pg, src1=f.Zn, src2=f.Zd)
+
+
+class fcvtxnt_z_p_z_d2s(_JSON_fcvtxnt_z_p_z_d2s):
+
+    pmu_events = ['FP_SPEC', 'SVE_FP_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: fcvtxnt_d_pv
+        fcvtxnt_d_pv(dest=f.Zd, pred=f.Pg, src1=f.Zn, src2=f.Zd)
+
+
+class fcvtx_z_p_z_d2s(_JSON_fcvtx_z_p_z_d2s):
+
+    movprfx_fusion = "predicated"
+    pmu_events = ['FP_SPEC', 'SVE_FP_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: fcvtx_d_pv
+        fcvtx_d_pv(dest=f.Zd, pred=f.Pg, src1=f.Zn, src2=f.Zd)
+
+
+class flogb_z_p_z_(_JSON_flogb_z_p_z_m):
+
+    movprfx_fusion = "predicated"
+    pmu_events = ['FP_SPEC', 'SVE_FP_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 3: flogb_d_pv, flogb_h_pv, flogb_s_pv
+        if f.size.value == 0b01:
+            flogb_h_pv(dest=f.Zd, pred=f.Pg, src1=f.Zn, src2=f.Zd)
+        elif f.size.value == 0b10:
+            flogb_s_pv(dest=f.Zd, pred=f.Pg, src1=f.Zn, src2=f.Zd)
+        elif f.size.value == 0b11:
+            flogb_d_pv(dest=f.Zd, pred=f.Pg, src1=f.Zn, src2=f.Zd)
+
+
+class fmaxnmp_z_p_zz_(_JSON_fmaxnmp_z_p_zz_):
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['FP_SPEC', 'SVE_FP_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 3: fmaxnmp_d_pv, fmaxnmp_h_pv, fmaxnmp_s_pv
+        if f.size.value == 0b01:
+            fmaxnmp_h_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm)
+        elif f.size.value == 0b10:
+            fmaxnmp_s_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm, idx=(Signal('111000')))
+        elif f.size.value == 0b11:
+            fmaxnmp_d_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm, idx=(Signal('000011')))
+
+
+class fmaxp_z_p_zz_(_JSON_fmaxp_z_p_zz_):
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['FP_SPEC', 'SVE_FP_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 3: fmaxp_d_pv, fmaxp_h_pv, fmaxp_s_pv
+        if f.size.value == 0b01:
+            fmaxp_h_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm)
+        elif f.size.value == 0b10:
+            fmaxp_s_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm, idx=(Signal('111000')))
+        elif f.size.value == 0b11:
+            fmaxp_d_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm, idx=(Signal('000011')))
+
+
+class fminnmp_z_p_zz_(_JSON_fminnmp_z_p_zz_):
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['FP_SPEC', 'SVE_FP_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 3: fminnmp_d_pv, fminnmp_h_pv, fminnmp_s_pv
+        if f.size.value == 0b01:
+            fminnmp_h_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm)
+        elif f.size.value == 0b10:
+            fminnmp_s_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm, idx=(Signal('111000')))
+        elif f.size.value == 0b11:
+            fminnmp_d_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm, idx=(Signal('000011')))
+
+
+class fminp_z_p_zz_(_JSON_fminp_z_p_zz_):
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['FP_SPEC', 'SVE_FP_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 3: fminp_d_pv, fminp_h_pv, fminp_s_pv
+        if f.size.value == 0b01:
+            fminp_h_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm)
+        elif f.size.value == 0b10:
+            fminp_s_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm, idx=(Signal('111000')))
+        elif f.size.value == 0b11:
+            fminp_d_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm, idx=(Signal('000011')))
+
+
+class fmlalb_z_zzzi_s(_JSON_fmlalb_z_zzzi_s):
+    fields = {'opcBit19':[19,19],'opcBit20':[20,20]}
+
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['FP_SPEC', 'SVE_FP_SPEC', 'ASE_SVE_FP_FMA_SPEC', 'PEM_ASE_SVE_FP_FMA_MUL_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 2: fmlalb_idx0_h_uv, fmlalb_idx1_h_uv
+        if f.i3l.value == 0b0:
+            fmlalb_idx0_h_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('0010'),f.opcBit20,f.opcBit19))
+        elif f.i3l.value == 0b1:
+            fmlalb_idx1_h_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('0010'),f.opcBit20,f.opcBit19))
+
+
+class fmlalb_z_z8z8z8_(_JSON_fmlalb_z_z8z8z8_):
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['FP_SPEC', 'SVE_FP_SPEC', 'ASE_SVE_FP_FMA_SPEC', 'PEM_ASE_SVE_FP_FMA_MUL_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: fmlalb_b_uv
+        fmlalb_b_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda)
+
+
+class fmlalb_z_z8z8z8i_(_JSON_fmlalb_z_z8z8z8i_):
+    fields = {'opcBit19':[19,19],'opcBit20':[20,20]}
+
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['FP_SPEC', 'SVE_FP_SPEC', 'ASE_SVE_FP_FMA_SPEC', 'PEM_ASE_SVE_FP_FMA_MUL_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 4: fmlalb_idx0_b_uv, fmlalb_idx1_b_uv, fmlalb_idx2_b_uv, fmlalb_idx3_b_uv
+        if f.i4l.value == 0b00:
+            fmlalb_idx0_b_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('0010'),f.opcBit20,f.opcBit19))
+        elif f.i4l.value == 0b01:
+            fmlalb_idx1_b_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('0010'),f.opcBit20,f.opcBit19))
+        elif f.i4l.value == 0b10:
+            fmlalb_idx2_b_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('0010'),f.opcBit20,f.opcBit19))
+        elif f.i4l.value == 0b11:
+            fmlalb_idx3_b_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('0010'),f.opcBit20,f.opcBit19))
+
+
+class fmlallbb_z32_z8z8z8_(_JSON_fmlallbb_z32_z8z8z8_):
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['FP_SPEC', 'SVE_FP_SPEC', 'ASE_SVE_FP_FMA_SPEC', 'PEM_ASE_SVE_FP_FMA_MUL_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: fmlallbb_b_uv
+        fmlallbb_b_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda)
+
+
+class fmlallbb_z32_z8z8z8i_(_JSON_fmlallbb_z32_z8z8z8i_):
+    fields = {'opcBit19':[19,19],'opcBit20':[20,20]}
+
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['FP_SPEC', 'SVE_FP_SPEC', 'ASE_SVE_FP_FMA_SPEC', 'PEM_ASE_SVE_FP_FMA_MUL_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 4: fmlallbb_idx0_b_uv, fmlallbb_idx1_b_uv, fmlallbb_idx2_b_uv, fmlallbb_idx3_b_uv
+        if f.i4l.value == 0b00:
+            fmlallbb_idx0_b_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('0010'),f.opcBit20,f.opcBit19))
+        elif f.i4l.value == 0b01:
+            fmlallbb_idx1_b_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('0010'),f.opcBit20,f.opcBit19))
+        elif f.i4l.value == 0b10:
+            fmlallbb_idx2_b_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('0010'),f.opcBit20,f.opcBit19))
+        elif f.i4l.value == 0b11:
+            fmlallbb_idx3_b_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('0010'),f.opcBit20,f.opcBit19))
+
+
+class fmlallbt_z32_z8z8z8_(_JSON_fmlallbt_z32_z8z8z8_):
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['FP_SPEC', 'SVE_FP_SPEC', 'ASE_SVE_FP_FMA_SPEC', 'PEM_ASE_SVE_FP_FMA_MUL_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: fmlallbt_b_uv
+        fmlallbt_b_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda)
+
+
+class fmlallbt_z32_z8z8z8i_(_JSON_fmlallbt_z32_z8z8z8i_):
+    fields = {'opcBit19':[19,19],'opcBit20':[20,20]}
+
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['FP_SPEC', 'SVE_FP_SPEC', 'ASE_SVE_FP_FMA_SPEC', 'PEM_ASE_SVE_FP_FMA_MUL_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 4: fmlallbt_idx0_b_uv, fmlallbt_idx1_b_uv, fmlallbt_idx2_b_uv, fmlallbt_idx3_b_uv
+        if f.i4l.value == 0b00:
+            fmlallbt_idx0_b_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('0010'),f.opcBit20,f.opcBit19))
+        elif f.i4l.value == 0b01:
+            fmlallbt_idx1_b_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('0010'),f.opcBit20,f.opcBit19))
+        elif f.i4l.value == 0b10:
+            fmlallbt_idx2_b_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('0010'),f.opcBit20,f.opcBit19))
+        elif f.i4l.value == 0b11:
+            fmlallbt_idx3_b_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('0010'),f.opcBit20,f.opcBit19))
+
+
+class fmlalltb_z32_z8z8z8_(_JSON_fmlalltb_z32_z8z8z8_):
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['FP_SPEC', 'SVE_FP_SPEC', 'ASE_SVE_FP_FMA_SPEC', 'PEM_ASE_SVE_FP_FMA_MUL_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: fmlalltb_b_uv
+        fmlalltb_b_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda)
+
+
+class fmlalltb_z32_z8z8z8i_(_JSON_fmlalltb_z32_z8z8z8i_):
+    fields = {'opcBit19':[19,19],'opcBit20':[20,20]}
+
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['FP_SPEC', 'SVE_FP_SPEC', 'ASE_SVE_FP_FMA_SPEC', 'PEM_ASE_SVE_FP_FMA_MUL_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 4: fmlalltb_idx0_b_uv, fmlalltb_idx1_b_uv, fmlalltb_idx2_b_uv, fmlalltb_idx3_b_uv
+        if f.i4l.value == 0b00:
+            fmlalltb_idx0_b_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('0010'),f.opcBit20,f.opcBit19))
+        elif f.i4l.value == 0b01:
+            fmlalltb_idx1_b_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('0010'),f.opcBit20,f.opcBit19))
+        elif f.i4l.value == 0b10:
+            fmlalltb_idx2_b_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('0010'),f.opcBit20,f.opcBit19))
+        elif f.i4l.value == 0b11:
+            fmlalltb_idx3_b_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('0010'),f.opcBit20,f.opcBit19))
+
+
+class fmlalltt_z32_z8z8z8_(_JSON_fmlalltt_z32_z8z8z8_):
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['FP_SPEC', 'SVE_FP_SPEC', 'ASE_SVE_FP_FMA_SPEC', 'PEM_ASE_SVE_FP_FMA_MUL_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: fmlalltt_b_uv
+        fmlalltt_b_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda)
+
+
+class fmlalltt_z32_z8z8z8i_(_JSON_fmlalltt_z32_z8z8z8i_):
+    fields = {'opcBit19':[19,19],'opcBit20':[20,20]}
+
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['FP_SPEC', 'SVE_FP_SPEC', 'ASE_SVE_FP_FMA_SPEC', 'PEM_ASE_SVE_FP_FMA_MUL_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 4: fmlalltt_idx0_b_uv, fmlalltt_idx1_b_uv, fmlalltt_idx2_b_uv, fmlalltt_idx3_b_uv
+        if f.i4l.value == 0b00:
+            fmlalltt_idx0_b_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('0010'),f.opcBit20,f.opcBit19))
+        elif f.i4l.value == 0b01:
+            fmlalltt_idx1_b_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('0010'),f.opcBit20,f.opcBit19))
+        elif f.i4l.value == 0b10:
+            fmlalltt_idx2_b_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('0010'),f.opcBit20,f.opcBit19))
+        elif f.i4l.value == 0b11:
+            fmlalltt_idx3_b_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('0010'),f.opcBit20,f.opcBit19))
+
+
+class fmlalt_z_z8z8z8_(_JSON_fmlalt_z_z8z8z8_):
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['FP_SPEC', 'SVE_FP_SPEC', 'ASE_SVE_FP_FMA_SPEC', 'PEM_ASE_SVE_FP_FMA_MUL_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: fmlalt_b_uv
+        fmlalt_b_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda)
+
+
+class fmlalt_z_z8z8z8i_(_JSON_fmlalt_z_z8z8z8i_):
+    fields = {'opcBit19':[19,19],'opcBit20':[20,20]}
+
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['FP_SPEC', 'SVE_FP_SPEC', 'ASE_SVE_FP_FMA_SPEC', 'PEM_ASE_SVE_FP_FMA_MUL_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 4: fmlalt_idx0_b_uv, fmlalt_idx1_b_uv, fmlalt_idx2_b_uv, fmlalt_idx3_b_uv
+        if f.i4l.value == 0b00:
+            fmlalt_idx0_b_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('0010'),f.opcBit20,f.opcBit19))
+        elif f.i4l.value == 0b01:
+            fmlalt_idx1_b_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('0010'),f.opcBit20,f.opcBit19))
+        elif f.i4l.value == 0b10:
+            fmlalt_idx2_b_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('0010'),f.opcBit20,f.opcBit19))
+        elif f.i4l.value == 0b11:
+            fmlalt_idx3_b_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('0010'),f.opcBit20,f.opcBit19))
+
+
+class fmlalb_z_zzz_(_JSON_fmlalb_z_zzz_):
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['FP_SPEC', 'SVE_FP_SPEC', 'ASE_SVE_FP_FMA_SPEC', 'PEM_ASE_SVE_FP_FMA_MUL_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: fmlalb_h_uv
+        fmlalb_h_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda)
+
+
+class fmlalt_z_zzzi_s(_JSON_fmlalt_z_zzzi_s):
+    fields = {'opcBit19':[19,19],'opcBit20':[20,20]}
+
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['FP_SPEC', 'SVE_FP_SPEC', 'ASE_SVE_FP_FMA_SPEC', 'PEM_ASE_SVE_FP_FMA_MUL_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 2: fmlalt_idx0_h_uv, fmlalt_idx1_h_uv
+        if f.i3l.value == 0b0:
+            fmlalt_idx0_h_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('0010'),f.opcBit20,f.opcBit19))
+        elif f.i3l.value == 0b1:
+            fmlalt_idx1_h_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('0010'),f.opcBit20,f.opcBit19))
+
+
+class fmlalt_z_zzz_(_JSON_fmlalt_z_zzz_):
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['FP_SPEC', 'SVE_FP_SPEC', 'ASE_SVE_FP_FMA_SPEC', 'PEM_ASE_SVE_FP_FMA_MUL_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: fmlalt_h_uv
+        fmlalt_h_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda)
+
+
+class fmlslb_z_zzzi_s(_JSON_fmlslb_z_zzzi_s):
+    fields = {'opcBit19':[19,19],'opcBit20':[20,20]}
+
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['FP_SPEC', 'SVE_FP_SPEC', 'ASE_SVE_FP_FMA_SPEC', 'PEM_ASE_SVE_FP_FMA_MUL_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 2: fmlslb_idx0_h_uv, fmlslb_idx1_h_uv
+        if f.i3l.value == 0b0:
+            fmlslb_idx0_h_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('0010'),f.opcBit20,f.opcBit19))
+        elif f.i3l.value == 0b1:
+            fmlslb_idx1_h_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('0010'),f.opcBit20,f.opcBit19))
+
+
+class fmlslb_z_zzz_(_JSON_fmlslb_z_zzz_):
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['FP_SPEC', 'SVE_FP_SPEC', 'ASE_SVE_FP_FMA_SPEC', 'PEM_ASE_SVE_FP_FMA_MUL_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: fmlslb_h_uv
+        fmlslb_h_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda)
+
+
+class fmlslt_z_zzzi_s(_JSON_fmlslt_z_zzzi_s):
+    fields = {'opcBit19':[19,19],'opcBit20':[20,20]}
+
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['FP_SPEC', 'SVE_FP_SPEC', 'ASE_SVE_FP_FMA_SPEC', 'PEM_ASE_SVE_FP_FMA_MUL_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 2: fmlslt_idx0_h_uv, fmlslt_idx1_h_uv
+        if f.i3l.value == 0b0:
+            fmlslt_idx0_h_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('0010'),f.opcBit20,f.opcBit19))
+        elif f.i3l.value == 0b1:
+            fmlslt_idx1_h_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('0010'),f.opcBit20,f.opcBit19))
+
+
+class fmlslt_z_zzz_(_JSON_fmlslt_z_zzz_):
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['FP_SPEC', 'SVE_FP_SPEC', 'ASE_SVE_FP_FMA_SPEC', 'PEM_ASE_SVE_FP_FMA_MUL_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: fmlslt_h_uv
+        fmlslt_h_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda)
+
+
+class histcnt_z_p_zz_(_JSON_histcnt_z_p_zz_):
+
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 2: histcnt_d_pv, histcnt_s_pv
+        if f.size.value == 0b10:
+            histcnt_s_pv(dest=f.Zd, pred=f.Pg, src1=f.Zn, src2=f.Zm)
+        elif f.size.value == 0b11:
+            histcnt_d_pv(dest=f.Zd, pred=f.Pg, src1=f.Zn, src2=f.Zm)
+
+
+class histseg_z_zz_(_JSON_histseg_z_zz_):
+
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: histseg_b_uv
+        if f.size.value == 0b00:
+            histseg_b_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm)
+
+
+class luti2_z_zz_8(_JSON_luti2_z_zz_8):
+    fields = {'opcBit22':[22,22],'opcBit23':[23,23]}
+
+
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: luti2_b_uv
+        luti2_b_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm, idx=(Signal('0010'),f.opcBit23,f.opcBit22))
+
+
+class luti2_z_zz_16(_JSON_luti2_z_zz_16):
+    fields = {'opcBit22':[22,22],'opcBit23':[23,23]}
+
+
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 2: luti2_idx0_h_uv, luti2_idx1_h_uv
+        if f.i3l.value == 0b0:
+            luti2_idx0_h_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm, idx=(Signal('0010'),f.opcBit23,f.opcBit22))
+        elif f.i3l.value == 0b1:
+            luti2_idx1_h_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm, idx=(Signal('0010'),f.opcBit23,f.opcBit22))
+
+
+class luti4_z_zz_8(_JSON_luti4_z_zz_8):
+    fields = {'opcBit23':[23,23]}
+
+
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: luti4_b_uv
+        luti4_b_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm, idx=(Signal('0011'),f.opcBit23,Signal('0')))
+
+
+class luti4_z_zz_2x16(_JSON_luti4_z_zz_2x16):
+    fields = {'opcBit22':[22,22],'opcBit23':[23,23]}
+
+
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        luti4_x2_h_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm, src3=f.Zn, src3_inc=1, idx=(Signal('0010'),f.opcBit23,f.opcBit22))
+
+
+class match_p_p_zz_(_JSON_match_p_p_zz_):
+    fields = {**_JSON_match_p_p_zz_.fields, 'size': (23, 22)}
+
+
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        #Dont_touch - PSTATE Write
+        # Number of uops 2: match_b_pv, match_h_pv
+        if f.size.value == 0b00:
+            match_b_pv(dest=f.Pd, pred=f.Pg, src1=f.Zn, src2=f.Zm, flagdest=f0)
+        elif f.size.value == 0b01:
+            match_h_pv(dest=f.Pd, pred=f.Pg, src1=f.Zn, src2=f.Zm, flagdest=f0)
+
+
+class mla_z_zzzi_h(_JSON_mla_z_zzzi_h):
+    fields = {'opcBit20':[20,20]}
+
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['PEM_ASE_SVE_INT_MUL_MMLA_DOT_SPEC', 'INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 2: mla_idx0_h_uv, mla_idx1_h_uv
+        if (f.i3l.value & 0b01 ) == 0b00:
+            mla_idx0_h_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('0010'),f.i3h,f.opcBit20))
+        elif (f.i3l.value & 0b01 ) == 0b01:
+            mla_idx1_h_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('0010'),f.i3h,f.opcBit20))
+
+
+class mla_z_zzzi_s(_JSON_mla_z_zzzi_s):
+    fields = {'opcBit19':[19,19],'opcBit20':[20,20]}
+
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['PEM_ASE_SVE_INT_MUL_MMLA_DOT_SPEC', 'INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: mla_idx0_s_uv
+        mla_idx0_s_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('0010'),f.opcBit20,f.opcBit19))
+
+
+class mla_z_zzzi_d(_JSON_mla_z_zzzi_d):
+    fields = {'opcBit20':[20,20]}
+
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['PEM_ASE_SVE_INT_MUL_MMLA_DOT_SPEC', 'INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: mla_idx0_d_uv
+        mla_idx0_d_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('1111'),f.opcBit20,Signal('0')))
+
+
+class mls_z_zzzi_h(_JSON_mls_z_zzzi_h):
+    fields = {'opcBit20':[20,20]}
+
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['PEM_ASE_SVE_INT_MUL_MMLA_DOT_SPEC', 'INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 2: mls_idx0_h_uv, mls_idx1_h_uv
+        if (f.i3l.value & 0b01 ) == 0b00:
+            mls_idx0_h_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('0010'),f.i3h,f.opcBit20))
+        elif (f.i3l.value & 0b01 ) == 0b01:
+            mls_idx1_h_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('0010'),f.i3h,f.opcBit20))
+
+
+class mls_z_zzzi_s(_JSON_mls_z_zzzi_s):
+    fields = {'opcBit19':[19,19],'opcBit20':[20,20]}
+
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['PEM_ASE_SVE_INT_MUL_MMLA_DOT_SPEC', 'INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: mls_idx0_s_uv
+        mls_idx0_s_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('0010'),f.opcBit20,f.opcBit19))
+
+
+class mls_z_zzzi_d(_JSON_mls_z_zzzi_d):
+    fields = {'opcBit20':[20,20]}
+
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['PEM_ASE_SVE_INT_MUL_MMLA_DOT_SPEC', 'INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: mls_idx0_d_uv
+        mls_idx0_d_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('1111'),f.opcBit20,Signal('0')))
+
+
+class mul_z_zzi_h(_JSON_mul_z_zzi_h):
+    fields = {'opcBit20':[20,20]}
+
+
+    pmu_events = ['PEM_ASE_SVE_INT_MUL_MMLA_DOT_SPEC', 'INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 2: mul_idx0_h_uv, mul_idx1_h_uv
+        if (f.i3l.value & 0b01 ) == 0b00:
+            mul_idx0_h_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm, idx=(Signal('0010'),f.i3h,f.opcBit20))
+        elif (f.i3l.value & 0b01 ) == 0b01:
+            mul_idx1_h_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm, idx=(Signal('0010'),f.i3h,f.opcBit20))
+
+
+class mul_z_zzi_s(_JSON_mul_z_zzi_s):
+    fields = {'opcBit19':[19,19],'opcBit20':[20,20]}
+
+
+    pmu_events = ['PEM_ASE_SVE_INT_MUL_MMLA_DOT_SPEC', 'INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: mul_idx0_s_uv
+        mul_idx0_s_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm, idx=(Signal('0010'),f.opcBit20,f.opcBit19))
+
+
+class mul_z_zzi_d(_JSON_mul_z_zzi_d):
+    fields = {'opcBit20':[20,20]}
+
+
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: mul_idx0_d_uv
+        mul_idx0_d_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm, idx=(Signal('1111'),f.opcBit20,Signal('0')))
+
+
+class mul_z_zz_(_JSON_mul_z_zz_):
+
+    pmu_events = ['PEM_ASE_SVE_INT_MUL_MMLA_DOT_SPEC', 'INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 4: mul_b_uv, mul_d_uv, mul_h_uv, mul_s_uv
+        if f.size.value == 0b00:
+            mul_b_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm)
+        elif f.size.value == 0b01:
+            mul_h_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm)
+        elif f.size.value == 0b10:
+            mul_s_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm)
+        elif f.size.value == 0b11:
+            mul_d_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm, idx=(Signal('111101')))
+
+
+class nbsl_z_zzz_(_JSON_nbsl_z_zzz_):
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: nbsl_b_uv
+        nbsl_b_uv(dest=f.Zdn, src1=f.Zm, src2=f.Zdn, src3=f.Zk)
+
+
+class nmatch_p_p_zz_(_JSON_nmatch_p_p_zz_):
+    fields = {**_JSON_nmatch_p_p_zz_.fields, 'size': (23, 22)}
+
+
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        #Dont_touch - PSTATE Write
+        # Number of uops 2: nmatch_b_pv, nmatch_h_pv
+        if f.size.value == 0b00:
+            nmatch_b_pv(dest=f.Pd, pred=f.Pg, src1=f.Zn, src2=f.Zm, flagdest=f0)
+        elif f.size.value == 0b01:
+            nmatch_h_pv(dest=f.Pd, pred=f.Pg, src1=f.Zn, src2=f.Zm, flagdest=f0)
+
+
+class pmullb_z_zz_(_JSON_pmullb_z_zz_):
+
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 3: pmullb_b_uv, pmullb_d_uv, pmullb_s_uv
+        if f.size.value == 0b00:
+            pmullb_d_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm)
+        elif f.size.value == 0b01:
+            pmullb_b_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm)
+        elif f.size.value == 0b11:
+            pmullb_s_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm)
+
+
+class pmullt_z_zz_(_JSON_pmullt_z_zz_):
+
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 3: pmullt_b_uv, pmullt_d_uv, pmullt_s_uv
+        if f.size.value == 0b00:
+            pmullt_d_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm, idx=(Signal('000111')))
+        elif f.size.value == 0b01:
+            pmullt_b_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm)
+        elif f.size.value == 0b11:
+            pmullt_s_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm)
+
+
+class pmul_z_zz_(_JSON_pmul_z_zz_):
+
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: pmul_b_uv
+        pmul_b_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm)
+
+
+class raddhnb_z_zz_(_JSON_raddhnb_z_zz_):
+
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 3: raddhnb_d_uv, raddhnb_h_uv, raddhnb_s_uv
+        if f.size.value == 0b01:
+            raddhnb_h_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm)
+        elif f.size.value == 0b10:
+            raddhnb_s_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm)
+        elif f.size.value == 0b11:
+            raddhnb_d_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm)
+
+
+class raddhnt_z_zz_(_JSON_raddhnt_z_zz_):
+
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 3: raddhnt_d_uv, raddhnt_h_uv, raddhnt_s_uv
+        if f.size.value == 0b01:
+            raddhnt_h_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm, src3=f.Zd)
+        elif f.size.value == 0b10:
+            raddhnt_s_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm, src3=f.Zd)
+        elif f.size.value == 0b11:
+            raddhnt_d_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm, src3=f.Zd)
+
+
+class rax1_z_zz_(_JSON_rax1_z_zz_):
+
+    pmu_events = ['CRYPTO_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: rax1_d_uv
+        rax1_d_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm)
+
+
+class rshrnb_z_zi_(_JSON_rshrnb_z_zi_):
+
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 3: rshrnb_d_uv, rshrnb_h_uv, rshrnb_s_uv
+        if f.tszh.value == 0b0:
+            if (f.tszl.value & 0b10 ) ==  0b10:
+                rshrnb_s_uv(dest=f.Zd, src1=f.Zn)
+            elif f.tszl.value == 0b01:
+                rshrnb_h_uv(dest=f.Zd, src1=f.Zn)
+        elif f.tszh.value == 0b1:
+            rshrnb_d_uv(dest=f.Zd, src1=f.Zn)
+
+
+class rshrnt_z_zi_(_JSON_rshrnt_z_zi_):
+
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 3: rshrnt_d_uv, rshrnt_h_uv, rshrnt_s_uv
+        if f.tszh.value == 0b0:
+            if (f.tszl.value & 0b10 ) ==  0b10:
+                rshrnt_s_uv(dest=f.Zd, src1=f.Zn, src2=f.Zd)
+            elif f.tszl.value == 0b01:
+                rshrnt_h_uv(dest=f.Zd, src1=f.Zn, src2=f.Zd)
+        elif f.tszh.value == 0b1:
+            rshrnt_d_uv(dest=f.Zd, src1=f.Zn, src2=f.Zd)
+
+
+class rsubhnb_z_zz_(_JSON_rsubhnb_z_zz_):
+
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 3: rsubhnb_d_uv, rsubhnb_h_uv, rsubhnb_s_uv
+        if f.size.value == 0b01:
+            rsubhnb_h_uv(dest=f.Zd, src1=f.Zm, src2=f.Zn)
+        elif f.size.value == 0b10:
+            rsubhnb_s_uv(dest=f.Zd, src1=f.Zm, src2=f.Zn)
+        elif f.size.value == 0b11:
+            rsubhnb_d_uv(dest=f.Zd, src1=f.Zm, src2=f.Zn)
+
+
+class rsubhnt_z_zz_(_JSON_rsubhnt_z_zz_):
+
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 3: rsubhnt_d_uv, rsubhnt_h_uv, rsubhnt_s_uv
+        if f.size.value == 0b01:
+            rsubhnt_h_uv(dest=f.Zd, src1=f.Zm, src2=f.Zn, src3=f.Zd)
+        elif f.size.value == 0b10:
+            rsubhnt_s_uv(dest=f.Zd, src1=f.Zm, src2=f.Zn, src3=f.Zd)
+        elif f.size.value == 0b11:
+            rsubhnt_d_uv(dest=f.Zd, src1=f.Zm, src2=f.Zn, src3=f.Zd)
+
+
+class sabalb_z_zzz_(_JSON_sabalb_z_zzz_):
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 3: sabalb_b_uv, sabalb_h_uv, sabalb_s_uv
+        if f.size.value == 0b01:
+            sabalb_b_uv(dest=f.Zda, src1=f.Zm, src2=f.Zn, src3=f.Zda)
+        elif f.size.value == 0b10:
+            sabalb_h_uv(dest=f.Zda, src1=f.Zm, src2=f.Zn, src3=f.Zda)
+        elif f.size.value == 0b11:
+            sabalb_s_uv(dest=f.Zda, src1=f.Zm, src2=f.Zn, src3=f.Zda)
+
+
+class sabalt_z_zzz_(_JSON_sabalt_z_zzz_):
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 3: sabalt_b_uv, sabalt_h_uv, sabalt_s_uv
+        if f.size.value == 0b01:
+            sabalt_b_uv(dest=f.Zda, src1=f.Zm, src2=f.Zn, src3=f.Zda)
+        elif f.size.value == 0b10:
+            sabalt_h_uv(dest=f.Zda, src1=f.Zm, src2=f.Zn, src3=f.Zda)
+        elif f.size.value == 0b11:
+            sabalt_s_uv(dest=f.Zda, src1=f.Zm, src2=f.Zn, src3=f.Zda, idx=(Signal('111111')))
+
+
+class saba_z_zzz_(_JSON_saba_z_zzz_):
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 4: saba_b_uv, saba_d_uv, saba_h_uv, saba_s_uv
+        if f.size.value == 0b00:
+            saba_b_uv(dest=f.Zda, src1=f.Zm, src2=f.Zn, src3=f.Zda)
+        elif f.size.value == 0b01:
+            saba_h_uv(dest=f.Zda, src1=f.Zm, src2=f.Zn, src3=f.Zda)
+        elif f.size.value == 0b10:
+            saba_s_uv(dest=f.Zda, src1=f.Zm, src2=f.Zn, src3=f.Zda)
+        elif f.size.value == 0b11:
+            saba_d_uv(dest=f.Zda, src1=f.Zm, src2=f.Zn, src3=f.Zda)
+
+
+class sabdlb_z_zz_(_JSON_sabdlb_z_zz_):
+
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 3: sabdlb_b_uv, sabdlb_h_uv, sabdlb_s_uv
+        if f.size.value == 0b01:
+            sabdlb_b_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm)
+        elif f.size.value == 0b10:
+            sabdlb_h_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm)
+        elif f.size.value == 0b11:
+            sabdlb_s_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm)
+
+
+class sabdlt_z_zz_(_JSON_sabdlt_z_zz_):
+
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 3: sabdlt_b_uv, sabdlt_h_uv, sabdlt_s_uv
+        if f.size.value == 0b01:
+            sabdlt_b_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm)
+        elif f.size.value == 0b10:
+            sabdlt_h_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm)
+        elif f.size.value == 0b11:
+            sabdlt_s_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm, idx=(Signal('111111')))
+
+
+class sadalp_z_p_z_(_JSON_sadalp_z_p_z_):
+
+    movprfx_fusion = "predicated"
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 3: sadalp_b_pv, sadalp_h_pv, sadalp_s_pv
+        if f.size.value == 0b01:
+            sadalp_b_pv(dest=f.Zda, pred=f.Pg, src1=f.Zn, src2=f.Zn, src3=f.Zda)
+        elif f.size.value == 0b10:
+            sadalp_h_pv(dest=f.Zda, pred=f.Pg, src1=f.Zn, src2=f.Zn, src3=f.Zda)
+        elif f.size.value == 0b11:
+            sadalp_s_pv(dest=f.Zda, pred=f.Pg, src1=f.Zn, src2=f.Zn, src3=f.Zda, idx=(Signal('000010')))
+
+
+class saddlbt_z_zz_(_JSON_saddlbt_z_zz_):
+
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 3: saddlbt_b_uv, saddlbt_h_uv, saddlbt_s_uv
+        if f.size.value == 0b01:
+            saddlbt_b_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm)
+        elif f.size.value == 0b10:
+            saddlbt_h_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm)
+        elif f.size.value == 0b11:
+            saddlbt_s_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm, idx=(Signal('000010')))
+
+
+class saddlb_z_zz_(_JSON_saddlb_z_zz_):
+
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 3: saddlb_b_uv, saddlb_h_uv, saddlb_s_uv
+        if f.size.value == 0b01:
+            saddlb_b_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm)
+        elif f.size.value == 0b10:
+            saddlb_h_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm)
+        elif f.size.value == 0b11:
+            saddlb_s_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm)
+
+
+class saddlt_z_zz_(_JSON_saddlt_z_zz_):
+
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 3: saddlt_b_uv, saddlt_h_uv, saddlt_s_uv
+        if f.size.value == 0b01:
+            saddlt_b_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm)
+        elif f.size.value == 0b10:
+            saddlt_h_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm)
+        elif f.size.value == 0b11:
+            saddlt_s_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm, idx=(Signal('111111')))
+
+
+class saddwb_z_zz_(_JSON_saddwb_z_zz_):
+
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 3: saddwb_b_uv, saddwb_h_uv, saddwb_s_uv
+        if f.size.value == 0b01:
+            saddwb_b_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm)
+        elif f.size.value == 0b10:
+            saddwb_h_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm)
+        elif f.size.value == 0b11:
+            saddwb_s_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm)
+
+
+class saddwt_z_zz_(_JSON_saddwt_z_zz_):
+
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 3: saddwt_b_uv, saddwt_h_uv, saddwt_s_uv
+        if f.size.value == 0b01:
+            saddwt_b_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm)
+        elif f.size.value == 0b10:
+            saddwt_h_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm)
+        elif f.size.value == 0b11:
+            saddwt_s_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm, idx=(Signal('000010')))
+
+
+class sbclb_z_zzz_(_JSON_sbclb_z_zzz_):
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 2: sbclb_d_uv, sbclb_s_uv
+        if f.sz.value == 0b0:
+            sbclb_s_uv(dest=f.Zda, src1=f.Zda, src2=f.Zn, src3=f.Zm)
+        elif f.sz.value == 0b1:
+            sbclb_d_uv(dest=f.Zda, src1=f.Zda, src2=f.Zn, src3=f.Zm)
+
+
+class sbclt_z_zzz_(_JSON_sbclt_z_zzz_):
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 2: sbclt_d_uv, sbclt_s_uv
+        if f.sz.value == 0b0:
+            sbclt_s_uv(dest=f.Zda, src1=f.Zda, src2=f.Zn, src3=f.Zm, idx=(Signal('000010')))
+        elif f.sz.value == 0b1:
+            sbclt_d_uv(dest=f.Zda, src1=f.Zda, src2=f.Zn, src3=f.Zm, idx=(Signal('001110')))
+
+
+class shadd_z_p_zz_(_JSON_shadd_z_p_zz_):
+
+    movprfx_fusion = "predicated"
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 4: shadd_b_pv, shadd_d_pv, shadd_h_pv, shadd_s_pv
+        if f.size.value == 0b00:
+            shadd_b_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm, src3=f.Zdn)
+        elif f.size.value == 0b01:
+            shadd_h_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm, src3=f.Zdn)
+        elif f.size.value == 0b10:
+            shadd_s_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm, src3=f.Zdn)
+        elif f.size.value == 0b11:
+            shadd_d_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm, src3=f.Zdn)
+
+
+class shrnb_z_zi_(_JSON_shrnb_z_zi_):
+
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 3: shrnb_d_uv, shrnb_h_uv, shrnb_s_uv
+        if f.tszh.value == 0b0:
+            if (f.tszl.value & 0b10 ) ==  0b10:
+                shrnb_s_uv(dest=f.Zd, src1=f.Zn)
+            elif f.tszl.value == 0b01:
+                shrnb_h_uv(dest=f.Zd, src1=f.Zn)
+        elif f.tszh.value == 0b1:
+            shrnb_d_uv(dest=f.Zd, src1=f.Zn)
+
+
+class shrnt_z_zi_(_JSON_shrnt_z_zi_):
+
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 3: shrnt_d_uv, shrnt_h_uv, shrnt_s_uv
+        if f.tszh.value == 0b0:
+            if (f.tszl.value & 0b10 ) ==  0b10:
+                shrnt_s_uv(dest=f.Zd, src1=f.Zn, src2=f.Zd)
+            elif f.tszl.value == 0b01:
+                shrnt_h_uv(dest=f.Zd, src1=f.Zn, src2=f.Zd)
+        elif f.tszh.value == 0b1:
+            shrnt_d_uv(dest=f.Zd, src1=f.Zn, src2=f.Zd)
+
+
+class shsubr_z_p_zz_(_JSON_shsubr_z_p_zz_):
+
+    movprfx_fusion = "predicated"
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 4: shsubr_b_pv, shsubr_d_pv, shsubr_h_pv, shsubr_s_pv
+        if f.size.value == 0b00:
+            shsubr_b_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm, src3=f.Zdn)
+        elif f.size.value == 0b01:
+            shsubr_h_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm, src3=f.Zdn)
+        elif f.size.value == 0b10:
+            shsubr_s_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm, src3=f.Zdn)
+        elif f.size.value == 0b11:
+            shsubr_d_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm, src3=f.Zdn)
+
+
+class shsub_z_p_zz_(_JSON_shsub_z_p_zz_):
+
+    movprfx_fusion = "predicated"
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 4: shsub_b_pv, shsub_d_pv, shsub_h_pv, shsub_s_pv
+        if f.size.value == 0b00:
+            shsub_b_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zm, src2=f.Zdn, src3=f.Zdn)
+        elif f.size.value == 0b01:
+            shsub_h_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zm, src2=f.Zdn, src3=f.Zdn)
+        elif f.size.value == 0b10:
+            shsub_s_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zm, src2=f.Zdn, src3=f.Zdn)
+        elif f.size.value == 0b11:
+            shsub_d_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zm, src2=f.Zdn, src3=f.Zdn)
+
+
+class sli_z_zzi_(_JSON_sli_z_zzi_):
+
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 4: sli_b_uv, sli_d_uv, sli_h_uv, sli_s_uv
+        if (f.tszh.value & 0b10 ) ==  0b10:
+            sli_d_uv(dest=f.Zd, src1=f.Zn, src2=f.Zd)
+        elif f.tszh.value == 0b00:
+            if (f.tszl.value & 0b10 ) ==  0b10:
+                sli_h_uv(dest=f.Zd, src1=f.Zn, src2=f.Zd)
+            elif f.tszl.value == 0b01:
+                sli_b_uv(dest=f.Zd, src1=f.Zn, src2=f.Zd)
+        elif f.tszh.value == 0b01:
+            sli_s_uv(dest=f.Zd, src1=f.Zn, src2=f.Zd)
+
+
+class sm4ekey_z_zz_(_JSON_sm4ekey_z_zz_):
+
+    pmu_events = ['CRYPTO_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: sm4ekey_s_uv
+        sm4ekey_s_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm)
+
+
+class sm4e_z_zz_(_JSON_sm4e_z_zz_):
+
+    pmu_events = ['CRYPTO_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: sm4e_s_uv
+        sm4e_s_uv(dest=f.Zdn, src1=f.Zdn, src2=f.Zm)
+
+
+class smaxp_z_p_zz_(_JSON_smaxp_z_p_zz_):
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 4: smaxp_b_pv, smaxp_d_pv, smaxp_h_pv, smaxp_s_pv
+        if f.size.value == 0b00:
+            smaxp_b_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm)
+        elif f.size.value == 0b01:
+            smaxp_h_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm)
+        elif f.size.value == 0b10:
+            smaxp_s_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm, idx=(Signal('111000')))
+        elif f.size.value == 0b11:
+            smaxp_d_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm, idx=(Signal('000011')))
+
+
+class sminp_z_p_zz_(_JSON_sminp_z_p_zz_):
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 4: sminp_b_pv, sminp_d_pv, sminp_h_pv, sminp_s_pv
+        if f.size.value == 0b00:
+            sminp_b_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm)
+        elif f.size.value == 0b01:
+            sminp_h_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm)
+        elif f.size.value == 0b10:
+            sminp_s_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm, idx=(Signal('111000')))
+        elif f.size.value == 0b11:
+            sminp_d_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm, idx=(Signal('000011')))
+
+
+class smlalb_z_zzzi_s(_JSON_smlalb_z_zzzi_s):
+    fields = {'opcBit19':[19,19],'opcBit20':[20,20]}
+
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['PEM_ASE_SVE_INT_MUL_MMLA_DOT_SPEC', 'INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 2: smlalb_idx0_h_uv, smlalb_idx1_h_uv
+        if f.i3l.value == 0b0:
+            smlalb_idx0_h_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('0010'),f.opcBit20,f.opcBit19))
+        elif f.i3l.value == 0b1:
+            smlalb_idx1_h_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('0010'),f.opcBit20,f.opcBit19))
+
+
+class smlalb_z_zzzi_d(_JSON_smlalb_z_zzzi_d):
+    fields = {'opcBit11':[11,11],'opcBit20':[20,20]}
+
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['PEM_ASE_SVE_INT_MUL_MMLA_DOT_SPEC', 'INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: smlalb_idx0_s_uv
+        smlalb_idx0_s_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('0010'),f.opcBit20,f.opcBit11))
+
+
+class smlalb_z_zzz_(_JSON_smlalb_z_zzz_):
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['PEM_ASE_SVE_INT_MUL_MMLA_DOT_SPEC', 'INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 3: smlalb_b_uv, smlalb_h_uv, smlalb_s_uv
+        if f.size.value == 0b01:
+            smlalb_b_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda)
+        elif f.size.value == 0b10:
+            smlalb_h_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda)
+        elif f.size.value == 0b11:
+            smlalb_s_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda)
+
+
+class smlalt_z_zzzi_s(_JSON_smlalt_z_zzzi_s):
+    fields = {'opcBit19':[19,19],'opcBit20':[20,20]}
+
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['PEM_ASE_SVE_INT_MUL_MMLA_DOT_SPEC', 'INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 2: smlalt_idx0_h_uv, smlalt_idx1_h_uv
+        if f.i3l.value == 0b0:
+            smlalt_idx0_h_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('0010'),f.opcBit20,f.opcBit19))
+        elif f.i3l.value == 0b1:
+            smlalt_idx1_h_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('0010'),f.opcBit20,f.opcBit19))
+
+
+class smlalt_z_zzzi_d(_JSON_smlalt_z_zzzi_d):
+    fields = {'opcBit11':[11,11],'opcBit20':[20,20]}
+
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['PEM_ASE_SVE_INT_MUL_MMLA_DOT_SPEC', 'INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: smlalt_idx0_s_uv
+        smlalt_idx0_s_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('1010'),f.opcBit20,f.opcBit11))
+
+
+class smlalt_z_zzz_(_JSON_smlalt_z_zzz_):
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['PEM_ASE_SVE_INT_MUL_MMLA_DOT_SPEC', 'INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 3: smlalt_b_uv, smlalt_h_uv, smlalt_s_uv
+        if f.size.value == 0b01:
+            smlalt_b_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda)
+        elif f.size.value == 0b10:
+            smlalt_h_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda)
+        elif f.size.value == 0b11:
+            smlalt_s_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('111111')))
+
+
+class smlslb_z_zzzi_s(_JSON_smlslb_z_zzzi_s):
+    fields = {'opcBit19':[19,19],'opcBit20':[20,20]}
+
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['PEM_ASE_SVE_INT_MUL_MMLA_DOT_SPEC', 'INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 2: smlslb_idx0_h_uv, smlslb_idx1_h_uv
+        if f.i3l.value == 0b0:
+            smlslb_idx0_h_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('0010'),f.opcBit20,f.opcBit19))
+        elif f.i3l.value == 0b1:
+            smlslb_idx1_h_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('0010'),f.opcBit20,f.opcBit19))
+
+
+class smlslb_z_zzzi_d(_JSON_smlslb_z_zzzi_d):
+    fields = {'opcBit11':[11,11],'opcBit20':[20,20]}
+
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['PEM_ASE_SVE_INT_MUL_MMLA_DOT_SPEC', 'INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: smlslb_idx0_s_uv
+        smlslb_idx0_s_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('0010'),f.opcBit20,f.opcBit11))
+
+
+class smlslb_z_zzz_(_JSON_smlslb_z_zzz_):
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['PEM_ASE_SVE_INT_MUL_MMLA_DOT_SPEC', 'INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 3: smlslb_b_uv, smlslb_h_uv, smlslb_s_uv
+        if f.size.value == 0b01:
+            smlslb_b_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda)
+        elif f.size.value == 0b10:
+            smlslb_h_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda)
+        elif f.size.value == 0b11:
+            smlslb_s_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda)
+
+
+class smlslt_z_zzzi_s(_JSON_smlslt_z_zzzi_s):
+    fields = {'opcBit19':[19,19],'opcBit20':[20,20]}
+
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['PEM_ASE_SVE_INT_MUL_MMLA_DOT_SPEC', 'INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 2: smlslt_idx0_h_uv, smlslt_idx1_h_uv
+        if f.i3l.value == 0b0:
+            smlslt_idx0_h_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('0010'),f.opcBit20,f.opcBit19))
+        elif f.i3l.value == 0b1:
+            smlslt_idx1_h_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('0010'),f.opcBit20,f.opcBit19))
+
+
+class smlslt_z_zzzi_d(_JSON_smlslt_z_zzzi_d):
+    fields = {'opcBit11':[11,11],'opcBit20':[20,20]}
+
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['PEM_ASE_SVE_INT_MUL_MMLA_DOT_SPEC', 'INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: smlslt_idx0_s_uv
+        smlslt_idx0_s_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('1010'),f.opcBit20,f.opcBit11))
+
+
+class smlslt_z_zzz_(_JSON_smlslt_z_zzz_):
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['PEM_ASE_SVE_INT_MUL_MMLA_DOT_SPEC', 'INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 3: smlslt_b_uv, smlslt_h_uv, smlslt_s_uv
+        if f.size.value == 0b01:
+            smlslt_b_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda)
+        elif f.size.value == 0b10:
+            smlslt_h_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda)
+        elif f.size.value == 0b11:
+            smlslt_s_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('111111')))
+
+
+class smulh_z_zz_(_JSON_smulh_z_zz_):
+
+    pmu_events = ['PEM_ASE_SVE_INT_MUL_MMLA_DOT_SPEC', 'INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 4: smulh_b_uv, smulh_d_uv, smulh_h_uv, smulh_s_uv
+        if f.size.value == 0b00:
+            smulh_b_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm)
+        elif f.size.value == 0b01:
+            smulh_h_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm)
+        elif f.size.value == 0b10:
+            smulh_s_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm)
+        elif f.size.value == 0b11:
+            smulh_d_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm, idx=(Signal('111101')))
+
+
+class smullb_z_zzi_s(_JSON_smullb_z_zzi_s):
+    fields = {'opcBit19':[19,19],'opcBit20':[20,20]}
+
+
+    pmu_events = ['PEM_ASE_SVE_INT_MUL_MMLA_DOT_SPEC', 'INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 2: smullb_idx0_h_uv, smullb_idx1_h_uv
+        if f.i3l.value == 0b0:
+            smullb_idx0_h_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm, idx=(Signal('0010'),f.opcBit20,f.opcBit19))
+        elif f.i3l.value == 0b1:
+            smullb_idx1_h_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm, idx=(Signal('0010'),f.opcBit20,f.opcBit19))
+
+
+class smullb_z_zzi_d(_JSON_smullb_z_zzi_d):
+    fields = {'opcBit11':[11,11],'opcBit20':[20,20]}
+
+
+    pmu_events = ['PEM_ASE_SVE_INT_MUL_MMLA_DOT_SPEC', 'INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: smullb_idx0_s_uv
+        smullb_idx0_s_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm, idx=(Signal('0010'),f.opcBit20,f.opcBit11))
+
+
+class smullb_z_zz_(_JSON_smullb_z_zz_):
+
+    pmu_events = ['PEM_ASE_SVE_INT_MUL_MMLA_DOT_SPEC', 'INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 3: smullb_b_uv, smullb_h_uv, smullb_s_uv
+        if f.size.value == 0b01:
+            smullb_b_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm)
+        elif f.size.value == 0b10:
+            smullb_h_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm)
+        elif f.size.value == 0b11:
+            smullb_s_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm)
+
+
+class smullt_z_zzi_s(_JSON_smullt_z_zzi_s):
+    fields = {'opcBit19':[19,19],'opcBit20':[20,20]}
+
+
+    pmu_events = ['PEM_ASE_SVE_INT_MUL_MMLA_DOT_SPEC', 'INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 2: smullt_idx0_h_uv, smullt_idx1_h_uv
+        if f.i3l.value == 0b0:
+            smullt_idx0_h_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm, idx=(Signal('0010'),f.opcBit20,f.opcBit19))
+        elif f.i3l.value == 0b1:
+            smullt_idx1_h_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm, idx=(Signal('0010'),f.opcBit20,f.opcBit19))
+
+
+class smullt_z_zzi_d(_JSON_smullt_z_zzi_d):
+    fields = {'opcBit11':[11,11],'opcBit20':[20,20]}
+
+
+    pmu_events = ['PEM_ASE_SVE_INT_MUL_MMLA_DOT_SPEC', 'INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: smullt_idx0_s_uv
+        smullt_idx0_s_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm, idx=(Signal('1010'),f.opcBit20,f.opcBit11))
+
+
+class smullt_z_zz_(_JSON_smullt_z_zz_):
+
+    pmu_events = ['PEM_ASE_SVE_INT_MUL_MMLA_DOT_SPEC', 'INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 3: smullt_b_uv, smullt_h_uv, smullt_s_uv
+        if f.size.value == 0b01:
+            smullt_b_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm)
+        elif f.size.value == 0b10:
+            smullt_h_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm)
+        elif f.size.value == 0b11:
+            smullt_s_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm, idx=(Signal('111111')))
+
+
+class splice_z_p_zz_con(_JSON_splice_z_p_zz_con):
+    fields = {**_JSON_splice_z_p_zz_con.fields, 'Pg': (12, 10)}
+
+
+    pmu_events = ['SVE_PERM_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        #Dont_touch - constructive
+        if f.size.value == 0b00:
+            splice_b_pv(dest=f.Zd, pred=f.Pg, src1=f.Zn, src2=f.Zn, src2_inc=1)
+        elif f.size.value == 0b01:
+            splice_h_pv(dest=f.Zd, pred=f.Pg, src1=f.Zn, src2=f.Zn, src2_inc=1)
+        elif f.size.value == 0b10:
+            splice_s_pv(dest=f.Zd, pred=f.Pg, src1=f.Zn, src2=f.Zn, src2_inc=1)
+        elif f.size.value == 0b11:
+            splice_d_pv(dest=f.Zd, pred=f.Pg, src1=f.Zn, src2=f.Zn, src2_inc=1)
+
+
+class sqabs_z_p_z_(_JSON_sqabs_z_p_z_m):
+
+    movprfx_fusion = "predicated"
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 4: sqabs_b_pv, sqabs_d_pv, sqabs_h_pv, sqabs_s_pv
+        if f.size.value == 0b00:
+            sqabs_b_pv(dest=f.Zd, pred=f.Pg, src1=f.Zn, src3=f.Zd)
+        elif f.size.value == 0b01:
+            sqabs_h_pv(dest=f.Zd, pred=f.Pg, src1=f.Zn, src3=f.Zd)
+        elif f.size.value == 0b10:
+            sqabs_s_pv(dest=f.Zd, pred=f.Pg, src1=f.Zn, src3=f.Zd)
+        elif f.size.value == 0b11:
+            sqabs_d_pv(dest=f.Zd, pred=f.Pg, src1=f.Zn, src3=f.Zd)
+
+
+class sqadd_z_p_zz_(_JSON_sqadd_z_p_zz_):
+
+    movprfx_fusion = "predicated"
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 4: sqadd_b_pv, sqadd_d_pv, sqadd_h_pv, sqadd_s_pv
+        if f.size.value == 0b00:
+            sqadd_b_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm, src3=f.Zdn)
+        elif f.size.value == 0b01:
+            sqadd_h_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm, src3=f.Zdn)
+        elif f.size.value == 0b10:
+            sqadd_s_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm, src3=f.Zdn)
+        elif f.size.value == 0b11:
+            sqadd_d_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm, src3=f.Zdn)
+
+
+class sqcadd_z_zz_(_JSON_sqcadd_z_zz_):
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 8: sqcadd270_b_uv, sqcadd270_d_uv, sqcadd270_h_uv, sqcadd270_s_uv, sqcadd90_b_uv, sqcadd90_d_uv, sqcadd90_h_uv, sqcadd90_s_uv
+        if f.size.value == 0b00:
+            if f.rot.value == 0b0:
+                sqcadd90_b_uv(dest=f.Zdn, src1=f.Zm, src2=f.Zdn)
+            elif f.rot.value == 0b1:
+                sqcadd270_b_uv(dest=f.Zdn, src1=f.Zm, src2=f.Zdn)
+        elif f.size.value == 0b01:
+            if f.rot.value == 0b0:
+                sqcadd90_h_uv(dest=f.Zdn, src1=f.Zm, src2=f.Zdn)
+            elif f.rot.value == 0b1:
+                sqcadd270_h_uv(dest=f.Zdn, src1=f.Zm, src2=f.Zdn)
+        elif f.size.value == 0b10:
+            if f.rot.value == 0b0:
+                sqcadd90_s_uv(dest=f.Zdn, src1=f.Zm, src2=f.Zdn, idx=(Signal('010011')))
+            elif f.rot.value == 0b1:
+                sqcadd270_s_uv(dest=f.Zdn, src1=f.Zm, src2=f.Zdn, idx=(Signal('010011')))
+        elif f.size.value == 0b11:
+            if f.rot.value == 0b0:
+                sqcadd90_d_uv(dest=f.Zdn, src1=f.Zm, src2=f.Zdn, idx=(Signal('010010')))
+            elif f.rot.value == 0b1:
+                sqcadd270_d_uv(dest=f.Zdn, src1=f.Zm, src2=f.Zdn, idx=(Signal('010010')))
+
+
+class sqdmlalbt_z_zzz_(_JSON_sqdmlalbt_z_zzz_):
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['PEM_ASE_SVE_INT_MUL_MMLA_DOT_SPEC', 'INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 3: sqdmlalbt_b_uv, sqdmlalbt_h_uv, sqdmlalbt_s_uv
+        if f.size.value == 0b01:
+            sqdmlalbt_b_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda)
+        elif f.size.value == 0b10:
+            sqdmlalbt_h_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda)
+        elif f.size.value == 0b11:
+            sqdmlalbt_s_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('000010')))
+
+
+class sqdmlalb_z_zzzi_s(_JSON_sqdmlalb_z_zzzi_s):
+    fields = {'opcBit19':[19,19],'opcBit20':[20,20]}
+
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['PEM_ASE_SVE_INT_MUL_MMLA_DOT_SPEC', 'INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 2: sqdmlalb_idx0_h_uv, sqdmlalb_idx1_h_uv
+        if f.i3l.value == 0b0:
+            sqdmlalb_idx0_h_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('0010'),f.opcBit20,f.opcBit19))
+        elif f.i3l.value == 0b1:
+            sqdmlalb_idx1_h_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('0010'),f.opcBit20,f.opcBit19))
+
+
+class sqdmlalb_z_zzzi_d(_JSON_sqdmlalb_z_zzzi_d):
+    fields = {'opcBit11':[11,11],'opcBit20':[20,20]}
+
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['PEM_ASE_SVE_INT_MUL_MMLA_DOT_SPEC', 'INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: sqdmlalb_idx0_s_uv
+        sqdmlalb_idx0_s_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('0010'),f.opcBit20,f.opcBit11))
+
+
+class sqdmlalb_z_zzz_(_JSON_sqdmlalb_z_zzz_):
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['PEM_ASE_SVE_INT_MUL_MMLA_DOT_SPEC', 'INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 3: sqdmlalb_b_uv, sqdmlalb_h_uv, sqdmlalb_s_uv
+        if f.size.value == 0b01:
+            sqdmlalb_b_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda)
+        elif f.size.value == 0b10:
+            sqdmlalb_h_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda)
+        elif f.size.value == 0b11:
+            sqdmlalb_s_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda)
+
+
+class sqdmlalt_z_zzzi_s(_JSON_sqdmlalt_z_zzzi_s):
+    fields = {'opcBit19':[19,19],'opcBit20':[20,20]}
+
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['PEM_ASE_SVE_INT_MUL_MMLA_DOT_SPEC', 'INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 2: sqdmlalt_idx0_h_uv, sqdmlalt_idx1_h_uv
+        if f.i3l.value == 0b0:
+            sqdmlalt_idx0_h_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('0010'),f.opcBit20,f.opcBit19))
+        elif f.i3l.value == 0b1:
+            sqdmlalt_idx1_h_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('0010'),f.opcBit20,f.opcBit19))
+
+
+class sqdmlalt_z_zzzi_d(_JSON_sqdmlalt_z_zzzi_d):
+    fields = {'opcBit11':[11,11],'opcBit20':[20,20]}
+
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: sqdmlalt_idx0_s_uv
+        sqdmlalt_idx0_s_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('1010'),f.opcBit20,f.opcBit11))
+
+
+class sqdmlalt_z_zzz_(_JSON_sqdmlalt_z_zzz_):
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['PEM_ASE_SVE_INT_MUL_MMLA_DOT_SPEC', 'INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 3: sqdmlalt_b_uv, sqdmlalt_h_uv, sqdmlalt_s_uv
+        if f.size.value == 0b01:
+            sqdmlalt_b_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda)
+        elif f.size.value == 0b10:
+            sqdmlalt_h_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda)
+        elif f.size.value == 0b11:
+            sqdmlalt_s_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('111111')))
+
+
+class sqdmlslbt_z_zzz_(_JSON_sqdmlslbt_z_zzz_):
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['PEM_ASE_SVE_INT_MUL_MMLA_DOT_SPEC', 'INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 3: sqdmlslbt_b_uv, sqdmlslbt_h_uv, sqdmlslbt_s_uv
+        if f.size.value == 0b01:
+            sqdmlslbt_b_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda)
+        elif f.size.value == 0b10:
+            sqdmlslbt_h_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda)
+        elif f.size.value == 0b11:
+            sqdmlslbt_s_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('000010')))
+
+
+class sqdmlslb_z_zzzi_s(_JSON_sqdmlslb_z_zzzi_s):
+    fields = {'opcBit19':[19,19],'opcBit20':[20,20]}
+
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['PEM_ASE_SVE_INT_MUL_MMLA_DOT_SPEC', 'INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 2: sqdmlslb_idx0_h_uv, sqdmlslb_idx1_h_uv
+        if f.i3l.value == 0b0:
+            sqdmlslb_idx0_h_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('0010'),f.opcBit20,f.opcBit19))
+        elif f.i3l.value == 0b1:
+            sqdmlslb_idx1_h_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('0010'),f.opcBit20,f.opcBit19))
+
+
+class sqdmlslb_z_zzzi_d(_JSON_sqdmlslb_z_zzzi_d):
+    fields = {'opcBit11':[11,11],'opcBit20':[20,20]}
+
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['PEM_ASE_SVE_INT_MUL_MMLA_DOT_SPEC', 'INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: sqdmlslb_idx0_s_uv
+        sqdmlslb_idx0_s_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('0010'),f.opcBit20,f.opcBit11))
+
+
+class sqdmlslb_z_zzz_(_JSON_sqdmlslb_z_zzz_):
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['PEM_ASE_SVE_INT_MUL_MMLA_DOT_SPEC', 'INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 3: sqdmlslb_b_uv, sqdmlslb_h_uv, sqdmlslb_s_uv
+        if f.size.value == 0b01:
+            sqdmlslb_b_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda)
+        elif f.size.value == 0b10:
+            sqdmlslb_h_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda)
+        elif f.size.value == 0b11:
+            sqdmlslb_s_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda)
+
+
+class sqdmlslt_z_zzzi_s(_JSON_sqdmlslt_z_zzzi_s):
+    fields = {'opcBit19':[19,19],'opcBit20':[20,20]}
+
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['PEM_ASE_SVE_INT_MUL_MMLA_DOT_SPEC', 'INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 2: sqdmlslt_idx0_h_uv, sqdmlslt_idx1_h_uv
+        if f.i3l.value == 0b0:
+            sqdmlslt_idx0_h_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('0010'),f.opcBit20,f.opcBit19))
+        elif f.i3l.value == 0b1:
+            sqdmlslt_idx1_h_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('0010'),f.opcBit20,f.opcBit19))
+
+
+class sqdmlslt_z_zzzi_d(_JSON_sqdmlslt_z_zzzi_d):
+    fields = {'opcBit11':[11,11],'opcBit20':[20,20]}
+
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['PEM_ASE_SVE_INT_MUL_MMLA_DOT_SPEC', 'INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: sqdmlslt_idx0_s_uv
+        sqdmlslt_idx0_s_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('1010'),f.opcBit20,f.opcBit11))
+
+
+class sqdmlslt_z_zzz_(_JSON_sqdmlslt_z_zzz_):
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['PEM_ASE_SVE_INT_MUL_MMLA_DOT_SPEC', 'INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 3: sqdmlslt_b_uv, sqdmlslt_h_uv, sqdmlslt_s_uv
+        if f.size.value == 0b01:
+            sqdmlslt_b_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda)
+        elif f.size.value == 0b10:
+            sqdmlslt_h_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda)
+        elif f.size.value == 0b11:
+            sqdmlslt_s_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('111111')))
+
+
+class sqdmulh_z_zzi_h(_JSON_sqdmulh_z_zzi_h):
+    fields = {'opcBit20':[20,20]}
+
+
+    pmu_events = ['PEM_ASE_SVE_INT_MUL_MMLA_DOT_SPEC', 'INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 2: sqdmulh_idx0_h_uv, sqdmulh_idx1_h_uv
+        if (f.i3l.value & 0b01 ) == 0b00:
+            sqdmulh_idx0_h_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm, idx=(Signal('0010'),f.i3h,f.opcBit20))
+        elif (f.i3l.value & 0b01 ) == 0b01:
+            sqdmulh_idx1_h_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm, idx=(Signal('0010'),f.i3h,f.opcBit20))
+
+
+class sqdmulh_z_zzi_s(_JSON_sqdmulh_z_zzi_s):
+    fields = {'opcBit19':[19,19],'opcBit20':[20,20]}
+
+
+    pmu_events = ['PEM_ASE_SVE_INT_MUL_MMLA_DOT_SPEC', 'INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: sqdmulh_idx0_s_uv
+        sqdmulh_idx0_s_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm, idx=(Signal('0010'),f.opcBit20,f.opcBit19))
+
+
+class sqdmulh_z_zzi_d(_JSON_sqdmulh_z_zzi_d):
+    fields = {'opcBit20':[20,20]}
+
+
+    pmu_events = ['PEM_ASE_SVE_INT_MUL_MMLA_DOT_SPEC', 'INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: sqdmulh_idx0_d_uv
+        sqdmulh_idx0_d_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm, idx=(Signal('1111'),f.opcBit20,Signal('0')))
+
+
+class sqdmulh_z_zz_(_JSON_sqdmulh_z_zz_):
+
+    pmu_events = ['PEM_ASE_SVE_INT_MUL_MMLA_DOT_SPEC', 'INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 4: sqdmulh_b_uv, sqdmulh_d_uv, sqdmulh_h_uv, sqdmulh_s_uv
+        if f.size.value == 0b00:
+            sqdmulh_b_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm)
+        elif f.size.value == 0b01:
+            sqdmulh_h_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm)
+        elif f.size.value == 0b10:
+            sqdmulh_s_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm)
+        elif f.size.value == 0b11:
+            sqdmulh_d_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm, idx=(Signal('111101')))
+
+
+class sqdmullb_z_zzi_s(_JSON_sqdmullb_z_zzi_s):
+    fields = {'opcBit19':[19,19],'opcBit20':[20,20]}
+
+
+    pmu_events = ['PEM_ASE_SVE_INT_MUL_MMLA_DOT_SPEC', 'INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 2: sqdmullb_idx0_h_uv, sqdmullb_idx1_h_uv
+        if f.i3l.value == 0b0:
+            sqdmullb_idx0_h_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm, idx=(Signal('0010'),f.opcBit20,f.opcBit19))
+        elif f.i3l.value == 0b1:
+            sqdmullb_idx1_h_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm, idx=(Signal('0010'),f.opcBit20,f.opcBit19))
+
+
+class sqdmullb_z_zzi_d(_JSON_sqdmullb_z_zzi_d):
+    fields = {'opcBit11':[11,11],'opcBit20':[20,20]}
+
+
+    pmu_events = ['PEM_ASE_SVE_INT_MUL_MMLA_DOT_SPEC', 'INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: sqdmullb_idx0_s_uv
+        sqdmullb_idx0_s_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm, idx=(Signal('0010'),f.opcBit20,f.opcBit11))
+
+
+class sqdmullb_z_zz_(_JSON_sqdmullb_z_zz_):
+
+    pmu_events = ['PEM_ASE_SVE_INT_MUL_MMLA_DOT_SPEC', 'INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 3: sqdmullb_b_uv, sqdmullb_h_uv, sqdmullb_s_uv
+        if f.size.value == 0b01:
+            sqdmullb_b_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm)
+        elif f.size.value == 0b10:
+            sqdmullb_h_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm)
+        elif f.size.value == 0b11:
+            sqdmullb_s_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm)
+
+
+class sqdmullt_z_zzi_s(_JSON_sqdmullt_z_zzi_s):
+    fields = {'opcBit19':[19,19],'opcBit20':[20,20]}
+
+
+    pmu_events = ['PEM_ASE_SVE_INT_MUL_MMLA_DOT_SPEC', 'INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 2: sqdmullt_idx0_h_uv, sqdmullt_idx1_h_uv
+        if f.i3l.value == 0b0:
+            sqdmullt_idx0_h_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm, idx=(Signal('0010'),f.opcBit20,f.opcBit19))
+        elif f.i3l.value == 0b1:
+            sqdmullt_idx1_h_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm, idx=(Signal('0010'),f.opcBit20,f.opcBit19))
+
+
+class sqdmullt_z_zzi_d(_JSON_sqdmullt_z_zzi_d):
+    fields = {'opcBit11':[11,11],'opcBit20':[20,20]}
+
+
+    pmu_events = ['PEM_ASE_SVE_INT_MUL_MMLA_DOT_SPEC', 'INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: sqdmullt_idx0_s_uv
+        sqdmullt_idx0_s_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm, idx=(Signal('1010'),f.opcBit20,f.opcBit11))
+
+
+class sqdmullt_z_zz_(_JSON_sqdmullt_z_zz_):
+
+    pmu_events = ['PEM_ASE_SVE_INT_MUL_MMLA_DOT_SPEC', 'INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 3: sqdmullt_b_uv, sqdmullt_h_uv, sqdmullt_s_uv
+        if f.size.value == 0b01:
+            sqdmullt_b_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm)
+        elif f.size.value == 0b10:
+            sqdmullt_h_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm)
+        elif f.size.value == 0b11:
+            sqdmullt_s_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm, idx=(Signal('111111')))
+
+
+class sqneg_z_p_z_(_JSON_sqneg_z_p_z_m):
+
+    movprfx_fusion = "predicated"
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 4: sqneg_b_pv, sqneg_d_pv, sqneg_h_pv, sqneg_s_pv
+        if f.size.value == 0b00:
+            sqneg_b_pv(dest=f.Zd, pred=f.Pg, src1=f.Zn, src3=f.Zd)
+        elif f.size.value == 0b01:
+            sqneg_h_pv(dest=f.Zd, pred=f.Pg, src1=f.Zn, src3=f.Zd)
+        elif f.size.value == 0b10:
+            sqneg_s_pv(dest=f.Zd, pred=f.Pg, src1=f.Zn, src3=f.Zd)
+        elif f.size.value == 0b11:
+            sqneg_d_pv(dest=f.Zd, pred=f.Pg, src1=f.Zn, src3=f.Zd)
+
+
+class sqrdcmlah_z_zzzi_h(_JSON_sqrdcmlah_z_zzzi_h):
+    fields = {'opcBit19':[19,19],'opcBit20':[20,20]}
+
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['PEM_ASE_SVE_INT_MUL_MMLA_DOT_SPEC', 'INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 4: sqrdcmlah0_idx_h_uv, sqrdcmlah180_idx_h_uv, sqrdcmlah270_idx_h_uv, sqrdcmlah90_idx_h_uv
+        if f.rot.value == 0b00:
+            sqrdcmlah0_idx_h_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('0010'),f.opcBit20,f.opcBit19))
+        elif f.rot.value == 0b01:
+            sqrdcmlah90_idx_h_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('0010'),f.opcBit20,f.opcBit19))
+        elif f.rot.value == 0b10:
+            sqrdcmlah180_idx_h_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('0010'),f.opcBit20,f.opcBit19))
+        elif f.rot.value == 0b11:
+            sqrdcmlah270_idx_h_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('0010'),f.opcBit20,f.opcBit19))
+
+
+class sqrdcmlah_z_zzzi_s(_JSON_sqrdcmlah_z_zzzi_s):
+    fields = {'opcBit20':[20,20]}
+
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['PEM_ASE_SVE_INT_MUL_MMLA_DOT_SPEC', 'INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 4: sqrdcmlah0_idx_s_uv, sqrdcmlah180_idx_s_uv, sqrdcmlah270_idx_s_uv, sqrdcmlah90_idx_s_uv
+        if f.rot.value == 0b00:
+            sqrdcmlah0_idx_s_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('1011'),f.opcBit20,Signal('0')))
+        elif f.rot.value == 0b01:
+            sqrdcmlah90_idx_s_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('1011'),f.opcBit20,Signal('1')))
+        elif f.rot.value == 0b10:
+            sqrdcmlah180_idx_s_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('1011'),f.opcBit20,Signal('0')))
+        elif f.rot.value == 0b11:
+            sqrdcmlah270_idx_s_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('1011'),f.opcBit20,Signal('1')))
+
+
+class sqrdcmlah_z_zzz_(_JSON_sqrdcmlah_z_zzz_):
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['PEM_ASE_SVE_INT_MUL_MMLA_DOT_SPEC', 'INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 16: sqrdcmlah0_b_uv, sqrdcmlah0_d_uv, sqrdcmlah0_h_uv, sqrdcmlah0_s_uv, sqrdcmlah180_b_uv, sqrdcmlah180_d_uv, sqrdcmlah180_h_uv, sqrdcmlah180_s_uv, sqrdcmlah270_b_uv, sqrdcmlah270_d_uv, sqrdcmlah270_h_uv, sqrdcmlah270_s_uv, sqrdcmlah90_b_uv, sqrdcmlah90_d_uv, sqrdcmlah90_h_uv, sqrdcmlah90_s_uv
+        if f.size.value == 0b00:
+            if f.rot.value == 0b00:
+                sqrdcmlah0_b_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda)
+            elif f.rot.value == 0b01:
+                sqrdcmlah90_b_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda)
+            elif f.rot.value == 0b10:
+                sqrdcmlah180_b_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda)
+            elif f.rot.value == 0b11:
+                sqrdcmlah270_b_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda)
+        elif f.size.value == 0b01:
+            if f.rot.value == 0b00:
+                sqrdcmlah0_h_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda)
+            elif f.rot.value == 0b01:
+                sqrdcmlah90_h_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda)
+            elif f.rot.value == 0b10:
+                sqrdcmlah180_h_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda)
+            elif f.rot.value == 0b11:
+                sqrdcmlah270_h_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda)
+        elif f.size.value == 0b10:
+            if f.rot.value == 0b00:
+                sqrdcmlah0_s_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('000100')))
+            elif f.rot.value == 0b01:
+                sqrdcmlah90_s_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('000101')))
+            elif f.rot.value == 0b10:
+                sqrdcmlah180_s_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('000100')))
+            elif f.rot.value == 0b11:
+                sqrdcmlah270_s_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('000101')))
+        elif f.size.value == 0b11:
+            if f.rot.value == 0b00:
+                sqrdcmlah0_d_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('111001')))
+            elif f.rot.value == 0b01:
+                sqrdcmlah90_d_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('111010')))
+            elif f.rot.value == 0b10:
+                sqrdcmlah180_d_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('111001')))
+            elif f.rot.value == 0b11:
+                sqrdcmlah270_d_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('111010')))
+
+
+class sqrdmlah_z_zzzi_h(_JSON_sqrdmlah_z_zzzi_h):
+    fields = {'opcBit20':[20,20]}
+
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['PEM_ASE_SVE_INT_MUL_MMLA_DOT_SPEC', 'INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 2: sqrdmlah_idx0_h_uv, sqrdmlah_idx1_h_uv
+        if (f.i3l.value & 0b01 ) == 0b00:
+            sqrdmlah_idx0_h_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('0010'),f.i3h,f.opcBit20))
+        elif (f.i3l.value & 0b01 ) == 0b01:
+            sqrdmlah_idx1_h_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('0010'),f.i3h,f.opcBit20))
+
+
+class sqrdmlah_z_zzzi_s(_JSON_sqrdmlah_z_zzzi_s):
+    fields = {'opcBit19':[19,19],'opcBit20':[20,20]}
+
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['PEM_ASE_SVE_INT_MUL_MMLA_DOT_SPEC', 'INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: sqrdmlah_idx0_s_uv
+        sqrdmlah_idx0_s_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('0010'),f.opcBit20,f.opcBit19))
+
+
+class sqrdmlah_z_zzzi_d(_JSON_sqrdmlah_z_zzzi_d):
+    fields = {'opcBit20':[20,20]}
+
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['PEM_ASE_SVE_INT_MUL_MMLA_DOT_SPEC', 'INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: sqrdmlah_idx0_d_uv
+        sqrdmlah_idx0_d_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('1111'),f.opcBit20,Signal('0')))
+
+
+class sqrdmlah_z_zzz_(_JSON_sqrdmlah_z_zzz_):
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['PEM_ASE_SVE_INT_MUL_MMLA_DOT_SPEC', 'INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 4: sqrdmlah_b_uv, sqrdmlah_d_uv, sqrdmlah_h_uv, sqrdmlah_s_uv
+        if f.size.value == 0b00:
+            sqrdmlah_b_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda)
+        elif f.size.value == 0b01:
+            sqrdmlah_h_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda)
+        elif f.size.value == 0b10:
+            sqrdmlah_s_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda)
+        elif f.size.value == 0b11:
+            sqrdmlah_d_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('111101')))
+
+
+class sqrdmlsh_z_zzzi_h(_JSON_sqrdmlsh_z_zzzi_h):
+    fields = {'opcBit20':[20,20]}
+
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['PEM_ASE_SVE_INT_MUL_MMLA_DOT_SPEC', 'INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 2: sqrdmlsh_idx0_h_uv, sqrdmlsh_idx1_h_uv
+        if (f.i3l.value & 0b01 ) == 0b00:
+            sqrdmlsh_idx0_h_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('0010'),f.i3h,f.opcBit20))
+        elif (f.i3l.value & 0b01 ) == 0b01:
+            sqrdmlsh_idx1_h_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('0010'),f.i3h,f.opcBit20))
+
+
+class sqrdmlsh_z_zzzi_s(_JSON_sqrdmlsh_z_zzzi_s):
+    fields = {'opcBit19':[19,19],'opcBit20':[20,20]}
+
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['PEM_ASE_SVE_INT_MUL_MMLA_DOT_SPEC', 'INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: sqrdmlsh_idx0_s_uv
+        sqrdmlsh_idx0_s_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('0010'),f.opcBit20,f.opcBit19))
+
+
+class sqrdmlsh_z_zzzi_d(_JSON_sqrdmlsh_z_zzzi_d):
+    fields = {'opcBit20':[20,20]}
+
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['PEM_ASE_SVE_INT_MUL_MMLA_DOT_SPEC', 'INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: sqrdmlsh_idx0_d_uv
+        sqrdmlsh_idx0_d_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('1111'),f.opcBit20,Signal('0')))
+
+
+class sqrdmlsh_z_zzz_(_JSON_sqrdmlsh_z_zzz_):
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['PEM_ASE_SVE_INT_MUL_MMLA_DOT_SPEC', 'INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 4: sqrdmlsh_b_uv, sqrdmlsh_d_uv, sqrdmlsh_h_uv, sqrdmlsh_s_uv
+        if f.size.value == 0b00:
+            sqrdmlsh_b_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda)
+        elif f.size.value == 0b01:
+            sqrdmlsh_h_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda)
+        elif f.size.value == 0b10:
+            sqrdmlsh_s_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda)
+        elif f.size.value == 0b11:
+            sqrdmlsh_d_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('111101')))
+
+
+class sqrdmulh_z_zzi_h(_JSON_sqrdmulh_z_zzi_h):
+    fields = {'opcBit20':[20,20]}
+
+
+    pmu_events = ['PEM_ASE_SVE_INT_MUL_MMLA_DOT_SPEC', 'INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 2: sqrdmulh_idx0_h_uv, sqrdmulh_idx1_h_uv
+        if (f.i3l.value & 0b01 ) == 0b00:
+            sqrdmulh_idx0_h_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm, idx=(Signal('0010'),f.i3h,f.opcBit20))
+        elif (f.i3l.value & 0b01 ) == 0b01:
+            sqrdmulh_idx1_h_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm, idx=(Signal('0010'),f.i3h,f.opcBit20))
+
+
+class sqrdmulh_z_zzi_s(_JSON_sqrdmulh_z_zzi_s):
+    fields = {'opcBit19':[19,19],'opcBit20':[20,20]}
+
+
+    pmu_events = ['PEM_ASE_SVE_INT_MUL_MMLA_DOT_SPEC', 'INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: sqrdmulh_idx0_s_uv
+        sqrdmulh_idx0_s_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm, idx=(Signal('0010'),f.opcBit20,f.opcBit19))
+
+
+class sqrdmulh_z_zzi_d(_JSON_sqrdmulh_z_zzi_d):
+    fields = {'opcBit20':[20,20]}
+
+
+    pmu_events = ['PEM_ASE_SVE_INT_MUL_MMLA_DOT_SPEC', 'INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: sqrdmulh_idx0_d_uv
+        sqrdmulh_idx0_d_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm, idx=(Signal('1111'),f.opcBit20,Signal('0')))
+
+
+class sqrdmulh_z_zz_(_JSON_sqrdmulh_z_zz_):
+
+    pmu_events = ['PEM_ASE_SVE_INT_MUL_MMLA_DOT_SPEC', 'INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 4: sqrdmulh_b_uv, sqrdmulh_d_uv, sqrdmulh_h_uv, sqrdmulh_s_uv
+        if f.size.value == 0b00:
+            sqrdmulh_b_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm)
+        elif f.size.value == 0b01:
+            sqrdmulh_h_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm)
+        elif f.size.value == 0b10:
+            sqrdmulh_s_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm)
+        elif f.size.value == 0b11:
+            sqrdmulh_d_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm, idx=(Signal('111101')))
+
+
+class sqrshlr_z_p_zz_(_JSON_sqrshlr_z_p_zz_):
+
+    movprfx_fusion = "predicated"
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 4: sqrshlr_b_pv, sqrshlr_d_pv, sqrshlr_h_pv, sqrshlr_s_pv
+        if f.size.value == 0b00:
+            sqrshlr_b_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zm, src2=f.Zdn, src3=f.Zdn)
+        elif f.size.value == 0b01:
+            sqrshlr_h_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zm, src2=f.Zdn, src3=f.Zdn)
+        elif f.size.value == 0b10:
+            sqrshlr_s_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zm, src2=f.Zdn, src3=f.Zdn)
+        elif f.size.value == 0b11:
+            sqrshlr_d_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zm, src2=f.Zdn, src3=f.Zdn)
+
+
+class sqrshl_z_p_zz_(_JSON_sqrshl_z_p_zz_):
+
+    movprfx_fusion = "predicated"
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 4: sqrshl_b_pv, sqrshl_d_pv, sqrshl_h_pv, sqrshl_s_pv
+        if f.size.value == 0b00:
+            sqrshl_b_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm, src3=f.Zdn)
+        elif f.size.value == 0b01:
+            sqrshl_h_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm, src3=f.Zdn)
+        elif f.size.value == 0b10:
+            sqrshl_s_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm, src3=f.Zdn)
+        elif f.size.value == 0b11:
+            sqrshl_d_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm, src3=f.Zdn)
+
+
+class sqrshrnb_z_zi_(_JSON_sqrshrnb_z_zi_):
+
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 3: sqrshrnb_d_uv, sqrshrnb_h_uv, sqrshrnb_s_uv
+        if f.tszh.value == 0b0:
+            if (f.tszl.value & 0b10 ) ==  0b10:
+                sqrshrnb_s_uv(dest=f.Zd, src1=f.Zn)
+            elif f.tszl.value == 0b01:
+                sqrshrnb_h_uv(dest=f.Zd, src1=f.Zn)
+        elif f.tszh.value == 0b1:
+            sqrshrnb_d_uv(dest=f.Zd, src1=f.Zn)
+
+
+class sqrshrnt_z_zi_(_JSON_sqrshrnt_z_zi_):
+
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 3: sqrshrnt_d_uv, sqrshrnt_h_uv, sqrshrnt_s_uv
+        if f.tszh.value == 0b0:
+            if (f.tszl.value & 0b10 ) ==  0b10:
+                sqrshrnt_s_uv(dest=f.Zd, src1=f.Zn, src2=f.Zd)
+            elif f.tszl.value == 0b01:
+                sqrshrnt_h_uv(dest=f.Zd, src1=f.Zn, src2=f.Zd)
+        elif f.tszh.value == 0b1:
+            sqrshrnt_d_uv(dest=f.Zd, src1=f.Zn, src2=f.Zd)
+
+
+class sqrshrunb_z_zi_(_JSON_sqrshrunb_z_zi_):
+
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 3: sqrshrunb_d_uv, sqrshrunb_h_uv, sqrshrunb_s_uv
+        if f.tszh.value == 0b0:
+            if (f.tszl.value & 0b10 ) ==  0b10:
+                sqrshrunb_s_uv(dest=f.Zd, src1=f.Zn)
+            elif f.tszl.value == 0b01:
+                sqrshrunb_h_uv(dest=f.Zd, src1=f.Zn)
+        elif f.tszh.value == 0b1:
+            sqrshrunb_d_uv(dest=f.Zd, src1=f.Zn)
+
+
+class sqrshrunt_z_zi_(_JSON_sqrshrunt_z_zi_):
+
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 3: sqrshrunt_d_uv, sqrshrunt_h_uv, sqrshrunt_s_uv
+        if f.tszh.value == 0b0:
+            if (f.tszl.value & 0b10 ) ==  0b10:
+                sqrshrunt_s_uv(dest=f.Zd, src1=f.Zn, src2=f.Zd)
+            elif f.tszl.value == 0b01:
+                sqrshrunt_h_uv(dest=f.Zd, src1=f.Zn, src2=f.Zd)
+        elif f.tszh.value == 0b1:
+            sqrshrunt_d_uv(dest=f.Zd, src1=f.Zn, src2=f.Zd)
+
+
+class sqshlr_z_p_zz_(_JSON_sqshlr_z_p_zz_):
+
+    movprfx_fusion = "predicated"
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 4: sqshlr_b_pv, sqshlr_d_pv, sqshlr_h_pv, sqshlr_s_pv
+        if f.size.value == 0b00:
+            sqshlr_b_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zm, src2=f.Zdn, src3=f.Zdn)
+        elif f.size.value == 0b01:
+            sqshlr_h_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zm, src2=f.Zdn, src3=f.Zdn)
+        elif f.size.value == 0b10:
+            sqshlr_s_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zm, src2=f.Zdn, src3=f.Zdn)
+        elif f.size.value == 0b11:
+            sqshlr_d_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zm, src2=f.Zdn, src3=f.Zdn)
+
+
+class sqshlu_z_p_zi_(_JSON_sqshlu_z_p_zi_):
+
+    movprfx_fusion = "predicated"
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        #Dont_touch - Overlay_F 
+        if (f.tszh.value & 0b10 ) ==  0b10:
+            sqshlu_d_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zdn, fsu_imm=(f.tszh, f.tszl, f.imm3))
+        elif (f.tszh.value & 0b11 ) ==  0b00:
+            if (f.tszl.value & 0b10 ) ==  0b10:
+                sqshlu_h_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zdn, fsu_imm=(f.tszh, f.tszl, f.imm3))
+            elif (f.tszl.value & 0b11 ) ==  0b01:
+                sqshlu_b_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zdn, fsu_imm=(f.tszh, f.tszl, f.imm3))
+        elif (f.tszh.value & 0b11 ) ==  0b01:
+            sqshlu_s_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zdn, fsu_imm=(f.tszh, f.tszl, f.imm3))
+
+
+class sqshl_z_p_zi_(_JSON_sqshl_z_p_zi_):
+
+    movprfx_fusion = "predicated"
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        #Dont_touch - Overlay_F 
+        if (f.tszh.value & 0b10 ) ==  0b10:
+            sqshl_imm_d_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zdn, fsu_imm=(f.tszh, f.tszl, f.imm3))
+        elif (f.tszh.value & 0b11 ) ==  0b00:
+            if (f.tszl.value & 0b10 ) ==  0b10:
+                sqshl_imm_h_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zdn, fsu_imm=(f.tszh, f.tszl, f.imm3))
+            elif (f.tszl.value & 0b11 ) ==  0b01:
+                sqshl_imm_b_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zdn, fsu_imm=(f.tszh, f.tszl, f.imm3))
+        elif (f.tszh.value & 0b11 ) ==  0b01:
+            sqshl_imm_s_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zdn, fsu_imm=(f.tszh, f.tszl, f.imm3))
+
+
+class sqshl_z_p_zz_(_JSON_sqshl_z_p_zz_):
+
+    movprfx_fusion = "predicated"
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 4: sqshl_b_pv, sqshl_d_pv, sqshl_h_pv, sqshl_s_pv
+        if f.size.value == 0b00:
+            sqshl_b_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm, src3=f.Zdn)
+        elif f.size.value == 0b01:
+            sqshl_h_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm, src3=f.Zdn)
+        elif f.size.value == 0b10:
+            sqshl_s_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm, src3=f.Zdn)
+        elif f.size.value == 0b11:
+            sqshl_d_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm, src3=f.Zdn)
+
+
+class sqshrnb_z_zi_(_JSON_sqshrnb_z_zi_):
+
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 3: sqshrnb_d_uv, sqshrnb_h_uv, sqshrnb_s_uv
+        if f.tszh.value == 0b0:
+            if (f.tszl.value & 0b10 ) ==  0b10:
+                sqshrnb_s_uv(dest=f.Zd, src1=f.Zn)
+            elif f.tszl.value == 0b01:
+                sqshrnb_h_uv(dest=f.Zd, src1=f.Zn)
+        elif f.tszh.value == 0b1:
+            sqshrnb_d_uv(dest=f.Zd, src1=f.Zn)
+
+
+class sqshrnt_z_zi_(_JSON_sqshrnt_z_zi_):
+
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 3: sqshrnt_d_uv, sqshrnt_h_uv, sqshrnt_s_uv
+        if f.tszh.value == 0b0:
+            if (f.tszl.value & 0b10 ) ==  0b10:
+                sqshrnt_s_uv(dest=f.Zd, src1=f.Zn, src2=f.Zd)
+            elif f.tszl.value == 0b01:
+                sqshrnt_h_uv(dest=f.Zd, src1=f.Zn, src2=f.Zd)
+        elif f.tszh.value == 0b1:
+            sqshrnt_d_uv(dest=f.Zd, src1=f.Zn, src2=f.Zd)
+
+
+class sqshrunb_z_zi_(_JSON_sqshrunb_z_zi_):
+
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 3: sqshrunb_d_uv, sqshrunb_h_uv, sqshrunb_s_uv
+        if f.tszh.value == 0b0:
+            if (f.tszl.value & 0b10 ) ==  0b10:
+                sqshrunb_s_uv(dest=f.Zd, src1=f.Zn)
+            elif f.tszl.value == 0b01:
+                sqshrunb_h_uv(dest=f.Zd, src1=f.Zn)
+        elif f.tszh.value == 0b1:
+            sqshrunb_d_uv(dest=f.Zd, src1=f.Zn)
+
+
+class sqshrunt_z_zi_(_JSON_sqshrunt_z_zi_):
+
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 3: sqshrunt_d_uv, sqshrunt_h_uv, sqshrunt_s_uv
+        if f.tszh.value == 0b0:
+            if (f.tszl.value & 0b10 ) ==  0b10:
+                sqshrunt_s_uv(dest=f.Zd, src1=f.Zn, src2=f.Zd)
+            elif f.tszl.value == 0b01:
+                sqshrunt_h_uv(dest=f.Zd, src1=f.Zn, src2=f.Zd)
+        elif f.tszh.value == 0b1:
+            sqshrunt_d_uv(dest=f.Zd, src1=f.Zn, src2=f.Zd)
+
+
+class sqsubr_z_p_zz_(_JSON_sqsubr_z_p_zz_):
+
+    movprfx_fusion = "predicated"
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 4: sqsubr_b_pv, sqsubr_d_pv, sqsubr_h_pv, sqsubr_s_pv
+        if f.size.value == 0b00:
+            sqsubr_b_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm, src3=f.Zdn)
+        elif f.size.value == 0b01:
+            sqsubr_h_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm, src3=f.Zdn)
+        elif f.size.value == 0b10:
+            sqsubr_s_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm, src3=f.Zdn)
+        elif f.size.value == 0b11:
+            sqsubr_d_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm, src3=f.Zdn)
+
+
+class sqsub_z_p_zz_(_JSON_sqsub_z_p_zz_):
+
+    movprfx_fusion = "predicated"
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 4: sqsub_b_pv, sqsub_d_pv, sqsub_h_pv, sqsub_s_pv
+        if f.size.value == 0b00:
+            sqsub_b_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zm, src2=f.Zdn, src3=f.Zdn)
+        elif f.size.value == 0b01:
+            sqsub_h_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zm, src2=f.Zdn, src3=f.Zdn)
+        elif f.size.value == 0b10:
+            sqsub_s_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zm, src2=f.Zdn, src3=f.Zdn)
+        elif f.size.value == 0b11:
+            sqsub_d_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zm, src2=f.Zdn, src3=f.Zdn)
+
+
+class sqxtnb_z_zz_(_JSON_sqxtnb_z_zz_):
+
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 3: sqxtnb_d_uv, sqxtnb_h_uv, sqxtnb_s_uv
+        if f.tszh.value == 0b0:
+            if f.tszl.value == 0b01:
+                sqxtnb_h_uv(dest=f.Zd, src1=f.Zn)
+            elif f.tszl.value == 0b10:
+                sqxtnb_s_uv(dest=f.Zd, src1=f.Zn)
+        elif f.tszh.value == 0b1:
+            if f.tszl.value == 0b00:
+                sqxtnb_d_uv(dest=f.Zd, src1=f.Zn)
+
+
+class sqxtnt_z_zz_(_JSON_sqxtnt_z_zz_):
+
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 3: sqxtnt_d_uv, sqxtnt_h_uv, sqxtnt_s_uv
+        if f.tszh.value == 0b0:
+            if f.tszl.value == 0b01:
+                sqxtnt_h_uv(dest=f.Zd, src1=f.Zn, src2=f.Zd)
+            elif f.tszl.value == 0b10:
+                sqxtnt_s_uv(dest=f.Zd, src1=f.Zn, src2=f.Zd)
+        elif f.tszh.value == 0b1:
+            if f.tszl.value == 0b00:
+                sqxtnt_d_uv(dest=f.Zd, src1=f.Zn, src2=f.Zd)
+
+
+class sqxtunb_z_zz_(_JSON_sqxtunb_z_zz_):
+
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 3: sqxtunb_d_uv, sqxtunb_h_uv, sqxtunb_s_uv
+        if f.tszh.value == 0b0:
+            if f.tszl.value == 0b01:
+                sqxtunb_h_uv(dest=f.Zd, src1=f.Zn)
+            elif f.tszl.value == 0b10:
+                sqxtunb_s_uv(dest=f.Zd, src1=f.Zn)
+        elif f.tszh.value == 0b1:
+            if f.tszl.value == 0b00:
+                sqxtunb_d_uv(dest=f.Zd, src1=f.Zn)
+
+
+class sqxtunt_z_zz_(_JSON_sqxtunt_z_zz_):
+
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 3: sqxtunt_d_uv, sqxtunt_h_uv, sqxtunt_s_uv
+        if f.tszh.value == 0b0:
+            if f.tszl.value == 0b01:
+                sqxtunt_h_uv(dest=f.Zd, src1=f.Zn, src2=f.Zd)
+            elif f.tszl.value == 0b10:
+                sqxtunt_s_uv(dest=f.Zd, src1=f.Zn, src2=f.Zd)
+        elif f.tszh.value == 0b1:
+            if f.tszl.value == 0b00:
+                sqxtunt_d_uv(dest=f.Zd, src1=f.Zn, src2=f.Zd)
+
+
+class srhadd_z_p_zz_(_JSON_srhadd_z_p_zz_):
+
+    movprfx_fusion = "predicated"
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 4: srhadd_b_pv, srhadd_d_pv, srhadd_h_pv, srhadd_s_pv
+        if f.size.value == 0b00:
+            srhadd_b_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm, src3=f.Zdn)
+        elif f.size.value == 0b01:
+            srhadd_h_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm, src3=f.Zdn)
+        elif f.size.value == 0b10:
+            srhadd_s_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm, src3=f.Zdn)
+        elif f.size.value == 0b11:
+            srhadd_d_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm, src3=f.Zdn)
+
+
+class sri_z_zzi_(_JSON_sri_z_zzi_):
+
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 4: sri_b_uv, sri_d_uv, sri_h_uv, sri_s_uv
+        if (f.tszh.value & 0b10 ) ==  0b10:
+            if (f.tszl.value & 0b00 ) ==  0b00:
+                sri_d_uv(dest=f.Zd, src1=f.Zn, src2=f.Zd)
+        elif (f.tszh.value & 0b11 ) ==  0b00:
+            if (f.tszl.value & 0b10 ) ==  0b10:
+                sri_h_uv(dest=f.Zd, src1=f.Zn, src2=f.Zd)
+            elif (f.tszl.value & 0b11 ) ==  0b01:
+                sri_b_uv(dest=f.Zd, src1=f.Zn, src2=f.Zd)
+        elif (f.tszh.value & 0b11 ) ==  0b01:
+            if (f.tszl.value & 0b00 ) ==  0b00:
+                sri_s_uv(dest=f.Zd, src1=f.Zn, src2=f.Zd)
+
+
+class srshlr_z_p_zz_(_JSON_srshlr_z_p_zz_):
+
+    movprfx_fusion = "predicated"
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 4: srshlr_b_pv, srshlr_d_pv, srshlr_h_pv, srshlr_s_pv
+        if f.size.value == 0b00:
+            srshlr_b_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zm, src2=f.Zdn, src3=f.Zdn)
+        elif f.size.value == 0b01:
+            srshlr_h_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zm, src2=f.Zdn, src3=f.Zdn)
+        elif f.size.value == 0b10:
+            srshlr_s_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zm, src2=f.Zdn, src3=f.Zdn)
+        elif f.size.value == 0b11:
+            srshlr_d_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zm, src2=f.Zdn, src3=f.Zdn)
+
+
+class srshl_z_p_zz_(_JSON_srshl_z_p_zz_):
+
+    movprfx_fusion = "predicated"
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 4: srshl_b_pv, srshl_d_pv, srshl_h_pv, srshl_s_pv
+        if f.size.value == 0b00:
+            srshl_b_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm, src3=f.Zdn)
+        elif f.size.value == 0b01:
+            srshl_h_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm, src3=f.Zdn)
+        elif f.size.value == 0b10:
+            srshl_s_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm, src3=f.Zdn)
+        elif f.size.value == 0b11:
+            srshl_d_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm, src3=f.Zdn)
+
+
+class srshr_z_p_zi_(_JSON_srshr_z_p_zi_):
+
+    movprfx_fusion = "predicated"
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        #Dont_touch - Overlay_F 
+        if (f.tszh.value & 0b10 ) ==  0b10:
+            srshr_d_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zdn, fsu_imm=(f.tszh, f.tszl, f.imm3))
+        elif (f.tszh.value & 0b11 ) ==  0b00:
+            if (f.tszl.value & 0b10 ) ==  0b10:
+                srshr_h_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zdn, fsu_imm=(f.tszh, f.tszl, f.imm3))
+            elif (f.tszl.value & 0b11 ) ==  0b01:
+                srshr_b_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zdn, fsu_imm=(f.tszh, f.tszl, f.imm3))
+        elif (f.tszh.value & 0b11 ) ==  0b01:
+            srshr_s_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zdn, fsu_imm=(f.tszh, f.tszl, f.imm3))
+
+
+class srsra_z_zi_(_JSON_srsra_z_zi_):
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 4: srsra_b_uv, srsra_d_uv, srsra_h_uv, srsra_s_uv
+        if (f.tszh.value & 0b10 ) ==  0b10:
+            srsra_d_uv(dest=f.Zda, src1=f.Zn, src2=f.Zda)
+        elif (f.tszh.value & 0b11 ) ==  0b00:
+            if (f.tszl.value & 0b10 ) ==  0b10:
+                srsra_h_uv(dest=f.Zda, src1=f.Zn, src2=f.Zda)
+            elif (f.tszl.value & 0b11 ) ==  0b01:
+                srsra_b_uv(dest=f.Zda, src1=f.Zn, src2=f.Zda)
+        elif (f.tszh.value & 0b11 ) ==  0b01:
+            srsra_s_uv(dest=f.Zda, src1=f.Zn, src2=f.Zda)
+
+
+class sshllb_z_zi_(_JSON_sshllb_z_zi_):
+
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 3: sshllb_b_uv, sshllb_h_uv, sshllb_s_uv
+        if f.tszh.value == 0b0:
+            if (f.tszl.value & 0b10 ) ==  0b10:
+                sshllb_h_uv(dest=f.Zd, src1=f.Zn)
+            elif (f.tszl.value & 0b11 ) ==  0b01:
+                sshllb_b_uv(dest=f.Zd, src1=f.Zn)
+        elif f.tszh.value == 0b1:
+            sshllb_s_uv(dest=f.Zd, src1=f.Zn)
+
+
+class sshllt_z_zi_(_JSON_sshllt_z_zi_):
+
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 3: sshllt_b_uv, sshllt_h_uv, sshllt_s_uv
+        if f.tszh.value == 0b0:
+            if (f.tszl.value & 0b10 ) ==  0b10:
+                sshllt_h_uv(dest=f.Zd, src1=f.Zn)
+            elif (f.tszl.value & 0b11 ) ==  0b01:
+                sshllt_b_uv(dest=f.Zd, src1=f.Zn)
+        elif f.tszh.value == 0b1:
+            sshllt_s_uv(dest=f.Zd, src1=f.Zn, idx=(Signal('111111')))
+
+
+class ssra_z_zi_(_JSON_ssra_z_zi_):
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 4: ssra_b_uv, ssra_d_uv, ssra_h_uv, ssra_s_uv
+        if (f.tszh.value & 0b10 ) ==  0b10:
+            ssra_d_uv(dest=f.Zda, src1=f.Zn, src2=f.Zda)
+        elif (f.tszh.value & 0b11 ) ==  0b00:
+            if (f.tszl.value & 0b10 ) ==  0b10:
+                ssra_h_uv(dest=f.Zda, src1=f.Zn, src2=f.Zda)
+            elif (f.tszl.value & 0b11 ) ==  0b01:
+                ssra_b_uv(dest=f.Zda, src1=f.Zn, src2=f.Zda)
+        elif (f.tszh.value & 0b11 ) ==  0b01:
+            ssra_s_uv(dest=f.Zda, src1=f.Zn, src2=f.Zda)
+
+
+class ssublbt_z_zz_(_JSON_ssublbt_z_zz_):
+
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 3: ssublbt_b_uv, ssublbt_h_uv, ssublbt_s_uv
+        if f.size.value == 0b01:
+            ssublbt_b_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm)
+        elif f.size.value == 0b10:
+            ssublbt_h_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm)
+        elif f.size.value == 0b11:
+            ssublbt_s_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm, idx=(Signal('000010')))
+
+
+class ssublb_z_zz_(_JSON_ssublb_z_zz_):
+
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 3: ssublb_b_uv, ssublb_h_uv, ssublb_s_uv
+        if f.size.value == 0b01:
+            ssublb_b_uv(dest=f.Zd, src1=f.Zm, src2=f.Zn)
+        elif f.size.value == 0b10:
+            ssublb_h_uv(dest=f.Zd, src1=f.Zm, src2=f.Zn)
+        elif f.size.value == 0b11:
+            ssublb_s_uv(dest=f.Zd, src1=f.Zm, src2=f.Zn)
+
+
+class ssubltb_z_zz_(_JSON_ssubltb_z_zz_):
+
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 3: ssubltb_b_uv, ssubltb_h_uv, ssubltb_s_uv
+        if f.size.value == 0b01:
+            ssubltb_b_uv(dest=f.Zd, src1=f.Zm, src2=f.Zn)
+        elif f.size.value == 0b10:
+            ssubltb_h_uv(dest=f.Zd, src1=f.Zm, src2=f.Zn)
+        elif f.size.value == 0b11:
+            ssubltb_s_uv(dest=f.Zd, src1=f.Zm, src2=f.Zn, idx=(Signal('000010')))
+
+
+class ssublt_z_zz_(_JSON_ssublt_z_zz_):
+
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 3: ssublt_b_uv, ssublt_h_uv, ssublt_s_uv
+        if f.size.value == 0b01:
+            ssublt_b_uv(dest=f.Zd, src1=f.Zm, src2=f.Zn)
+        elif f.size.value == 0b10:
+            ssublt_h_uv(dest=f.Zd, src1=f.Zm, src2=f.Zn)
+        elif f.size.value == 0b11:
+            ssublt_s_uv(dest=f.Zd, src1=f.Zm, src2=f.Zn, idx=(Signal('111111')))
+
+
+class ssubwb_z_zz_(_JSON_ssubwb_z_zz_):
+
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 3: ssubwb_b_uv, ssubwb_h_uv, ssubwb_s_uv
+        if f.size.value == 0b01:
+            ssubwb_b_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm)
+        elif f.size.value == 0b10:
+            ssubwb_h_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm)
+        elif f.size.value == 0b11:
+            ssubwb_s_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm)
+
+
+class ssubwt_z_zz_(_JSON_ssubwt_z_zz_):
+
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 3: ssubwt_b_uv, ssubwt_h_uv, ssubwt_s_uv
+        if f.size.value == 0b01:
+            ssubwt_b_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm)
+        elif f.size.value == 0b10:
+            ssubwt_h_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm)
+        elif f.size.value == 0b11:
+            ssubwt_s_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm, idx=(Signal('000010')))
+
+
+class subhnb_z_zz_(_JSON_subhnb_z_zz_):
+
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 3: subhnb_d_uv, subhnb_h_uv, subhnb_s_uv
+        if f.size.value == 0b01:
+            subhnb_h_uv(dest=f.Zd, src1=f.Zm, src2=f.Zn)
+        elif f.size.value == 0b10:
+            subhnb_s_uv(dest=f.Zd, src1=f.Zm, src2=f.Zn)
+        elif f.size.value == 0b11:
+            subhnb_d_uv(dest=f.Zd, src1=f.Zm, src2=f.Zn)
+
+
+class subhnt_z_zz_(_JSON_subhnt_z_zz_):
+
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 3: subhnt_d_uv, subhnt_h_uv, subhnt_s_uv
+        if f.size.value == 0b01:
+            subhnt_h_uv(dest=f.Zd, src1=f.Zm, src2=f.Zn, src3=f.Zd)
+        elif f.size.value == 0b10:
+            subhnt_s_uv(dest=f.Zd, src1=f.Zm, src2=f.Zn, src3=f.Zd)
+        elif f.size.value == 0b11:
+            subhnt_d_uv(dest=f.Zd, src1=f.Zm, src2=f.Zn, src3=f.Zd)
+
+
+class suqadd_z_p_zz_(_JSON_suqadd_z_p_zz_):
+
+    movprfx_fusion = "predicated"
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 4: suqadd_b_pv, suqadd_d_pv, suqadd_h_pv, suqadd_s_pv
+        if f.size.value == 0b00:
+            suqadd_b_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm, src3=f.Zdn)
+        elif f.size.value == 0b01:
+            suqadd_h_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm, src3=f.Zdn)
+        elif f.size.value == 0b10:
+            suqadd_s_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm, src3=f.Zdn)
+        elif f.size.value == 0b11:
+            suqadd_d_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm, src3=f.Zdn)
+
+
+class tbl_z_zz_2(_JSON_tbl_z_zz_2):
+
+    pmu_events = ['SVE_PERM_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        # Number of uops 4: tbl1x_b_uv, tbl1x_d_uv, tbl1x_h_uv, tbl1x_s_uv
+        if f.size.value == 0b00:
+            tbl2r_b_uv(dest=f.Zd, src1=f.Zm, src2=f.Zn, src3=f.Zn, src3_inc=1)
+        elif f.size.value == 0b01:
+            tbl2r_h_uv(dest=f.Zd, src1=f.Zm, src2=f.Zn, src3=f.Zn, src3_inc=1)
+        elif f.size.value == 0b10:
+            tbl2r_s_uv(dest=f.Zd, src1=f.Zm, src2=f.Zn, src3=f.Zn, src3_inc=1)
+        elif f.size.value == 0b11:
+            tbl2r_d_uv(dest=f.Zd, src1=f.Zm, src2=f.Zn, src3=f.Zn, src3_inc=1)
+
+
+class tbx_z_zz_(_JSON_tbx_z_zz_):
+
+    pmu_events = ['SVE_PERM_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 4: tbl1x_b_uv, tbl1x_d_uv, tbl1x_h_uv, tbl1x_s_uv
+        if f.size.value == 0b00:
+            tbl1x_b_uv(dest=f.Zd, src1=f.Zm, src2=f.Zn, src3=f.Zd)
+        elif f.size.value == 0b01:
+            tbl1x_h_uv(dest=f.Zd, src1=f.Zm, src2=f.Zn, src3=f.Zd)
+        elif f.size.value == 0b10:
+            tbl1x_s_uv(dest=f.Zd, src1=f.Zm, src2=f.Zn, src3=f.Zd)
+        elif f.size.value == 0b11:
+            tbl1x_d_uv(dest=f.Zd, src1=f.Zm, src2=f.Zn, src3=f.Zd)
+
+
+class uabalb_z_zzz_(_JSON_uabalb_z_zzz_):
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 3: uabalb_b_uv, uabalb_h_uv, uabalb_s_uv
+        if f.size.value == 0b01:
+            uabalb_b_uv(dest=f.Zda, src1=f.Zm, src2=f.Zn, src3=f.Zda)
+        elif f.size.value == 0b10:
+            uabalb_h_uv(dest=f.Zda, src1=f.Zm, src2=f.Zn, src3=f.Zda)
+        elif f.size.value == 0b11:
+            uabalb_s_uv(dest=f.Zda, src1=f.Zm, src2=f.Zn, src3=f.Zda)
+
+
+class uabalt_z_zzz_(_JSON_uabalt_z_zzz_):
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 3: uabalt_b_uv, uabalt_h_uv, uabalt_s_uv
+        if f.size.value == 0b01:
+            uabalt_b_uv(dest=f.Zda, src1=f.Zm, src2=f.Zn, src3=f.Zda)
+        elif f.size.value == 0b10:
+            uabalt_h_uv(dest=f.Zda, src1=f.Zm, src2=f.Zn, src3=f.Zda)
+        elif f.size.value == 0b11:
+            uabalt_s_uv(dest=f.Zda, src1=f.Zm, src2=f.Zn, src3=f.Zda, idx=(Signal('111111')))
+
+
+class uaba_z_zzz_(_JSON_uaba_z_zzz_):
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 4: uaba_b_uv, uaba_d_uv, uaba_h_uv, uaba_s_uv
+        if f.size.value == 0b00:
+            uaba_b_uv(dest=f.Zda, src1=f.Zm, src2=f.Zn, src3=f.Zda)
+        elif f.size.value == 0b01:
+            uaba_h_uv(dest=f.Zda, src1=f.Zm, src2=f.Zn, src3=f.Zda)
+        elif f.size.value == 0b10:
+            uaba_s_uv(dest=f.Zda, src1=f.Zm, src2=f.Zn, src3=f.Zda)
+        elif f.size.value == 0b11:
+            uaba_d_uv(dest=f.Zda, src1=f.Zm, src2=f.Zn, src3=f.Zda)
+
+
+class uabdlb_z_zz_(_JSON_uabdlb_z_zz_):
+
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 3: uabdlb_b_uv, uabdlb_h_uv, uabdlb_s_uv
+        if f.size.value == 0b01:
+            uabdlb_b_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm)
+        elif f.size.value == 0b10:
+            uabdlb_h_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm)
+        elif f.size.value == 0b11:
+            uabdlb_s_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm)
+
+
+class uabdlt_z_zz_(_JSON_uabdlt_z_zz_):
+
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 3: uabdlt_b_uv, uabdlt_h_uv, uabdlt_s_uv
+        if f.size.value == 0b01:
+            uabdlt_b_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm)
+        elif f.size.value == 0b10:
+            uabdlt_h_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm)
+        elif f.size.value == 0b11:
+            uabdlt_s_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm, idx=(Signal('111111')))
+
+
+class uadalp_z_p_z_(_JSON_uadalp_z_p_z_):
+
+    movprfx_fusion = "predicated"
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 3: uadalp_b_pv, uadalp_h_pv, uadalp_s_pv
+        if f.size.value == 0b01:
+            uadalp_b_pv(dest=f.Zda, pred=f.Pg, src1=f.Zn, src2=f.Zn, src3=f.Zda)
+        elif f.size.value == 0b10:
+            uadalp_h_pv(dest=f.Zda, pred=f.Pg, src1=f.Zn, src2=f.Zn, src3=f.Zda)
+        elif f.size.value == 0b11:
+            uadalp_s_pv(dest=f.Zda, pred=f.Pg, src1=f.Zn, src2=f.Zn, src3=f.Zda, idx=(Signal('000010')))
+
+
+class uaddlb_z_zz_(_JSON_uaddlb_z_zz_):
+
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 3: uaddlb_b_uv, uaddlb_h_uv, uaddlb_s_uv
+        if f.size.value == 0b01:
+            uaddlb_b_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm)
+        elif f.size.value == 0b10:
+            uaddlb_h_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm)
+        elif f.size.value == 0b11:
+            uaddlb_s_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm)
+
+
+class uaddlt_z_zz_(_JSON_uaddlt_z_zz_):
+
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 3: uaddlt_b_uv, uaddlt_h_uv, uaddlt_s_uv
+        if f.size.value == 0b01:
+            uaddlt_b_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm)
+        elif f.size.value == 0b10:
+            uaddlt_h_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm)
+        elif f.size.value == 0b11:
+            uaddlt_s_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm, idx=(Signal('111111')))
+
+
+class uaddwb_z_zz_(_JSON_uaddwb_z_zz_):
+
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 3: uaddwb_b_uv, uaddwb_h_uv, uaddwb_s_uv
+        if f.size.value == 0b01:
+            uaddwb_b_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm)
+        elif f.size.value == 0b10:
+            uaddwb_h_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm)
+        elif f.size.value == 0b11:
+            uaddwb_s_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm)
+
+
+class uaddwt_z_zz_(_JSON_uaddwt_z_zz_):
+
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 3: uaddwt_b_uv, uaddwt_h_uv, uaddwt_s_uv
+        if f.size.value == 0b01:
+            uaddwt_b_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm)
+        elif f.size.value == 0b10:
+            uaddwt_h_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm)
+        elif f.size.value == 0b11:
+            uaddwt_s_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm, idx=(Signal('000010')))
+
+
+class uhadd_z_p_zz_(_JSON_uhadd_z_p_zz_):
+
+    movprfx_fusion = "predicated"
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 4: uhadd_b_pv, uhadd_d_pv, uhadd_h_pv, uhadd_s_pv
+        if f.size.value == 0b00:
+            uhadd_b_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm, src3=f.Zdn)
+        elif f.size.value == 0b01:
+            uhadd_h_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm, src3=f.Zdn)
+        elif f.size.value == 0b10:
+            uhadd_s_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm, src3=f.Zdn)
+        elif f.size.value == 0b11:
+            uhadd_d_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm, src3=f.Zdn)
+
+
+class uhsubr_z_p_zz_(_JSON_uhsubr_z_p_zz_):
+
+    movprfx_fusion = "predicated"
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 4: uhsubr_b_pv, uhsubr_d_pv, uhsubr_h_pv, uhsubr_s_pv
+        if f.size.value == 0b00:
+            uhsubr_b_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm, src3=f.Zdn)
+        elif f.size.value == 0b01:
+            uhsubr_h_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm, src3=f.Zdn)
+        elif f.size.value == 0b10:
+            uhsubr_s_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm, src3=f.Zdn)
+        elif f.size.value == 0b11:
+            uhsubr_d_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm, src3=f.Zdn)
+
+
+class uhsub_z_p_zz_(_JSON_uhsub_z_p_zz_):
+
+    movprfx_fusion = "predicated"
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 4: uhsub_b_pv, uhsub_d_pv, uhsub_h_pv, uhsub_s_pv
+        if f.size.value == 0b00:
+            uhsub_b_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zm, src2=f.Zdn, src3=f.Zdn)
+        elif f.size.value == 0b01:
+            uhsub_h_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zm, src2=f.Zdn, src3=f.Zdn)
+        elif f.size.value == 0b10:
+            uhsub_s_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zm, src2=f.Zdn, src3=f.Zdn)
+        elif f.size.value == 0b11:
+            uhsub_d_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zm, src2=f.Zdn, src3=f.Zdn)
+
+
+class umaxp_z_p_zz_(_JSON_umaxp_z_p_zz_):
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 4: umaxp_b_pv, umaxp_d_pv, umaxp_h_pv, umaxp_s_pv
+        if f.size.value == 0b00:
+            umaxp_b_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm)
+        elif f.size.value == 0b01:
+            umaxp_h_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm)
+        elif f.size.value == 0b10:
+            umaxp_s_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm, idx=(Signal('111000')))
+        elif f.size.value == 0b11:
+            umaxp_d_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm, idx=(Signal('000011')))
+
+
+class uminp_z_p_zz_(_JSON_uminp_z_p_zz_):
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 4: uminp_b_pv, uminp_d_pv, uminp_h_pv, uminp_s_pv
+        if f.size.value == 0b00:
+            uminp_b_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm)
+        elif f.size.value == 0b01:
+            uminp_h_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm)
+        elif f.size.value == 0b10:
+            uminp_s_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm, idx=(Signal('111000')))
+        elif f.size.value == 0b11:
+            uminp_d_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm, idx=(Signal('000011')))
+
+
+class umlalb_z_zzzi_s(_JSON_umlalb_z_zzzi_s):
+    fields = {'opcBit19':[19,19],'opcBit20':[20,20]}
+
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['PEM_ASE_SVE_INT_MUL_MMLA_DOT_SPEC', 'INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 2: umlalb_idx0_h_uv, umlalb_idx1_h_uv
+        if f.i3l.value == 0b0:
+            umlalb_idx0_h_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('0010'),f.opcBit20,f.opcBit19))
+        elif f.i3l.value == 0b1:
+            umlalb_idx1_h_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('0010'),f.opcBit20,f.opcBit19))
+
+
+class umlalb_z_zzzi_d(_JSON_umlalb_z_zzzi_d):
+    fields = {'opcBit11':[11,11],'opcBit20':[20,20]}
+
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['PEM_ASE_SVE_INT_MUL_MMLA_DOT_SPEC', 'INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: umlalb_idx0_s_uv
+        umlalb_idx0_s_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('0010'),f.opcBit20,f.opcBit11))
+
+
+class umlalb_z_zzz_(_JSON_umlalb_z_zzz_):
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['PEM_ASE_SVE_INT_MUL_MMLA_DOT_SPEC', 'INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 3: umlalb_b_uv, umlalb_h_uv, umlalb_s_uv
+        if f.size.value == 0b01:
+            umlalb_b_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda)
+        elif f.size.value == 0b10:
+            umlalb_h_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda)
+        elif f.size.value == 0b11:
+            umlalb_s_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda)
+
+
+class umlalt_z_zzzi_s(_JSON_umlalt_z_zzzi_s):
+    fields = {'opcBit19':[19,19],'opcBit20':[20,20]}
+
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['PEM_ASE_SVE_INT_MUL_MMLA_DOT_SPEC', 'INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 2: umlalt_idx0_h_uv, umlalt_idx1_h_uv
+        if f.i3l.value == 0b0:
+            umlalt_idx0_h_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('0010'),f.opcBit20,f.opcBit19))
+        elif f.i3l.value == 0b1:
+            umlalt_idx1_h_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('0010'),f.opcBit20,f.opcBit19))
+
+
+class umlalt_z_zzzi_d(_JSON_umlalt_z_zzzi_d):
+    fields = {'opcBit11':[11,11],'opcBit20':[20,20]}
+
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['PEM_ASE_SVE_INT_MUL_MMLA_DOT_SPEC', 'INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: umlalt_idx0_s_uv
+        umlalt_idx0_s_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('1010'),f.opcBit20,f.opcBit11))
+
+
+class umlalt_z_zzz_(_JSON_umlalt_z_zzz_):
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['PEM_ASE_SVE_INT_MUL_MMLA_DOT_SPEC', 'INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 3: umlalt_b_uv, umlalt_h_uv, umlalt_s_uv
+        if f.size.value == 0b01:
+            umlalt_b_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda)
+        elif f.size.value == 0b10:
+            umlalt_h_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda)
+        elif f.size.value == 0b11:
+            umlalt_s_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('111111')))
+
+
+class umlslb_z_zzzi_s(_JSON_umlslb_z_zzzi_s):
+    fields = {'opcBit19':[19,19],'opcBit20':[20,20]}
+
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['PEM_ASE_SVE_INT_MUL_MMLA_DOT_SPEC', 'INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 2: umlslb_idx0_h_uv, umlslb_idx1_h_uv
+        if f.i3l.value == 0b0:
+            umlslb_idx0_h_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('0010'),f.opcBit20,f.opcBit19))
+        elif f.i3l.value == 0b1:
+            umlslb_idx1_h_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('0010'),f.opcBit20,f.opcBit19))
+
+
+class umlslb_z_zzzi_d(_JSON_umlslb_z_zzzi_d):
+    fields = {'opcBit11':[11,11],'opcBit20':[20,20]}
+
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['PEM_ASE_SVE_INT_MUL_MMLA_DOT_SPEC', 'INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: umlslb_idx0_s_uv
+        umlslb_idx0_s_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('0010'),f.opcBit20,f.opcBit11))
+
+
+class umlslb_z_zzz_(_JSON_umlslb_z_zzz_):
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['PEM_ASE_SVE_INT_MUL_MMLA_DOT_SPEC', 'INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 3: umlslb_b_uv, umlslb_h_uv, umlslb_s_uv
+        if f.size.value == 0b01:
+            umlslb_b_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda)
+        elif f.size.value == 0b10:
+            umlslb_h_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda)
+        elif f.size.value == 0b11:
+            umlslb_s_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda)
+
+
+class umlslt_z_zzzi_s(_JSON_umlslt_z_zzzi_s):
+    fields = {'opcBit19':[19,19],'opcBit20':[20,20]}
+
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['PEM_ASE_SVE_INT_MUL_MMLA_DOT_SPEC', 'INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 2: umlslt_idx0_h_uv, umlslt_idx1_h_uv
+        if f.i3l.value == 0b0:
+            umlslt_idx0_h_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('0010'),f.opcBit20,f.opcBit19))
+        elif f.i3l.value == 0b1:
+            umlslt_idx1_h_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('0010'),f.opcBit20,f.opcBit19))
+
+
+class umlslt_z_zzzi_d(_JSON_umlslt_z_zzzi_d):
+    fields = {'opcBit11':[11,11],'opcBit20':[20,20]}
+
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['PEM_ASE_SVE_INT_MUL_MMLA_DOT_SPEC', 'INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: umlslt_idx0_s_uv
+        umlslt_idx0_s_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('1010'),f.opcBit20,f.opcBit11))
+
+
+class umlslt_z_zzz_(_JSON_umlslt_z_zzz_):
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['PEM_ASE_SVE_INT_MUL_MMLA_DOT_SPEC', 'INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 3: umlslt_b_uv, umlslt_h_uv, umlslt_s_uv
+        if f.size.value == 0b01:
+            umlslt_b_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda)
+        elif f.size.value == 0b10:
+            umlslt_h_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda)
+        elif f.size.value == 0b11:
+            umlslt_s_uv(dest=f.Zda, src1=f.Zn, src2=f.Zm, src3=f.Zda, idx=(Signal('111111')))
+
+
+class umulh_z_zz_(_JSON_umulh_z_zz_):
+
+    pmu_events = ['PEM_ASE_SVE_INT_MUL_MMLA_DOT_SPEC', 'INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 4: umulh_b_uv, umulh_d_uv, umulh_h_uv, umulh_s_uv
+        if f.size.value == 0b00:
+            umulh_b_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm)
+        elif f.size.value == 0b01:
+            umulh_h_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm)
+        elif f.size.value == 0b10:
+            umulh_s_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm)
+        elif f.size.value == 0b11:
+            umulh_d_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm, idx=(Signal('111101')))
+
+
+class umullb_z_zzi_s(_JSON_umullb_z_zzi_s):
+    fields = {'opcBit19':[19,19],'opcBit20':[20,20]}
+
+
+    pmu_events = ['PEM_ASE_SVE_INT_MUL_MMLA_DOT_SPEC', 'INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 2: umullb_idx0_h_uv, umullb_idx1_h_uv
+        if f.i3l.value == 0b0:
+            umullb_idx0_h_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm, idx=(Signal('0010'),f.opcBit20,f.opcBit19))
+        elif f.i3l.value == 0b1:
+            umullb_idx1_h_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm, idx=(Signal('0010'),f.opcBit20,f.opcBit19))
+
+
+class umullb_z_zzi_d(_JSON_umullb_z_zzi_d):
+    fields = {'opcBit11':[11,11],'opcBit20':[20,20]}
+
+
+    pmu_events = ['PEM_ASE_SVE_INT_MUL_MMLA_DOT_SPEC', 'INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: umullb_idx0_s_uv
+        umullb_idx0_s_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm, idx=(Signal('0010'),f.opcBit20,f.opcBit11))
+
+
+class umullb_z_zz_(_JSON_umullb_z_zz_):
+
+    pmu_events = ['PEM_ASE_SVE_INT_MUL_MMLA_DOT_SPEC', 'INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 3: umullb_b_uv, umullb_h_uv, umullb_s_uv
+        if f.size.value == 0b01:
+            umullb_b_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm)
+        elif f.size.value == 0b10:
+            umullb_h_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm)
+        elif f.size.value == 0b11:
+            umullb_s_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm)
+
+
+class umullt_z_zzi_s(_JSON_umullt_z_zzi_s):
+    fields = {'opcBit19':[19,19],'opcBit20':[20,20]}
+
+
+    pmu_events = ['PEM_ASE_SVE_INT_MUL_MMLA_DOT_SPEC', 'INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 2: umullt_idx0_h_uv, umullt_idx1_h_uv
+        if f.i3l.value == 0b0:
+            umullt_idx0_h_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm, idx=(Signal('0010'),f.opcBit20,f.opcBit19))
+        elif f.i3l.value == 0b1:
+            umullt_idx1_h_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm, idx=(Signal('0010'),f.opcBit20,f.opcBit19))
+
+
+class umullt_z_zzi_d(_JSON_umullt_z_zzi_d):
+    fields = {'opcBit11':[11,11],'opcBit20':[20,20]}
+
+
+    pmu_events = ['PEM_ASE_SVE_INT_MUL_MMLA_DOT_SPEC', 'INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: umullt_idx0_s_uv
+        umullt_idx0_s_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm, idx=(Signal('1010'),f.opcBit20,f.opcBit11))
+
+
+class umullt_z_zz_(_JSON_umullt_z_zz_):
+
+    pmu_events = ['PEM_ASE_SVE_INT_MUL_MMLA_DOT_SPEC', 'INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 3: umullt_b_uv, umullt_h_uv, umullt_s_uv
+        if f.size.value == 0b01:
+            umullt_b_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm)
+        elif f.size.value == 0b10:
+            umullt_h_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm)
+        elif f.size.value == 0b11:
+            umullt_s_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm, idx=(Signal('111111')))
+
+
+class uqadd_z_p_zz_(_JSON_uqadd_z_p_zz_):
+
+    movprfx_fusion = "predicated"
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 4: uqadd_b_pv, uqadd_d_pv, uqadd_h_pv, uqadd_s_pv
+        if f.size.value == 0b00:
+            uqadd_b_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm, src3=f.Zdn)
+        elif f.size.value == 0b01:
+            uqadd_h_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm, src3=f.Zdn)
+        elif f.size.value == 0b10:
+            uqadd_s_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm, src3=f.Zdn)
+        elif f.size.value == 0b11:
+            uqadd_d_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm, src3=f.Zdn)
+
+
+class uqrshlr_z_p_zz_(_JSON_uqrshlr_z_p_zz_):
+
+    movprfx_fusion = "predicated"
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 4: uqrshlr_b_pv, uqrshlr_d_pv, uqrshlr_h_pv, uqrshlr_s_pv
+        if f.size.value == 0b00:
+            uqrshlr_b_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zm, src2=f.Zdn, src3=f.Zdn)
+        elif f.size.value == 0b01:
+            uqrshlr_h_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zm, src2=f.Zdn, src3=f.Zdn)
+        elif f.size.value == 0b10:
+            uqrshlr_s_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zm, src2=f.Zdn, src3=f.Zdn)
+        elif f.size.value == 0b11:
+            uqrshlr_d_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zm, src2=f.Zdn, src3=f.Zdn)
+
+
+class uqrshl_z_p_zz_(_JSON_uqrshl_z_p_zz_):
+
+    movprfx_fusion = "predicated"
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 4: uqrshl_b_pv, uqrshl_d_pv, uqrshl_h_pv, uqrshl_s_pv
+        if f.size.value == 0b00:
+            uqrshl_b_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm, src3=f.Zdn)
+        elif f.size.value == 0b01:
+            uqrshl_h_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm, src3=f.Zdn)
+        elif f.size.value == 0b10:
+            uqrshl_s_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm, src3=f.Zdn)
+        elif f.size.value == 0b11:
+            uqrshl_d_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm, src3=f.Zdn)
+
+
+class uqrshrnb_z_zi_(_JSON_uqrshrnb_z_zi_):
+
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 3: uqrshrnb_d_uv, uqrshrnb_h_uv, uqrshrnb_s_uv
+        if f.tszh.value == 0b0:
+            if (f.tszl.value & 0b10 ) ==  0b10:
+                uqrshrnb_s_uv(dest=f.Zd, src1=f.Zn)
+            elif f.tszl.value == 0b01:
+                uqrshrnb_h_uv(dest=f.Zd, src1=f.Zn)
+        elif f.tszh.value == 0b1:
+            uqrshrnb_d_uv(dest=f.Zd, src1=f.Zn)
+
+
+class uqrshrnt_z_zi_(_JSON_uqrshrnt_z_zi_):
+
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 3: uqrshrnt_d_uv, uqrshrnt_h_uv, uqrshrnt_s_uv
+        if f.tszh.value == 0b0:
+            if (f.tszl.value & 0b10 ) ==  0b10:
+                uqrshrnt_s_uv(dest=f.Zd, src1=f.Zn, src2=f.Zd)
+            elif f.tszl.value == 0b01:
+                uqrshrnt_h_uv(dest=f.Zd, src1=f.Zn, src2=f.Zd)
+        elif f.tszh.value == 0b1:
+            uqrshrnt_d_uv(dest=f.Zd, src1=f.Zn, src2=f.Zd)
+
+
+class uqshlr_z_p_zz_(_JSON_uqshlr_z_p_zz_):
+
+    movprfx_fusion = "predicated"
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 4: uqshlr_b_pv, uqshlr_d_pv, uqshlr_h_pv, uqshlr_s_pv
+        if f.size.value == 0b00:
+            uqshlr_b_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zm, src2=f.Zdn, src3=f.Zdn)
+        elif f.size.value == 0b01:
+            uqshlr_h_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zm, src2=f.Zdn, src3=f.Zdn)
+        elif f.size.value == 0b10:
+            uqshlr_s_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zm, src2=f.Zdn, src3=f.Zdn)
+        elif f.size.value == 0b11:
+            uqshlr_d_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zm, src2=f.Zdn, src3=f.Zdn)
+
+
+class uqshl_z_p_zi_(_JSON_uqshl_z_p_zi_):
+
+    movprfx_fusion = "predicated"
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        #Dont_touch - Overlay_F 
+        if (f.tszh.value & 0b10 ) ==  0b10:
+            uqshl_imm_d_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zdn, fsu_imm=(f.tszh, f.tszl, f.imm3))
+        elif (f.tszh.value & 0b11 ) ==  0b00:
+            if (f.tszl.value & 0b10 ) ==  0b10:
+                uqshl_imm_h_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zdn, fsu_imm=(f.tszh, f.tszl, f.imm3))
+            elif (f.tszl.value & 0b11 ) ==  0b01:
+                uqshl_imm_b_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zdn, fsu_imm=(f.tszh, f.tszl, f.imm3))
+        elif (f.tszh.value & 0b11 ) ==  0b01:
+            uqshl_imm_s_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zdn, fsu_imm=(f.tszh, f.tszl, f.imm3))
+
+
+class uqshl_z_p_zz_(_JSON_uqshl_z_p_zz_):
+
+    movprfx_fusion = "predicated"
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 4: uqshl_b_pv, uqshl_d_pv, uqshl_h_pv, uqshl_s_pv
+        if f.size.value == 0b00:
+            uqshl_b_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm, src3=f.Zdn)
+        elif f.size.value == 0b01:
+            uqshl_h_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm, src3=f.Zdn)
+        elif f.size.value == 0b10:
+            uqshl_s_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm, src3=f.Zdn)
+        elif f.size.value == 0b11:
+            uqshl_d_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm, src3=f.Zdn)
+
+
+class uqshrnb_z_zi_(_JSON_uqshrnb_z_zi_):
+
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 3: uqshrnb_d_uv, uqshrnb_h_uv, uqshrnb_s_uv
+        if f.tszh.value == 0b0:
+            if (f.tszl.value & 0b10 ) ==  0b10:
+                uqshrnb_s_uv(dest=f.Zd, src1=f.Zn)
+            elif f.tszl.value == 0b01:
+                uqshrnb_h_uv(dest=f.Zd, src1=f.Zn)
+        elif f.tszh.value == 0b1:
+            uqshrnb_d_uv(dest=f.Zd, src1=f.Zn)
+
+
+class uqshrnt_z_zi_(_JSON_uqshrnt_z_zi_):
+
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 3: uqshrnt_d_uv, uqshrnt_h_uv, uqshrnt_s_uv
+        if f.tszh.value == 0b0:
+            if (f.tszl.value & 0b10 ) ==  0b10:
+                uqshrnt_s_uv(dest=f.Zd, src1=f.Zn, src2=f.Zd)
+            elif f.tszl.value == 0b01:
+                uqshrnt_h_uv(dest=f.Zd, src1=f.Zn, src2=f.Zd)
+        elif f.tszh.value == 0b1:
+            uqshrnt_d_uv(dest=f.Zd, src1=f.Zn, src2=f.Zd)
+
+
+class uqsubr_z_p_zz_(_JSON_uqsubr_z_p_zz_):
+
+    movprfx_fusion = "predicated"
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 4: uqsubr_b_pv, uqsubr_d_pv, uqsubr_h_pv, uqsubr_s_pv
+        if f.size.value == 0b00:
+            uqsubr_b_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm, src3=f.Zdn)
+        elif f.size.value == 0b01:
+            uqsubr_h_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm, src3=f.Zdn)
+        elif f.size.value == 0b10:
+            uqsubr_s_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm, src3=f.Zdn)
+        elif f.size.value == 0b11:
+            uqsubr_d_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm, src3=f.Zdn)
+
+
+class uqsub_z_p_zz_(_JSON_uqsub_z_p_zz_):
+
+    movprfx_fusion = "predicated"
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 4: uqsub_b_pv, uqsub_d_pv, uqsub_h_pv, uqsub_s_pv
+        if f.size.value == 0b00:
+            uqsub_b_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zm, src2=f.Zdn, src3=f.Zdn)
+        elif f.size.value == 0b01:
+            uqsub_h_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zm, src2=f.Zdn, src3=f.Zdn)
+        elif f.size.value == 0b10:
+            uqsub_s_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zm, src2=f.Zdn, src3=f.Zdn)
+        elif f.size.value == 0b11:
+            uqsub_d_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zm, src2=f.Zdn, src3=f.Zdn)
+
+
+class uqxtnb_z_zz_(_JSON_uqxtnb_z_zz_):
+
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 3: uqxtnb_d_uv, uqxtnb_h_uv, uqxtnb_s_uv
+        if f.tszh.value == 0b0:
+            if f.tszl.value == 0b01:
+                uqxtnb_h_uv(dest=f.Zd, src1=f.Zn)
+            elif f.tszl.value == 0b10:
+                uqxtnb_s_uv(dest=f.Zd, src1=f.Zn)
+        elif f.tszh.value == 0b1:
+            if f.tszl.value == 0b00:
+                uqxtnb_d_uv(dest=f.Zd, src1=f.Zn)
+
+
+class uqxtnt_z_zz_(_JSON_uqxtnt_z_zz_):
+
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 3: uqxtnt_d_uv, uqxtnt_h_uv, uqxtnt_s_uv
+        if f.tszh.value == 0b0:
+            if f.tszl.value == 0b01:
+                uqxtnt_h_uv(dest=f.Zd, src1=f.Zn, src2=f.Zd)
+            elif f.tszl.value == 0b10:
+                uqxtnt_s_uv(dest=f.Zd, src1=f.Zn, src2=f.Zd)
+        elif f.tszh.value == 0b1:
+            if f.tszl.value == 0b00:
+                uqxtnt_d_uv(dest=f.Zd, src1=f.Zn, src2=f.Zd)
+
+
+class urecpe_z_p_z_(_JSON_urecpe_z_p_z_m):
+
+    movprfx_fusion = "predicated"
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: urecpe_s_pv
+        if f.size.value == 0b10:
+            urecpe_s_pv(dest=f.Zd, pred=f.Pg, src1=f.Zn, src3=f.Zd)
+
+
+class urhadd_z_p_zz_(_JSON_urhadd_z_p_zz_):
+
+    movprfx_fusion = "predicated"
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 4: urhadd_b_pv, urhadd_d_pv, urhadd_h_pv, urhadd_s_pv
+        if f.size.value == 0b00:
+            urhadd_b_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm, src3=f.Zdn)
+        elif f.size.value == 0b01:
+            urhadd_h_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm, src3=f.Zdn)
+        elif f.size.value == 0b10:
+            urhadd_s_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm, src3=f.Zdn)
+        elif f.size.value == 0b11:
+            urhadd_d_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm, src3=f.Zdn)
+
+
+class urshlr_z_p_zz_(_JSON_urshlr_z_p_zz_):
+
+    movprfx_fusion = "predicated"
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 4: urshlr_b_pv, urshlr_d_pv, urshlr_h_pv, urshlr_s_pv
+        if f.size.value == 0b00:
+            urshlr_b_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zm, src2=f.Zdn, src3=f.Zdn)
+        elif f.size.value == 0b01:
+            urshlr_h_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zm, src2=f.Zdn, src3=f.Zdn)
+        elif f.size.value == 0b10:
+            urshlr_s_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zm, src2=f.Zdn, src3=f.Zdn)
+        elif f.size.value == 0b11:
+            urshlr_d_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zm, src2=f.Zdn, src3=f.Zdn)
+
+
+class urshl_z_p_zz_(_JSON_urshl_z_p_zz_):
+
+    movprfx_fusion = "predicated"
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 4: urshl_b_pv, urshl_d_pv, urshl_h_pv, urshl_s_pv
+        if f.size.value == 0b00:
+            urshl_b_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm, src3=f.Zdn)
+        elif f.size.value == 0b01:
+            urshl_h_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm, src3=f.Zdn)
+        elif f.size.value == 0b10:
+            urshl_s_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm, src3=f.Zdn)
+        elif f.size.value == 0b11:
+            urshl_d_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zm, src3=f.Zdn)
+
+
+class urshr_z_p_zi_(_JSON_urshr_z_p_zi_):
+
+    movprfx_fusion = "predicated"
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        #Dont_touch - Overlay_F 
+        if (f.tszh.value & 0b10 ) ==  0b10:
+            urshr_d_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zdn, fsu_imm=(f.tszh, f.tszl, f.imm3))
+        elif (f.tszh.value & 0b11 ) ==  0b00:
+            if (f.tszl.value & 0b10 ) ==  0b10:
+                urshr_h_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zdn, fsu_imm=(f.tszh, f.tszl, f.imm3))
+            elif (f.tszl.value & 0b11 ) ==  0b01:
+                urshr_b_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zdn, fsu_imm=(f.tszh, f.tszl, f.imm3))
+        elif (f.tszh.value & 0b11 ) ==  0b01:
+            urshr_s_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zdn, src2=f.Zdn, fsu_imm=(f.tszh, f.tszl, f.imm3))
+
+
+class ursqrte_z_p_z_(_JSON_ursqrte_z_p_z_m):
+
+    movprfx_fusion = "predicated"
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: ursqrte_s_pv
+        if f.size.value == 0b10:
+            ursqrte_s_pv(dest=f.Zd, pred=f.Pg, src1=f.Zn, src3=f.Zd)
+
+
+class ursra_z_zi_(_JSON_ursra_z_zi_):
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 4: ursra_b_uv, ursra_d_uv, ursra_h_uv, ursra_s_uv
+        if (f.tszh.value & 0b10 ) ==  0b10:
+            ursra_d_uv(dest=f.Zda, src1=f.Zn, src2=f.Zda)
+        elif (f.tszh.value & 0b11 ) ==  0b00:
+            if (f.tszl.value & 0b10 ) ==  0b10:
+                ursra_h_uv(dest=f.Zda, src1=f.Zn, src2=f.Zda)
+            elif (f.tszl.value & 0b11 ) ==  0b01:
+                ursra_b_uv(dest=f.Zda, src1=f.Zn, src2=f.Zda)
+        elif (f.tszh.value & 0b11 ) ==  0b01:
+            ursra_s_uv(dest=f.Zda, src1=f.Zn, src2=f.Zda)
+
+
+class ushllb_z_zi_(_JSON_ushllb_z_zi_):
+
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 3: ushllb_b_uv, ushllb_h_uv, ushllb_s_uv
+        if f.tszh.value == 0b0:
+            if (f.tszl.value & 0b10 ) ==  0b10:
+                ushllb_h_uv(dest=f.Zd, src1=f.Zn)
+            elif (f.tszl.value & 0b11 ) ==  0b01:
+                ushllb_b_uv(dest=f.Zd, src1=f.Zn)
+        elif f.tszh.value == 0b1:
+            ushllb_s_uv(dest=f.Zd, src1=f.Zn)
+
+
+class ushllt_z_zi_(_JSON_ushllt_z_zi_):
+
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 3: ushllt_b_uv, ushllt_h_uv, ushllt_s_uv
+        if f.tszh.value == 0b0:
+            if (f.tszl.value & 0b10 ) ==  0b10:
+                ushllt_h_uv(dest=f.Zd, src1=f.Zn)
+            elif (f.tszl.value & 0b11 ) ==  0b01:
+                ushllt_b_uv(dest=f.Zd, src1=f.Zn)
+        elif f.tszh.value == 0b1:
+            ushllt_s_uv(dest=f.Zd, src1=f.Zn, idx=(Signal('111111')))
+
+
+class usqadd_z_p_zz_(_JSON_usqadd_z_p_zz_):
+
+    movprfx_fusion = "predicated"
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 4: usqadd_b_pv, usqadd_d_pv, usqadd_h_pv, usqadd_s_pv
+        if f.size.value == 0b00:
+            usqadd_b_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zm, src2=f.Zdn, src3=f.Zdn)
+        elif f.size.value == 0b01:
+            usqadd_h_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zm, src2=f.Zdn, src3=f.Zdn)
+        elif f.size.value == 0b10:
+            usqadd_s_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zm, src2=f.Zdn, src3=f.Zdn)
+        elif f.size.value == 0b11:
+            usqadd_d_pv(dest=f.Zdn, pred=f.Pg, src1=f.Zm, src2=f.Zdn, src3=f.Zdn)
+
+
+class usra_z_zi_(_JSON_usra_z_zi_):
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 4: usra_b_uv, usra_d_uv, usra_h_uv, usra_s_uv
+        if (f.tszh.value & 0b10 ) ==  0b10:
+            usra_d_uv(dest=f.Zda, src1=f.Zn, src2=f.Zda)
+        elif (f.tszh.value & 0b11 ) ==  0b00:
+            if (f.tszl.value & 0b10 ) ==  0b10:
+                usra_h_uv(dest=f.Zda, src1=f.Zn, src2=f.Zda)
+            elif (f.tszl.value & 0b11 ) ==  0b01:
+                usra_b_uv(dest=f.Zda, src1=f.Zn, src2=f.Zda)
+        elif (f.tszh.value & 0b11 ) ==  0b01:
+            usra_s_uv(dest=f.Zda, src1=f.Zn, src2=f.Zda)
+
+
+class usublb_z_zz_(_JSON_usublb_z_zz_):
+
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 3: usublb_b_uv, usublb_h_uv, usublb_s_uv
+        if f.size.value == 0b01:
+            usublb_b_uv(dest=f.Zd, src1=f.Zm, src2=f.Zn)
+        elif f.size.value == 0b10:
+            usublb_h_uv(dest=f.Zd, src1=f.Zm, src2=f.Zn)
+        elif f.size.value == 0b11:
+            usublb_s_uv(dest=f.Zd, src1=f.Zm, src2=f.Zn)
+
+
+class usublt_z_zz_(_JSON_usublt_z_zz_):
+
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 3: usublt_b_uv, usublt_h_uv, usublt_s_uv
+        if f.size.value == 0b01:
+            usublt_b_uv(dest=f.Zd, src1=f.Zm, src2=f.Zn)
+        elif f.size.value == 0b10:
+            usublt_h_uv(dest=f.Zd, src1=f.Zm, src2=f.Zn)
+        elif f.size.value == 0b11:
+            usublt_s_uv(dest=f.Zd, src1=f.Zm, src2=f.Zn, idx=(Signal('111111')))
+
+
+class usubwb_z_zz_(_JSON_usubwb_z_zz_):
+
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 3: usubwb_b_uv, usubwb_h_uv, usubwb_s_uv
+        if f.size.value == 0b01:
+            usubwb_b_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm)
+        elif f.size.value == 0b10:
+            usubwb_h_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm)
+        elif f.size.value == 0b11:
+            usubwb_s_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm)
+
+
+class usubwt_z_zz_(_JSON_usubwt_z_zz_):
+
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 3: usubwt_b_uv, usubwt_h_uv, usubwt_s_uv
+        if f.size.value == 0b01:
+            usubwt_b_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm)
+        elif f.size.value == 0b10:
+            usubwt_h_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm)
+        elif f.size.value == 0b11:
+            usubwt_s_uv(dest=f.Zd, src1=f.Zn, src2=f.Zm, idx=(Signal('000010')))
+
+
+class whilege_p_p_rr_(_JSON_whilege_p_p_rr_):
+
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC', 'SIMD_INST_SPEC']
+
+    def decode(self, f):
+        #Dont_touch - IXU
+        if f.sf.value == 0b0:
+            subs32(dest=s0, src1=f.Rn, src2=f.Rm, imm=Signal("011000"), flagdest=f1)
+            while_ge_32(dest=f.Pd, src1=s0, src2=f.Rm, src3=f1, imm=(f.size), flagdest=f0)
+        elif f.sf.value == 0b1:
+            subs64(dest=s0, src1=f.Rn, src2=f.Rm, imm=Signal("011000"), flagdest=f1)
+            while_ge_64(dest=f.Pd, src1=s0, src2=f.Rm, src3=f1, imm=(f.size), flagdest=f0)
+
+
+class whilegt_p_p_rr_(_JSON_whilegt_p_p_rr_):
+
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC', 'SIMD_INST_SPEC']
+
+    def decode(self, f):
+        #Dont_touch - IXU
+        if f.sf.value == 0b0:
+            subs32(dest=s0, src1=f.Rn, src2=f.Rm, imm=Signal("011000"), flagdest=f1)
+            while_gt_32(dest=f.Pd, src1=s0, src2=f.Rm, src3=f1, imm=(f.size), flagdest=f0)
+        elif f.sf.value == 0b1:
+            subs64(dest=s0, src1=f.Rn, src2=f.Rm, imm=Signal("011000"), flagdest=f1)
+            while_gt_64(dest=f.Pd, src1=s0, src2=f.Rm, src3=f1, imm=(f.size), flagdest=f0)
+
+
+class whilehi_p_p_rr_(_JSON_whilehi_p_p_rr_):
+
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC', 'SIMD_INST_SPEC']
+
+    def decode(self, f):
+        #Dont_touch - IXU
+        if f.sf.value == 0b0:
+            subs32(dest=s0, src1=f.Rn, src2=f.Rm, imm=Signal("011000"), flagdest=f1)
+            while_hi_32(dest=f.Pd, src1=s0, src2=f.Rm, src3=f1, imm=(f.size), flagdest=f0)
+        elif f.sf.value == 0b1:
+            subs64(dest=s0, src1=f.Rn, src2=f.Rm, imm=Signal("011000"), flagdest=f1)
+            while_hi_64(dest=f.Pd, src1=s0, src2=f.Rm, src3=f1, imm=(f.size), flagdest=f0)
+
+
+class whilehs_p_p_rr_(_JSON_whilehs_p_p_rr_):
+
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC', 'SIMD_INST_SPEC']
+
+    def decode(self, f):
+        #Dont_touch - IXU
+        if f.sf.value == 0b0:
+            subs32(dest=s0, src1=f.Rn, src2=f.Rm, imm=Signal("011000"), flagdest=f1)
+            while_hs_32(dest=f.Pd, src1=s0, src2=f.Rm, src3=f1, imm=(f.size), flagdest=f0)
+        elif f.sf.value == 0b1:
+            subs64(dest=s0, src1=f.Rn, src2=f.Rm, imm=Signal("011000"), flagdest=f1)
+            while_hs_64(dest=f.Pd, src1=s0, src2=f.Rm, src3=f1, imm=(f.size), flagdest=f0)
+        
+
+class whilerw_p_rr_(_JSON_whilerw_p_rr_):
+
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC', 'SIMD_INST_SPEC']
+
+    def decode(self, f):
+        #Dont_touch - IXU
+        subs64(dest=s0, src1=f.Rm, src2=f.Rn, imm=Signal("011000"), flagdest=f1)
+        abs_while(dest=s1, src1=ZR, src2=s0, src3=f1)
+        whilerw(dest=f.Pd, src1=s1, imm=(f.size), flagdest=f0)
+
+
+class whilewr_p_rr_(_JSON_whilewr_p_rr_):
+
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC', 'SIMD_INST_SPEC']
+
+    def decode(self, f):
+        #Dont_touch - IXU
+        subs64(dest=s0, src1=f.Rm, src2=f.Rn, imm=Signal("011000"), flagdest=f1)
+        whilewr(dest=f.Pd, src1=s0, src3=f1, imm=(f.size), flagdest=f0)
+
+
+class xar_z_zzi_(_JSON_xar_z_zzi_):
+
+    movprfx_fusion = "unpredicated"
+    pmu_events = ['INT_SPEC', 'SVE_INT_SPEC', 'SIMD_INST_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC']
+
+    def decode(self, f):
+        # Number of uops 4: xar_b_uv, xar_d_uv, xar_h_uv, xar_s_uv
+        if (f.tszh.value & 0b10 ) ==  0b10:
+            xar_d_uv(dest=f.Zdn, src1=f.Zdn, src2=f.Zm)
+        elif (f.tszh.value & 0b11 ) ==  0b00:
+            if (f.tszl.value & 0b10 ) ==  0b10:
+                xar_h_uv(dest=f.Zdn, src1=f.Zdn, src2=f.Zm)
+            elif (f.tszl.value & 0b11 ) ==  0b01:
+                xar_b_uv(dest=f.Zdn, src1=f.Zdn, src2=f.Zm)
+        elif (f.tszh.value & 0b11 ) ==  0b01:
+            xar_s_uv(dest=f.Zdn, src1=f.Zdn, src2=f.Zm)

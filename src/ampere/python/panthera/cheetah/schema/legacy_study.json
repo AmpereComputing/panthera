@@ -1,0 +1,112 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "urn:panthera:cheetah:legacy-study",
+    "title": "Study",
+    "description": "Definition of a cheetah study",
+    "type": "object",
+    "properties": {
+        "name": {
+            "type": "string",
+            "description": "Trace name"
+        },
+        "parsed_logs": {
+            "type": "boolean",
+            "description": "Trace name"
+        },
+        "specifications": {
+            "$ref": "./specification"
+        },
+        "workloads": {
+            "$ref": "../tracing/schema/workload"
+        },
+        "job_tree": {
+            "type": "array",
+            "description": "Configuration",
+            "items": {
+                "type": "array",
+                "description": "Jobs in configuration",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "name": {
+                            "type": "string",
+                            "description": "Job name"
+                        },
+                        "directory": {
+                            "type": "string",
+                            "description": "Job directory (i.e. configuration)"
+                        },
+                        "cmds": {
+                            "type": "array",
+                            "description": "Job commands (in run order)",
+                            "items": {
+                                "type": "array",
+                                "description": "Command arguments",
+                                "items": {
+                                    "type": "string"
+                                }
+                            }
+                        },
+                        "meta": {
+                            "type": "object",
+                            "properties": {
+                                "configuration": {
+                                    "type": "string",
+                                    "description": "Job configuration name"
+                                },
+                                "suite": {
+                                    "type": "string",
+                                    "description": "Job suite name"
+                                },
+                                "workload": {
+                                    "type": "string",
+                                    "description": "Job workload name"
+                                },
+                                "weight": {
+                                    "type": "number",
+                                    "description": "Job weight within workload"
+                                }
+                            }
+                        },
+                        "required": [
+                            "name",
+                            "directory",
+                            "cmds",
+                            "meta"
+                        ]
+                    }
+                }
+            }
+        },
+        "workload_dir": {
+            "type": "string",
+            "description": "Workload (tracelist) directory"
+        },
+        "panthera_root": {
+            "type": "string",
+            "description": "Path to panthera or install directory"
+        },
+        "node_file": {
+            "type": "string",
+            "description": "Parallel node file (SSH nodes)"
+        },
+        "load": {
+            "type": "string",
+            "description": "Parallel system load"
+        },
+        "parallel_info": {
+            "type": "string",
+            "description": "Parallel info"
+        },
+        "local_jobs": {
+            "type": "string",
+            "description": "Local parallelism"
+        }
+    },
+    "required": [
+        "name",
+        "specifications",
+        "workloads",
+        "job_tree"
+    ]
+}

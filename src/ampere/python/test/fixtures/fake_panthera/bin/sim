@@ -1,0 +1,19 @@
+#! /bin/bash
+# Copyright (c) 2024 Ampere Computing. All rights reserved.
+# SPDX-License-Identifier: BSD-3-Clause
+
+
+for arg in "$@"
+do
+    if [ "$arg" == "--missing-option" ]; then
+        echo "ERROR: no option --missing-option"
+        exit 0
+    fi
+    if [[ "$arg" == *".csv" ]]; then
+        echo "some_metric" > "$arg"
+    fi
+done
+
+echo "Info: End of elaboration. Starting simulation."
+echo "$@"
+echo "Info: Simulation stopped by user"

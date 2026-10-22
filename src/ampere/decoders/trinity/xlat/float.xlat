@@ -1,0 +1,2607 @@
+# Copyright (c) 2022-2026 Ampere Computing. All rights reserved.
+# SPDX-License-Identifier: BSD-3-Clause
+
+from ampere.xlat import Signal, Translation
+from proj.uop import *
+from proj.xlat_register_constants import * # x30/ZR/xzr/SP_EL*/s0/s1/T0/T1/T2/T3/RGSR_EL1
+
+class FABS_H_floatdp1(_JSON_FABS_H_floatdp1):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: fabs_h_nv
+        fabs_h_nv(dest=f.Rd, src1=f.Rn, src2=f.Rd)
+
+
+class FABS_S_floatdp1(_JSON_FABS_S_floatdp1):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: fabs_s_nv
+        fabs_s_nv(dest=f.Rd, src1=f.Rn, src2=f.Rd)
+
+
+class FABS_D_floatdp1(_JSON_FABS_D_floatdp1):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: fabs_d_nv
+        fabs_d_nv(dest=f.Rd, src1=f.Rn, src2=f.Rd)
+
+
+class FADD_H_floatdp2(_JSON_FADD_H_floatdp2):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: fadd_h_nv
+        fadd_h_nv(dest=f.Rd, src1=f.Rn, src2=f.Rm)
+
+
+class FADD_S_floatdp2(_JSON_FADD_S_floatdp2):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: fadd_s_nv
+        fadd_s_nv(dest=f.Rd, src1=f.Rn, src2=f.Rm)
+
+
+class FADD_D_floatdp2(_JSON_FADD_D_floatdp2):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: fadd_d_nv
+        fadd_d_nv(dest=f.Rd, src1=f.Rn, src2=f.Rm)
+
+
+class FCCMP_H_floatccmp(_JSON_FCCMP_H_floatccmp):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        rmig(dest=s0, imm=(f.cond,f.nzcv), src3=f0)
+        movi2f_fmovd(dest=T0, src2=s0)
+        fccmp_h_nv(src1=f.Rn, src2=f.Rm, src3=T0, flagdest=f0)
+
+
+class FCCMP_S_floatccmp(_JSON_FCCMP_S_floatccmp):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        rmig(dest=s0, imm=(f.cond,f.nzcv), src3=f0)
+        movi2f_fmovd(dest=T0, src2=s0)
+        fccmp_s_nv(src1=f.Rn, src2=f.Rm, src3=T0, flagdest=f0)
+
+
+class FCCMP_D_floatccmp(_JSON_FCCMP_D_floatccmp):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        rmig(dest=s0, imm=(f.cond,f.nzcv), src3=f0)
+        movi2f_fmovd(dest=T0, src2=s0)
+        fccmp_d_nv(src1=f.Rn, src2=f.Rm, src3=T0, flagdest=f0)
+
+
+class FCCMPE_H_floatccmp(_JSON_FCCMPE_H_floatccmp):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        rmig(dest=s0, imm=(f.cond,f.nzcv), src3=f0)
+        movi2f_fmovd(dest=T0, src2=s0)
+        fccmpe_h_nv(src1=f.Rn, src2=f.Rm, src3=T0, flagdest=f0)
+
+
+class FCCMPE_S_floatccmp(_JSON_FCCMPE_S_floatccmp):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        rmig(dest=s0, imm=(f.cond,f.nzcv), src3=f0)
+        movi2f_fmovd(dest=T0, src2=s0)
+        fccmpe_s_nv(src1=f.Rn, src2=f.Rm, src3=T0, flagdest=f0)
+
+
+class FCCMPE_D_floatccmp(_JSON_FCCMPE_D_floatccmp):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        rmig(dest=s0, imm=(f.cond,f.nzcv), src3=f0)
+        movi2f_fmovd(dest=T0, src2=s0)
+        fccmpe_d_nv(src1=f.Rn, src2=f.Rm, src3=T0, flagdest=f0)
+
+
+class FCMP_H_floatcmp(_JSON_FCMP_H_floatcmp):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        fcmp_h_nv(src1=f.Rn, src2=f.Rm, flagdest=f0)
+
+
+class FCMP_HZ_floatcmp(_JSON_FCMP_HZ_floatcmp):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        fcmpz_h_nv(src1=f.Rn, flagdest=f0)
+
+
+class FCMP_S_floatcmp(_JSON_FCMP_S_floatcmp):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        fcmp_s_nv(src1=f.Rn, src2=f.Rm, flagdest=f0)
+
+
+class FCMP_SZ_floatcmp(_JSON_FCMP_SZ_floatcmp):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        fcmpz_s_nv(src1=f.Rn, flagdest=f0)
+
+
+class FCMP_D_floatcmp(_JSON_FCMP_D_floatcmp):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        fcmp_d_nv(src1=f.Rn, src2=f.Rm, flagdest=f0)
+
+
+class FCMP_DZ_floatcmp(_JSON_FCMP_DZ_floatcmp):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        fcmpz_d_nv(src1=f.Rn, flagdest=f0)
+
+
+class FCMPE_H_floatcmp(_JSON_FCMPE_H_floatcmp):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        fcmpe_h_nv(src1=f.Rn, src2=f.Rm, flagdest=f0)
+
+
+class FCMPE_HZ_floatcmp(_JSON_FCMPE_HZ_floatcmp):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        fcmpez_h_nv(src1=f.Rn, flagdest=f0)
+
+
+class FCMPE_S_floatcmp(_JSON_FCMPE_S_floatcmp):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        fcmpe_s_nv(src1=f.Rn, src2=f.Rm, flagdest=f0)
+
+
+class FCMPE_SZ_floatcmp(_JSON_FCMPE_SZ_floatcmp):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        fcmpez_s_nv(src1=f.Rn, flagdest=f0)
+
+
+class FCMPE_D_floatcmp(_JSON_FCMPE_D_floatcmp):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        fcmpe_d_nv(src1=f.Rn, src2=f.Rm, flagdest=f0)
+
+
+class FCMPE_DZ_floatcmp(_JSON_FCMPE_DZ_floatcmp):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        fcmpez_d_nv(src1=f.Rn, flagdest=f0)
+
+class FCSEL_H_floatsel(_JSON_FCSEL_H_floatsel):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        rmig(dest=s0, imm=(f.cond,Signal('0000')), src3=f0)
+        movi2f_fmovd(dest=T0, src2=s0)
+        fcsel_h_nv(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=T0)
+
+
+class FCSEL_S_floatsel(_JSON_FCSEL_S_floatsel):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        rmig(dest=s0, imm=(f.cond,Signal('0000')), src3=f0)
+        movi2f_fmovd(dest=T0, src2=s0)
+        fcsel_s_nv(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=T0)
+
+
+class FCSEL_D_floatsel(_JSON_FCSEL_D_floatsel):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        rmig(dest=s0, imm=(f.cond,Signal('0000')), src3=f0)
+        movi2f_fmovd(dest=T0, src2=s0)
+        fcsel_d_nv(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=T0)
+
+
+class FCVT_SH_floatdp1(_JSON_FCVT_SH_floatdp1):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: fcvts_h_nv
+        fcvts_h_nv(dest=f.Rd, src1=f.Rn, src2=f.Rd)
+
+
+class FCVT_DH_floatdp1(_JSON_FCVT_DH_floatdp1):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: fcvtd_h_nv
+        fcvtd_h_nv(dest=f.Rd, src1=f.Rn, src2=f.Rd)
+
+
+class FCVT_HS_floatdp1(_JSON_FCVT_HS_floatdp1):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: fcvth_s_nv
+        fcvth_s_nv(dest=f.Rd, src1=f.Rn, src2=f.Rd)
+
+
+class FCVT_DS_floatdp1(_JSON_FCVT_DS_floatdp1):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: fcvtd_s_nv
+        fcvtd_s_nv(dest=f.Rd, src1=f.Rn, src2=f.Rd)
+
+
+class FCVT_HD_floatdp1(_JSON_FCVT_HD_floatdp1):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: fcvth_d_nv
+        fcvth_d_nv(dest=f.Rd, src1=f.Rn, src2=f.Rd)
+
+
+class FCVT_SD_floatdp1(_JSON_FCVT_SD_floatdp1):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: fcvts_d_nv
+        fcvts_d_nv(dest=f.Rd, src1=f.Rn, src2=f.Rd)
+
+
+class FCVTAS_32H_float2int(_JSON_FCVTAS_32H_float2int):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        fcvts32_ra_h_nv(dest=T0, src1=f.Rn)
+        if f.Rd.value != 0b11111:
+          gfmov_s_nv(dest=f.Rd, src1=T0)
+
+
+class FCVTAS_64H_float2int(_JSON_FCVTAS_64H_float2int):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        fcvts64_ra_h_nv(dest=T0, src1=f.Rn)
+        if f.Rd.value != 0b11111:
+          gfmov_d_nv(dest=f.Rd, src1=T0)
+
+
+class FCVTAS_32S_float2int(_JSON_FCVTAS_32S_float2int):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        fcvts32_ra_s_nv(dest=T0, src1=f.Rn, src2=f.Rn)
+        if f.Rd.value != 0b11111:
+          gfmov_s_nv(dest=f.Rd, src1=T0)
+
+
+class FCVTAS_64S_float2int(_JSON_FCVTAS_64S_float2int):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        fcvts64_ra_s_nv(dest=T0, src1=f.Rn)
+        if f.Rd.value != 0b11111:
+          gfmov_d_nv(dest=f.Rd, src1=T0)
+
+
+class FCVTAS_32D_float2int(_JSON_FCVTAS_32D_float2int):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        fcvts32_ra_d_nv(dest=T0, src1=f.Rn)
+        if f.Rd.value != 0b11111:
+          gfmov_s_nv(dest=f.Rd, src1=T0)
+
+
+class FCVTAS_64D_float2int(_JSON_FCVTAS_64D_float2int):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        fcvts64_ra_d_nv(dest=T0, src1=f.Rn, src2=f.Rn)
+        if f.Rd.value != 0b11111:
+          gfmov_d_nv(dest=f.Rd, src1=T0)
+
+
+class FCVTAU_32H_float2int(_JSON_FCVTAU_32H_float2int):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        fcvtu32_ra_h_nv(dest=T0, src1=f.Rn)
+        if f.Rd.value != 0b11111:
+          gfmov_s_nv(dest=f.Rd, src1=T0)
+
+
+class FCVTAU_64H_float2int(_JSON_FCVTAU_64H_float2int):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        fcvtu64_ra_h_nv(dest=T0, src1=f.Rn)
+        if f.Rd.value != 0b11111:
+          gfmov_d_nv(dest=f.Rd, src1=T0)
+
+
+class FCVTAU_32S_float2int(_JSON_FCVTAU_32S_float2int):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        fcvtu32_ra_s_nv(dest=T0, src1=f.Rn, src2=f.Rn)
+        if f.Rd.value != 0b11111:
+          gfmov_s_nv(dest=f.Rd, src1=T0)
+
+
+class FCVTAU_64S_float2int(_JSON_FCVTAU_64S_float2int):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        fcvtu64_ra_s_nv(dest=T0, src1=f.Rn)
+        if f.Rd.value != 0b11111:
+          gfmov_d_nv(dest=f.Rd, src1=T0)
+
+
+class FCVTAU_32D_float2int(_JSON_FCVTAU_32D_float2int):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        fcvtu32_ra_d_nv(dest=T0, src1=f.Rn)
+        if f.Rd.value != 0b11111:
+          gfmov_s_nv(dest=f.Rd, src1=T0)
+
+
+class FCVTAU_64D_float2int(_JSON_FCVTAU_64D_float2int):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        fcvtu64_ra_d_nv(dest=T0, src1=f.Rn, src2=f.Rn)
+        if f.Rd.value != 0b11111:
+          gfmov_d_nv(dest=f.Rd, src1=T0)
+
+
+class FCVTMS_32H_float2int(_JSON_FCVTMS_32H_float2int):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        fcvts32_rm_h_nv(dest=T0, src1=f.Rn)
+        if f.Rd.value != 0b11111:
+          gfmov_s_nv(dest=f.Rd, src1=T0)
+
+
+class FCVTMS_64H_float2int(_JSON_FCVTMS_64H_float2int):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        fcvts64_rm_h_nv(dest=T0, src1=f.Rn)
+        if f.Rd.value != 0b11111:
+          gfmov_d_nv(dest=f.Rd, src1=T0)
+
+
+class FCVTMS_32S_float2int(_JSON_FCVTMS_32S_float2int):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        fcvts32_rm_s_nv(dest=T0, src1=f.Rn, src2=f.Rn)
+        if f.Rd.value != 0b11111:
+          gfmov_s_nv(dest=f.Rd, src1=T0)
+
+
+class FCVTMS_64S_float2int(_JSON_FCVTMS_64S_float2int):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        fcvts64_rm_s_nv(dest=T0, src1=f.Rn)
+        if f.Rd.value != 0b11111:
+          gfmov_d_nv(dest=f.Rd, src1=T0)
+
+
+class FCVTMS_32D_float2int(_JSON_FCVTMS_32D_float2int):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        fcvts32_rm_d_nv(dest=T0, src1=f.Rn)
+        if f.Rd.value != 0b11111:
+          gfmov_s_nv(dest=f.Rd, src1=T0)
+
+
+class FCVTMS_64D_float2int(_JSON_FCVTMS_64D_float2int):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        fcvts64_rm_d_nv(dest=T0, src1=f.Rn, src2=f.Rn)
+        if f.Rd.value != 0b11111:
+          gfmov_d_nv(dest=f.Rd, src1=T0)
+
+
+class FCVTMU_32H_float2int(_JSON_FCVTMU_32H_float2int):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        fcvtu32_rm_h_nv(dest=T0, src1=f.Rn)
+        if f.Rd.value != 0b11111:
+          gfmov_s_nv(dest=f.Rd, src1=T0)
+
+
+class FCVTMU_64H_float2int(_JSON_FCVTMU_64H_float2int):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        fcvtu64_rm_h_nv(dest=T0, src1=f.Rn)
+        if f.Rd.value != 0b11111:
+          gfmov_d_nv(dest=f.Rd, src1=T0)
+
+
+class FCVTMU_32S_float2int(_JSON_FCVTMU_32S_float2int):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        fcvtu32_rm_s_nv(dest=T0, src1=f.Rn, src2=f.Rn)
+        if f.Rd.value != 0b11111:
+          gfmov_s_nv(dest=f.Rd, src1=T0)
+
+
+class FCVTMU_64S_float2int(_JSON_FCVTMU_64S_float2int):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        fcvtu64_rm_s_nv(dest=T0, src1=f.Rn)
+        if f.Rd.value != 0b11111:
+          gfmov_d_nv(dest=f.Rd, src1=T0)
+
+
+class FCVTMU_32D_float2int(_JSON_FCVTMU_32D_float2int):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        fcvtu32_rm_d_nv(dest=T0, src1=f.Rn)
+        if f.Rd.value != 0b11111:
+          gfmov_s_nv(dest=f.Rd, src1=T0)
+
+
+class FCVTMU_64D_float2int(_JSON_FCVTMU_64D_float2int):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        fcvtu64_rm_d_nv(dest=T0, src1=f.Rn, src2=f.Rn)
+        if f.Rd.value != 0b11111:
+          gfmov_d_nv(dest=f.Rd, src1=T0)
+
+
+class FCVTNS_32H_float2int(_JSON_FCVTNS_32H_float2int):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        fcvts32_rn_h_nv(dest=T0, src1=f.Rn)
+        if f.Rd.value != 0b11111:
+          gfmov_s_nv(dest=f.Rd, src1=T0)
+
+
+class FCVTNS_64H_float2int(_JSON_FCVTNS_64H_float2int):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        fcvts64_rn_h_nv(dest=T0, src1=f.Rn)
+        if f.Rd.value != 0b11111:
+          gfmov_d_nv(dest=f.Rd, src1=T0)
+
+
+class FCVTNS_32S_float2int(_JSON_FCVTNS_32S_float2int):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        fcvts32_rn_s_nv(dest=T0, src1=f.Rn, src2=f.Rn)
+        if f.Rd.value != 0b11111:
+          gfmov_s_nv(dest=f.Rd, src1=T0)
+
+
+class FCVTNS_64S_float2int(_JSON_FCVTNS_64S_float2int):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        fcvts64_rn_s_nv(dest=T0, src1=f.Rn)
+        if f.Rd.value != 0b11111:
+          gfmov_d_nv(dest=f.Rd, src1=T0)
+
+
+class FCVTNS_32D_float2int(_JSON_FCVTNS_32D_float2int):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        fcvts32_rn_d_nv(dest=T0, src1=f.Rn)
+        if f.Rd.value != 0b11111:
+          gfmov_s_nv(dest=f.Rd, src1=T0)
+
+
+class FCVTNS_64D_float2int(_JSON_FCVTNS_64D_float2int):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        fcvts64_rn_d_nv(dest=T0, src1=f.Rn, src2=f.Rn)
+        if f.Rd.value != 0b11111:
+          gfmov_d_nv(dest=f.Rd, src1=T0)
+
+
+class FCVTNU_32H_float2int(_JSON_FCVTNU_32H_float2int):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        fcvtu32_rn_h_nv(dest=T0, src1=f.Rn)
+        if f.Rd.value != 0b11111:
+          gfmov_s_nv(dest=f.Rd, src1=T0)
+
+
+class FCVTNU_64H_float2int(_JSON_FCVTNU_64H_float2int):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        fcvtu64_rn_h_nv(dest=T0, src1=f.Rn)
+        if f.Rd.value != 0b11111:
+          gfmov_d_nv(dest=f.Rd, src1=T0)
+
+
+class FCVTNU_32S_float2int(_JSON_FCVTNU_32S_float2int):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        fcvtu32_rn_s_nv(dest=T0, src1=f.Rn, src2=f.Rn)
+        if f.Rd.value != 0b11111:
+          gfmov_s_nv(dest=f.Rd, src1=T0)
+
+
+class FCVTNU_64S_float2int(_JSON_FCVTNU_64S_float2int):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        fcvtu64_rn_s_nv(dest=T0, src1=f.Rn)
+        if f.Rd.value != 0b11111:
+          gfmov_d_nv(dest=f.Rd, src1=T0)
+
+
+class FCVTNU_32D_float2int(_JSON_FCVTNU_32D_float2int):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        fcvtu32_rn_d_nv(dest=T0, src1=f.Rn)
+        if f.Rd.value != 0b11111:
+          gfmov_s_nv(dest=f.Rd, src1=T0)
+
+
+class FCVTNU_64D_float2int(_JSON_FCVTNU_64D_float2int):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        fcvtu64_rn_d_nv(dest=T0, src1=f.Rn, src2=f.Rn)
+        if f.Rd.value != 0b11111:
+          gfmov_d_nv(dest=f.Rd, src1=T0)
+
+
+class FCVTPS_32H_float2int(_JSON_FCVTPS_32H_float2int):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        fcvts32_rp_h_nv(dest=T0, src1=f.Rn)
+        if f.Rd.value != 0b11111:
+          gfmov_s_nv(dest=f.Rd, src1=T0)
+
+
+class FCVTPS_64H_float2int(_JSON_FCVTPS_64H_float2int):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        fcvts64_rp_h_nv(dest=T0, src1=f.Rn)
+        if f.Rd.value != 0b11111:
+          gfmov_d_nv(dest=f.Rd, src1=T0)
+
+
+class FCVTPS_32S_float2int(_JSON_FCVTPS_32S_float2int):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        fcvts32_rp_s_nv(dest=T0, src1=f.Rn, src2=f.Rn)
+        if f.Rd.value != 0b11111:
+          gfmov_s_nv(dest=f.Rd, src1=T0)
+
+
+class FCVTPS_64S_float2int(_JSON_FCVTPS_64S_float2int):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        fcvts64_rp_s_nv(dest=T0, src1=f.Rn)
+        if f.Rd.value != 0b11111:
+          gfmov_d_nv(dest=f.Rd, src1=T0)
+
+
+class FCVTPS_32D_float2int(_JSON_FCVTPS_32D_float2int):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        fcvts32_rp_d_nv(dest=T0, src1=f.Rn)
+        if f.Rd.value != 0b11111:
+          gfmov_s_nv(dest=f.Rd, src1=T0)
+
+
+class FCVTPS_64D_float2int(_JSON_FCVTPS_64D_float2int):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        fcvts64_rp_d_nv(dest=T0, src1=f.Rn, src2=f.Rn)
+        if f.Rd.value != 0b11111:
+          gfmov_d_nv(dest=f.Rd, src1=T0)
+
+
+class FCVTPU_32H_float2int(_JSON_FCVTPU_32H_float2int):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        fcvtu32_rp_h_nv(dest=T0, src1=f.Rn)
+        if f.Rd.value != 0b11111:
+          gfmov_s_nv(dest=f.Rd, src1=T0)
+
+
+class FCVTPU_64H_float2int(_JSON_FCVTPU_64H_float2int):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        fcvtu64_rp_h_nv(dest=T0, src1=f.Rn)
+        if f.Rd.value != 0b11111:
+          gfmov_d_nv(dest=f.Rd, src1=T0)
+
+
+class FCVTPU_32S_float2int(_JSON_FCVTPU_32S_float2int):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        fcvtu32_rp_s_nv(dest=T0, src1=f.Rn, src2=f.Rn)
+        if f.Rd.value != 0b11111:
+          gfmov_s_nv(dest=f.Rd, src1=T0)
+
+
+class FCVTPU_64S_float2int(_JSON_FCVTPU_64S_float2int):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        fcvtu64_rp_s_nv(dest=T0, src1=f.Rn)
+        if f.Rd.value != 0b11111:
+          gfmov_d_nv(dest=f.Rd, src1=T0)
+
+
+class FCVTPU_32D_float2int(_JSON_FCVTPU_32D_float2int):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        fcvtu32_rp_d_nv(dest=T0, src1=f.Rn)
+        if f.Rd.value != 0b11111:
+          gfmov_s_nv(dest=f.Rd, src1=T0)
+
+
+class FCVTPU_64D_float2int(_JSON_FCVTPU_64D_float2int):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        fcvtu64_rp_d_nv(dest=T0, src1=f.Rn, src2=f.Rn)
+        if f.Rd.value != 0b11111:
+          gfmov_d_nv(dest=f.Rd, src1=T0)
+
+
+class FCVTZS_32H_float2fix(_JSON_FCVTZS_32H_float2fix):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        fcvtsf_h_nv(dest=T0, src1=f.Rn)
+        fcvts32f_rz_s_nv(dest=T0, src1=T0, src2=T0, fsu_imm=f.scale)
+        if f.Rd.value != 0b11111:
+          gfmov_s_nv(dest=f.Rd, src1=T0)
+
+
+class FCVTZS_64H_float2fix(_JSON_FCVTZS_64H_float2fix):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        fcvtsf_h_nv(dest=T0, src1=f.Rn)
+        fcvts64f_rz_s_nv(dest=T0, src1=T0, fsu_imm=f.scale)
+        if f.Rd.value != 0b11111:
+          gfmov_d_nv(dest=f.Rd, src1=T0)
+
+
+class FCVTZS_32S_float2fix(_JSON_FCVTZS_32S_float2fix):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        fcvts32f_rz_s_nv(dest=T0, src1=f.Rn, src2=f.Rn, fsu_imm=f.scale)
+        if f.Rd.value != 0b11111:
+          gfmov_s_nv(dest=f.Rd, src1=T0)
+
+
+class FCVTZS_64S_float2fix(_JSON_FCVTZS_64S_float2fix):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        fcvts64f_rz_s_nv(dest=T0, src1=f.Rn, fsu_imm=f.scale)
+        if f.Rd.value != 0b11111:
+          gfmov_d_nv(dest=f.Rd, src1=T0)
+
+
+class FCVTZS_32D_float2fix(_JSON_FCVTZS_32D_float2fix):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        fcvts32f_rz_d_nv(dest=T0, src1=f.Rn, fsu_imm=f.scale)
+        if f.Rd.value != 0b11111:
+          gfmov_s_nv(dest=f.Rd, src1=T0)
+
+
+class FCVTZS_64D_float2fix(_JSON_FCVTZS_64D_float2fix):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        fcvts64f_rz_d_nv(dest=T0, src1=f.Rn, src2=f.Rn, fsu_imm=f.scale)
+        if f.Rd.value != 0b11111:
+          gfmov_d_nv(dest=f.Rd, src1=T0)
+
+
+class FCVTZS_32H_float2int(_JSON_FCVTZS_32H_float2int):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        fcvts32_rz_h_nv(dest=T0, src1=f.Rn)
+        if f.Rd.value != 0b11111:
+          gfmov_s_nv(dest=f.Rd, src1=T0)
+
+
+class FCVTZS_64H_float2int(_JSON_FCVTZS_64H_float2int):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        fcvts64_rz_h_nv(dest=T0, src1=f.Rn)
+        if f.Rd.value != 0b11111:
+          gfmov_d_nv(dest=f.Rd, src1=T0)
+
+
+class FCVTZS_32S_float2int(_JSON_FCVTZS_32S_float2int):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        fcvts32_rz_s_nv(dest=T0, src1=f.Rn, src2=f.Rn)
+        if f.Rd.value != 0b11111:
+          gfmov_s_nv(dest=f.Rd, src1=T0)
+
+
+class FCVTZS_64S_float2int(_JSON_FCVTZS_64S_float2int):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        fcvts64_rz_s_nv(dest=T0, src1=f.Rn)
+        if f.Rd.value != 0b11111:
+          gfmov_d_nv(dest=f.Rd, src1=T0)
+
+
+class FCVTZS_32D_float2int(_JSON_FCVTZS_32D_float2int):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        fcvts32_rz_d_nv(dest=T0, src1=f.Rn)
+        if f.Rd.value != 0b11111:
+          gfmov_s_nv(dest=f.Rd, src1=T0)
+
+
+class FCVTZS_64D_float2int(_JSON_FCVTZS_64D_float2int):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        fcvts64_rz_d_nv(dest=T0, src1=f.Rn, src2=f.Rn)
+        if f.Rd.value != 0b11111:
+          gfmov_d_nv(dest=f.Rd, src1=T0)
+
+
+class FCVTZU_32H_float2fix(_JSON_FCVTZU_32H_float2fix):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        fcvtsf_h_nv(dest=T0, src1=f.Rn)
+        fcvtu32f_rz_s_nv(dest=T0, src1=T0, src2=T0, fsu_imm=f.scale)
+        if f.Rd.value != 0b11111:
+          gfmov_s_nv(dest=f.Rd, src1=T0)
+
+
+class FCVTZU_64H_float2fix(_JSON_FCVTZU_64H_float2fix):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        fcvtsf_h_nv(dest=T0, src1=f.Rn)
+        fcvtu64f_rz_s_nv(dest=T0, src1=T0, fsu_imm=f.scale)
+        if f.Rd.value != 0b11111:
+          gfmov_d_nv(dest=f.Rd, src1=T0)
+
+
+class FCVTZU_32S_float2fix(_JSON_FCVTZU_32S_float2fix):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        fcvtu32f_rz_s_nv(dest=T0, src1=f.Rn, src2=f.Rn, fsu_imm=f.scale)
+        if f.Rd.value != 0b11111:
+          gfmov_s_nv(dest=f.Rd, src1=T0)
+
+
+class FCVTZU_64S_float2fix(_JSON_FCVTZU_64S_float2fix):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        fcvtu64f_rz_s_nv(dest=T0, src1=f.Rn, fsu_imm=f.scale)
+        if f.Rd.value != 0b11111:
+          gfmov_d_nv(dest=f.Rd, src1=T0)
+
+
+class FCVTZU_32D_float2fix(_JSON_FCVTZU_32D_float2fix):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        fcvtu32f_rz_d_nv(dest=T0, src1=f.Rn, fsu_imm=f.scale)
+        if f.Rd.value != 0b11111:
+          gfmov_s_nv(dest=f.Rd, src1=T0)
+
+
+class FCVTZU_64D_float2fix(_JSON_FCVTZU_64D_float2fix):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        fcvtu64f_rz_d_nv(dest=T0, src1=f.Rn, src2=f.Rn, fsu_imm=f.scale)
+        if f.Rd.value != 0b11111:
+          gfmov_d_nv(dest=f.Rd, src1=T0)
+
+
+class FCVTZU_32H_float2int(_JSON_FCVTZU_32H_float2int):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        fcvtu32_rz_h_nv(dest=T0, src1=f.Rn)
+        if f.Rd.value != 0b11111:
+          gfmov_s_nv(dest=f.Rd, src1=T0)
+
+
+class FCVTZU_64H_float2int(_JSON_FCVTZU_64H_float2int):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        fcvtu64_rz_h_nv(dest=T0, src1=f.Rn)
+        if f.Rd.value != 0b11111:
+          gfmov_d_nv(dest=f.Rd, src1=T0)
+
+
+class FCVTZU_32S_float2int(_JSON_FCVTZU_32S_float2int):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        fcvtu32_rz_s_nv(dest=T0, src1=f.Rn, src2=f.Rn)
+        if f.Rd.value != 0b11111:
+          gfmov_s_nv(dest=f.Rd, src1=T0)
+
+
+class FCVTZU_64S_float2int(_JSON_FCVTZU_64S_float2int):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        fcvtu64_rz_s_nv(dest=T0, src1=f.Rn)
+        if f.Rd.value != 0b11111:
+          gfmov_d_nv(dest=f.Rd, src1=T0)
+
+
+class FCVTZU_32D_float2int(_JSON_FCVTZU_32D_float2int):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        fcvtu32_rz_d_nv(dest=T0, src1=f.Rn)
+        if f.Rd.value != 0b11111:
+          gfmov_s_nv(dest=f.Rd, src1=T0)
+
+
+class FCVTZU_64D_float2int(_JSON_FCVTZU_64D_float2int):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        fcvtu64_rz_d_nv(dest=T0, src1=f.Rn, src2=f.Rn)
+        if f.Rd.value != 0b11111:
+          gfmov_d_nv(dest=f.Rd, src1=T0)
+
+
+class FDIV_H_floatdp2(_JSON_FDIV_H_floatdp2):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: fdiv_h_nv
+        fdiv_h_nv(dest=f.Rd, src1=f.Rn, src2=f.Rm)
+
+
+class FDIV_S_floatdp2(_JSON_FDIV_S_floatdp2):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: fdiv_s_nv
+        fdiv_s_nv(dest=f.Rd, src1=f.Rn, src2=f.Rm)
+
+
+class FDIV_D_floatdp2(_JSON_FDIV_D_floatdp2):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: fdiv_d_nv
+        fdiv_d_nv(dest=f.Rd, src1=f.Rn, src2=f.Rm)
+
+
+class FJCVTZS_32D_float2int(_JSON_FJCVTZS_32D_float2int):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        fjcvtzs_d_nv(dest=T0, src1=f.Rn, flagdest=f0)
+        if f.Rd.value != 0b11111:
+          gfmov_d_nv(dest=f.Rd, src1=T0)
+
+
+class FMADD_H_floatdp3(_JSON_FMADD_H_floatdp3):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: fmadd_h_nv
+        fmadd_h_nv(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f.Ra)
+
+
+class FMADD_S_floatdp3(_JSON_FMADD_S_floatdp3):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: fmadd_s_nv
+        fmadd_s_nv(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f.Ra)
+
+
+class FMADD_D_floatdp3(_JSON_FMADD_D_floatdp3):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: fmadd_d_sv
+        fmadd_d_sv(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f.Ra)
+
+
+class FMAX_H_floatdp2(_JSON_FMAX_H_floatdp2):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: fmax_h_nv
+        fmax_h_nv(dest=f.Rd, src1=f.Rn, src2=f.Rm)
+
+
+class FMAX_S_floatdp2(_JSON_FMAX_S_floatdp2):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: fmax_s_nv
+        fmax_s_nv(dest=f.Rd, src1=f.Rn, src2=f.Rm)
+
+
+class FMAX_D_floatdp2(_JSON_FMAX_D_floatdp2):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: fmax_d_nv
+        fmax_d_nv(dest=f.Rd, src1=f.Rn, src2=f.Rm)
+
+
+class FMAXNM_H_floatdp2(_JSON_FMAXNM_H_floatdp2):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: fmaxnm_h_nv
+        fmaxnm_h_nv(dest=f.Rd, src1=f.Rn, src2=f.Rm)
+
+
+class FMAXNM_S_floatdp2(_JSON_FMAXNM_S_floatdp2):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: fmaxnm_s_nv
+        fmaxnm_s_nv(dest=f.Rd, src1=f.Rn, src2=f.Rm)
+
+
+class FMAXNM_D_floatdp2(_JSON_FMAXNM_D_floatdp2):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: fmaxnm_d_nv
+        fmaxnm_d_nv(dest=f.Rd, src1=f.Rn, src2=f.Rm)
+
+
+class FMIN_H_floatdp2(_JSON_FMIN_H_floatdp2):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: fmin_h_nv
+        fmin_h_nv(dest=f.Rd, src1=f.Rn, src2=f.Rm)
+
+
+class FMIN_S_floatdp2(_JSON_FMIN_S_floatdp2):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: fmin_s_nv
+        fmin_s_nv(dest=f.Rd, src1=f.Rn, src2=f.Rm)
+
+
+class FMIN_D_floatdp2(_JSON_FMIN_D_floatdp2):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: fmin_d_nv
+        fmin_d_nv(dest=f.Rd, src1=f.Rn, src2=f.Rm)
+
+
+class FMINNM_H_floatdp2(_JSON_FMINNM_H_floatdp2):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: fminnm_h_nv
+        fminnm_h_nv(dest=f.Rd, src1=f.Rn, src2=f.Rm)
+
+
+class FMINNM_S_floatdp2(_JSON_FMINNM_S_floatdp2):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: fminnm_s_nv
+        fminnm_s_nv(dest=f.Rd, src1=f.Rn, src2=f.Rm)
+
+
+class FMINNM_D_floatdp2(_JSON_FMINNM_D_floatdp2):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: fminnm_d_nv
+        fminnm_d_nv(dest=f.Rd, src1=f.Rn, src2=f.Rm)
+
+
+class FMOV_H_floatdp1(_JSON_FMOV_H_floatdp1):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: fmov_h_nv
+        fmov_h_nv(dest=f.Rd, src2=f.Rn)
+
+
+class FMOV_S_floatdp1(_JSON_FMOV_S_floatdp1):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: fmov_s_nv
+        fmov_s_nv(dest=f.Rd, src2=f.Rn)
+
+
+class FMOV_D_floatdp1(_JSON_FMOV_D_floatdp1):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: fmov_d_nv
+        fmov_d_nv(dest=f.Rd, src2=f.Rn)
+
+
+class FMOV_32H_float2int(_JSON_FMOV_32H_float2int):
+
+    pmu_bucket = 'dp'
+
+    pmu_events = ['DP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        if f.Rd.value != 0b11111:
+          gfmov_h_nv(dest=f.Rd, src1=f.Rn)
+        else:
+          nop()
+
+
+class FMOV_64H_float2int(_JSON_FMOV_64H_float2int):
+
+    pmu_bucket = 'dp'
+
+    pmu_events = ['DP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        if f.Rd.value != 0b11111:
+          gfmov_h_nv(dest=f.Rd, src1=f.Rn)
+        else:
+          nop()
+
+
+class FMOV_H32_float2int(_JSON_FMOV_H32_float2int):
+
+    pmu_bucket = 'dp'
+
+    pmu_events = ['DP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        movi2f_fmovh(dest=f.Rd, src2=f.Rn)
+
+
+class FMOV_S32_float2int(_JSON_FMOV_S32_float2int):
+
+    pmu_bucket = 'dp'
+
+    pmu_events = ['DP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        movi2f_fmovs(dest=f.Rd, src2=f.Rn)
+
+
+class FMOV_32S_float2int(_JSON_FMOV_32S_float2int):
+
+    pmu_bucket = 'dp'
+
+    pmu_events = ['DP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        if f.Rd.value != 0b11111:
+          gfmov_s_nv(dest=f.Rd, src1=f.Rn)
+        else:
+          nop()
+
+
+class FMOV_H64_float2int(_JSON_FMOV_H64_float2int):
+
+    pmu_bucket = 'dp'
+
+    pmu_events = ['DP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        movi2f_fmovh(dest=f.Rd, src2=f.Rn)
+
+
+class FMOV_D64_float2int(_JSON_FMOV_D64_float2int):
+
+    pmu_bucket = 'dp'
+
+    pmu_events = ['DP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        movi2f_fmovd(dest=f.Rd, src2=f.Rn)
+
+
+class FMOV_V64I_float2int(_JSON_FMOV_V64I_float2int):
+
+    pmu_bucket = 'dp'
+
+    pmu_events = ['DP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        movi2f_fmovd(dest=T0,   src2=f.Rn)
+        ins2_idx0_d_lv(dest=f.Rd, src1=f.Rd, src2=T0, fsu_imm=Signal("110000000"), idx=Signal('001100'))
+
+
+class FMOV_64D_float2int(_JSON_FMOV_64D_float2int):
+
+    pmu_bucket = 'dp'
+
+    pmu_events = ['DP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        if f.Rd.value != 0b11111:
+          gfmov_d_nv(dest=f.Rd, src1=f.Rn)
+        else:
+          nop()
+
+
+class FMOV_64VX_float2int(_JSON_FMOV_64VX_float2int):
+
+    pmu_bucket = 'dp'
+
+    pmu_events = ['DP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        if f.Rd.value != 0b11111:
+          gins2_idx0_d_lv(dest=f.Rd, src1=f.Rn, src2=f.Rn, fsu_imm=Signal("010001000"), idx=Signal('001110'))  #DestElem=LowerDblW #SrcElem=UpperDblW
+        else:
+          nop()
+
+
+class FMOV_H_floatimm(_JSON_FMOV_H_floatimm):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: fmov_imm_h_nv
+        fmov_imm_h_nv(dest=f.Rd, idx=(Signal('001000')))
+
+
+class FMOV_S_floatimm(_JSON_FMOV_S_floatimm):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: fmov_imm_s_nv
+        fmov_imm_s_nv(dest=f.Rd, idx=(Signal('001000')))
+
+
+class FMOV_D_floatimm(_JSON_FMOV_D_floatimm):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: fmov_imm_d_nv
+        fmov_imm_d_nv(dest=f.Rd, idx=(Signal('001000')))
+
+
+class FMSUB_H_floatdp3(_JSON_FMSUB_H_floatdp3):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: fmsub_h_nv
+        fmsub_h_nv(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f.Ra)
+
+
+class FMSUB_S_floatdp3(_JSON_FMSUB_S_floatdp3):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: fmsub_s_nv
+        fmsub_s_nv(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f.Ra)
+
+
+class FMSUB_D_floatdp3(_JSON_FMSUB_D_floatdp3):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: fmsub_d_nv
+        fmsub_d_nv(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f.Ra)
+
+
+class FMUL_H_floatdp2(_JSON_FMUL_H_floatdp2):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: fmul_h_nv
+        fmul_h_nv(dest=f.Rd, src1=f.Rn, src2=f.Rm)
+
+
+class FMUL_S_floatdp2(_JSON_FMUL_S_floatdp2):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: fmul_s_nv
+        fmul_s_nv(dest=f.Rd, src1=f.Rn, src2=f.Rm)
+
+
+class FMUL_D_floatdp2(_JSON_FMUL_D_floatdp2):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: fmul_d_nv
+        fmul_d_nv(dest=f.Rd, src1=f.Rn, src2=f.Rm)
+
+
+class FNEG_H_floatdp1(_JSON_FNEG_H_floatdp1):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: fneg_h_nv
+        fneg_h_nv(dest=f.Rd, src1=f.Rn, src2=f.Rd)
+
+
+class FNEG_S_floatdp1(_JSON_FNEG_S_floatdp1):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: fneg_s_nv
+        fneg_s_nv(dest=f.Rd, src1=f.Rn, src2=f.Rd)
+
+
+class FNEG_D_floatdp1(_JSON_FNEG_D_floatdp1):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: fneg_d_nv
+        fneg_d_nv(dest=f.Rd, src1=f.Rn, src2=f.Rd)
+
+
+class FNMADD_H_floatdp3(_JSON_FNMADD_H_floatdp3):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: fnmadd_h_nv
+        fnmadd_h_nv(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f.Ra)
+
+
+class FNMADD_S_floatdp3(_JSON_FNMADD_S_floatdp3):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: fnmadd_s_nv
+        fnmadd_s_nv(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f.Ra)
+
+
+class FNMADD_D_floatdp3(_JSON_FNMADD_D_floatdp3):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: fnmadd_d_nv
+        fnmadd_d_nv(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f.Ra)
+
+
+class FNMSUB_H_floatdp3(_JSON_FNMSUB_H_floatdp3):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: fnmsub_h_nv
+        fnmsub_h_nv(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f.Ra)
+
+
+class FNMSUB_S_floatdp3(_JSON_FNMSUB_S_floatdp3):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: fnmsub_s_nv
+        fnmsub_s_nv(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f.Ra)
+
+
+class FNMSUB_D_floatdp3(_JSON_FNMSUB_D_floatdp3):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: fnmsub_d_nv
+        fnmsub_d_nv(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f.Ra)
+
+
+class FNMUL_H_floatdp2(_JSON_FNMUL_H_floatdp2):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: fnmul_h_nv
+        fnmul_h_nv(dest=f.Rd, src1=f.Rn, src2=f.Rm)
+
+
+class FNMUL_S_floatdp2(_JSON_FNMUL_S_floatdp2):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: fnmul_s_nv
+        fnmul_s_nv(dest=f.Rd, src1=f.Rn, src2=f.Rm)
+
+
+class FNMUL_D_floatdp2(_JSON_FNMUL_D_floatdp2):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: fnmul_d_nv
+        fnmul_d_nv(dest=f.Rd, src1=f.Rn, src2=f.Rm)
+
+
+class FRINT32X_S_floatdp1(_JSON_FRINT32X_S_floatdp1):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: frint32x_s_nv
+        frint32x_s_nv(dest=f.Rd, src1=f.Rn, src2=f.Rd)
+
+
+class FRINT32X_D_floatdp1(_JSON_FRINT32X_D_floatdp1):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: frint32x_d_nv
+        frint32x_d_nv(dest=f.Rd, src1=f.Rn, src2=f.Rd)
+
+
+class FRINT32Z_S_floatdp1(_JSON_FRINT32Z_S_floatdp1):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: frint32z_s_nv
+        frint32z_s_nv(dest=f.Rd, src1=f.Rn, src2=f.Rd)
+
+
+class FRINT32Z_D_floatdp1(_JSON_FRINT32Z_D_floatdp1):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: frint32z_d_nv
+        frint32z_d_nv(dest=f.Rd, src1=f.Rn, src2=f.Rd)
+
+
+class FRINT64X_S_floatdp1(_JSON_FRINT64X_S_floatdp1):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: frint64x_s_nv
+        frint64x_s_nv(dest=f.Rd, src1=f.Rn, src2=f.Rd)
+
+
+class FRINT64X_D_floatdp1(_JSON_FRINT64X_D_floatdp1):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: frint64x_d_nv
+        frint64x_d_nv(dest=f.Rd, src1=f.Rn, src2=f.Rd)
+
+
+class FRINT64Z_S_floatdp1(_JSON_FRINT64Z_S_floatdp1):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: frint64z_s_nv
+        frint64z_s_nv(dest=f.Rd, src1=f.Rn, src2=f.Rd)
+
+
+class FRINT64Z_D_floatdp1(_JSON_FRINT64Z_D_floatdp1):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: frint64z_d_nv
+        frint64z_d_nv(dest=f.Rd, src1=f.Rn, src2=f.Rd)
+
+
+class FRINTA_H_floatdp1(_JSON_FRINTA_H_floatdp1):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: frint_ra_h_nv
+        frint_ra_h_nv(dest=f.Rd, src1=f.Rn, src2=f.Rd)
+
+
+class FRINTA_S_floatdp1(_JSON_FRINTA_S_floatdp1):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: frint_ra_s_nv
+        frint_ra_s_nv(dest=f.Rd, src1=f.Rn, src2=f.Rd)
+
+
+class FRINTA_D_floatdp1(_JSON_FRINTA_D_floatdp1):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: frint_ra_d_nv
+        frint_ra_d_nv(dest=f.Rd, src1=f.Rn, src2=f.Rd)
+
+
+class FRINTI_H_floatdp1(_JSON_FRINTI_H_floatdp1):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: frint_h_nv
+        frint_h_nv(dest=f.Rd, src1=f.Rn, src2=f.Rd)
+
+
+class FRINTI_S_floatdp1(_JSON_FRINTI_S_floatdp1):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: frint_s_nv
+        frint_s_nv(dest=f.Rd, src1=f.Rn, src2=f.Rd)
+
+
+class FRINTI_D_floatdp1(_JSON_FRINTI_D_floatdp1):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: frint_d_nv
+        frint_d_nv(dest=f.Rd, src1=f.Rn, src2=f.Rd)
+
+
+class FRINTM_H_floatdp1(_JSON_FRINTM_H_floatdp1):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: frint_rm_h_nv
+        frint_rm_h_nv(dest=f.Rd, src1=f.Rn, src2=f.Rd)
+
+
+class FRINTM_S_floatdp1(_JSON_FRINTM_S_floatdp1):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: frint_rm_s_nv
+        frint_rm_s_nv(dest=f.Rd, src1=f.Rn, src2=f.Rd)
+
+
+class FRINTM_D_floatdp1(_JSON_FRINTM_D_floatdp1):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: frint_rm_d_nv
+        frint_rm_d_nv(dest=f.Rd, src1=f.Rn, src2=f.Rd)
+
+
+class FRINTN_H_floatdp1(_JSON_FRINTN_H_floatdp1):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: frint_rn_h_nv
+        frint_rn_h_nv(dest=f.Rd, src1=f.Rn, src2=f.Rd)
+
+
+class FRINTN_S_floatdp1(_JSON_FRINTN_S_floatdp1):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: frint_rn_s_nv
+        frint_rn_s_nv(dest=f.Rd, src1=f.Rn, src2=f.Rd)
+
+
+class FRINTN_D_floatdp1(_JSON_FRINTN_D_floatdp1):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: frint_rn_d_nv
+        frint_rn_d_nv(dest=f.Rd, src1=f.Rn, src2=f.Rd)
+
+
+class FRINTP_H_floatdp1(_JSON_FRINTP_H_floatdp1):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: frint_rp_h_nv
+        frint_rp_h_nv(dest=f.Rd, src1=f.Rn, src2=f.Rd)
+
+
+class FRINTP_S_floatdp1(_JSON_FRINTP_S_floatdp1):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: frint_rp_s_nv
+        frint_rp_s_nv(dest=f.Rd, src1=f.Rn, src2=f.Rd)
+
+
+class FRINTP_D_floatdp1(_JSON_FRINTP_D_floatdp1):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: frint_rp_d_nv
+        frint_rp_d_nv(dest=f.Rd, src1=f.Rn, src2=f.Rd)
+
+
+class FRINTX_H_floatdp1(_JSON_FRINTX_H_floatdp1):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: frintx_h_nv
+        frintx_h_nv(dest=f.Rd, src1=f.Rn, src2=f.Rd)
+
+
+class FRINTX_S_floatdp1(_JSON_FRINTX_S_floatdp1):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: frintx_s_nv
+        frintx_s_nv(dest=f.Rd, src1=f.Rn, src2=f.Rd)
+
+
+class FRINTX_D_floatdp1(_JSON_FRINTX_D_floatdp1):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: frintx_d_nv
+        frintx_d_nv(dest=f.Rd, src1=f.Rn, src2=f.Rd)
+
+
+class FRINTZ_H_floatdp1(_JSON_FRINTZ_H_floatdp1):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: frint_rz_h_nv
+        frint_rz_h_nv(dest=f.Rd, src1=f.Rn, src2=f.Rd)
+
+
+class FRINTZ_S_floatdp1(_JSON_FRINTZ_S_floatdp1):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: frint_rz_s_nv
+        frint_rz_s_nv(dest=f.Rd, src1=f.Rn, src2=f.Rd)
+
+
+class FRINTZ_D_floatdp1(_JSON_FRINTZ_D_floatdp1):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: frint_rz_d_nv
+        frint_rz_d_nv(dest=f.Rd, src1=f.Rn, src2=f.Rd)
+
+
+class FSQRT_H_floatdp1(_JSON_FSQRT_H_floatdp1):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: fsqrt_h_nv
+        fsqrt_h_nv(dest=f.Rd, src1=f.Rn, src2=f.Rd)
+
+
+class FSQRT_S_floatdp1(_JSON_FSQRT_S_floatdp1):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: fsqrt_s_nv
+        fsqrt_s_nv(dest=f.Rd, src1=f.Rn, src2=f.Rd)
+
+
+class FSQRT_D_floatdp1(_JSON_FSQRT_D_floatdp1):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: fsqrt_d_nv
+        fsqrt_d_nv(dest=f.Rd, src1=f.Rn, src2=f.Rd)
+
+
+class FSUB_H_floatdp2(_JSON_FSUB_H_floatdp2):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: fsub_h_nv
+        fsub_h_nv(dest=f.Rd, src1=f.Rn, src2=f.Rm)
+
+
+class FSUB_S_floatdp2(_JSON_FSUB_S_floatdp2):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: fsub_s_nv
+        fsub_s_nv(dest=f.Rd, src1=f.Rn, src2=f.Rm)
+
+
+class FSUB_D_floatdp2(_JSON_FSUB_D_floatdp2):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        # Number of uops 1: fsub_d_nv
+        fsub_d_nv(dest=f.Rd, src1=f.Rn, src2=f.Rm)
+
+
+class SCVTF_H32_float2fix(_JSON_SCVTF_H32_float2fix):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        movi2f_fmovs(dest=T0, src2=f.Rn)
+        scvtfsf_rz_s_nv(dest=T0, src1=T0, fsu_imm=(f.scale))
+        fcvthf_s_nv(dest=f.Rd, src1=T0, src2=f.Rd)
+        #scvtfhf_s_nv(dest=f.Rd, src1=T0, src2=f.Rd, fsu_imm=f.scale)
+
+
+class SCVTF_S32_float2fix(_JSON_SCVTF_S32_float2fix):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        movi2f_fmovs(dest=T0, src2=f.Rn)
+        scvtfsf_s_nv(dest=f.Rd, src1=T0, src2=f.Rd, fsu_imm=f.scale)
+
+
+class SCVTF_D32_float2fix(_JSON_SCVTF_D32_float2fix):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        movi2f_fmovs(dest=T0, src2=f.Rn)
+        scvtfdg_s_nv(dest=f.Rd, src1=T0, src2=f.Rd, fsu_imm=f.scale)
+
+
+class SCVTF_H64_float2fix(_JSON_SCVTF_H64_float2fix):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        movi2f_fmovd(dest=T0, src2=f.Rn)
+        scvtfsg_rz_d_nv(dest=T0, src1=T0, fsu_imm=f.scale)
+        fcvthf_s_nv(dest=f.Rd, src1=T0, src2=f.Rd)
+        #scvtfhg_d_nv(dest=f.Rd, src1=T0, src2=f.Rd, fsu_imm=f.scale)
+
+
+class SCVTF_S64_float2fix(_JSON_SCVTF_S64_float2fix):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        movi2f_fmovd(dest=T0, src2=f.Rn)
+        scvtfsg_d_nv(dest=f.Rd, src1=T0, src2=f.Rd, fsu_imm=f.scale)
+
+
+class SCVTF_D64_float2fix(_JSON_SCVTF_D64_float2fix):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        movi2f_fmovd(dest=T0, src2=f.Rn)
+        scvtfdf_d_nv(dest=f.Rd, src1=T0, src2=f.Rd, fsu_imm=f.scale)
+
+
+class SCVTF_H32_float2int(_JSON_SCVTF_H32_float2int):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        movi2f_fmovs(dest=T0, src2=f.Rn)
+        scvtfh_s_nv(dest=f.Rd, src1=T0, src2=f.Rd)
+
+
+class SCVTF_S32_float2int(_JSON_SCVTF_S32_float2int):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        movi2f_fmovs(dest=T0, src2=f.Rn)
+        scvtfs_s_nv(dest=f.Rd, src1=T0, src2=f.Rd)
+
+
+class SCVTF_D32_float2int(_JSON_SCVTF_D32_float2int):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        movi2f_fmovs(dest=T0, src2=f.Rn)
+        scvtfd_s_nv(dest=f.Rd, src1=T0, src2=f.Rd)
+
+
+class SCVTF_H64_float2int(_JSON_SCVTF_H64_float2int):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        movi2f_fmovd(dest=T0, src2=f.Rn)
+        scvtfh_d_nv(dest=f.Rd, src1=T0, src2=f.Rd)
+
+
+class SCVTF_S64_float2int(_JSON_SCVTF_S64_float2int):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        movi2f_fmovd(dest=T0, src2=f.Rn)
+        scvtfs_d_nv(dest=f.Rd, src1=T0, src2=f.Rd)
+
+
+class SCVTF_D64_float2int(_JSON_SCVTF_D64_float2int):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        movi2f_fmovd(dest=T0, src2=f.Rn)
+        scvtfd_d_nv(dest=f.Rd, src1=T0, src2=f.Rd)
+
+
+class UCVTF_H32_float2fix(_JSON_UCVTF_H32_float2fix):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        movi2f_fmovs(dest=T0, src2=f.Rn)
+        ucvtfsf_rz_s_nv(dest=T0, src1=T0, fsu_imm=f.scale)
+        fcvthf_s_nv(dest=f.Rd, src1=T0, src2=f.Rd)
+        #ucvtfhf_s_nv(dest=f.Rd, src1=T0, src2=f.Rd, fsu_imm=f.scale)
+
+
+class UCVTF_S32_float2fix(_JSON_UCVTF_S32_float2fix):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        movi2f_fmovs(dest=T0, src2=f.Rn)
+        ucvtfsf_s_nv(dest=f.Rd, src1=T0, src2=f.Rd, fsu_imm=f.scale)
+
+
+class UCVTF_D32_float2fix(_JSON_UCVTF_D32_float2fix):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        movi2f_fmovs(dest=T0, src2=f.Rn)
+        ucvtfdg_s_nv(dest=f.Rd, src1=T0, src2=f.Rd, fsu_imm=f.scale)
+
+
+class UCVTF_H64_float2fix(_JSON_UCVTF_H64_float2fix):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        movi2f_fmovd(dest=T0, src2=f.Rn)
+        ucvtfsg_rz_d_nv(dest=T0, src1=T0, fsu_imm=f.scale)
+        fcvthf_s_nv(dest=f.Rd, src1=T0, src2=f.Rd)
+        #ucvtfhg_d_nv(dest=f.Rd, src1=T0, src2=f.Rd, fsu_imm=f.scale)
+
+
+class UCVTF_S64_float2fix(_JSON_UCVTF_S64_float2fix):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        movi2f_fmovd(dest=T0, src2=f.Rn)
+        ucvtfsg_d_nv(dest=f.Rd, src1=T0, src2=f.Rd, fsu_imm=f.scale)
+
+
+class UCVTF_D64_float2fix(_JSON_UCVTF_D64_float2fix):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        movi2f_fmovd(dest=T0, src2=f.Rn)
+        ucvtfdf_d_nv(dest=f.Rd, src1=T0, src2=f.Rd, fsu_imm=f.scale)
+
+
+class UCVTF_H32_float2int(_JSON_UCVTF_H32_float2int):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        movi2f_fmovs(dest=T0, src2=f.Rn)
+        ucvtfh_s_nv(dest=f.Rd, src1=T0, src2=f.Rd)
+
+
+class UCVTF_S32_float2int(_JSON_UCVTF_S32_float2int):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        movi2f_fmovs(dest=T0, src2=f.Rn)
+        ucvtfs_s_nv(dest=f.Rd, src1=T0, src2=f.Rd)
+
+
+class UCVTF_D32_float2int(_JSON_UCVTF_D32_float2int):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        movi2f_fmovs(dest=T0, src2=f.Rn)
+        ucvtfd_s_nv(dest=f.Rd, src1=T0, src2=f.Rd)
+
+
+class UCVTF_H64_float2int(_JSON_UCVTF_H64_float2int):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        movi2f_fmovd(dest=T0, src2=f.Rn)
+        ucvtfh_d_nv(dest=f.Rd, src1=T0, src2=f.Rd)
+
+
+class UCVTF_S64_float2int(_JSON_UCVTF_S64_float2int):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        movi2f_fmovd(dest=T0, src2=f.Rn)
+        ucvtfs_d_nv(dest=f.Rd, src1=T0, src2=f.Rd)
+
+
+class UCVTF_D64_float2int(_JSON_UCVTF_D64_float2int):
+
+    pmu_bucket = 'vfp'
+
+    pmu_events = ['FP_SPEC', 'VFP_SPEC']
+
+    def decode(self, f):
+        #Dont_touch
+        movi2f_fmovd(dest=T0, src2=f.Rn)
+        ucvtfd_d_nv(dest=f.Rd, src1=T0, src2=f.Rd)

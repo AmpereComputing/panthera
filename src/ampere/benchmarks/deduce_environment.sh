@@ -1,0 +1,90 @@
+#!/bin/bash
+# Copyright (c) 2023-2024 Ampere Computing. All rights reserved.
+# SPDX-License-Identifier: BSD-3-Clause
+
+# Target values for minimum instructions
+DEFAULT_MIN_OFFLINE_WARMUP_INSTRS=10000
+DEFAULT_MIN_ONLINE_WARMUP_INSTRS=0
+DEFAULT_MIN_MEASURED_INSTRS=30000
+DEFAULT_MIN_COOLDOWN_INSTRS=10000
+
+# Region minimum iterations
+DEFAULT_MIN_OFFLINE_WARMUP_ITERATIONS=2
+DEFAULT_MIN_ONLINE_WARMUP_ITERATIONS=0
+DEFAULT_MIN_MEASURED_ITERATIONS=1
+DEFAULT_MIN_COOLDOWN_ITERATIONS=1
+
+# Search "wiggle" factor. Stop adjusting when we are over the minimum and less
+# than 1/TARGET_CLOSENESS to the nominal instruction count for the region or
+# if we are as close to 1/TARGET_CLOSNESS as we can get
+TARGET_CLOSENESS=32
+
+if ! which perf > /dev/null
+then
+    echo "Error: could not find 'perf' in PATH. Please make sure it is installed"
+    exit 1
+fi
+
+BASELINE_INSTRUCTIONS=$(perf stat -e instructions:u env BENCHMARK_OFFLINE_WARMUP_ITERATIONS=0 BENCHMARK_ONLINE_WARMUP_ITERATIONS=0 BENCHMARK_ITERATIONS=0 BENCHMARK_COOLDOWN_ITERATIONS=0 $@ 2>&1 | grep "instructions:u" | sed -e "s/[^0-9]//g")
+
+find_iterations() {
+    TARGET_INSTRUCTION_BASELINE=$1
+    TARGET_INSTRUCTION_DELTA=$2
+    ITERATIONS_DETECTED=$3
+    SEARCH_VARIABLE_NAME=$4
+    OTHER_VARS=$5
+    COMMAND=${@:6}
+
+    if [ ${TARGET_INSTRUCTION_DELTA} -gt 0 ]
+    then
+        FACTOR=1
+        ABOVE_THRESHOLD=0
+        while true
+        do
+            if [[ ${FACTOR} -gt ${TARGET_CLOSENESS} || $((${ITERATIONS_DETECTED} / ${FACTOR})) -eq 0 ]]
+            then
+                # If we are already adjusting by a finer delta than the target closness and we haven't
+                # yet achieved it then we must be as close as we can get but aren't there yet so just
+                # terminate here
+                break
+            fi
+
+            ITERATION_INSTRUCTIONS=$(perf stat -e instructions:u env ${SEARCH_VARIABLE_NAME}=${ITERATIONS_DETECTED} ${OTHER_VARS} ${COMMAND} 2>&1 | grep "instructions:u" | sed -e "s/[^0-9]//g")
+            INSTRUCTION_OFFSET=$((${ITERATION_INSTRUCTIONS}-${TARGET_INSTRUCTION_DELTA}))
+
+            if [ ${TARGET_INSTRUCTION_BASELINE} -lt ${INSTRUCTION_OFFSET} ]
+            then
+                if [ ${ABOVE_THRESHOLD} -eq 0 ]
+                then
+                    ABOVE_THRESHOLD=1
+                    FACTOR=$((${FACTOR} * 2))
+                fi
+                # If we get here then we exceed minimum delta so let's see how close we are
+                INSTRUCTION_DISTANCE=$((${INSTRUCTION_OFFSET} - ${TARGET_INSTRUCTION_BASELINE}))
+                INSTRUCTION_DISTANCE=${INSTRUCTION_DISTANCE#-} # Fake-up absolute value by stripping negative char
+                if [ $((${TARGET_CLOSENESS} * ${INSTRUCTION_DISTANCE})) -lt ${TARGET_INSTRUCTION_DELTA} ]
+                then
+                    break
+                else
+                    ITERATIONS_DETECTED=$((${ITERATIONS_DETECTED} - ${ITERATIONS_DETECTED} / ${FACTOR}))
+                fi
+            else
+                if [ ${ABOVE_THRESHOLD} -gt 0 ]
+                then
+                    ABOVE_THRESHOLD=0
+                    FACTOR=$((${FACTOR} * 2))
+                fi
+                ITERATIONS_DETECTED=$((${ITERATIONS_DETECTED} + ${ITERATIONS_DETECTED} / ${FACTOR}))
+            fi
+        done
+    fi
+
+    echo ${ITERATIONS_DETECTED}
+}
+
+BENCHMARK_OFFLINE_WARMUP_ITERATIONS_DETECTED=$(find_iterations ${BASELINE_INSTRUCTIONS} ${MIN_OFFLINE_WARMUP_INSTRS:-${DEFAULT_MIN_OFFLINE_WARMUP_INSTRS}} ${MIN_OFFLINE_WARMUP_ITERATIONS:-${DEFAULT_MIN_OFFLINE_WARMUP_ITERATIONS}} BENCHMARK_OFFLINE_WARMUP_ITERATIONS "BENCHMARK_ONLINE_WARMUP_ITERATIONS=0 BENCHMARK_ITERATIONS=0 BENCHMARK_COOLDOWN_ITERATIONS=0" $@)
+BENCHMARK_ONLINE_WARMUP_ITERATIONS_DETECTED=$(find_iterations ${BASELINE_INSTRUCTIONS} ${ONLINE_WARMUP_INSTRS:-${DEFAULT_MIN_ONLINE_WARMUP_INSTRS}} ${ONLINE_WARMUP_ITERATIONS:-${DEFAULT_MIN_ONLINE_WARMUP_ITERATIONS}} BENCHMARK_ONLINE_WARMUP_ITERATIONS "BENCHMARK_OFFLINE_WARMUP_ITERATIONS=0 BENCHMARK_ITERATIONS=0 BENCHMARK_COOLDOWN_ITERATIONS=0" $@)
+BENCHMARK_ITERATIONS_DETECTED=$(find_iterations ${BASELINE_INSTRUCTIONS} ${MEASURED_INSTRS:-${DEFAULT_MIN_MEASURED_INSTRS}} ${MEASURED_ITERATIONS:-${DEFAULT_MIN_MEASURED_ITERATIONS}} BENCHMARK_ITERATIONS "BENCHMARK_OFFLINE_WARMUP_ITERATIONS=0 BENCHMARK_ONLINE_WARMUP_ITERATIONS=0 BENCHMARK_COOLDOWN_ITERATIONS=0" $@)
+BENCHMARK_COOLDOWN_ITERATIONS_DETECTED=$(find_iterations ${BASELINE_INSTRUCTIONS} ${COOLDOWN_INSTRS:-${DEFAULT_MIN_COOLDOWN_INSTRS}} ${COOLDOWN_ITERATIONS:-${DEFAULT_MIN_COOLDOWN_ITERATIONS}} BENCHMARK_COOLDOWN_ITERATIONS "BENCHMARK_OFFLINE_WARMUP_ITERATIONS=0 BENCHMARK_ONLINE_WARMUP_ITERATIONS=0 BENCHMARK_ITERATIONS=0" $@)
+
+echo "BENCHMARK_OFFLINE_WARMUP_ITERATIONS=${BENCHMARK_OFFLINE_WARMUP_ITERATIONS_DETECTED} BENCHMARK_ONLINE_WARMUP_ITERATIONS=${BENCHMARK_ONLINE_WARMUP_ITERATIONS_DETECTED} BENCHMARK_ITERATIONS=${BENCHMARK_ITERATIONS_DETECTED} BENCHMARK_COOLDOWN_ITERATIONS=${BENCHMARK_COOLDOWN_ITERATIONS_DETECTED}"

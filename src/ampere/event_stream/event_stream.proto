@@ -1,0 +1,120 @@
+/*
+ * Copyright (c) 2018-2024 Ampere Computing. All rights reserved.
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+
+/*
+ * Remember to change the version number in
+ * ./event_stream.py and
+ * ./event_stream_proto.h
+ * whenever you change this file.
+ */
+
+syntax = "proto3";
+
+package ampere.event_stream_proto;
+
+enum Kind {
+    EVENT = 0; // An event in time
+    VALUE = 1; // A data value
+}
+
+/*
+ * Define the type of an Event or Value.
+ * The definition provides a name and other meta data.
+ * For efficiency the Definition id is used in the other
+ * messages and the Definition name can be reconstructed
+ * from the Definition message.
+ */
+message Definition {
+    Kind kind = 1;
+    int32 id = 2;
+    string name = 3;
+    string description = 4;
+    optional int32 enumeration_id = 5;
+}
+
+/*
+ * Report Parameter values for the model execution used to produce this event
+ * stream
+ */
+message Parameter {
+    string name = 1;
+    string description = 2;
+    oneof value {
+        bool bool_value = 3;
+        int64 int_value = 4;
+        uint64 uint_value = 5;
+        double double_value = 6;
+        string string_value = 7;
+        string json_value = 8;
+    }
+}
+
+/*
+ * Enumeration integer to string mapping, referred to by Definition.enumeration_id
+ */
+message Enumeration {
+    int32 id = 1;
+    map<int64, string> values = 2;
+}
+
+/* Response from event processor to definition */
+message DefinitionResponse {
+    int32 id = 1;
+    bool enable = 2;
+}
+
+/*
+ * A data value for an event.
+ */
+message Value {
+    int32 definition_id = 1;
+    oneof values {
+        int64 int_value = 2;
+        uint64 uint_value = 3;
+        string string_value = 4;
+    }
+}
+
+/*
+ * An event in time with a variable number of data values.
+ */
+message Event {
+    int32 definition_id = 1;
+    int64 id = 2;
+    int64 time = 3;
+    repeated Value values = 4;
+}
+
+enum CtrlType {
+    START_SIMULATION = 0;
+}
+
+/*
+ * Control message for miscellaneous communication.
+ */
+message Control {
+    CtrlType type = 1;
+}
+
+/*
+ * Wrap all of the other messages types. Use oneof to allow
+ * easy decoding of the wrapped message. The actual message
+ * in the event stream will always be a Record.
+ */
+message Record {
+    oneof records {
+        Definition definition = 1;
+        Event event = 2;
+        Control control = 3;
+        Parameter parameter = 4;
+        Enumeration enumeration = 5;
+    }
+}
+
+message Response {
+    oneof responses {
+        DefinitionResponse definition = 1;
+    }
+}

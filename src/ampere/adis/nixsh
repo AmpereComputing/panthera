@@ -1,0 +1,7 @@
+#!/bin/bash
+# Copyright (c) 2024-2025 Ampere Computing. All rights reserved.
+# SPDX-License-Identifier: BSD-3-Clause
+
+# run this from a 'build' subdirectory
+/bin/time nix-shell ../project.nix --run "../build-and-run.sh ${1}"
+

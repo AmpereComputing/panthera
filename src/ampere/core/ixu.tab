@@ -1,0 +1,114 @@
+# Copyright (c) 2024 Ampere Computing. All rights reserved.
+# SPDX-License-Identifier: BSD-3-Clause
+
+@namespace "ampere::core"
+
+FsuProducerConnor
+================
+MA3
+MA5
+HP3
+HP4
+BY
+SI2
+SI3
+SI5
+MU3
+MU
+BU2
+BU3
+CU2
+CU3
+CU5
+LAST
+================
+@event_data {"name": "fsu_producer_connor", "description": "fsu producer connor"}
+
+
+FsuProducerTrinity
+================
+MA5
+MA3
+HP3
+HP4
+BY
+SI2
+SI3
+SI5
+MU
+BU2
+BU3
+CU2
+CU3
+CU5
+LAST
+================
+@event_data {"name": "fsu_producer_trinity", "description": "fsu producer trinity"}
+
+
+FsuConsumerTrinity
+================
+MA35_N
+MA35_X
+HP_N
+HP_X
+BY
+SI_N
+SI_X
+MU_N
+MU_X
+MU_L
+BU_X
+BU_L
+CU_N
+CU_X
+DV
+LAST
+================
+@event_data {"name": "fsu_consumer_trinity", "description": "fsu consumer trinity"}
+
+
+FsuProducerRipley	| Value |
+==================================
+NONE			| 0	|
+MA			| 0	|
+HP			| 1	|
+BY			| 2	|
+SI2			| 3	|
+SI3			| 4	|
+SI5			| 5	|
+MU			| 6	|
+BU			| 7	|
+CU2			| 8	|
+CU3			| 9	|
+CU5			| 10	|
+LAST			| 11	|
+=================================
+@event_data {"name": "fsu_producer_ripley", "description": "fsu producer ripley"}
+
+
+FsuConsumerRipley	| Value |
+=================================
+NONE			| 0	|
+MA_N1			| 0	|
+MA_N2			| 1	|
+MA_N3			| 2	|
+MA_X			| 3	|
+MA_L			| 4	|
+HP_N			| 5	|
+HP_X			| 6	|
+BY			| 7	|
+SI_N			| 8	|
+SI_X			| 9	|
+MU_N			| 10	|
+MU_X			| 11	|
+MU_L			| 12	|
+BU_X			| 13	|
+BU_L			| 14	|
+CU_N			| 15	|
+CU_X			| 16	|
+CU_L			| 17	|
+DV			| 18	|
+LAST			| 19	|
+=================================
+@event_data {"name": "fsu_consumer_ripley", "description": "fsu consumer ripley"}

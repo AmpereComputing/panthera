@@ -1,0 +1,120 @@
+{
+  "name": "test",
+  "specifications": [
+    {
+      "name": "echoone",
+      "exe": "/bin/echo",
+      "parameters": "one"
+    },
+    {
+      "name": "echotwo",
+      "exe": "/bin/echo",
+      "parameters": "two"
+    }
+  ],
+  "workloads": [
+    {
+      "name": "999.hello",
+      "file": "999.hello.is.xz"
+    },
+    {
+      "name": "999.goodbye",
+      "file": "999.goodbye.is.xz"
+    }
+  ],
+  "workload_dir": ".",
+  "job_tree": [
+    [
+      {
+        "name": "999.hello",
+        "directory": "test/echoone",
+        "cmds": [
+          [
+            "/path/to/panthera/bin/panthera",
+            "--timeseries",
+            "test/echoone/999.hello.ts.csv",
+            "/bin/echo",
+            "-core.instruction_stream_name",
+            "./999.hello.is.xz",
+            "o",
+            "n",
+            "e"
+          ],
+          [
+            "gzip",
+            "-f",
+            "test/echoone/999.hello.ts.csv"
+          ]
+        ]
+      },
+      {
+        "name": "999.goodbye",
+        "directory": "test/echoone",
+        "cmds": [
+          [
+            "/path/to/panthera/bin/panthera",
+            "--timeseries",
+            "test/echoone/999.goodbye.ts.csv",
+            "/bin/echo",
+            "-core.instruction_stream_name",
+            "./999.goodbye.is.xz",
+            "o",
+            "n",
+            "e"
+          ],
+          [
+            "gzip",
+            "-f",
+            "test/echoone/999.goodbye.ts.csv"
+          ]
+        ]
+      }
+    ],
+    [
+      {
+        "name": "999.hello",
+        "directory": "test/echotwo",
+        "cmds": [
+          [
+            "/path/to/panthera/bin/panthera",
+            "--timeseries",
+            "test/echotwo/999.hello.ts.csv",
+            "/bin/echo",
+            "-core.instruction_stream_name",
+            "./999.hello.is.xz",
+            "t",
+            "w",
+            "o"
+          ],
+          [
+            "gzip",
+            "-f",
+            "test/echotwo/999.hello.ts.csv"
+          ]
+        ]
+      },
+      {
+        "name": "999.goodbye",
+        "directory": "test/echotwo",
+        "cmds": [
+          [
+            "/path/to/panthera/bin/panthera",
+            "--timeseries",
+            "test/echotwo/999.goodbye.ts.csv",
+            "/bin/echo",
+            "-core.instruction_stream_name",
+            "./999.goodbye.is.xz",
+            "t",
+            "w",
+            "o"
+          ],
+          [
+            "gzip",
+            "-f",
+            "test/echotwo/999.goodbye.ts.csv"
+          ]
+        ]
+      }
+    ]
+  ]
+}

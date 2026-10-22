@@ -1,0 +1,2942 @@
+# Copyright (c) 2022-2026 Ampere Computing. All rights reserved.
+# SPDX-License-Identifier: BSD-3-Clause
+
+# -*- python -*-
+from ampere.xlat import Signal, Translation, Fusion
+from proj.uop import *
+from proj.xlat_register_constants import * # x30/ZR/xzr/SP_EL*/s0/s1/T0/T1/T2/T3/RGSR_EL1
+
+class ABS_32_dp_1src(_JSON_ABS_32_dp_1src):
+
+    def decode(self, f):
+        abs32(dest=f.Rd, src1=ZR, src2=f.Rn)
+
+
+class ABS_64_dp_1src(_JSON_ABS_64_dp_1src):
+
+    def decode(self, f):
+        abs64(dest=f.Rd, src1=ZR, src2=f.Rn)
+
+
+class ADC_32_addsub_carry(_JSON_ADC_32_addsub_carry):
+
+    pmu_bucket = 'dp_a64scalar'
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+        adc32(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+
+
+class ADC_64_addsub_carry(_JSON_ADC_64_addsub_carry):
+
+    pmu_bucket = 'dp_a64scalar'
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+        adc64(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+
+
+class ADCS_32_addsub_carry(_JSON_ADCS_32_addsub_carry):
+
+    pmu_bucket = 'dp_a64scalar'
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+        adcs32(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, src3=f0)
+
+
+class ADCS_64_addsub_carry(_JSON_ADCS_64_addsub_carry):
+
+    pmu_bucket = 'dp_a64scalar'
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+        adcs64(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, src3=f0)
+
+
+class ADD_32_addsub_ext(_JSON_ADD_32_addsub_ext):
+
+    pmu_bucket = 'dp_a64scalar'
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+        if f.option.value == 0b000:
+            add32(dest=f.Rd, src1=f.Rn, src2=f.Rm, imm=(f.option,f.imm3), dest_is_stack_pointer=True, src1_is_stack_pointer=True)
+        elif f.option.value == 0b001:
+            add32(dest=f.Rd, src1=f.Rn, src2=f.Rm, imm=(f.option,f.imm3), dest_is_stack_pointer=True, src1_is_stack_pointer=True)
+        elif f.option.value == 0b010:
+            add32(dest=f.Rd, src1=f.Rn, src2=f.Rm, imm=(f.option,f.imm3), dest_is_stack_pointer=True, src1_is_stack_pointer=True)
+        elif f.option.value == 0b011:
+            add32(dest=f.Rd, src1=f.Rn, src2=f.Rm, imm=(f.option,f.imm3), dest_is_stack_pointer=True, src1_is_stack_pointer=True)
+        elif f.option.value == 0b100:
+            sxt32(dest=s0, src1=f.Rm, imm=(f.imm3,f.option))
+            add32(dest=f.Rd, src1=f.Rn, src2=s0, imm=Signal("011000"), dest_is_stack_pointer=True, src1_is_stack_pointer=True)
+        elif f.option.value == 0b101:
+            sxt32(dest=s0, src1=f.Rm, imm=(f.imm3,f.option))
+            add32(dest=f.Rd, src1=f.Rn, src2=s0, imm=Signal("011000"), dest_is_stack_pointer=True, src1_is_stack_pointer=True)
+        elif f.option.value == 0b110:
+            add32(dest=f.Rd, src1=f.Rn, src2=f.Rm, imm=(f.option,f.imm3), dest_is_stack_pointer=True, src1_is_stack_pointer=True)
+        elif f.option.value == 0b111:
+            add32(dest=f.Rd, src1=f.Rn, src2=f.Rm, imm=(f.option,f.imm3), dest_is_stack_pointer=True, src1_is_stack_pointer=True)
+
+
+class ADD_64_addsub_ext(_JSON_ADD_64_addsub_ext):
+
+    pmu_bucket = 'dp_a64scalar'
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+        if f.option.value == 0b000:
+            add64(dest=f.Rd, src1=f.Rn, src2=f.Rm, imm=(f.option,f.imm3), dest_is_stack_pointer=True, src1_is_stack_pointer=True)
+        elif f.option.value == 0b001:
+            add64(dest=f.Rd, src1=f.Rn, src2=f.Rm, imm=(f.option,f.imm3), dest_is_stack_pointer=True, src1_is_stack_pointer=True)
+        elif f.option.value == 0b010:
+            add64(dest=f.Rd, src1=f.Rn, src2=f.Rm, imm=(f.option,f.imm3), dest_is_stack_pointer=True, src1_is_stack_pointer=True)
+        elif f.option.value == 0b011:
+            add64(dest=f.Rd, src1=f.Rn, src2=f.Rm, imm=(f.option,f.imm3), dest_is_stack_pointer=True, src1_is_stack_pointer=True)
+        elif f.option.value == 0b100:
+            sxt64(dest=s0, src1=f.Rm, imm=(f.imm3,f.option))
+            add64(dest=f.Rd, src1=f.Rn, src2=s0, imm=Signal("011000"), dest_is_stack_pointer=True, src1_is_stack_pointer=True)
+        elif f.option.value == 0b101:
+            sxt64(dest=s0, src1=f.Rm, imm=(f.imm3,f.option))
+            add64(dest=f.Rd, src1=f.Rn, src2=s0, imm=Signal("011000"), dest_is_stack_pointer=True, src1_is_stack_pointer=True)
+        elif f.option.value == 0b110:
+            sxt64(dest=s0, src1=f.Rm, imm=(f.imm3,f.option))
+            add64(dest=f.Rd, src1=f.Rn, src2=s0, imm=Signal("011000"), dest_is_stack_pointer=True, src1_is_stack_pointer=True)
+        elif f.option.value == 0b111:
+            add64(dest=f.Rd, src1=f.Rn, src2=f.Rm, imm=(f.option,f.imm3), dest_is_stack_pointer=True, src1_is_stack_pointer=True)
+
+
+class ADD_32_addsub_imm(_JSON_ADD_32_addsub_imm):
+
+    pmu_bucket = 'dp_a64scalar'
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+        add32(dest=f.Rd, src2=f.Rn, imm=(f.sh,f.imm12), dest_is_stack_pointer=True, src2_is_stack_pointer=True)
+
+
+class ADD_64_addsub_imm(_JSON_ADD_64_addsub_imm):
+
+    pmu_bucket = 'dp_a64scalar'
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+        add64(dest=f.Rd, src2=f.Rn, imm=(f.sh,f.imm12), dest_is_stack_pointer=True, src2_is_stack_pointer=True)
+
+
+class ADD_32_addsub_shift(_JSON_ADD_32_addsub_shift):
+    fields  = {'opcBit12':[12,12],'opcBit11':[11,11],'opcBit10':[10,10]}
+
+
+    pmu_bucket = 'dp_a64scalar'
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+        if f.shift.value == 0b00 and f.imm6.value <= 0b000100:
+            add32(dest=f.Rd, src1=f.Rn, src2=f.Rm, imm=(Signal("011"),f.opcBit12,f.opcBit11,f.opcBit10))
+        elif f.shift.value == 0b00 and f.imm6.value > 0b000100:
+            lsl32_imm(dest=s0, src1=f.Rm, imm=f.imm6)
+            add32(dest=f.Rd, src1=f.Rn, src2=s0, imm=Signal("011000"))
+        elif f.shift.value == 0b01:
+            lsr32(dest=s0, src1=f.Rm, src2=f.Rm, imm=f.imm6)
+            add32(dest=f.Rd, src1=f.Rn, src2=s0, imm=Signal("011000"))
+        elif f.shift.value == 0b10:
+            asr32(dest=s0, src1=f.Rm, src2=f.Rm, imm=f.imm6)
+            add32(dest=f.Rd, src1=f.Rn, src2=s0, imm=Signal("011000"))
+        elif f.shift.value == 0b11:
+            # This is an illegal/unused encoding
+            pass
+
+
+class ADD_64_addsub_shift(_JSON_ADD_64_addsub_shift):
+    fields  = {'opcBit12':[12,12],'opcBit11':[11,11],'opcBit10':[10,10]}
+
+
+    pmu_bucket = 'dp_a64scalar'
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+        if f.shift.value == 0b00 and f.imm6.value <= 0b000100:
+            add64(dest=f.Rd, src1=f.Rn, src2=f.Rm, imm=(Signal("011"),f.opcBit12,f.opcBit11,f.opcBit10))
+        elif f.shift.value == 0b00 and f.imm6.value > 0b000100:
+            lsl64_imm(dest=s0, src1=f.Rm, imm=f.imm6)
+            add64(dest=f.Rd, src1=f.Rn, src2=s0, imm=Signal("011000"))
+        elif f.shift.value == 0b01:
+            lsr64(dest=s0, src1=f.Rm, src2=f.Rm, imm=f.imm6)
+            add64(dest=f.Rd, src1=f.Rn, src2=s0, imm=Signal("011000"))
+        elif f.shift.value == 0b10:
+            asr64(dest=s0, src1=f.Rm, src2=f.Rm, imm=f.imm6)
+            add64(dest=f.Rd, src1=f.Rn, src2=s0, imm=Signal("011000"))
+        elif f.shift.value == 0b11:
+            # This is an illegal/unused encoding
+            pass
+
+
+class ADDG_64_addsub_immtags(_JSON_ADDG_64_addsub_immtags):
+    fields = {**_JSON_ADDG_64_addsub_immtags.fields, 'Xd': (4, 0), 'Xn': (9, 5), 'uimm4': (13, 10), 'uimm6': (21, 16)}
+
+
+    def decode(self, f):
+        addg(dest=f.Xd, src2=f.Xn, imm=(f.uimm6,f.uimm4), src2_is_stack_pointer=True, dest_is_stack_pointer=True)
+
+
+class ADDS_32S_addsub_ext(_JSON_ADDS_32S_addsub_ext):
+
+    pmu_bucket = 'dp_a64scalar'
+    flag_fuse_to_Bcond = True
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+        if f.option.value == 0b000:
+            adds32(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=(f.option,f.imm3), src1_is_stack_pointer=True)
+        elif f.option.value == 0b001:
+            adds32(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=(f.option,f.imm3), src1_is_stack_pointer=True)
+        elif f.option.value == 0b010:
+            adds32(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=(f.option,f.imm3), src1_is_stack_pointer=True)
+        elif f.option.value == 0b011:
+            adds32(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=(f.option,f.imm3), src1_is_stack_pointer=True)
+        elif f.option.value == 0b100:
+            sxt32(dest=s0, src1=f.Rm, imm=(f.imm3,f.option))
+            adds32(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=s0, imm=Signal("011000"), src1_is_stack_pointer=True)
+        elif f.option.value == 0b101:
+            sxt32(dest=s0, src1=f.Rm, imm=(f.imm3,f.option))
+            adds32(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=s0, imm=Signal("011000"), src1_is_stack_pointer=True)
+        elif f.option.value == 0b110:
+            adds32(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=(f.option,f.imm3), src1_is_stack_pointer=True)
+        elif f.option.value == 0b111:
+            adds32(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=(f.option,f.imm3), src1_is_stack_pointer=True)
+
+
+class ADDS_64S_addsub_ext(_JSON_ADDS_64S_addsub_ext):
+
+    pmu_bucket = 'dp_a64scalar'
+    flag_fuse_to_Bcond = True
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+        if f.option.value == 0b000:
+            adds64(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=(f.option,f.imm3), src1_is_stack_pointer=True)
+        elif f.option.value == 0b001:
+            adds64(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=(f.option,f.imm3), src1_is_stack_pointer=True)
+        elif f.option.value == 0b010:
+            adds64(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=(f.option,f.imm3), src1_is_stack_pointer=True)
+        elif f.option.value == 0b011:
+            adds64(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=(f.option,f.imm3), src1_is_stack_pointer=True)
+        elif f.option.value == 0b100:
+            sxt64(dest=s0, src1=f.Rm, imm=(f.imm3,f.option))
+            adds64(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=s0, imm=Signal("011000"), src1_is_stack_pointer=True)
+        elif f.option.value == 0b101:
+            sxt64(dest=s0, src1=f.Rm, imm=(f.imm3,f.option))
+            adds64(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=s0, imm=Signal("011000"), src1_is_stack_pointer=True)
+        elif f.option.value == 0b110:
+            sxt64(dest=s0, src1=f.Rm, imm=(f.imm3,f.option))
+            adds64(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=s0, imm=Signal("011000"), src1_is_stack_pointer=True)
+        elif f.option.value == 0b111:
+            adds64(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=(f.option,f.imm3), src1_is_stack_pointer=True)
+
+
+class ADDS_32S_addsub_imm(_JSON_ADDS_32S_addsub_imm):
+
+    pmu_bucket = 'dp_a64scalar'
+    flag_fuse_to_Bcond = True
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+        adds32(dest=f.Rd, flagdest=f0, src2=f.Rn, imm=(f.sh,f.imm12), src2_is_stack_pointer=True)
+
+
+class ADDS_64S_addsub_imm(_JSON_ADDS_64S_addsub_imm):
+
+    pmu_bucket = 'dp_a64scalar'
+    flag_fuse_to_Bcond = True
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+        adds64(dest=f.Rd, flagdest=f0, src2=f.Rn, imm=(f.sh,f.imm12), src2_is_stack_pointer=True)
+
+
+class ADDS_32_addsub_shift(_JSON_ADDS_32_addsub_shift):
+    fields  = {'opcBit12':[12,12],'opcBit11':[11,11],'opcBit10':[10,10]}
+
+
+    pmu_bucket = 'dp_a64scalar'
+    flag_fuse_to_Bcond = True
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+        if f.shift.value == 0b00 and f.imm6.value <= 0b000100:
+            adds32(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=(Signal("011"),f.opcBit12,f.opcBit11,f.opcBit10))
+        elif f.shift.value == 0b00 and f.imm6.value > 0b000100:
+            lsl32_imm(dest=s0, src1=f.Rm, imm=f.imm6)
+            adds32(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=s0, imm=Signal("011000"))
+        elif f.shift.value == 0b01:
+            lsr32(dest=s0, src1=f.Rm, src2=f.Rm, imm=f.imm6)
+            adds32(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=s0, imm=Signal("011000"))
+        elif f.shift.value == 0b10:
+            asr32(dest=s0, src1=f.Rm, src2=f.Rm, imm=f.imm6)
+            adds32(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=s0, imm=Signal("011000"))
+        elif f.shift.value == 0b11:
+            # This is an illegal/unused encoding
+            pass
+
+
+class ADDS_64_addsub_shift(_JSON_ADDS_64_addsub_shift):
+    fields  = {'opcBit12':[12,12],'opcBit11':[11,11],'opcBit10':[10,10]}
+
+
+    pmu_bucket = 'dp_a64scalar'
+    flag_fuse_to_Bcond = True
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+        if f.shift.value == 0b00 and f.imm6.value <= 0b000100:
+            adds64(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=(Signal("011"),f.opcBit12,f.opcBit11,f.opcBit10))
+        elif f.shift.value == 0b00 and f.imm6.value > 0b000100:
+            lsl64_imm(dest=s0, src1=f.Rm, imm=f.imm6)
+            adds64(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=s0, imm=Signal("011000"))
+        elif f.shift.value == 0b01:
+            lsr64(dest=s0, src1=f.Rm, src2=f.Rm, imm=f.imm6)
+            adds64(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=s0, imm=Signal("011000"))
+        elif f.shift.value == 0b10:
+            asr64(dest=s0, src1=f.Rm, src2=f.Rm, imm=f.imm6)
+            adds64(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=s0, imm=Signal("011000"))
+        elif f.shift.value == 0b11:
+            # This is an illegal/unused encoding
+            pass
+
+
+class ADR_only_pcreladdr(_JSON_ADR_only_pcreladdr):
+
+    pmu_bucket = 'dp_a64scalar'
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+        adr(dest=f.Rd, imm=(f.immhi,f.immlo), use_pc=True, imm_signext=True)
+
+
+class ADRP_only_pcreladdr(_JSON_ADRP_only_pcreladdr):
+
+    pmu_bucket = 'dp_a64scalar'
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+        # To match with what we want to do for adrp+add(immediate) fusion, instead of
+        # shifting the immediate by 12 with imm_shift, we will do that here in decode, this
+        # simplifies hardward in IdrImm and makes the decode mux for extracted_immediate match
+        # for adrp and adrp+addimm
+        adr(dest=f.Rd, imm=(f.immhi,f.immlo, Signal('000000000000')), use_pc=True, imm_signext=True, is_adrp=True)
+
+
+class AND_32_log_imm(_JSON_AND_32_log_imm):
+
+    pmu_bucket = 'dp_a64scalar'
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+        and32_imm(dest=f.Rd, src2=f.Rn, imm=(f.N,f.immr,f.imms), dest_is_stack_pointer=True)
+
+
+class AND_64_log_imm(_JSON_AND_64_log_imm):
+
+    pmu_bucket = 'dp_a64scalar'
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+        and64_imm(dest=f.Rd, src2=f.Rn, imm=(f.N,f.immr,f.imms), dest_is_stack_pointer=True)
+
+
+class AND_32_log_shift(_JSON_AND_32_log_shift):
+
+    pmu_bucket = 'dp_a64scalar'
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+        if f.shift.value == 0b00 and f.imm6.value <= 0b000100:
+            and32(dest=f.Rd, src1=f.Rn, src2=f.Rm, imm=f.imm6)
+        elif f.shift.value == 0b00 and f.imm6.value > 0b000100:
+            lsl32_imm(dest=s0, src1=f.Rm, imm=f.imm6)
+            and32(dest=f.Rd, src1=f.Rn, src2=s0, imm=Signal("000"))
+        elif f.shift.value == 0b01:
+            lsr32(dest=s0, src1=f.Rm, src2=f.Rm, imm=f.imm6)
+            and32(dest=f.Rd, src1=f.Rn, src2=s0, imm=Signal("000"))
+        elif f.shift.value == 0b10:
+            asr32(dest=s0, src1=f.Rm, src2=f.Rm, imm=f.imm6)
+            and32(dest=f.Rd, src1=f.Rn, src2=s0, imm=Signal("000"))
+        elif f.shift.value == 0b11:
+            extr32(dest=s0, src1=f.Rm, src2=f.Rm, imm=f.imm6)
+            and32(dest=f.Rd, src1=f.Rn, src2=s0, imm=Signal("000"))
+
+
+class AND_64_log_shift(_JSON_AND_64_log_shift):
+
+    pmu_bucket = 'dp_a64scalar'
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+        if f.shift.value == 0b00 and f.imm6.value <= 0b000100:
+            and64(dest=f.Rd, src1=f.Rn, src2=f.Rm, imm=f.imm6)
+        elif f.shift.value == 0b00 and f.imm6.value > 0b000100:
+            lsl64_imm(dest=s0, src1=f.Rm, imm=f.imm6)
+            and64(dest=f.Rd, src1=f.Rn, src2=s0, imm=Signal("000"))
+        elif f.shift.value == 0b01:
+            lsr64(dest=s0, src1=f.Rm, src2=f.Rm, imm=f.imm6)
+            and64(dest=f.Rd, src1=f.Rn, src2=s0, imm=Signal("000"))
+        elif f.shift.value == 0b10:
+            asr64(dest=s0, src1=f.Rm, src2=f.Rm, imm=f.imm6)
+            and64(dest=f.Rd, src1=f.Rn, src2=s0, imm=Signal("000"))
+        elif f.shift.value == 0b11:
+            extr64(dest=s0, src1=f.Rm, src2=f.Rm, imm=f.imm6)
+            and64(dest=f.Rd, src1=f.Rn, src2=s0, imm=Signal("000"))
+
+
+class ANDS_32S_log_imm(_JSON_ANDS_32S_log_imm):
+
+    pmu_bucket = 'dp_a64scalar'
+    flag_fuse_to_Bcond = True
+    fusion_delay_hint = True
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+        ands32_imm(dest=f.Rd, flagdest=f0, src2=f.Rn, imm=(f.N,f.immr,f.imms))
+
+
+class ANDS_64S_log_imm(_JSON_ANDS_64S_log_imm):
+
+    pmu_bucket = 'dp_a64scalar'
+    flag_fuse_to_Bcond = True
+    fusion_delay_hint = True
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+        ands64_imm(dest=f.Rd, flagdest=f0, src2=f.Rn, imm=(f.N,f.immr,f.imms))
+
+
+class ANDS_32_log_shift(_JSON_ANDS_32_log_shift):
+
+    pmu_bucket = 'dp_a64scalar'
+    flag_fuse_to_Bcond = True
+    fusion_delay_hint = True
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+        if f.shift.value == 0b00 and f.imm6.value <= 0b000100:
+            ands32(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=f.imm6)
+        elif f.shift.value == 0b00 and f.imm6.value > 0b000100:
+            lsl32_imm(dest=s0, src1=f.Rm, imm=f.imm6)
+            ands32(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=s0, imm=Signal("000"))
+        elif f.shift.value == 0b01:
+            lsr32(dest=s0, src1=f.Rm, src2=f.Rm, imm=f.imm6)
+            ands32(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=s0, imm=Signal("000"))
+        elif f.shift.value == 0b10:
+            asr32(dest=s0, src1=f.Rm, src2=f.Rm, imm=f.imm6)
+            ands32(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=s0, imm=Signal("000"))
+        elif f.shift.value == 0b11:
+            extr32(dest=s0, src1=f.Rm, src2=f.Rm, imm=f.imm6)
+            ands32(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=s0, imm=Signal("000"))
+
+
+class ANDS_64_log_shift(_JSON_ANDS_64_log_shift):
+
+    pmu_bucket = 'dp_a64scalar'
+    flag_fuse_to_Bcond = True
+    fusion_delay_hint = True
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+        if f.shift.value == 0b00 and f.imm6.value <= 0b000100:
+            ands64(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=f.imm6)
+        elif f.shift.value == 0b00 and f.imm6.value > 0b000100:
+            lsl64_imm(dest=s0, src1=f.Rm, imm=f.imm6)
+            ands64(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=s0, imm=Signal("000"))
+        elif f.shift.value == 0b01:
+            lsr64(dest=s0, src1=f.Rm, src2=f.Rm, imm=f.imm6)
+            ands64(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=s0, imm=Signal("000"))
+        elif f.shift.value == 0b10:
+            asr64(dest=s0, src1=f.Rm, src2=f.Rm, imm=f.imm6)
+            ands64(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=s0, imm=Signal("000"))
+        elif f.shift.value == 0b11:
+            extr64(dest=s0, src1=f.Rm, src2=f.Rm, imm=f.imm6)
+            ands64(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=s0, imm=Signal("000"))
+
+
+class ASRV_32_dp_2src(_JSON_ASRV_32_dp_2src):
+
+    pmu_bucket = 'dp_a64scalar'
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+        asrv32(dest=f.Rd, src1=f.Rn, src2=f.Rm)
+
+
+class ASRV_64_dp_2src(_JSON_ASRV_64_dp_2src):
+
+    pmu_bucket = 'dp_a64scalar'
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+        asrv64(dest=f.Rd, src1=f.Rn, src2=f.Rm)
+
+
+
+class AUTDA_64P_dp_1src(_JSON_AUTDA_64P_dp_1src):
+
+    pmu_bucket = 'dp'
+    mode_bits = { 'pac_da_enabled' : 1 }
+
+    pmu_events = ['DP_SPEC']
+
+    def decode(self, f):
+        if self.mode_bits['pac_da_enabled']:
+            autda(dest=f.Rd, src1=f.Rd, src2=f.Rn, src2_is_stack_pointer=True)
+        else:
+            nop()
+
+
+class AUTDZA_64Z_dp_1src(_JSON_AUTDZA_64Z_dp_1src):
+
+    pmu_bucket = 'dp'
+    mode_bits = { 'pac_da_enabled' : 1 }
+
+    pmu_events = ['DP_SPEC']
+
+    def decode(self, f):
+        if self.mode_bits['pac_da_enabled']:
+            autda(dest=f.Rd, src1=f.Rd, src2=f.Rn)
+        else:
+            nop()
+
+
+class AUTDB_64P_dp_1src(_JSON_AUTDB_64P_dp_1src):
+
+    pmu_bucket = 'dp'
+    mode_bits = { 'pac_db_enabled' : 1 }
+
+    pmu_events = ['DP_SPEC']
+
+    def decode(self, f):
+        if self.mode_bits['pac_db_enabled']:
+            autdb(dest=f.Rd, src1=f.Rd, src2=f.Rn, src2_is_stack_pointer=True)
+        else:
+            nop()
+
+
+class AUTDZB_64Z_dp_1src(_JSON_AUTDZB_64Z_dp_1src):
+
+    pmu_bucket = 'dp'
+    mode_bits = { 'pac_db_enabled' : 1 }
+
+    pmu_events = ['DP_SPEC']
+
+    def decode(self, f):
+        if self.mode_bits['pac_db_enabled']:
+            autdb(dest=f.Rd, src1=f.Rd, src2=f.Rn)
+        else:
+            nop()
+
+
+
+class AUTIA_64P_dp_1src(_JSON_AUTIA_64P_dp_1src):
+
+    pmu_bucket = 'dp'
+    mode_bits = { 'pac_ia_enabled' : 1 }
+
+    pmu_events = ['DP_SPEC']
+
+    def decode(self, f):
+        if self.mode_bits['pac_ia_enabled']:
+            autia(dest=f.Rd, src1=f.Rd, src2=f.Rn, src2_is_stack_pointer=True)
+        else:
+            nop()
+
+
+
+class AUTIZA_64Z_dp_1src(_JSON_AUTIZA_64Z_dp_1src):
+
+    pmu_bucket = 'dp'
+    mode_bits = { 'pac_ia_enabled' : 1 }
+
+    pmu_events = ['DP_SPEC']
+
+    def decode(self, f):
+        if self.mode_bits['pac_ia_enabled']:
+            autia(dest=f.Rd, src1=f.Rd, src2=f.Rn)
+        else:
+            nop()
+
+
+
+class AUTIB_64P_dp_1src(_JSON_AUTIB_64P_dp_1src):
+
+    pmu_bucket = 'dp'
+    mode_bits = { 'pac_ib_enabled' : 1 }
+
+    pmu_events = ['DP_SPEC']
+
+    def decode(self, f):
+        if self.mode_bits['pac_ib_enabled']:
+            autib(dest=f.Rd, src1=f.Rd, src2=f.Rn, src2_is_stack_pointer=True)
+        else:
+            nop()
+
+
+class AUTIZB_64Z_dp_1src(_JSON_AUTIZB_64Z_dp_1src):
+
+    pmu_bucket = 'dp'
+    mode_bits = { 'pac_ib_enabled' : 1 }
+
+    pmu_events = ['DP_SPEC']
+
+    def decode(self, f):
+        if self.mode_bits['pac_ib_enabled']:
+            autib(dest=f.Rd, src1=f.Rd, src2=f.Rn)
+        else:
+            nop()
+
+
+
+class BFM_32M_bitfield(_JSON_BFM_32M_bitfield):
+
+    pmu_bucket = 'dp_a64scalar'
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+        bfm32(dest=f.Rd, src1=f.Rn, src2=f.Rd, imm=(f.immr,f.imms))
+
+
+class BFM_64M_bitfield(_JSON_BFM_64M_bitfield):
+
+    pmu_bucket = 'dp_a64scalar'
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+        bfm64(dest=f.Rd, src1=f.Rn, src2=f.Rd, imm=(f.immr,f.imms))
+
+
+class BIC_32_log_shift(_JSON_BIC_32_log_shift):
+
+    pmu_bucket = 'dp_a64scalar'
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+        if f.imm6.value == 0b000000:
+            bic32(dest=f.Rd, src1=f.Rn, src2=f.Rm, imm=Signal("000"))
+        elif f.shift.value == 0b00 and f.imm6.value <= 0b000100:
+            uxt32(dest=s0, src1=f.Rm, imm=(f.imm6,Signal("010")))
+            bic32(dest=f.Rd, src1=f.Rn, src2=s0, imm=Signal("000"))
+        elif f.shift.value == 0b00 and f.imm6.value > 0b000100:
+            lsl32_imm(dest=s0, src1=f.Rm, imm=f.imm6)
+            bic32(dest=f.Rd, src1=f.Rn, src2=s0, imm=Signal("000"))
+        elif f.shift.value == 0b01:
+            lsr32(dest=s0, src1=f.Rm, src2=f.Rm, imm=f.imm6)
+            bic32(dest=f.Rd, src1=f.Rn, src2=s0, imm=Signal("000"))
+        elif f.shift.value == 0b10:
+            asr32(dest=s0, src1=f.Rm, src2=f.Rm, imm=f.imm6)
+            bic32(dest=f.Rd, src1=f.Rn, src2=s0, imm=Signal("000"))
+        elif f.shift.value == 0b11:
+            extr32(dest=s0, src1=f.Rm, src2=f.Rm, imm=f.imm6)
+            bic32(dest=f.Rd, src1=f.Rn, src2=s0, imm=Signal("000"))
+
+
+class BIC_64_log_shift(_JSON_BIC_64_log_shift):
+
+    pmu_bucket = 'dp_a64scalar'
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+        if f.imm6.value == 0b000000:
+            bic64(dest=f.Rd, src1=f.Rn, src2=f.Rm, imm=Signal("000"))
+        elif f.shift.value == 0b00 and f.imm6.value <= 0b000100:
+            uxt64(dest=s0, src1=f.Rm, imm=(f.imm6,Signal("011")))
+            bic64(dest=f.Rd, src1=f.Rn, src2=s0, imm=Signal("000"))
+        elif f.shift.value == 0b00 and f.imm6.value > 0b000100:
+            lsl64_imm(dest=s0, src1=f.Rm, imm=f.imm6)
+            bic64(dest=f.Rd, src1=f.Rn, src2=s0, imm=Signal("000"))
+        elif f.shift.value == 0b01:
+            lsr64(dest=s0, src1=f.Rm, src2=f.Rm, imm=f.imm6)
+            bic64(dest=f.Rd, src1=f.Rn, src2=s0, imm=Signal("000"))
+        elif f.shift.value == 0b10:
+            asr64(dest=s0, src1=f.Rm, src2=f.Rm, imm=f.imm6)
+            bic64(dest=f.Rd, src1=f.Rn, src2=s0, imm=Signal("000"))
+        elif f.shift.value == 0b11:
+            extr64(dest=s0, src1=f.Rm, src2=f.Rm, imm=f.imm6)
+            bic64(dest=f.Rd, src1=f.Rn, src2=s0, imm=Signal("000"))
+
+
+class BICS_32_log_shift(_JSON_BICS_32_log_shift):
+
+    pmu_bucket = 'dp_a64scalar'
+    flag_fuse_to_Bcond = True
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+        if f.imm6.value == 0b000000:
+            bics32(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=Signal("000"))
+        elif f.shift.value == 0b00 and f.imm6.value <= 0b000100:
+            uxt32(dest=s0, src1=f.Rm, imm=(f.imm6,Signal("010")))
+            bics32(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=s0, imm=Signal("000"))
+        elif f.shift.value == 0b00 and f.imm6.value > 0b000100:
+            lsl32_imm(dest=s0, src1=f.Rm, imm=f.imm6)
+            bics32(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=s0, imm=Signal("000"))
+        elif f.shift.value == 0b01:
+            lsr32(dest=s0, src1=f.Rm, src2=f.Rm, imm=f.imm6)
+            bics32(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=s0, imm=Signal("000"))
+        elif f.shift.value == 0b10:
+            asr32(dest=s0, src1=f.Rm, src2=f.Rm, imm=f.imm6)
+            bics32(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=s0, imm=Signal("000"))
+        elif f.shift.value == 0b11:
+            extr32(dest=s0, src1=f.Rm, src2=f.Rm, imm=f.imm6)
+            bics32(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=s0, imm=Signal("000"))
+
+
+class BICS_64_log_shift(_JSON_BICS_64_log_shift):
+
+    pmu_bucket = 'dp_a64scalar'
+    flag_fuse_to_Bcond = True
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+        if f.imm6.value == 0b000000:
+            bics64(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=Signal("000"))
+        elif f.shift.value == 0b00 and f.imm6.value <= 0b000100:
+            uxt64(dest=s0, src1=f.Rm, imm=(f.imm6,Signal("011")))
+            bics64(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=s0, imm=Signal("000"))
+        elif f.shift.value == 0b00 and f.imm6.value > 0b000100:
+            lsl64_imm(dest=s0, src1=f.Rm, imm=f.imm6)
+            bics64(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=s0, imm=Signal("000"))
+        elif f.shift.value == 0b01:
+            lsr64(dest=s0, src1=f.Rm, src2=f.Rm, imm=f.imm6)
+            bics64(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=s0, imm=Signal("000"))
+        elif f.shift.value == 0b10:
+            asr64(dest=s0, src1=f.Rm, src2=f.Rm, imm=f.imm6)
+            bics64(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=s0, imm=Signal("000"))
+        elif f.shift.value == 0b11:
+            extr64(dest=s0, src1=f.Rm, src2=f.Rm, imm=f.imm6)
+            bics64(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=s0, imm=Signal("000"))
+
+
+class CCMN_32_condcmp_imm(_JSON_CCMN_32_condcmp_imm):
+
+    pmu_bucket = 'dp_a64scalar'
+    flag_fuse_to_Bcond = True
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+        ccmn32(flagdest=f0, src2=f.Rn, src3=f0, imm=(f.imm5,f.cond,f.nzcv))
+
+
+class CCMN_64_condcmp_imm(_JSON_CCMN_64_condcmp_imm):
+
+    pmu_bucket = 'dp_a64scalar'
+    flag_fuse_to_Bcond = True
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+        ccmn64(flagdest=f0, src2=f.Rn, src3=f0, imm=(f.imm5,f.cond,f.nzcv))
+
+
+class CCMN_32_condcmp_reg(_JSON_CCMN_32_condcmp_reg):
+
+    pmu_bucket = 'dp_a64scalar'
+    flag_fuse_to_Bcond = True
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+        ccmn32(flagdest=f0, src1=f.Rn, src2=f.Rm, src3=f0, imm=(f.cond,f.nzcv))
+
+
+class CCMN_64_condcmp_reg(_JSON_CCMN_64_condcmp_reg):
+
+    pmu_bucket = 'dp_a64scalar'
+    flag_fuse_to_Bcond = True
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+        ccmn64(flagdest=f0, src1=f.Rn, src2=f.Rm, src3=f0, imm=(f.cond,f.nzcv))
+
+
+class CCMP_32_condcmp_imm(_JSON_CCMP_32_condcmp_imm):
+
+    pmu_bucket = 'dp_a64scalar'
+    flag_fuse_to_Bcond = True
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+        ccmp32(flagdest=f0, src2=f.Rn, src3=f0, imm=(f.imm5,f.cond,f.nzcv))
+
+
+class CCMP_64_condcmp_imm(_JSON_CCMP_64_condcmp_imm):
+
+    pmu_bucket = 'dp_a64scalar'
+    flag_fuse_to_Bcond = True
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+        ccmp64(flagdest=f0, src2=f.Rn, src3=f0, imm=(f.imm5,f.cond,f.nzcv))
+
+
+class CCMP_32_condcmp_reg(_JSON_CCMP_32_condcmp_reg):
+
+    pmu_bucket = 'dp_a64scalar'
+    flag_fuse_to_Bcond = True
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+        ccmp32(flagdest=f0, src1=f.Rn, src2=f.Rm, src3=f0, imm=(f.cond,f.nzcv))
+
+
+class CCMP_64_condcmp_reg(_JSON_CCMP_64_condcmp_reg):
+
+    pmu_bucket = 'dp_a64scalar'
+    flag_fuse_to_Bcond = True
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+        ccmp64(flagdest=f0, src1=f.Rn, src2=f.Rm, src3=f0, imm=(f.cond,f.nzcv))
+
+
+class CLS_32_dp_1src(_JSON_CLS_32_dp_1src):
+
+    pmu_bucket = 'dp_a64scalar'
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+        cls32(dest=f.Rd, src1=f.Rn)
+
+
+class CLS_64_dp_1src(_JSON_CLS_64_dp_1src):
+
+    pmu_bucket = 'dp_a64scalar'
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+        cls64(dest=f.Rd, src1=f.Rn)
+
+
+class CLZ_32_dp_1src(_JSON_CLZ_32_dp_1src):
+
+    pmu_bucket = 'dp_a64scalar'
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+        clz32(dest=f.Rd, src1=f.Rn)
+
+
+class CLZ_64_dp_1src(_JSON_CLZ_64_dp_1src):
+
+    pmu_bucket = 'dp_a64scalar'
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+        clz64(dest=f.Rd, src1=f.Rn)
+
+
+class CNT_32_dp_1src(_JSON_CNT_32_dp_1src):
+
+    def decode(self, f):
+        cnt32(dest=f.Rd, src1=f.Rn)
+
+
+class CNT_64_dp_1src(_JSON_CNT_64_dp_1src):
+
+    def decode(self, f):
+        cnt64(dest=f.Rd, src1=f.Rn)
+
+
+class CRC32B_32C_dp_2src(_JSON_CRC32B_32C_dp_2src):
+
+    pmu_bucket = 'dp'
+
+    pmu_events = ['DP_SPEC']
+
+    def decode(self, f):
+        crc32_b(dest=f.Rd, src1=f.Rn, src2=f.Rm)
+
+
+class CRC32H_32C_dp_2src(_JSON_CRC32H_32C_dp_2src):
+
+    pmu_bucket = 'dp'
+
+    pmu_events = ['DP_SPEC']
+
+    def decode(self, f):
+        crc32_h(dest=f.Rd, src1=f.Rn, src2=f.Rm)
+
+
+class CRC32W_32C_dp_2src(_JSON_CRC32W_32C_dp_2src):
+
+    pmu_bucket = 'dp'
+
+    pmu_events = ['DP_SPEC']
+
+    def decode(self, f):
+        crc32_w(dest=f.Rd, src1=f.Rn, src2=f.Rm)
+
+
+class CRC32X_64C_dp_2src(_JSON_CRC32X_64C_dp_2src):
+
+    pmu_bucket = 'dp'
+
+    pmu_events = ['DP_SPEC']
+
+    def decode(self, f):
+        crc64_d(dest=f.Rd, src1=f.Rn, src2=f.Rm)
+
+
+class CRC32CB_32C_dp_2src(_JSON_CRC32CB_32C_dp_2src):
+
+    pmu_bucket = 'dp'
+
+    pmu_events = ['DP_SPEC']
+
+    def decode(self, f):
+        crcc32_b(dest=f.Rd, src1=f.Rn, src2=f.Rm)
+
+
+class CRC32CH_32C_dp_2src(_JSON_CRC32CH_32C_dp_2src):
+
+    pmu_bucket = 'dp'
+
+    pmu_events = ['DP_SPEC']
+
+    def decode(self, f):
+        crcc32_h(dest=f.Rd, src1=f.Rn, src2=f.Rm)
+
+
+class CRC32CW_32C_dp_2src(_JSON_CRC32CW_32C_dp_2src):
+
+    pmu_bucket = 'dp'
+
+    pmu_events = ['DP_SPEC']
+
+    def decode(self, f):
+        crcc32_w(dest=f.Rd, src1=f.Rn, src2=f.Rm)
+
+
+class CRC32CX_64C_dp_2src(_JSON_CRC32CX_64C_dp_2src):
+
+    pmu_bucket = 'dp'
+
+    pmu_events = ['DP_SPEC']
+
+    def decode(self, f):
+        crcc64_d(dest=f.Rd, src1=f.Rn, src2=f.Rm)
+
+
+class CSEL_32_condsel(_JSON_CSEL_32_condsel):
+
+    pmu_bucket = 'dp'
+
+    pmu_events = ['DP_SPEC']
+
+    def decode(self, f):
+        if f.cond.value == 0b0000:
+            csel32_eq(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value == 0b0010:
+            csel32_cs(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value == 0b0100:
+            csel32_mi(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value == 0b0110:
+            csel32_vs(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value == 0b1000:
+            csel32_hi(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value == 0b1010:
+            csel32_ge(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value == 0b1100:
+            csel32_gt(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value >= 0b1110:
+            csel32_al(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value == 0b0001:
+            csel32_ne(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value == 0b0011:
+            csel32_cc(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value == 0b0101:
+            csel32_pl(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value == 0b0111:
+            csel32_vc(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value == 0b1001:
+            csel32_ls(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value == 0b1011:
+            csel32_lt(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value == 0b1101:
+            csel32_le(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+
+
+class CSEL_64_condsel(_JSON_CSEL_64_condsel):
+
+    pmu_bucket = 'dp'
+
+    pmu_events = ['DP_SPEC']
+
+    def decode(self, f):
+        if f.cond.value == 0b0000:
+            csel64_eq(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value == 0b0010:
+            csel64_cs(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value == 0b0100:
+            csel64_mi(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value == 0b0110:
+            csel64_vs(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value == 0b1000:
+            csel64_hi(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value == 0b1010:
+            csel64_ge(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value == 0b1100:
+            csel64_gt(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value >= 0b1110:
+            csel64_al(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value == 0b0001:
+            csel64_ne(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value == 0b0011:
+            csel64_cc(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value == 0b0101:
+            csel64_pl(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value == 0b0111:
+            csel64_vc(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value == 0b1001:
+            csel64_ls(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value == 0b1011:
+            csel64_lt(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value == 0b1101:
+            csel64_le(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+
+
+class CSINC_32_condsel(_JSON_CSINC_32_condsel):
+
+    pmu_bucket = 'dp_a64scalar'
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+        if f.cond.value == 0b0000:
+            csinc32_eq(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value == 0b0010:
+            csinc32_cs(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value == 0b0100:
+            csinc32_mi(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value == 0b0110:
+            csinc32_vs(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value == 0b1000:
+            csinc32_hi(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value == 0b1010:
+            csinc32_ge(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value == 0b1100:
+            csinc32_gt(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value >= 0b1110:
+            csinc32_al(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value == 0b0001:
+            csinc32_ne(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value == 0b0011:
+            csinc32_cc(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value == 0b0101:
+            csinc32_pl(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value == 0b0111:
+            csinc32_vc(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value == 0b1001:
+            csinc32_ls(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value == 0b1011:
+            csinc32_lt(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value == 0b1101:
+            csinc32_le(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+
+
+class CSINC_64_condsel(_JSON_CSINC_64_condsel):
+
+    pmu_bucket = 'dp_a64scalar'
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+        if f.cond.value == 0b0000:
+            csinc64_eq(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value == 0b0010:
+            csinc64_cs(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value == 0b0100:
+            csinc64_mi(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value == 0b0110:
+            csinc64_vs(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value == 0b1000:
+            csinc64_hi(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value == 0b1010:
+            csinc64_ge(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value == 0b1100:
+            csinc64_gt(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value >= 0b1110:
+            csinc64_al(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value == 0b0001:
+            csinc64_ne(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value == 0b0011:
+            csinc64_cc(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value == 0b0101:
+            csinc64_pl(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value == 0b0111:
+            csinc64_vc(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value == 0b1001:
+            csinc64_ls(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value == 0b1011:
+            csinc64_lt(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value == 0b1101:
+            csinc64_le(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+
+
+class CSINV_32_condsel(_JSON_CSINV_32_condsel):
+
+    pmu_bucket = 'dp_a64scalar'
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+        if f.cond.value == 0b0000:
+            csinv32_eq(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value == 0b0010:
+            csinv32_cs(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value == 0b0100:
+            csinv32_mi(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value == 0b0110:
+            csinv32_vs(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value == 0b1000:
+            csinv32_hi(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value == 0b1010:
+            csinv32_ge(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value == 0b1100:
+            csinv32_gt(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value >= 0b1110:
+            csinv32_al(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value == 0b0001:
+            csinv32_ne(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value == 0b0011:
+            csinv32_cc(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value == 0b0101:
+            csinv32_pl(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value == 0b0111:
+            csinv32_vc(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value == 0b1001:
+            csinv32_ls(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value == 0b1011:
+            csinv32_lt(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value == 0b1101:
+            csinv32_le(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+
+
+class CSINV_64_condsel(_JSON_CSINV_64_condsel):
+
+    pmu_bucket = 'dp_a64scalar'
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+        if f.cond.value == 0b0000:
+            csinv64_eq(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value == 0b0010:
+            csinv64_cs(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value == 0b0100:
+            csinv64_mi(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value == 0b0110:
+            csinv64_vs(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value == 0b1000:
+            csinv64_hi(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value == 0b1010:
+            csinv64_ge(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value == 0b1100:
+            csinv64_gt(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value >= 0b1110:
+            csinv64_al(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value == 0b0001:
+            csinv64_ne(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value == 0b0011:
+            csinv64_cc(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value == 0b0101:
+            csinv64_pl(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value == 0b0111:
+            csinv64_vc(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value == 0b1001:
+            csinv64_ls(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value == 0b1011:
+            csinv64_lt(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value == 0b1101:
+            csinv64_le(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+
+
+class CSNEG_32_condsel(_JSON_CSNEG_32_condsel):
+
+    pmu_bucket = 'dp_a64scalar'
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+        if f.cond.value == 0b0000:
+            csneg32_eq(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value == 0b0010:
+            csneg32_cs(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value == 0b0100:
+            csneg32_mi(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value == 0b0110:
+            csneg32_vs(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value == 0b1000:
+            csneg32_hi(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value == 0b1010:
+            csneg32_ge(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value == 0b1100:
+            csneg32_gt(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value >= 0b1110:
+            csneg32_al(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value == 0b0001:
+            csneg32_ne(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value == 0b0011:
+            csneg32_cc(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value == 0b0101:
+            csneg32_pl(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value == 0b0111:
+            csneg32_vc(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value == 0b1001:
+            csneg32_ls(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value == 0b1011:
+            csneg32_lt(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value == 0b1101:
+            csneg32_le(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+
+
+class CSNEG_64_condsel(_JSON_CSNEG_64_condsel):
+
+    pmu_bucket = 'dp_a64scalar'
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+        if f.cond.value == 0b0000:
+            csneg64_eq(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value == 0b0010:
+            csneg64_cs(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value == 0b0100:
+            csneg64_mi(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value == 0b0110:
+            csneg64_vs(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value == 0b1000:
+            csneg64_hi(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value == 0b1010:
+            csneg64_ge(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value == 0b1100:
+            csneg64_gt(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value >= 0b1110:
+            csneg64_al(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value == 0b0001:
+            csneg64_ne(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value == 0b0011:
+            csneg64_cc(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value == 0b0101:
+            csneg64_pl(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value == 0b0111:
+            csneg64_vc(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value == 0b1001:
+            csneg64_ls(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value == 0b1011:
+            csneg64_lt(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+        elif f.cond.value == 0b1101:
+            csneg64_le(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+
+
+class CTZ_32_dp_1src(_JSON_CTZ_32_dp_1src):
+
+    def decode(self, f):
+        ctz32(dest=f.Rd, src1=f.Rn)
+
+
+class CTZ_64_dp_1src(_JSON_CTZ_64_dp_1src):
+
+    def decode(self, f):
+        ctz64(dest=f.Rd, src1=f.Rn)
+
+
+class EON_32_log_shift(_JSON_EON_32_log_shift):
+
+    pmu_bucket = 'dp_a64scalar'
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+        if f.imm6.value == 0b000000:
+            eon32(dest=f.Rd, src1=f.Rn, src2=f.Rm, imm=Signal("000"))
+        elif f.shift.value == 0b00 and f.imm6.value <= 0b000100:
+            uxt32(dest=s0, src1=f.Rm, imm=(f.imm6,Signal("010")))
+            eon32(dest=f.Rd, src1=f.Rn, src2=s0, imm=Signal("000"))
+        elif f.shift.value == 0b00 and f.imm6.value > 0b000100:
+            lsl32_imm(dest=s0, src1=f.Rm, imm=f.imm6)
+            eon32(dest=f.Rd, src1=f.Rn, src2=s0, imm=Signal("000"))
+        elif f.shift.value == 0b01:
+            lsr32(dest=s0, src1=f.Rm, src2=f.Rm, imm=f.imm6)
+            eon32(dest=f.Rd, src1=f.Rn, src2=s0, imm=Signal("000"))
+        elif f.shift.value == 0b10:
+            asr32(dest=s0, src1=f.Rm, src2=f.Rm, imm=f.imm6)
+            eon32(dest=f.Rd, src1=f.Rn, src2=s0, imm=Signal("000"))
+        elif f.shift.value == 0b11:
+            extr32(dest=s0, src1=f.Rm, src2=f.Rm, imm=f.imm6)
+            eon32(dest=f.Rd, src1=f.Rn, src2=s0, imm=Signal("000"))
+
+
+class EON_64_log_shift(_JSON_EON_64_log_shift):
+
+    pmu_bucket = 'dp_a64scalar'
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+        if f.imm6.value == 0b000000:
+            eon64(dest=f.Rd, src1=f.Rn, src2=f.Rm, imm=Signal("000"))
+        elif f.shift.value == 0b00 and f.imm6.value <= 0b000100:
+            uxt64(dest=s0, src1=f.Rm, imm=(f.imm6,Signal("011")))
+            eon64(dest=f.Rd, src1=f.Rn, src2=s0, imm=Signal("000"))
+        elif f.shift.value == 0b00 and f.imm6.value > 0b000100:
+            lsl64_imm(dest=s0, src1=f.Rm, imm=f.imm6)
+            eon64(dest=f.Rd, src1=f.Rn, src2=s0, imm=Signal("000"))
+        elif f.shift.value == 0b01:
+            lsr64(dest=s0, src1=f.Rm, src2=f.Rm, imm=f.imm6)
+            eon64(dest=f.Rd, src1=f.Rn, src2=s0, imm=Signal("000"))
+        elif f.shift.value == 0b10:
+            asr64(dest=s0, src1=f.Rm, src2=f.Rm, imm=f.imm6)
+            eon64(dest=f.Rd, src1=f.Rn, src2=s0, imm=Signal("000"))
+        elif f.shift.value == 0b11:
+            extr64(dest=s0, src1=f.Rm, src2=f.Rm, imm=f.imm6)
+            eon64(dest=f.Rd, src1=f.Rn, src2=s0, imm=Signal("000"))
+
+
+class EOR_32_log_imm(_JSON_EOR_32_log_imm):
+
+    pmu_bucket = 'dp_a64scalar'
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+        eor32_imm(dest=f.Rd, src2=f.Rn, imm=(f.N,f.immr,f.imms), dest_is_stack_pointer=True)
+
+
+class EOR_64_log_imm(_JSON_EOR_64_log_imm):
+
+    pmu_bucket = 'dp_a64scalar'
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+        eor64_imm(dest=f.Rd, src2=f.Rn, imm=(f.N,f.immr,f.imms), dest_is_stack_pointer=True)
+
+
+class EOR_32_log_shift(_JSON_EOR_32_log_shift):
+
+    pmu_bucket = 'dp_a64scalar'
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+        if f.shift.value == 0b00 and f.imm6.value <= 0b000100:
+            eor32(dest=f.Rd, src1=f.Rn, src2=f.Rm, imm=f.imm6)
+        elif f.shift.value == 0b00 and f.imm6.value > 0b000100:
+            lsl32_imm(dest=s0, src1=f.Rm, imm=f.imm6)
+            eor32(dest=f.Rd, src1=f.Rn, src2=s0, imm=Signal("000"))
+        elif f.shift.value == 0b01:
+            lsr32(dest=s0, src1=f.Rm, src2=f.Rm, imm=f.imm6)
+            eor32(dest=f.Rd, src1=f.Rn, src2=s0, imm=Signal("000"))
+        elif f.shift.value == 0b10:
+            asr32(dest=s0, src1=f.Rm, src2=f.Rm, imm=f.imm6)
+            eor32(dest=f.Rd, src1=f.Rn, src2=s0, imm=Signal("000"))
+        elif f.shift.value == 0b11:
+            extr32(dest=s0, src1=f.Rm, src2=f.Rm, imm=f.imm6)
+            eor32(dest=f.Rd, src1=f.Rn, src2=s0, imm=Signal("000"))
+
+
+class EOR_64_log_shift(_JSON_EOR_64_log_shift):
+
+    pmu_bucket = 'dp_a64scalar'
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+        if f.shift.value == 0b00 and f.imm6.value <= 0b000100:
+            eor64(dest=f.Rd, src1=f.Rn, src2=f.Rm, imm=f.imm6)
+        elif f.shift.value == 0b00 and f.imm6.value > 0b000100:
+            lsl64_imm(dest=s0, src1=f.Rm, imm=f.imm6)
+            eor64(dest=f.Rd, src1=f.Rn, src2=s0, imm=Signal("000"))
+        elif f.shift.value == 0b01:
+            lsr64(dest=s0, src1=f.Rm, src2=f.Rm, imm=f.imm6)
+            eor64(dest=f.Rd, src1=f.Rn, src2=s0, imm=Signal("000"))
+        elif f.shift.value == 0b10:
+            asr64(dest=s0, src1=f.Rm, src2=f.Rm, imm=f.imm6)
+            eor64(dest=f.Rd, src1=f.Rn, src2=s0, imm=Signal("000"))
+        elif f.shift.value == 0b11:
+            extr64(dest=s0, src1=f.Rm, src2=f.Rm, imm=f.imm6)
+            eor64(dest=f.Rd, src1=f.Rn, src2=s0, imm=Signal("000"))
+
+
+class EXTR_32_extract(_JSON_EXTR_32_extract):
+
+    pmu_bucket = 'dp_a64scalar'
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+        extr32(dest=f.Rd, src1=f.Rm, src2=f.Rn, imm=f.imms)
+
+
+class EXTR_64_extract(_JSON_EXTR_64_extract):
+
+    pmu_bucket = 'dp_a64scalar'
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+        extr64(dest=f.Rd, src1=f.Rm, src2=f.Rn, imm=f.imms)
+
+
+class GMI_64G_dp_2src(_JSON_GMI_64G_dp_2src):
+    fields = {**_JSON_GMI_64G_dp_2src.fields, 'Xd': (4, 0), 'Xm': (20, 16), 'Xn': (9, 5)}
+
+
+    pmu_bucket = 'dp'
+
+    pmu_events = ['DP_SPEC']
+
+    def decode(self, f):
+        gmi(dest=f.Xd, src1=f.Xn, src2=f.Xm, src1_is_stack_pointer=True)
+
+
+class IRG_64I_dp_2src(_JSON_IRG_64I_dp_2src):
+    fields = {**_JSON_IRG_64I_dp_2src.fields, 'Xd': (4, 0), 'Xm': (20, 16), 'Xn': (9, 5)}
+ 
+ 
+    pmu_bucket = 'dp'
+ 
+    pmu_events = ['DP_SPEC']
+
+    def decode(self, f):
+         irg(dest=RGSR_EL1, src1=f.Xm, src2=RGSR_EL1)
+         insg(dest=f.Xd, src1=RGSR_EL1, src2=f.Xn, src2_is_stack_pointer=True, dest_is_stack_pointer=True)
+
+
+class LDG_64Loffset_ldsttags(_JSON_LDG_64Loffset_ldsttags):
+    fields = {**_JSON_LDG_64Loffset_ldsttags.fields, 'Xn': (9, 5), 'Xt': (4, 0)}
+
+
+    pmu_bucket = 'load'
+
+    pmu_events = ['ASE_SVE_LDST_SPEC', 'LD_SPEC']
+
+    def decode(self, f):
+        ldg(dest=s0, src1=f.Xn, imm=f.imm9, imm_signext=True, src1_is_stack_pointer=True)
+        insg(dest=f.Xt, src1=s0, src2=f.Xt)
+        
+
+class LDGM_64bulk_ldsttags(_JSON_LDGM_64bulk_ldsttags):
+    fields = {**_JSON_LDGM_64bulk_ldsttags.fields, 'Xn': (9, 5), 'Xt': (4, 0)}
+
+
+    pmu_bucket = 'load'
+
+    pmu_events = ['ASE_SVE_LDST_SPEC', 'LD_SPEC']
+
+    def decode(self, f):
+        ldgm(dest=f.Xt, src1=f.Xn, imm=Signal("0"), src1_is_stack_pointer=True)
+
+
+class LSLV_32_dp_2src(_JSON_LSLV_32_dp_2src):
+
+    pmu_bucket = 'dp_a64scalar'
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+        lslv32(dest=f.Rd, src1=f.Rn, src2=f.Rm)
+
+
+class LSLV_64_dp_2src(_JSON_LSLV_64_dp_2src):
+
+    pmu_bucket = 'dp_a64scalar'
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+        lslv64(dest=f.Rd, src1=f.Rn, src2=f.Rm)
+
+
+class LSRV_32_dp_2src(_JSON_LSRV_32_dp_2src):
+
+    pmu_bucket = 'dp_a64scalar'
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+        lsrv32(dest=f.Rd, src1=f.Rn, src2=f.Rm)
+
+
+class LSRV_64_dp_2src(_JSON_LSRV_64_dp_2src):
+
+    pmu_bucket = 'dp_a64scalar'
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+        lsrv64(dest=f.Rd, src1=f.Rn, src2=f.Rm)
+
+
+class MADD_32A_dp_3src(_JSON_MADD_32A_dp_3src):
+
+    pmu_bucket = 'dp_a64scalar'
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+      if f.Ra.value == 0b11111:
+        mul32(dest=f.Rd, src1=f.Rn, src2=f.Rm)
+      else:
+        mul32(dest=s0, src1=f.Rn, src2=f.Rm)
+        add32(dest=f.Rd, src1=f.Ra, src2=s0, imm=Signal("011000"))
+
+
+class MADD_64A_dp_3src(_JSON_MADD_64A_dp_3src):
+
+    pmu_bucket = 'dp_a64scalar'
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+      if f.Ra.value == 0b11111:
+        umull(dest=f.Rd, src1=f.Rn, src2=f.Rm)
+      else:
+        umull(dest=s0, src1=f.Rn, src2=f.Rm)
+        add64(dest=f.Rd, src1=f.Ra, src2=s0, imm=Signal("011000"))
+
+
+class MOVK_32_movewide(_JSON_MOVK_32_movewide):
+
+    pmu_bucket = 'dp'
+
+    pmu_events = ['DP_SPEC']
+
+    def decode(self, f):
+        if f.hw.value == 0b00:
+            movk32_0b(dest=f.Rd, src2=f.Rd, imm=f.imm16)
+        elif f.hw.value == 0b01:
+            movk32_2b(dest=f.Rd, src2=f.Rd, imm=f.imm16)
+
+
+class MOVK_64_movewide(_JSON_MOVK_64_movewide):
+
+    pmu_bucket = 'dp'
+
+    pmu_events = ['DP_SPEC']
+
+    def decode(self, f):
+        if f.hw.value == 0b00:
+            movk64_0b(dest=f.Rd, src2=f.Rd, imm=f.imm16)
+        elif f.hw.value == 0b01:
+            movk64_2b(dest=f.Rd, src2=f.Rd, imm=f.imm16)
+        elif f.hw.value == 0b10:
+            movk64_4b(dest=f.Rd, src2=f.Rd, imm=f.imm16)
+        elif f.hw.value == 0b11:
+            movk64_6b(dest=f.Rd, src2=f.Rd, imm=f.imm16)
+
+
+class MOVN_32_movewide(_JSON_MOVN_32_movewide):
+
+    pmu_bucket = 'dp'
+
+    pmu_events = ['DP_SPEC']
+
+    def decode(self, f):
+        if f.hw.value == 0b00:
+            movn32_0b(dest=f.Rd, imm=f.imm16)
+        elif f.hw.value == 0b01:
+            movn32_2b(dest=f.Rd, imm=f.imm16)
+
+
+class MOVN_64_movewide(_JSON_MOVN_64_movewide):
+
+    pmu_bucket = 'dp'
+
+    pmu_events = ['DP_SPEC']
+
+    def decode(self, f):
+        if f.hw.value == 0b00:
+            movn64_0b(dest=f.Rd, imm=f.imm16)
+        elif f.hw.value == 0b01:
+            movn64_2b(dest=f.Rd, imm=f.imm16)
+        elif f.hw.value == 0b10:
+            movn64_4b(dest=f.Rd, imm=f.imm16)
+        elif f.hw.value == 0b11:
+            movn64_6b(dest=f.Rd, imm=f.imm16)
+
+
+class MOVZ_32_movewide(_JSON_MOVZ_32_movewide):
+
+    pmu_bucket = 'dp'
+
+    pmu_events = ['DP_SPEC']
+
+    def decode(self, f):
+        if f.hw.value == 0b00:
+            movz32_0b(dest=f.Rd, imm=f.imm16)
+        elif f.hw.value == 0b01:
+            movz32_2b(dest=f.Rd, imm=f.imm16)
+
+
+class MOVZ_64_movewide(_JSON_MOVZ_64_movewide):
+
+    pmu_bucket = 'dp'
+
+    pmu_events = ['DP_SPEC']
+
+    def decode(self, f):
+        if f.hw.value == 0b00:
+            movz64_0b(dest=f.Rd, imm=f.imm16)
+        elif f.hw.value == 0b01:
+            self.fusion_delay_hint = True
+            movz64_2b(dest=f.Rd, imm=f.imm16)
+        elif f.hw.value == 0b10:
+            movz64_4b(dest=f.Rd, imm=f.imm16)
+        elif f.hw.value == 0b11:
+            movz64_6b(dest=f.Rd, imm=f.imm16)
+
+
+class MSUB_32A_dp_3src(_JSON_MSUB_32A_dp_3src):
+
+    pmu_bucket = 'dp_a64scalar'
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+        umull32(dest=s0, src1=f.Rn, src2=f.Rm)
+        sub32(dest=f.Rd, src1=f.Ra, src2=s0, imm=Signal("011000"))
+
+
+class MSUB_64A_dp_3src(_JSON_MSUB_64A_dp_3src):
+
+    pmu_bucket = 'dp_a64scalar'
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+        umull(dest=s0, src1=f.Rn, src2=f.Rm)
+        sub64(dest=f.Rd, src1=f.Ra, src2=s0, imm=Signal("011000"))
+
+
+class ORN_32_log_shift(_JSON_ORN_32_log_shift):
+
+    pmu_bucket = 'dp_a64scalar'
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+        if f.imm6.value == 0b000000:
+            orn32(dest=f.Rd, src1=f.Rn, src2=f.Rm, imm=Signal("000"))
+        elif f.shift.value == 0b00 and f.imm6.value <= 0b000100:
+            uxt32(dest=s0, src1=f.Rm, imm=(f.imm6,Signal("010")))
+            orn32(dest=f.Rd, src1=f.Rn, src2=s0, imm=Signal("000"))
+        elif f.shift.value == 0b00 and f.imm6.value > 0b000100:
+            lsl32_imm(dest=s0, src1=f.Rm, imm=f.imm6)
+            orn32(dest=f.Rd, src1=f.Rn, src2=s0, imm=Signal("000"))
+        elif f.shift.value == 0b01:
+            lsr32(dest=s0, src1=f.Rm, src2=f.Rm, imm=f.imm6)
+            orn32(dest=f.Rd, src1=f.Rn, src2=s0, imm=Signal("000"))
+        elif f.shift.value == 0b10:
+            asr32(dest=s0, src1=f.Rm, src2=f.Rm, imm=f.imm6)
+            orn32(dest=f.Rd, src1=f.Rn, src2=s0, imm=Signal("000"))
+        elif f.shift.value == 0b11:
+            extr32(dest=s0, src1=f.Rm, src2=f.Rm, imm=f.imm6)
+            orn32(dest=f.Rd, src1=f.Rn, src2=s0, imm=Signal("000"))
+
+
+class ORN_64_log_shift(_JSON_ORN_64_log_shift):
+
+    pmu_bucket = 'dp_a64scalar'
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+        if f.imm6.value == 0b000000:
+            orn64(dest=f.Rd, src1=f.Rn, src2=f.Rm, imm=Signal("000"))
+        elif f.shift.value == 0b00 and f.imm6.value <= 0b000100:
+            uxt64(dest=s0, src1=f.Rm, imm=(f.imm6,Signal("011")))
+            orn64(dest=f.Rd, src1=f.Rn, src2=s0, imm=Signal("000"))
+        elif f.shift.value == 0b00 and f.imm6.value > 0b000100:
+            lsl64_imm(dest=s0, src1=f.Rm, imm=f.imm6)
+            orn64(dest=f.Rd, src1=f.Rn, src2=s0, imm=Signal("000"))
+        elif f.shift.value == 0b01:
+            lsr64(dest=s0, src1=f.Rm, src2=f.Rm, imm=f.imm6)
+            orn64(dest=f.Rd, src1=f.Rn, src2=s0, imm=Signal("000"))
+        elif f.shift.value == 0b10:
+            asr64(dest=s0, src1=f.Rm, src2=f.Rm, imm=f.imm6)
+            orn64(dest=f.Rd, src1=f.Rn, src2=s0, imm=Signal("000"))
+        elif f.shift.value == 0b11:
+            extr64(dest=s0, src1=f.Rm, src2=f.Rm, imm=f.imm6)
+            orn64(dest=f.Rd, src1=f.Rn, src2=s0, imm=Signal("000"))
+
+
+class ORR_32_log_imm(_JSON_ORR_32_log_imm):
+
+    pmu_bucket = 'dp_a64scalar'
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+        orr32_imm(dest=f.Rd, src2=f.Rn, imm=(f.N,f.immr,f.imms), dest_is_stack_pointer=True)
+
+
+class ORR_64_log_imm(_JSON_ORR_64_log_imm):
+
+    pmu_bucket = 'dp_a64scalar'
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+        orr64_imm(dest=f.Rd, src2=f.Rn, imm=(f.N,f.immr,f.imms), dest_is_stack_pointer=True)
+
+
+class ORR_32_log_shift(_JSON_ORR_32_log_shift):
+
+    pmu_bucket = 'dp_a64scalar'
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+        if f.shift.value == 0b00 and f.imm6.value <= 0b000100:
+            orr32(dest=f.Rd, src1=f.Rn, src2=f.Rm, imm=f.imm6)
+        elif f.shift.value == 0b00 and f.imm6.value > 0b000100:
+            lsl32_imm(dest=s0, src1=f.Rm, imm=f.imm6)
+            orr32(dest=f.Rd, src1=f.Rn, src2=s0, imm=Signal("000"))
+        elif f.shift.value == 0b01:
+            lsr32(dest=s0, src1=f.Rm, src2=f.Rm, imm=f.imm6)
+            orr32(dest=f.Rd, src1=f.Rn, src2=s0, imm=Signal("000"))
+        elif f.shift.value == 0b10:
+            asr32(dest=s0, src1=f.Rm, src2=f.Rm, imm=f.imm6)
+            orr32(dest=f.Rd, src1=f.Rn, src2=s0, imm=Signal("000"))
+        elif f.shift.value == 0b11:
+            extr32(dest=s0, src1=f.Rm, src2=f.Rm, imm=f.imm6)
+            orr32(dest=f.Rd, src1=f.Rn, src2=s0, imm=Signal("000"))
+
+
+class ORR_64_log_shift(_JSON_ORR_64_log_shift):
+
+    pmu_bucket = 'dp_a64scalar'
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+        if f.shift.value == 0b00 and f.imm6.value <= 0b000100:
+            orr64(dest=f.Rd, src1=f.Rn, src2=f.Rm, imm=f.imm6)
+        elif f.shift.value == 0b00 and f.imm6.value > 0b000100:
+            lsl64_imm(dest=s0, src1=f.Rm, imm=f.imm6)
+            orr64(dest=f.Rd, src1=f.Rn, src2=s0, imm=Signal("000"))
+        elif f.shift.value == 0b01:
+            lsr64(dest=s0, src1=f.Rm, src2=f.Rm, imm=f.imm6)
+            orr64(dest=f.Rd, src1=f.Rn, src2=s0, imm=Signal("000"))
+        elif f.shift.value == 0b10:
+            asr64(dest=s0, src1=f.Rm, src2=f.Rm, imm=f.imm6)
+            orr64(dest=f.Rd, src1=f.Rn, src2=s0, imm=Signal("000"))
+        elif f.shift.value == 0b11:
+            extr64(dest=s0, src1=f.Rm, src2=f.Rm, imm=f.imm6)
+            orr64(dest=f.Rd, src1=f.Rn, src2=s0, imm=Signal("000"))
+
+
+class PACDA_64P_dp_1src(_JSON_PACDA_64P_dp_1src):
+
+    pmu_bucket = 'dp'
+    mode_bits = { 'pac_da_enabled' : 1 }
+
+    pmu_events = ['DP_SPEC']
+
+    def decode(self, f):
+        if self.mode_bits['pac_da_enabled']:
+            pacda(dest=f.Rd, src1=f.Rd, src2=f.Rn, src2_is_stack_pointer=True)
+        else:
+            nop()
+
+
+
+class PACDZA_64Z_dp_1src(_JSON_PACDZA_64Z_dp_1src):
+
+    pmu_bucket = 'dp'
+    mode_bits = { 'pac_da_enabled' : 1 }
+
+    pmu_events = ['DP_SPEC']
+
+    def decode(self, f):
+        if self.mode_bits['pac_da_enabled']:
+            pacda(dest=f.Rd, src1=f.Rd, src2=f.Rn)
+        else:
+            nop()
+
+
+
+class PACDB_64P_dp_1src(_JSON_PACDB_64P_dp_1src):
+
+    pmu_bucket = 'dp'
+    mode_bits = { 'pac_db_enabled' : 1 }
+
+    pmu_events = ['DP_SPEC']
+
+    def decode(self, f):
+        if self.mode_bits['pac_db_enabled']:
+            pacdb(dest=f.Rd, src1=f.Rd, src2=f.Rn, src2_is_stack_pointer=True)
+        else:
+            nop()
+
+
+class PACDZB_64Z_dp_1src(_JSON_PACDZB_64Z_dp_1src):
+
+    pmu_bucket = 'dp'
+    mode_bits = { 'pac_db_enabled' : 1 }
+
+    pmu_events = ['DP_SPEC']
+
+    def decode(self, f):
+        if self.mode_bits['pac_db_enabled']:
+            pacdb(dest=f.Rd, src1=f.Rd, src2=f.Rn)
+        else:
+            nop()
+
+
+
+class PACGA_64P_dp_2src(_JSON_PACGA_64P_dp_2src):
+
+    pmu_bucket = 'dp'
+
+    pmu_events = ['DP_SPEC']
+
+    def decode(self, f):
+        pacga(dest=f.Rd, src1=f.Rn, src2=f.Rm, src2_is_stack_pointer=True)
+
+
+class PACIA_64P_dp_1src(_JSON_PACIA_64P_dp_1src):
+
+    pmu_bucket = 'dp'
+    mode_bits = { 'pac_ia_enabled' : 1 }
+
+    pmu_events = ['DP_SPEC']
+
+    def decode(self, f):
+        if self.mode_bits['pac_ia_enabled']:
+            pacia(dest=f.Rd, src1=f.Rd, src2=f.Rn, src2_is_stack_pointer=True)
+        else:
+            nop()
+
+
+
+class PACIZA_64Z_dp_1src(_JSON_PACIZA_64Z_dp_1src):
+
+    pmu_bucket = 'dp'
+    mode_bits = { 'pac_ia_enabled' : 1 }
+
+    pmu_events = ['DP_SPEC']
+
+    def decode(self, f):
+        if self.mode_bits['pac_ia_enabled']:
+            pacia(dest=f.Rd, src1=f.Rd, src2=f.Rn)
+        else:
+            nop()
+
+
+
+class PACIB_64P_dp_1src(_JSON_PACIB_64P_dp_1src):
+
+    pmu_bucket = 'dp'
+    mode_bits = { 'pac_ib_enabled' : 1 }
+
+    pmu_events = ['DP_SPEC']
+
+    def decode(self, f):
+        if self.mode_bits['pac_ib_enabled']:
+            pacib(dest=f.Rd, src1=f.Rd, src2=f.Rn, src2_is_stack_pointer=True)
+        else:
+            nop()
+
+
+
+class PACIZB_64Z_dp_1src(_JSON_PACIZB_64Z_dp_1src):
+
+    pmu_bucket = 'dp'
+    mode_bits = { 'pac_ib_enabled' : 1 }
+
+    pmu_events = ['DP_SPEC']
+
+    def decode(self, f):
+        if self.mode_bits['pac_ib_enabled']:
+            pacib(dest=f.Rd, src1=f.Rd, src2=f.Rn)
+        else:
+            nop()
+
+
+class RBIT_32_dp_1src(_JSON_RBIT_32_dp_1src):
+
+    pmu_bucket = 'dp_a64scalar'
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+        rbit_w(dest=f.Rd, src1=f.Rn)
+
+
+class RBIT_64_dp_1src(_JSON_RBIT_64_dp_1src):
+
+    pmu_bucket = 'dp_a64scalar'
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+        rbit_d(dest=f.Rd, src1=f.Rn)
+
+
+class REV_32_dp_1src(_JSON_REV_32_dp_1src):
+
+    pmu_bucket = 'dp_a64scalar'
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+        rev32_w(dest=f.Rd, src1=f.Rn)
+
+
+class REV_64_dp_1src(_JSON_REV_64_dp_1src):
+
+    pmu_bucket = 'dp_a64scalar'
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+        rev64_d(dest=f.Rd, src1=f.Rn)
+
+
+class REV16_32_dp_1src(_JSON_REV16_32_dp_1src):
+
+    pmu_bucket = 'dp_a64scalar'
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+        rev32_h(dest=f.Rd, src1=f.Rn)
+
+
+class REV16_64_dp_1src(_JSON_REV16_64_dp_1src):
+
+    pmu_bucket = 'dp_a64scalar'
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+        rev64_h(dest=f.Rd, src1=f.Rn)
+
+
+class REV32_64_dp_1src(_JSON_REV32_64_dp_1src):
+
+    pmu_bucket = 'dp_a64scalar'
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+        rev64_w(dest=f.Rd, src1=f.Rn)
+
+
+class RMIF_only_rmif(_JSON_RMIF_only_rmif):
+
+    pmu_bucket = 'dp'
+
+    pmu_events = ['DP_SPEC']
+
+    def decode(self, f):
+        rmif(flagdest=f0, src2=f.Rn, src3=f0, imm=(f.imm6,f.mask))
+
+
+class RORV_32_dp_2src(_JSON_RORV_32_dp_2src):
+
+    pmu_bucket = 'dp_a64scalar'
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+        rorv32(dest=f.Rd, src1=f.Rn, src2=f.Rm)
+
+
+class RORV_64_dp_2src(_JSON_RORV_64_dp_2src):
+
+    pmu_bucket = 'dp_a64scalar'
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+        rorv64(dest=f.Rd, src1=f.Rn, src2=f.Rm)
+
+
+class SBC_32_addsub_carry(_JSON_SBC_32_addsub_carry):
+
+    pmu_bucket = 'dp_a64scalar'
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+        sbc32(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+
+
+class SBC_64_addsub_carry(_JSON_SBC_64_addsub_carry):
+
+    pmu_bucket = 'dp_a64scalar'
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+        sbc64(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f0)
+
+
+class SBCS_32_addsub_carry(_JSON_SBCS_32_addsub_carry):
+
+    pmu_bucket = 'dp_a64scalar'
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+        sbcs32(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, src3=f0)
+
+
+class SBCS_64_addsub_carry(_JSON_SBCS_64_addsub_carry):
+
+    pmu_bucket = 'dp_a64scalar'
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+        sbcs64(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, src3=f0)
+
+
+class SBFM_32M_bitfield(_JSON_SBFM_32M_bitfield):
+
+    pmu_bucket = 'dp_a64scalar'
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+        sbfm32(dest=f.Rd, src1=f.Rn, imm=(f.immr,f.imms))
+
+
+class SBFM_64M_bitfield(_JSON_SBFM_64M_bitfield):
+
+    pmu_bucket = 'dp_a64scalar'
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+        sbfm64(dest=f.Rd, src1=f.Rn, imm=(f.immr,f.imms))
+
+
+class SDIV_32_dp_2src(_JSON_SDIV_32_dp_2src):
+
+    pmu_bucket = 'dp_a64scalar'
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+        movi2f_fmovd(dest=T0, src1=f.Rn, src2=f.Rm)
+        if (f.Rd.value != 0b11111):
+           gsdiv_s_nv(dest=f.Rd, src1=T0)
+
+
+class SDIV_64_dp_2src(_JSON_SDIV_64_dp_2src):
+
+    pmu_bucket = 'dp_a64scalar'
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+        movi2f_fmovd(dest=T0, src2=f.Rn)
+        movi2f_fmovd(dest=T1, src2=f.Rm)
+        if (f.Rd.value != 0b11111):
+           gsdiv_d_nv(dest=f.Rd, src1=T0, src2=T1)
+
+
+class SETF8_only_setf(_JSON_SETF8_only_setf):
+
+    pmu_bucket = 'dp'
+
+    pmu_events = ['DP_SPEC']
+
+    def decode(self, f):
+        setf8(flagdest=f0, src2=f.Rn, src3=f0)
+
+
+class SETF16_only_setf(_JSON_SETF16_only_setf):
+
+    pmu_bucket = 'dp'
+
+    pmu_events = ['DP_SPEC']
+
+    def decode(self, f):
+        setf16(flagdest=f0, src2=f.Rn, src3=f0)
+
+
+class SMADDL_64WA_dp_3src(_JSON_SMADDL_64WA_dp_3src):
+
+    pmu_bucket = 'dp_a64scalar'
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+      if f.Ra.value == 0b11111:
+        smull32(dest=f.Rd, src1=f.Rn, src2=f.Rm)
+      else:
+        smull32(dest=s0, src1=f.Rn, src2=f.Rm)
+        add64(dest=f.Rd, src1=f.Ra, src2=s0, imm=Signal("011000"))
+
+
+class SMAX_32_minmax_imm(_JSON_SMAX_32_minmax_imm):
+
+    def decode(self, f):
+        #smax32(dest=f.Rd, src2=f.Rn, imm=f.imm8)
+        #Required a special subtract which handled a signed immediate
+        #The immediate variants of csel need to use a signed or unsigned imm8 based on if it's
+        #U/S MAX/MIN.  Instead of creating sign and unsigned version of csel, we use bit8 to specify
+        #if we should sign or zero extend in ImmDec.
+        subs32_simm_nodest(src2=f.Rn, imm=(Signal("00001"),f.imm8), flagdest=f1)
+        csel32_le(dest=f.Rd, src2=f.Rn, imm=(Signal("1"),f.imm8), src3=f1)
+
+
+class SMAX_64_minmax_imm(_JSON_SMAX_64_minmax_imm):
+
+    def decode(self, f):
+        #smax64(dest=f.Rd, src2=f.Rn, imm=f.imm8)
+        #Required a special subtract which handled a signed immediate
+        #The immediate variants of csel need to use a signed or unsigned imm8 based on if it's
+        #U/S MAX/MIN.  Instead of creating sign and unsigned version of csel, we use bit8 to specify
+        #if we should sign or zero extend in ImmDec.
+        subs64_simm_nodest(src2=f.Rn, imm=(Signal("00001"),f.imm8), flagdest=f1)
+        csel64_le(dest=f.Rd, src2=f.Rn, imm=(Signal("1"),f.imm8), src3=f1)
+
+
+class SMAX_32_dp_2src(_JSON_SMAX_32_dp_2src):
+
+    def decode(self, f):
+        subs32_nodest(src1=f.Rn, src2=f.Rm, imm=Signal("011000"), flagdest=f1)
+        #Rd = n==v ? Rn : Rm
+        csel32_ge(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f1)
+
+
+class SMAX_64_dp_2src(_JSON_SMAX_64_dp_2src):
+
+    def decode(self, f):
+        subs64_nodest(src1=f.Rn, src2=f.Rm, imm=Signal("011000"), flagdest=f1)
+        #Rd = n==v ? Rn : Rm
+        csel64_ge(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f1)
+
+
+class SMIN_32_minmax_imm(_JSON_SMIN_32_minmax_imm):
+
+    def decode(self, f):
+        #smin32(dest=f.Rd, src2=f.Rn, imm=f.imm8)
+        #Required a special subtract which handled a signed immediate
+        #The immediate variants of csel need to use a signed or unsigned imm8 based on if it's
+        #U/S MAX/MIN.  Instead of creating sign and unsigned version of csel, we use bit8 to specify
+        #if we should sign or zero extend in ImmDec.
+        subs32_simm_nodest(src2=f.Rn, imm=(Signal("00001"),f.imm8), flagdest=f1)
+        csel32_ge(dest=f.Rd, src2=f.Rn, imm=(Signal("1"),f.imm8), src3=f1)
+
+
+class SMIN_64_minmax_imm(_JSON_SMIN_64_minmax_imm):
+
+    def decode(self, f):
+        #smin64(dest=f.Rd, src2=f.Rn, imm=f.imm8)
+        #Required a special subtract which handled a signed immediate
+        #The immediate variants of csel need to use a signed or unsigned imm8 based on if it's
+        #U/S MAX/MIN.  Instead of creating sign and unsigned version of csel, we use bit8 to specify
+        #if we should sign or zero extend in ImmDec.
+        subs64_simm_nodest(src2=f.Rn, imm=(Signal("00001"),f.imm8), flagdest=f1)
+        csel64_ge(dest=f.Rd, src2=f.Rn, imm=(Signal("1"),f.imm8), src3=f1)
+
+
+class SMIN_32_dp_2src(_JSON_SMIN_32_dp_2src):
+
+    def decode(self, f):
+        subs32_nodest(src1=f.Rn, src2=f.Rm, imm=Signal("011000"), flagdest=f1)
+        #Rd = (n==v)&~z ? Rm : Rn
+        csel32_le(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f1)
+
+
+class SMIN_64_dp_2src(_JSON_SMIN_64_dp_2src):
+
+    def decode(self, f):
+        subs64_nodest(src1=f.Rn, src2=f.Rm, imm=Signal("011000"), flagdest=f1)
+        #Rd = (n==v)&~z ? Rm : Rn
+        csel64_le(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f1)
+
+
+class SMSUBL_64WA_dp_3src(_JSON_SMSUBL_64WA_dp_3src):
+
+    pmu_bucket = 'dp_a64scalar'
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+        smull32(dest=s0, src1=f.Rn, src2=f.Rm)
+        sub64(dest=f.Rd, src1=f.Ra, src2=s0, imm=Signal("011000"))
+
+
+class SMULH_64_dp_3src(_JSON_SMULH_64_dp_3src):
+
+    pmu_bucket = 'dp_a64scalar'
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+        smulh(dest=f.Rd, src1=f.Rn, src2=f.Rm)
+
+
+class ST2G_64Spost_ldsttags(_JSON_ST2G_64Spost_ldsttags):
+    fields = {**_JSON_ST2G_64Spost_ldsttags.fields, 'Xn': (9, 5), 'Xt': (4, 0)}
+
+
+    pmu_bucket = 'store'
+
+    pmu_events = ['ASE_SVE_LDST_SPEC', 'ST_SPEC']
+
+    def decode(self, f):
+        stg(src1=f.Xn, src2=f.Xt, imm=Signal("0"),                src1_is_stack_pointer=True, src2_is_stack_pointer=True)
+        stg(src1=f.Xn, src2=f.Xt, imm=Signal("0"), imm_incr=True, src1_is_stack_pointer=True, src2_is_stack_pointer=True)
+        ## Part of the left shift (<<3) is done in IXU so the imm can fit within 12b
+        add64_idximm_ls3(dest=f.Xn, src2=f.Xn, imm=f.imm9, imm_shift=1, imm_signext=True, src2_is_stack_pointer=True, dest_is_stack_pointer=True)
+
+
+class ST2G_64Spre_ldsttags(_JSON_ST2G_64Spre_ldsttags):
+    fields = {**_JSON_ST2G_64Spre_ldsttags.fields, 'Xn': (9, 5), 'Xt': (4, 0)}
+
+
+    pmu_bucket = 'store'
+
+    pmu_events = ['ASE_SVE_LDST_SPEC', 'ST_SPEC']
+
+    def decode(self, f):
+        stg(src1=f.Xn, src2=f.Xt, imm=f.imm9,                imm_signext=True, src1_is_stack_pointer=True, src2_is_stack_pointer=True)
+        stg(src1=f.Xn, src2=f.Xt, imm=f.imm9, imm_incr=True, imm_signext=True, src1_is_stack_pointer=True, src2_is_stack_pointer=True)
+        ## Part of the left shift (<<3) is done in IXU so the imm can fit within 12b
+        add64_idximm_ls3(dest=f.Xn, src2=f.Xn, imm=f.imm9, imm_shift=1, imm_signext=True, src2_is_stack_pointer=True, dest_is_stack_pointer=True)
+
+
+class ST2G_64Soffset_ldsttags(_JSON_ST2G_64Soffset_ldsttags):
+    fields = {**_JSON_ST2G_64Soffset_ldsttags.fields, 'Xn': (9, 5), 'Xt': (4, 0)}
+
+
+    pmu_bucket = 'store'
+
+    pmu_events = ['ASE_SVE_LDST_SPEC', 'ST_SPEC']
+
+    def decode(self, f):
+        stg(src1=f.Xn, src2=f.Xt, imm=f.imm9,                imm_signext=True, src1_is_stack_pointer=True, src2_is_stack_pointer=True)
+        stg(src1=f.Xn, src2=f.Xt, imm=f.imm9, imm_incr=True, imm_signext=True, src1_is_stack_pointer=True, src2_is_stack_pointer=True)
+
+
+class STG_64Spost_ldsttags(_JSON_STG_64Spost_ldsttags):
+    fields = {**_JSON_STG_64Spost_ldsttags.fields, 'Xn': (9, 5), 'Xt': (4, 0)}
+
+
+    pmu_bucket = 'store'
+
+    pmu_events = ['ASE_SVE_LDST_SPEC', 'ST_SPEC']
+
+    def decode(self, f):
+        stg(src1=f.Xn, src2=f.Xt, imm=Signal("0"), src1_is_stack_pointer=True, src2_is_stack_pointer=True)
+        ## Part of the left shift (<<3) is done in IXU so the imm can fit within 12b
+        add64_idximm_ls3(dest=f.Xn, src2=f.Xn, imm=f.imm9, imm_shift=1, imm_signext=True, src2_is_stack_pointer=True, dest_is_stack_pointer=True)
+
+
+class STG_64Spre_ldsttags(_JSON_STG_64Spre_ldsttags):
+    fields = {**_JSON_STG_64Spre_ldsttags.fields, 'Xn': (9, 5), 'Xt': (4, 0)}
+
+
+    pmu_bucket = 'store'
+
+    pmu_events = ['ASE_SVE_LDST_SPEC', 'ST_SPEC']
+
+    def decode(self, f):
+        stg(src1=f.Xn, src2=f.Xt, imm=f.imm9, imm_signext=True, src1_is_stack_pointer=True, src2_is_stack_pointer=True)
+        add64_idximm_ls3(dest=f.Xn, src2=f.Xn, imm=f.imm9, imm_shift=1, imm_signext=True, src2_is_stack_pointer=True, dest_is_stack_pointer=True)
+
+class STG_64Soffset_ldsttags(_JSON_STG_64Soffset_ldsttags):
+    fields = {**_JSON_STG_64Soffset_ldsttags.fields, 'Xn': (9, 5), 'Xt': (4, 0)}
+
+
+    pmu_bucket = 'store'
+
+    pmu_events = ['ASE_SVE_LDST_SPEC', 'ST_SPEC']
+
+    def decode(self, f):
+        stg(src1=f.Xn, src2=f.Xt, imm=f.imm9, imm_signext=True, src1_is_stack_pointer=True, src2_is_stack_pointer=True)
+
+
+class STGM_64bulk_ldsttags(_JSON_STGM_64bulk_ldsttags):
+    fields = {**_JSON_STGM_64bulk_ldsttags.fields, 'Xn': (9, 5), 'Xt': (4, 0)}
+
+
+    pmu_bucket = 'store'
+
+    pmu_events = ['ASE_SVE_LDST_SPEC', 'ST_SPEC']
+
+    def decode(self, f):
+        stgm(src1=f.Xn, src2=f.Xt, imm=Signal("0"), src1_is_stack_pointer=True)
+
+
+class STGP_64_ldstpair_post(_JSON_STGP_64_ldstpair_post):
+    fields = {**_JSON_STGP_64_ldstpair_post.fields, 'Xn': (9, 5), 'Xt': (4, 0), 'Xt2': (14, 10)}
+
+
+    pmu_bucket = 'store'
+
+    pmu_events = ['ASE_SVE_LDST_SPEC', 'ST_SPEC']
+
+    def decode(self, f):
+        stgp(src1=f.Xn, src2=f.Xt, imm=Signal("0"), src1_is_stack_pointer=True)
+        stdhi_d(src2=f.Xt2, imm=Signal('0'))
+        add64_idximm_ls3(dest=f.Xn, src2=f.Xn, imm=f.simm7, imm_shift=1, imm_signext=True, src2_is_stack_pointer=True, dest_is_stack_pointer=True)
+
+
+class STGP_64_ldstpair_pre(_JSON_STGP_64_ldstpair_pre):
+    fields = {**_JSON_STGP_64_ldstpair_pre.fields, 'Xn': (9, 5), 'Xt': (4, 0), 'Xt2': (14, 10)}
+
+
+    pmu_bucket = 'store'
+
+    pmu_events = ['ASE_SVE_LDST_SPEC', 'ST_SPEC']
+
+    def decode(self, f):
+        stgp(src1=f.Xn, src2=f.Xt, imm=f.simm7, imm_signext=True, src1_is_stack_pointer=True)
+        stdhi_d(src2=f.Xt2, imm=Signal('0'))
+        add64_idximm_ls3(dest=f.Xn, src2=f.Xn, imm=f.simm7, imm_shift=1, imm_signext=True, src2_is_stack_pointer=True, dest_is_stack_pointer=True)
+
+
+class STGP_64_ldstpair_off(_JSON_STGP_64_ldstpair_off):
+    fields = {**_JSON_STGP_64_ldstpair_off.fields, 'Xn': (9, 5), 'Xt': (4, 0), 'Xt2': (14, 10)}
+
+
+    pmu_bucket = 'store'
+
+    pmu_events = ['ASE_SVE_LDST_SPEC', 'ST_SPEC']
+
+    def decode(self, f):
+        stgp(src1=f.Xn, src2=f.Xt, imm=f.simm7, imm_signext=True, src1_is_stack_pointer=True)
+        stdhi_d(src2=f.Xt2, imm=Signal('0'))
+
+
+class STZ2G_64Spost_ldsttags(_JSON_STZ2G_64Spost_ldsttags):
+    fields = {**_JSON_STZ2G_64Spost_ldsttags.fields, 'Xn': (9, 5), 'Xt': (4, 0)}
+
+
+    pmu_bucket = 'store'
+
+    pmu_events = ['ASE_SVE_LDST_SPEC', 'ST_SPEC']
+
+    def decode(self, f):
+        stzg(src1=f.Xn, src2=f.Xt, imm=Signal("0"),                src1_is_stack_pointer=True, src2_is_stack_pointer=True)
+        stzg(src1=f.Xn, src2=f.Xt, imm=Signal("0"), imm_incr=True, src1_is_stack_pointer=True, src2_is_stack_pointer=True)
+        add64_idximm_ls3(dest=f.Xn, src2=f.Xn, imm=f.imm9, imm_shift=1, imm_signext=True, src2_is_stack_pointer=True, dest_is_stack_pointer=True)
+
+
+class STZ2G_64Spre_ldsttags(_JSON_STZ2G_64Spre_ldsttags):
+    fields = {**_JSON_STZ2G_64Spre_ldsttags.fields, 'Xn': (9, 5), 'Xt': (4, 0)}
+
+
+    pmu_bucket = 'store'
+
+    pmu_events = ['ASE_SVE_LDST_SPEC', 'ST_SPEC']
+
+    def decode(self, f):
+        stzg(src1=f.Xn, src2=f.Xt, imm=f.imm9,                imm_signext=True, src1_is_stack_pointer=True, src2_is_stack_pointer=True)
+        stzg(src1=f.Xn, src2=f.Xt, imm=f.imm9, imm_incr=True, imm_signext=True, src1_is_stack_pointer=True, src2_is_stack_pointer=True)
+        add64_idximm_ls3(dest=f.Xn, src2=f.Xn, imm=f.imm9, imm_shift=1, imm_signext=True, src2_is_stack_pointer=True, dest_is_stack_pointer=True)
+
+
+class STZ2G_64Soffset_ldsttags(_JSON_STZ2G_64Soffset_ldsttags):
+    fields = {**_JSON_STZ2G_64Soffset_ldsttags.fields, 'Xn': (9, 5), 'Xt': (4, 0)}
+
+
+    pmu_bucket = 'store'
+
+    pmu_events = ['ASE_SVE_LDST_SPEC', 'ST_SPEC']
+
+    def decode(self, f):
+        stzg(src1=f.Xn, src2=f.Xt, imm=f.imm9,                imm_signext=True, src1_is_stack_pointer=True, src2_is_stack_pointer=True)
+        stzg(src1=f.Xn, src2=f.Xt, imm=f.imm9, imm_incr=True, imm_signext=True, src1_is_stack_pointer=True, src2_is_stack_pointer=True)
+
+
+class STZG_64Spost_ldsttags(_JSON_STZG_64Spost_ldsttags):
+    fields = {**_JSON_STZG_64Spost_ldsttags.fields, 'Xn': (9, 5), 'Xt': (4, 0)}
+
+
+    pmu_bucket = 'store'
+
+    pmu_events = ['ASE_SVE_LDST_SPEC', 'ST_SPEC']
+
+    def decode(self, f):
+        stzg(src1=f.Xn, src2=f.Xt, imm=Signal("0"), src1_is_stack_pointer=True, src2_is_stack_pointer=True)
+        add64_idximm_ls3(dest=f.Xn, src2=f.Xn, imm=f.imm9, imm_shift=1, imm_signext=True, src2_is_stack_pointer=True, dest_is_stack_pointer=True)
+
+
+class STZG_64Spre_ldsttags(_JSON_STZG_64Spre_ldsttags):
+    fields = {**_JSON_STZG_64Spre_ldsttags.fields, 'Xn': (9, 5), 'Xt': (4, 0)}
+
+
+    pmu_bucket = 'store'
+
+    pmu_events = ['ASE_SVE_LDST_SPEC', 'ST_SPEC']
+
+    def decode(self, f):
+        stzg(src1=f.Xn, src2=f.Xt, imm=f.imm9, imm_signext=True, src1_is_stack_pointer=True, src2_is_stack_pointer=True)
+        add64_idximm_ls3(dest=f.Xn, src2=f.Xn, imm=f.imm9, imm_shift=1, imm_signext=True, src2_is_stack_pointer=True, dest_is_stack_pointer=True)
+
+
+class STZG_64Soffset_ldsttags(_JSON_STZG_64Soffset_ldsttags):
+    fields = {**_JSON_STZG_64Soffset_ldsttags.fields, 'Xn': (9, 5), 'Xt': (4, 0)}
+
+
+    pmu_bucket = 'store'
+
+    pmu_events = ['ASE_SVE_LDST_SPEC', 'ST_SPEC']
+
+    def decode(self, f):
+        stzg(src1=f.Xn, src2=f.Xt, imm=f.imm9, imm_signext=True, src1_is_stack_pointer=True, src2_is_stack_pointer=True)
+
+class STZGM_64bulk_ldsttags(_JSON_STZGM_64bulk_ldsttags):
+    fields = {**_JSON_STZGM_64bulk_ldsttags.fields, 'Xn': (9, 5), 'Xt': (4, 0)}
+
+
+    pmu_bucket = 'store'
+
+    pmu_events = ['ASE_SVE_LDST_SPEC', 'ST_SPEC']
+
+    def decode(self, f):
+        # didnt like adding a uop for this but the alternative was a huge mess, at least 12 uops i'm guessing
+        stzgm(src1=f.Xn, src2=f.Xt, imm=Signal("0"), src1_is_stack_pointer=True)
+
+
+class SUB_32_addsub_ext(_JSON_SUB_32_addsub_ext):
+
+    pmu_bucket = 'dp_a64scalar'
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+      #shift of value of zero means we might just be a single uop flow
+      if f.imm3.value == 0b000:
+        #sign extend single/double word doesn't do anything so just a single uop flow
+        if f.option.value >= 0b110:
+          sub32(dest=f.Rd, src1=f.Rn, src2=f.Rm, imm=(f.option,f.imm3), dest_is_stack_pointer=True, src1_is_stack_pointer=True)
+        elif f.option.value >= 0b100:
+          sxt32(dest=s0, src1=f.Rm, imm=(f.imm3,f.option))
+          sub32(dest=f.Rd, src1=f.Rn, src2=s0, imm=(Signal("011"),f.imm3), dest_is_stack_pointer=True, src1_is_stack_pointer=True)
+        #zero extend can be done at the bypass mux, so just a single uop flow
+        else:
+          sub32(dest=f.Rd, src1=f.Rn, src2=f.Rm, imm=(f.option,f.imm3), dest_is_stack_pointer=True, src1_is_stack_pointer=True)
+      #non zero shift means it's always a 2 uop flow
+      else:
+        if f.option.value >= 0b100:
+          sxt32(dest=s0, src1=f.Rm, imm=(f.imm3,f.option))
+          sub32(dest=f.Rd, src1=f.Rn, src2=s0, imm=Signal("011000"), dest_is_stack_pointer=True, src1_is_stack_pointer=True)
+        else:
+          uxt32(dest=s0, src1=f.Rm, imm=(f.imm3,f.option))
+          sub32(dest=f.Rd, src1=f.Rn, src2=s0, imm=Signal("011000"), dest_is_stack_pointer=True, src1_is_stack_pointer=True)
+
+
+class SUB_64_addsub_ext(_JSON_SUB_64_addsub_ext):
+
+    pmu_bucket = 'dp_a64scalar'
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+      #shift of value of zero means we might just be a single uop flow
+      if f.imm3.value == 0b000:
+        #sign extend double word doesn't do anything so just a single uop flow
+        if f.option.value >= 0b111:
+          sub64(dest=f.Rd, src1=f.Rn, src2=f.Rm, imm=(f.option,f.imm3), dest_is_stack_pointer=True, src1_is_stack_pointer=True)
+        elif f.option.value >= 0b100:
+          sxt64(dest=s0, src1=f.Rm, imm=(f.imm3,f.option))
+          sub64(dest=f.Rd, src1=f.Rn, src2=s0, imm=(Signal("011"),f.imm3), dest_is_stack_pointer=True, src1_is_stack_pointer=True)
+        #zero extend can be done at the bypass mux, so just a single uop flow
+        else:
+          sub64(dest=f.Rd, src1=f.Rn, src2=f.Rm, imm=(f.option,f.imm3), dest_is_stack_pointer=True, src1_is_stack_pointer=True)
+      #non zero shift means it's always a 2 uop flow
+      else:
+        if f.option.value >= 0b100:
+          sxt64(dest=s0, src1=f.Rm, imm=(f.imm3,f.option))
+          sub64(dest=f.Rd, src1=f.Rn, src2=s0, imm=Signal("011000"), dest_is_stack_pointer=True, src1_is_stack_pointer=True)
+        else:
+          uxt64(dest=s0, src1=f.Rm, imm=(f.imm3,f.option))
+          sub64(dest=f.Rd, src1=f.Rn, src2=s0, imm=Signal("011000"), dest_is_stack_pointer=True, src1_is_stack_pointer=True)
+
+
+class SUB_32_addsub_imm(_JSON_SUB_32_addsub_imm):
+
+    pmu_bucket = 'dp_a64scalar'
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+        sub32(dest=f.Rd, src2=f.Rn, imm=(f.sh,f.imm12), dest_is_stack_pointer=True, src2_is_stack_pointer=True)
+
+
+class SUB_64_addsub_imm(_JSON_SUB_64_addsub_imm):
+
+    pmu_bucket = 'dp_a64scalar'
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+        sub64(dest=f.Rd, src2=f.Rn, imm=(f.sh,f.imm12), dest_is_stack_pointer=True, src2_is_stack_pointer=True)
+
+
+class SUB_32_addsub_shift(_JSON_SUB_32_addsub_shift):
+    fields  = {'opcBit12':[12,12],'opcBit11':[11,11],'opcBit10':[10,10]}
+
+
+    pmu_bucket = 'dp_a64scalar'
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+        if f.imm6.value == 0b000000:
+            sub32(dest=f.Rd, src1=f.Rn, src2=f.Rm, imm=(Signal("011"),f.opcBit12,f.opcBit11,f.opcBit10))
+        elif f.shift.value == 0b00 and f.imm6.value <= 0b000100:
+            uxt32(dest=s0, src1=f.Rm, imm=(f.imm6,Signal("010")))
+            sub32(dest=f.Rd, src1=f.Rn, src2=s0, imm=Signal("011000"))
+        elif f.shift.value == 0b00 and f.imm6.value > 0b000100:
+            lsl32_imm(dest=s0, src1=f.Rm, imm=f.imm6)
+            sub32(dest=f.Rd, src1=f.Rn, src2=s0, imm=Signal("011000"))
+        elif f.shift.value == 0b01:
+            lsr32(dest=s0, src1=f.Rm, src2=f.Rm, imm=f.imm6)
+            sub32(dest=f.Rd, src1=f.Rn, src2=s0, imm=Signal("011000"))
+        elif f.shift.value == 0b10:
+            asr32(dest=s0, src1=f.Rm, src2=f.Rm, imm=f.imm6)
+            sub32(dest=f.Rd, src1=f.Rn, src2=s0, imm=Signal("011000"))
+        elif f.shift.value == 0b11:
+            # This is an illegal/unused encoding
+            pass
+
+
+class SUB_64_addsub_shift(_JSON_SUB_64_addsub_shift):
+    fields  = {'opcBit12':[12,12],'opcBit11':[11,11],'opcBit10':[10,10]}
+
+
+    pmu_bucket = 'dp_a64scalar'
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+        if f.imm6.value == 0b000000:
+            sub64(dest=f.Rd, src1=f.Rn, src2=f.Rm, imm=(Signal("011"),f.opcBit12,f.opcBit11,f.opcBit10))
+        elif f.shift.value == 0b00 and f.imm6.value <= 0b000100:
+            uxt64(dest=s0, src1=f.Rm, imm=(f.imm6,Signal("011")))
+            sub64(dest=f.Rd, src1=f.Rn, src2=s0, imm=Signal("011000"))
+        elif f.shift.value == 0b00 and f.imm6.value > 0b000100:
+            lsl64_imm(dest=s0, src1=f.Rm, imm=f.imm6)
+            sub64(dest=f.Rd, src1=f.Rn, src2=s0, imm=Signal("011000"))
+        elif f.shift.value == 0b01:
+            lsr64(dest=s0, src1=f.Rm, src2=f.Rm, imm=f.imm6)
+            sub64(dest=f.Rd, src1=f.Rn, src2=s0, imm=Signal("011000"))
+        elif f.shift.value == 0b10:
+            asr64(dest=s0, src1=f.Rm, src2=f.Rm, imm=f.imm6)
+            sub64(dest=f.Rd, src1=f.Rn, src2=s0, imm=Signal("011000"))
+        elif f.shift.value == 0b11:
+            # This is an illegal/unused encoding
+            pass
+
+
+class SUBG_64_addsub_immtags(_JSON_SUBG_64_addsub_immtags):
+    fields = {**_JSON_SUBG_64_addsub_immtags.fields, 'Xd': (4, 0), 'Xn': (9, 5), 'uimm4': (13, 10), 'uimm6': (21, 16)}
+
+
+    pmu_bucket = 'dp'
+
+    pmu_events = ['DP_SPEC']
+
+    def decode(self, f):
+        subg(dest=f.Xd, src2=f.Xn, imm=(f.uimm6,f.uimm4), src2_is_stack_pointer=True, dest_is_stack_pointer=True)
+
+
+class SUBP_64S_dp_2src(_JSON_SUBP_64S_dp_2src):
+    fields = {**_JSON_SUBP_64S_dp_2src.fields, 'Xd': (4, 0), 'Xm': (20, 16), 'Xn': (9, 5)}
+
+
+    pmu_bucket = 'dp'
+
+    pmu_events = ['DP_SPEC']
+
+    def decode(self, f):
+        subp(dest=f.Xd, src1=f.Xn, src2=f.Xm, src1_is_stack_pointer=True, src2_is_stack_pointer=True )
+
+
+class SUBPS_64S_dp_2src(_JSON_SUBPS_64S_dp_2src):
+    fields = {**_JSON_SUBPS_64S_dp_2src.fields, 'Xd': (4, 0), 'Xm': (20, 16), 'Xn': (9, 5)}
+ 
+ 
+    pmu_bucket = 'dp'
+ 
+    pmu_events = ['DP_SPEC']
+
+    def decode(self, f):
+        subps(dest=f.Xd, flagdest=f0, src1=f.Xn, src2=f.Xm, src1_is_stack_pointer=True, src2_is_stack_pointer=True )
+
+
+class SUBS_32S_addsub_ext(_JSON_SUBS_32S_addsub_ext):
+
+    pmu_bucket = 'dp_a64scalar'
+    flag_fuse_to_Bcond = True
+    fusion_delay_hint = True
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+      #shift of value of zero means we might just be a single uop flow
+      if f.imm3.value == 0b000:
+        #sign extend single/double word doesn't do anything so just a single uop flow
+        if f.option.value >= 0b110:
+          subs32(dest=f.Rd, src1=f.Rn, src2=f.Rm, imm=(f.option,f.imm3), src1_is_stack_pointer=True, flagdest=f0)
+        elif f.option.value >= 0b100:
+          sxt32(dest=s0, src1=f.Rm, imm=(f.imm3,f.option))
+          subs32(dest=f.Rd, src1=f.Rn, src2=s0, imm=(Signal("011"),f.imm3), src1_is_stack_pointer=True, flagdest=f0)
+        #zero extend can be done at the bypass mux, so just a single uop flow
+        else:
+          subs32(dest=f.Rd, src1=f.Rn, src2=f.Rm, imm=(f.option,f.imm3), src1_is_stack_pointer=True, flagdest=f0)
+      #non zero shift means it's always a 2 uop flow
+      else:
+        if f.option.value >= 0b100:
+          sxt32(dest=s0, src1=f.Rm, imm=(f.imm3,f.option))
+          subs32(dest=f.Rd, src1=f.Rn, src2=s0, imm=Signal("011000"), src1_is_stack_pointer=True, flagdest=f0)
+        else:
+          uxt32(dest=s0, src1=f.Rm, imm=(f.imm3,f.option))
+          subs32(dest=f.Rd, src1=f.Rn, src2=s0, imm=Signal("011000"), src1_is_stack_pointer=True, flagdest=f0)
+
+
+class SUBS_64S_addsub_ext(_JSON_SUBS_64S_addsub_ext):
+
+    pmu_bucket = 'dp_a64scalar'
+    flag_fuse_to_Bcond = True
+    fusion_delay_hint = True
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+      #shift of value of zero means we might just be a single uop flow
+      if f.imm3.value == 0b000:
+        #sign extend double word doesn't do anything so just a single uop flow
+        if f.option.value >= 0b111:
+          subs64(dest=f.Rd, src1=f.Rn, src2=f.Rm, imm=(f.option,f.imm3), src1_is_stack_pointer=True, flagdest=f0)
+        elif f.option.value >= 0b100:
+          sxt64(dest=s0, src1=f.Rm, imm=(f.imm3,f.option))
+          subs64(dest=f.Rd, src1=f.Rn, src2=s0, imm=(Signal("011"),f.imm3), src1_is_stack_pointer=True, flagdest=f0)
+        #zero extend can be done at the bypass mux, so just a single uop flow
+        else:
+          subs64(dest=f.Rd, src1=f.Rn, src2=f.Rm, imm=(f.option,f.imm3), src1_is_stack_pointer=True, flagdest=f0)
+      #non zero shift means it's always a 2 uop flow
+      else:
+        if f.option.value >= 0b100:
+          sxt64(dest=s0, src1=f.Rm, imm=(f.imm3,f.option))
+          subs64(dest=f.Rd, src1=f.Rn, src2=s0, imm=(Signal("011"),Signal("000")), src1_is_stack_pointer=True, flagdest=f0)
+        else:
+          uxt64(dest=s0, src1=f.Rm, imm=(f.imm3,f.option))
+          subs64(dest=f.Rd, src1=f.Rn, src2=s0, imm=(Signal("011"),Signal("000")), src1_is_stack_pointer=True, flagdest=f0)
+
+
+class SUBS_32S_addsub_imm(_JSON_SUBS_32S_addsub_imm):
+
+    pmu_bucket = 'dp_a64scalar'
+    flag_fuse_to_Bcond = True
+    fusion_delay_hint = True
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+        subs32(dest=f.Rd, flagdest=f0, src2=f.Rn, imm=(f.sh,f.imm12), src2_is_stack_pointer=True)
+
+
+class SUBS_64S_addsub_imm(_JSON_SUBS_64S_addsub_imm):
+
+    pmu_bucket = 'dp_a64scalar'
+    flag_fuse_to_Bcond = True
+    fusion_delay_hint = True
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+        subs64(dest=f.Rd, flagdest=f0, src2=f.Rn, imm=(f.sh,f.imm12), src2_is_stack_pointer=True)
+
+
+class SUBS_32_addsub_shift(_JSON_SUBS_32_addsub_shift):
+    fields  = {'opcBit12':[12,12],'opcBit11':[11,11],'opcBit10':[10,10]}
+
+
+    pmu_bucket = 'dp_a64scalar'
+    flag_fuse_to_Bcond = True
+    fusion_delay_hint = True
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+        if f.imm6.value == 0b000000:
+            subs32(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=(Signal("011"),f.opcBit12,f.opcBit11,f.opcBit10))
+        elif f.shift.value == 0b00 and f.imm6.value <= 0b000100:
+            uxt32(dest=s0, src1=f.Rm, imm=(f.imm6,Signal("010")))
+            subs32(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=s0, imm=Signal("011000"))
+        elif f.shift.value == 0b00 and f.imm6.value > 0b000100:
+            lsl32_imm(dest=s0, src1=f.Rm, imm=f.imm6)
+            subs32(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=s0, imm=Signal("011000"))
+        elif f.shift.value == 0b01:
+            lsr32(dest=s0, src1=f.Rm, src2=f.Rm, imm=f.imm6)
+            subs32(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=s0, imm=Signal("011000"))
+        elif f.shift.value == 0b10:
+            asr32(dest=s0, src1=f.Rm, src2=f.Rm, imm=f.imm6)
+            subs32(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=s0, imm=Signal("011000"))
+        elif f.shift.value == 0b11:
+            # This is an illegal/unused encoding
+            pass
+
+
+class SUBS_64_addsub_shift(_JSON_SUBS_64_addsub_shift):
+    fields  = {'opcBit12':[12,12],'opcBit11':[11,11],'opcBit10':[10,10]}
+
+
+    pmu_bucket = 'dp_a64scalar'
+    flag_fuse_to_Bcond = True
+    fusion_delay_hint = True
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+        if f.imm6.value == 0b000000:
+            subs64(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=(Signal("011"),f.opcBit12,f.opcBit11,f.opcBit10))
+        elif f.shift.value == 0b00 and f.imm6.value <= 0b000100:
+            uxt64(dest=s0, src1=f.Rm, imm=(f.imm6,Signal("011")))
+            subs64(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=s0, imm=Signal("011000"))
+        elif f.shift.value == 0b00 and f.imm6.value > 0b000100:
+            lsl64_imm(dest=s0, src1=f.Rm, imm=f.imm6)
+            subs64(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=s0, imm=Signal("011000"))
+        elif f.shift.value == 0b01:
+            lsr64(dest=s0, src1=f.Rm, src2=f.Rm, imm=f.imm6)
+            subs64(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=s0, imm=Signal("011000"))
+        elif f.shift.value == 0b10:
+            asr64(dest=s0, src1=f.Rm, src2=f.Rm, imm=f.imm6)
+            subs64(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=s0, imm=Signal("011000"))
+        elif f.shift.value == 0b11:
+            # This is an illegal/unused encoding
+            pass
+
+
+class UBFM_32M_bitfield(_JSON_UBFM_32M_bitfield):
+
+    pmu_bucket = 'dp_a64scalar'
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+        ubfm32(dest=f.Rd, src1=f.Rn, imm=(f.immr,f.imms))
+
+
+class UBFM_64M_bitfield(_JSON_UBFM_64M_bitfield):
+
+    pmu_bucket = 'dp_a64scalar'
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+        ubfm64(dest=f.Rd, src1=f.Rn, imm=(f.immr,f.imms))
+
+
+class UDIV_32_dp_2src(_JSON_UDIV_32_dp_2src):
+
+    pmu_bucket = 'dp_a64scalar'
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+        movi2f_fmovd(dest=T0, src1=f.Rn, src2=f.Rm)
+        if (f.Rd.value != 0b11111):
+           gudiv_s_nv(dest=f.Rd, src1=T0)
+
+
+
+class UDIV_64_dp_2src(_JSON_UDIV_64_dp_2src):
+
+    pmu_bucket = 'dp_a64scalar'
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+        movi2f_fmovd(dest=T0, src2=f.Rn)
+        movi2f_fmovd(dest=T1, src2=f.Rm)
+        if (f.Rd.value != 0b11111):
+           gudiv_d_nv(dest=f.Rd, src1=T0, src2=T1)
+
+
+class UMADDL_64WA_dp_3src(_JSON_UMADDL_64WA_dp_3src):
+
+    pmu_bucket = 'dp_a64scalar'
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+      if f.Ra.value == 0b11111:
+        umull32(dest=f.Rd, src1=f.Rn, src2=f.Rm)
+      else:
+        umull32(dest=s0, src1=f.Rn, src2=f.Rm)
+        add64(dest=f.Rd, src1=f.Ra, src2=s0, imm=Signal("011000"))
+
+
+class UMAX_32U_minmax_imm(_JSON_UMAX_32U_minmax_imm):
+
+    def decode(self, f):
+        #umax32(dest=f.Rd, src2=f.Rn, imm=f.imm8)
+        #The immediate variants of csel need to use a signed or unsigned imm8 based on if it's
+        #U/S MAX/MIN.  Instead of creating sign and unsigned version of csel, we use bit8 to specify
+        #if we should sign or zero extend in ImmDec.
+        subs32_nodest(src2=f.Rn, imm=(Signal("00000"),f.imm8), flagdest=f1)
+        csel32_ls(dest=f.Rd, src2=f.Rn, imm=(Signal("0"),f.imm8), src3=f1)
+
+
+class UMAX_64U_minmax_imm(_JSON_UMAX_64U_minmax_imm):
+
+    def decode(self, f):
+        #umax64(dest=f.Rd, src2=f.Rn, imm=f.imm8)
+        #The immediate variants of csel need to use a signed or unsigned imm8 based on if it's
+        #U/S MAX/MIN.  Instead of creating sign and unsigned version of csel, we use bit8 to specify
+        #if we should sign or zero extend in ImmDec.
+        subs64_nodest(src2=f.Rn, imm=(Signal("00000"),f.imm8), flagdest=f1)
+        csel64_ls(dest=f.Rd, src2=f.Rn, imm=(Signal("0"),f.imm8), src3=f1)
+
+
+class UMAX_32_dp_2src(_JSON_UMAX_32_dp_2src):
+
+    def decode(self, f):
+        subs32_nodest(src1=f.Rn, src2=f.Rm, imm=Signal("011000"), flagdest=f1)
+        #Rd = c&~z ? Rn : Rm
+        csel32_hi(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f1)
+
+
+class UMAX_64_dp_2src(_JSON_UMAX_64_dp_2src):
+
+    def decode(self, f):
+        subs64_nodest(src1=f.Rn, src2=f.Rm, imm=Signal("011000"), flagdest=f1)
+        #Rd = c&~z ? Rn : Rm
+        csel64_hi(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f1)
+
+
+class UMIN_32U_minmax_imm(_JSON_UMIN_32U_minmax_imm):
+
+    def decode(self, f):
+        #umin32(dest=f.Rd, src2=f.Rn, imm=f.imm8)
+        #The immediate variants of csel need to use a signed or unsigned imm8 based on if it's
+        #U/S MAX/MIN.  Instead of creating sign and unsigned version of csel, we use bit8 to specify
+        #if we should sign or zero extend in ImmDec.
+        subs32_nodest(src2=f.Rn, imm=(Signal("00000"),f.imm8), flagdest=f1)
+        csel32_hi(dest=f.Rd, src2=f.Rn, imm=(Signal("0"),f.imm8), src3=f1)
+
+
+class UMIN_64U_minmax_imm(_JSON_UMIN_64U_minmax_imm):
+
+    def decode(self, f):
+        #umin64(dest=f.Rd, src2=f.Rn, imm=f.imm8)
+        #The immediate variants of csel need to use a signed or unsigned imm8 based on if it's
+        #U/S MAX/MIN.  Instead of creating sign and unsigned version of csel, we use bit8 to specify
+        #if we should sign or zero extend in ImmDec.
+        subs64_nodest(src2=f.Rn, imm=(Signal("00000"),f.imm8), flagdest=f1)
+        csel64_hi(dest=f.Rd, src2=f.Rn, imm=(Signal("0"),f.imm8), src3=f1)
+
+
+class UMIN_32_dp_2src(_JSON_UMIN_32_dp_2src):
+
+    def decode(self, f):
+        subs32_nodest(src1=f.Rn, src2=f.Rm, imm=Signal("011000"), flagdest=f1)
+        #Rd = c&~z ? Rm : Rn
+        csel32_ls(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f1)
+
+
+class UMIN_64_dp_2src(_JSON_UMIN_64_dp_2src):
+
+    def decode(self, f):
+        subs64_nodest(src1=f.Rn, src2=f.Rm, imm=Signal("011000"), flagdest=f1)
+        #Rd = c&~z ? Rm : Rn
+        csel64_ls(dest=f.Rd, src1=f.Rn, src2=f.Rm, src3=f1)
+
+
+class UMSUBL_64WA_dp_3src(_JSON_UMSUBL_64WA_dp_3src):
+
+    pmu_bucket = 'dp_a64scalar'
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+        umull32(dest=s0, src1=f.Rn, src2=f.Rm)
+        sub64(dest=f.Rd, src1=f.Ra, src2=s0, imm=Signal("011000"))
+
+
+class UMULH_64_dp_3src(_JSON_UMULH_64_dp_3src):
+
+    pmu_bucket = 'dp_a64scalar'
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f):
+        umulh(dest=f.Rd, src1=f.Rn, src2=f.Rm)
+
+
+class XPACD_64Z_dp_1src(_JSON_XPACD_64Z_dp_1src):
+
+    pmu_bucket = 'dp'
+
+    pmu_events = ['DP_SPEC']
+
+    def decode(self, f):
+        xpacd(dest=f.Rd, src1=f.Rd)
+
+
+class XPACI_64Z_dp_1src(_JSON_XPACI_64Z_dp_1src):
+
+    pmu_bucket = 'dp'
+
+    pmu_events = ['DP_SPEC']
+
+    def decode(self, f):
+        xpaci(dest=f.Rd, src1=f.Rd)

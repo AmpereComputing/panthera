@@ -1,0 +1,22 @@
+# Copyright (c) 2024 Ampere Computing. All rights reserved.
+# SPDX-License-Identifier: BSD-3-Clause
+
+name: dtype_t
+namespace: aice_emu
+cfile: dtype.cc
+hfile: dtype.hh
+tokens:
+- invalid
+- fp32
+- bf16
+- s8
+- u8
+- fp8_e5m2
+- fp8_e4m3
+- mxfp8_e5m2
+- mxfp8_e4m3
+- mxfp6_e3m2
+- mxfp6_e2m3
+- mxfp4_e2m1
+- mxint8
+- mxint4

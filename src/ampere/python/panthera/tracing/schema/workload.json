@@ -1,0 +1,55 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "urn:panthera:tracing:workload",
+    "title": "Workloads",
+    "description": "A specification of workloads and associated files/parameters",
+    "type": "array",
+    "items": {
+        "type": "object",
+        "properties": {
+            "name": {
+                "type": "string",
+                "description": "Trace name"
+            },
+            "file": {
+                "type": "string",
+                "description": "Instruction stream file (.is.xz)"
+            },
+            "workload": {
+                "type": "string",
+                "description": "Workload trace is a part of"
+            },
+            "suite": {
+                "type": "string",
+                "description": "Suite trace/workload is a part of"
+            },
+            "weight": {
+                "type": "number",
+                "description": "Trace weight (by instructions) within workload"
+            },
+            "pan_cache_preload_file": {
+                "type": "string",
+                "description": "Memory stream (.ms.xz) for cache preload"
+            },
+            "pan_branch_warmup_file": {
+                "type": "string",
+                "description": "Branch stream (.bs.xz) for branch-predictor warmup"
+            },
+            "warmup_instructions": {
+                "type": "number",
+                "description": "Amount of warmup instructions (before measurement) used when tracing"
+            },
+            "measurement_instructions": {
+                "type": "number",
+                "description": "Amount of instructions traced"
+            },
+            "cooldown_instructions": {
+                "type": "number",
+                "description": "Amount of cooldown instructions (after measurement) used when tracing"
+            }
+        },
+        "required": [
+            "name", "workload", "suite", "weight", "file"
+        ]
+    }
+}

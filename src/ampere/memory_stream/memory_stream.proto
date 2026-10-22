@@ -1,0 +1,68 @@
+/*
+ * Copyright (c) 2020-2023 Ampere Computing. All rights reserved.
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+
+syntax = "proto3";
+
+package ampere.ms;
+
+// The Filter message will be present once as the first message in the stream
+message Filter {
+    uint32 cache_size = 1;  // Size of dcache (in bytes) that this memory trace was 'filtered' through
+    uint32 icache_size = 2;  // Size of icache (in bytes) that this memory trace was 'filtered' through
+    bool instruction_data_split = 3; // True if this memory stream was filtered through split instruction- and data-caches (false for unified caches)
+    // if instruction_data_split is false, this was filtered through a unified cache which was the size of one of cache_size (NOT the sum of cache_size and icache_size)
+}
+
+// The Access message will be repeated until the end of the stream
+message Access {
+    enum Type {
+        READ = 0;
+        WRITE = 1;
+        READUNIQUE = 2;
+    }
+
+    enum Source {
+        DATA = 0;
+        INSTRUCTION = 1;
+    }
+
+    Type type = 1;          // Type of access
+    Source source = 2;      // Instruction or data?
+    uint64 pa = 3;          // Physical address of the first byte
+    uint32 size = 4;        // Size of the access in bytes
+    uint64 offset = 5;      // Offset since time 0 (measured in undefined, monotonically-increasing units)
+    uint64 agent_id = 6;    // ID of the core or other originator of this request
+    uint64 pc = 7;          // Program counter of the instruction triggering this access, if applicable
+    uint64 va = 8;          // Corresponding virtual address of the first byte
+}
+
+message Control {
+    enum Type {
+        /* Start of memory stream */
+        START_MEMORY = 0;
+
+        /* End of memory stream */
+        END_MEMORY = 1;
+
+        /* Begin flushing of cache filter after end of stream */
+        START_CACHE_FLUSH = 2;
+
+        /* End flushing of cache filter after end of stream */
+        END_CACHE_FLUSH = 3;
+    }
+    Type type = 1;
+}
+
+/*
+ * Wrap all of the other messages types. Use oneof to allow
+ * easy decoding of the wrapped message. The actual message
+ * in the memory stream will always be an Event.
+ */
+message Event {
+    oneof records {
+        Access access = 1;
+        Control control = 2;
+    }
+}

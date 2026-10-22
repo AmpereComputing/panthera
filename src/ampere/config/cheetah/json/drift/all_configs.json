@@ -1,0 +1,57 @@
+[
+    {
+        "name": "nebula",
+        "exe": "{panthera_root}/bin/amperesys",
+        "parameters": [
+            "-cfg", "{panthera_root}/config/model/sys/nebula.cfg",
+            "-sys.soc_0.core_0.instruction_stream_name", "{workload_path}",
+            "-sys.soc_0.core_0.l2c.warmup_ms", "{memstream_path}",
+            "-sys.soc_0.core_0.gpc.max_instructions", "1000000",
+            "-sys.soc_0.core_0.gpc.heartbeat", "10000"
+        ]
+    },
+    {
+        "name": "domino",
+        "exe": "{panthera_root}/bin/amperesys",
+        "parameters": [
+            "-cfg", "{panthera_root}/config/model/sys/domino.cfg",
+            "-sys.soc_0.core_0.instruction_stream_name", "{workload_path}",
+            "-sys.soc_0.core_0.l2c.warmup_ms", "{memstream_path}",
+            "-sys.soc_0.core_0.gpc.max_instructions", "1000000",
+            "-sys.soc_0.core_0.gpc.heartbeat", "10000"
+        ]
+    },
+    {
+        "name": "rogue",
+        "exe": "{panthera_root}/bin/amperesys",
+        "parameters": [
+            "-cfg", "{panthera_root}/config/model/sys/rogue.cfg",
+            "-sys.soc_0.core_0.instruction_stream_name", "{workload_path}",
+            "-sys.soc_0.core_0.l2c.warmup_ms", "{memstream_path}",
+            "-sys.soc_0.core_0.gpc.max_instructions", "1000000",
+            "-sys.soc_0.core_0.gpc.heartbeat", "10000"
+        ]
+    },
+    {
+        "name": "banshee",
+        "exe": "{panthera_root}/bin/amperesys",
+        "parameters": [
+            "-cfg", "{panthera_root}/config/model/sys/banshee.cfg",
+            "-sys.soc_0.core_0.instruction_stream_name", "{workload_path}",
+            "-sys.soc_0.core_0.l2c.warmup_ms", "{memstream_path}",
+            "-sys.soc_0.core_0.gpc.max_instructions", "1000000",
+            "-sys.soc_0.core_0.gpc.heartbeat", "10000"
+        ]
+    },
+    {
+        "name": "siryn",
+        "exe": "{panthera_root}/bin/amperesys",
+        "parameters": [
+            "-cfg", "{panthera_root}/config/model/sys/siryn.cfg",
+            "-sys.soc_0.core_0.instruction_stream_name", "{workload_path}",
+            "-sys.soc_0.core_0.l2c.warmup_ms", "{memstream_path}",
+            "-sys.soc_0.core_0.gpc.max_instructions", "1000000",
+            "-sys.soc_0.core_0.gpc.heartbeat", "10000"
+        ]
+    }
+]

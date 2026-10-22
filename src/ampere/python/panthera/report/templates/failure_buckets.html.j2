@@ -1,0 +1,99 @@
+{#- Copyright (c) 2026 Ampere Computing. All rights reserved. -#}
+{#- SPDX-License-Identifier: BSD-3-Clause -#}
+
+<html>
+<head>
+<style>
+    .odd {
+        background-color: #eee;
+    }
+    th {
+        font-weight: bold;
+    }
+    table, th, td {
+        border: 1px solid #000;
+        border-collapse: collapse;
+    }
+    th, td {
+        padding: 4px 8px;
+    }
+    pre {
+        padding: 2px 4px;
+        border: solid 1px #000;
+        border-radius: 2px;
+    }
+    .good {
+        background-color: #bfb;
+    }
+    .bad {
+        background-color: #fbb;
+    }
+    ul {
+        margin-bottom: 15px;
+    }
+</style>
+</head>
+<body>
+<h1>{{ title }}</h1>
+<h2>Summary</h2>
+<table>
+    <tr>
+        <th>Configuration</th>
+        <th>Total</th>
+        <th>Passed</th>
+        <th>Failed</th>
+        <th>Pass Rate</th>
+    </tr>
+{%- for name, jobs in summary.items() %}
+    <tr class="{{ loop.cycle('odd', 'even') }}">
+        <td>{{ name }}</td>
+        <td>{{ jobs.total }}</td>
+        <td>{{ jobs.passed }}</td>
+        <td>{{ jobs.failed }}</td>
+        <td class="{{ 'good' if jobs.passed == jobs.total else 'bad' }}">{{ "{:.2%}".format(jobs.passed / jobs.total) }}</td>
+    </tr>
+{%- endfor %}
+</table>
+
+{%- if commits %}
+<h2>Commits ({{ commits | length }})</h2>
+<table>
+    <tr>
+        <th>SHA</th>
+        <th>Author</th>
+        <th>Description</th>
+    </tr>
+{%- for commit in commits %}
+    <tr class="{{ loop.cycle('odd', 'even') }}">
+        <td>
+            <code>{{ commit.sha }}</code>
+        </td>
+        <td>{{ commit.author }}</td>
+        <td>{{ commit.description }}</td>
+    </tr>
+{%- endfor %}
+</table>
+{%- endif %}
+
+{%- if buckets %}
+<h2>Failure Buckets</h2>
+{% for name, sub_buckets in buckets.items() %}
+<h3>{{ name }} ({{ sub_buckets | length }} buckets)</h3>
+{% set total_failures = (sub_buckets | sum(attribute="size")) %}
+<ol>
+{%- for bucket in sub_buckets %}
+    <li>
+        {{ bucket.size }} jobs, {{ "{:.2%}".format(bucket.size / total_failures) }} of failures
+        <pre>{{ bucket.key }}</pre>
+        <ul>
+        {%- for line in bucket.lines[:4] %}
+            <li><code>{{ line.path }}</code></li>
+        {%- endfor %}
+        </ul>
+    </li>
+{%- endfor %}
+</ol>
+{% endfor %}
+{%- endif %}
+</body>
+</html>

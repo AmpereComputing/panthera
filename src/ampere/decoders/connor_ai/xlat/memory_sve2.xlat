@@ -1,0 +1,289 @@
+# Copyright (c) 2025-2026 Ampere Computing. All rights reserved.
+# SPDX-License-Identifier: BSD-3-Clause
+
+# -*- python -*-
+from ampere.xlat import Signal, Translation
+from proj.uop import *
+from proj.xlat_register_constants import * # x30/ZR/xzr/SP_EL*/s0/s1/T0/T1/T2/T3/RGSR_EL1
+
+
+class ldnt1b_z_p_ar_s_x32_unscaled(_JSON_ldnt1b_z_p_ar_s_x32_unscaled):  # SVE2
+
+    mem_tag_checked = 'always'
+    pmu_events = ['LD_SPEC', 'SVE_LDST_SPEC', 'SVE_LD_GATHER_SPEC', 'SVE_LDST_NONCONTIG_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC', 'SIMD_INST_SPEC']
+
+    def decode(self, f):
+        gmovlpair_d_lv(dest=s0, dest2=s1, src1=f.Zn)
+        gathernt_b_1of4(dest=T0, src3=f.Pg, src1=s0, src2=f.Rm, imm=(UOFF64,NOSHIFT))
+        gathernt_b_2of4(dest=T0, src3=f.Pg, src1=s1, src2=f.Rm, imm=(UOFF64,NOSHIFT))
+
+        gmovhpair_d_lv(dest=s0, dest2=s1, src1=f.Zn)
+        gathernt_b_3of4(dest=T0, src3=f.Pg, src1=s0, src2=f.Rm, imm=(UOFF64,NOSHIFT))
+        gathernt_b_4of4(dest=T0, src3=f.Pg, src1=s1, src2=f.Rm, imm=(UOFF64,NOSHIFT))
+        movprfx_d_uv(dest=f.Zt, src2=T0)
+
+
+class ldnt1b_z_p_ar_d_64_unscaled(_JSON_ldnt1b_z_p_ar_d_64_unscaled):  # SVE2
+
+    mem_tag_checked = 'always'
+    pmu_events = ['LD_SPEC', 'SVE_LDST_SPEC', 'SVE_LD_GATHER_SPEC', 'SVE_LDST_NONCONTIG_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC', 'SIMD_INST_SPEC']
+
+    def decode(self, f):
+        gmovpair_d_lv(dest=s0, dest2=s1, src1=f.Zn)
+        gathernt_b_1of2(dest=T0, src3=f.Pg, src1=s0, src2=f.Rm, imm=(UOFF64,NOSHIFT))
+        gathernt_b_2of2(dest=T0, src3=f.Pg, src1=s1, src2=f.Rm, imm=(UOFF64,NOSHIFT))
+        movprfx_d_uv(dest=f.Zt, src2=T0)
+
+
+class ldnt1d_z_p_ar_d_64_unscaled(_JSON_ldnt1d_z_p_ar_d_64_unscaled):  # SVE2
+
+    mem_tag_checked = 'always'
+    pmu_events = ['LD_SPEC', 'SVE_LDST_SPEC', 'SVE_LD_GATHER_SPEC', 'SVE_LDST_NONCONTIG_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC', 'SIMD_INST_SPEC']
+
+    def decode(self, f):
+        gmovpair_d_lv(dest=s0, dest2=s1, src1=f.Zn)
+        gathernt_d_1of2(dest=T0, src3=f.Pg, src1=s0, src2=f.Rm, imm=(UOFF64,NOSHIFT))
+        gathernt_d_2of2(dest=T0, src3=f.Pg, src1=s1, src2=f.Rm, imm=(UOFF64,NOSHIFT))
+        movprfx_d_uv(dest=f.Zt, src2=T0)
+
+
+class ldnt1h_z_p_ar_s_x32_unscaled(_JSON_ldnt1h_z_p_ar_s_x32_unscaled):  # SVE2
+
+    mem_tag_checked = 'always'
+    pmu_events = ['LD_SPEC', 'SVE_LDST_SPEC', 'SVE_LD_GATHER_SPEC', 'SVE_LDST_NONCONTIG_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC', 'SIMD_INST_SPEC']
+
+    def decode(self, f):
+        gmovlpair_d_lv(dest=s0, dest2=s1, src1=f.Zn)
+        gathernt_h_1of4(dest=T0, src3=f.Pg, src1=s0, src2=f.Rm, imm=(UOFF64,NOSHIFT))
+        gathernt_h_2of4(dest=T0, src3=f.Pg, src1=s1, src2=f.Rm, imm=(UOFF64,NOSHIFT))
+
+        gmovhpair_d_lv(dest=s0, dest2=s1, src1=f.Zn)
+        gathernt_h_3of4(dest=T0, src3=f.Pg, src1=s0, src2=f.Rm, imm=(UOFF64,NOSHIFT))
+        gathernt_h_4of4(dest=T0, src3=f.Pg, src1=s1, src2=f.Rm, imm=(UOFF64,NOSHIFT))
+        movprfx_d_uv(dest=f.Zt, src2=T0)
+
+
+class ldnt1h_z_p_ar_d_64_unscaled(_JSON_ldnt1h_z_p_ar_d_64_unscaled):  # SVE2
+
+    mem_tag_checked = 'always'
+    pmu_events = ['LD_SPEC', 'SVE_LDST_SPEC', 'SVE_LD_GATHER_SPEC', 'SVE_LDST_NONCONTIG_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC', 'SIMD_INST_SPEC']
+
+    def decode(self, f):
+        gmovpair_d_lv(dest=s0, dest2=s1, src1=f.Zn)
+        gathernt_h_1of2(dest=T0, src3=f.Pg, src1=s0, src2=f.Rm, imm=(UOFF64,NOSHIFT))
+        gathernt_h_2of2(dest=T0, src3=f.Pg, src1=s1, src2=f.Rm, imm=(UOFF64,NOSHIFT))
+        movprfx_d_uv(dest=f.Zt, src2=T0)
+
+
+
+class ldnt1sb_z_p_ar_s_x32_unscaled(_JSON_ldnt1sb_z_p_ar_s_x32_unscaled):  # SVE2
+
+    mem_tag_checked = 'always'
+    pmu_events = ['LD_SPEC', 'SVE_LDST_SPEC', 'SVE_LD_GATHER_SPEC', 'SVE_LDST_NONCONTIG_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC', 'SIMD_INST_SPEC']
+
+    def decode(self, f):
+        gmovlpair_d_lv(dest=s0, dest2=s1, src1=f.Zn)
+        gathernt_sb_1of4(dest=T0, src3=f.Pg, src1=s0, src2=f.Rm, imm=(UOFF64,NOSHIFT))
+        gathernt_sb_2of4(dest=T0, src3=f.Pg, src1=s1, src2=f.Rm, imm=(UOFF64,NOSHIFT))
+
+        gmovhpair_d_lv(dest=s0, dest2=s1, src1=f.Zn)
+        gathernt_sb_3of4(dest=T0, src3=f.Pg, src1=s0, src2=f.Rm, imm=(UOFF64,NOSHIFT))
+        gathernt_sb_4of4(dest=T0, src3=f.Pg, src1=s1, src2=f.Rm, imm=(UOFF64,NOSHIFT))
+        movprfx_d_uv(dest=f.Zt, src2=T0)
+
+
+class ldnt1sb_z_p_ar_d_64_unscaled(_JSON_ldnt1sb_z_p_ar_d_64_unscaled):  # SVE2
+
+    mem_tag_checked = 'always'
+    pmu_events = ['LD_SPEC', 'SVE_LDST_SPEC', 'SVE_LD_GATHER_SPEC', 'SVE_LDST_NONCONTIG_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC', 'SIMD_INST_SPEC']
+
+    def decode(self, f):
+        gmovpair_d_lv(dest=s0, dest2=s1, src1=f.Zn)
+        gathernt_sb_1of2(dest=T0, src3=f.Pg, src1=s0, src2=f.Rm, imm=(UOFF64,NOSHIFT))
+        gathernt_sb_2of2(dest=T0, src3=f.Pg, src1=s1, src2=f.Rm, imm=(UOFF64,NOSHIFT))
+        movprfx_d_uv(dest=f.Zt, src2=T0)
+
+
+class ldnt1sh_z_p_ar_s_x32_unscaled(_JSON_ldnt1sh_z_p_ar_s_x32_unscaled):  # SVE2
+
+    mem_tag_checked = 'always'
+    pmu_events = ['LD_SPEC', 'SVE_LDST_SPEC', 'SVE_LD_GATHER_SPEC', 'SVE_LDST_NONCONTIG_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC', 'SIMD_INST_SPEC']
+
+    def decode(self, f):
+        gmovlpair_d_lv(dest=s0, dest2=s1, src1=f.Zn)
+        gathernt_sh_1of4(dest=T0, src3=f.Pg, src1=s0, src2=f.Rm, imm=(UOFF64,NOSHIFT))
+        gathernt_sh_2of4(dest=T0, src3=f.Pg, src1=s1, src2=f.Rm, imm=(UOFF64,NOSHIFT))
+
+        gmovhpair_d_lv(dest=s0, dest2=s1, src1=f.Zn)
+        gathernt_sh_3of4(dest=T0, src3=f.Pg, src1=s0, src2=f.Rm, imm=(UOFF64,NOSHIFT))
+        gathernt_sh_4of4(dest=T0, src3=f.Pg, src1=s1, src2=f.Rm, imm=(UOFF64,NOSHIFT))
+        movprfx_d_uv(dest=f.Zt, src2=T0)
+
+
+
+class ldnt1sh_z_p_ar_d_64_unscaled(_JSON_ldnt1sh_z_p_ar_d_64_unscaled):  # SVE2
+
+    mem_tag_checked = 'always'
+    pmu_events = ['LD_SPEC', 'SVE_LDST_SPEC', 'SVE_LD_GATHER_SPEC', 'SVE_LDST_NONCONTIG_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC', 'SIMD_INST_SPEC']
+
+    def decode(self, f):
+        gmovpair_d_lv(dest=s0, dest2=s1, src1=f.Zn)
+        gathernt_sh_1of2(dest=T0, src3=f.Pg, src1=s0, src2=f.Rm, imm=(UOFF64,NOSHIFT))
+        gathernt_sh_2of2(dest=T0, src3=f.Pg, src1=s1, src2=f.Rm, imm=(UOFF64,NOSHIFT))
+        movprfx_d_uv(dest=f.Zt, src2=T0)
+
+
+class ldnt1sw_z_p_ar_d_64_unscaled(_JSON_ldnt1sw_z_p_ar_d_64_unscaled):  # SVE2
+
+    mem_tag_checked = 'always'
+    pmu_events = ['LD_SPEC', 'SVE_LDST_SPEC', 'SVE_LD_GATHER_SPEC', 'SVE_LDST_NONCONTIG_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC', 'SIMD_INST_SPEC']
+
+    def decode(self, f):
+        gmovpair_d_lv(dest=s0, dest2=s1, src1=f.Zn)
+        gathernt_sw_1of2(dest=T0, src3=f.Pg, src1=s0, src2=f.Rm, imm=(UOFF64,NOSHIFT))
+        gathernt_sw_2of2(dest=T0, src3=f.Pg, src1=s1, src2=f.Rm, imm=(UOFF64,NOSHIFT))
+        movprfx_d_uv(dest=f.Zt, src2=T0)
+
+
+
+class ldnt1w_z_p_ar_s_x32_unscaled(_JSON_ldnt1w_z_p_ar_s_x32_unscaled):  # SVE2
+
+    mem_tag_checked = 'always'
+    pmu_events = ['LD_SPEC', 'SVE_LDST_SPEC', 'SVE_LD_GATHER_SPEC', 'SVE_LDST_NONCONTIG_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC', 'SIMD_INST_SPEC']
+
+    def decode(self, f):
+        gmovlpair_d_lv(dest=s0, dest2=s1, src1=f.Zn)
+        gathernt_w_1of4(dest=T0, src3=f.Pg, src1=s0, src2=f.Rm, imm=(UOFF64,NOSHIFT))
+        gathernt_w_2of4(dest=T0, src3=f.Pg, src1=s1, src2=f.Rm, imm=(UOFF64,NOSHIFT))
+
+        gmovhpair_d_lv(dest=s0, dest2=s1, src1=f.Zn)
+        gathernt_w_3of4(dest=T0, src3=f.Pg, src1=s0, src2=f.Rm, imm=(UOFF64,NOSHIFT))
+        gathernt_w_4of4(dest=T0, src3=f.Pg, src1=s1, src2=f.Rm, imm=(UOFF64,NOSHIFT))
+        movprfx_d_uv(dest=f.Zt, src2=T0)
+
+
+
+class ldnt1w_z_p_ar_d_64_unscaled(_JSON_ldnt1w_z_p_ar_d_64_unscaled):  # SVE2
+
+    mem_tag_checked = 'always'
+    pmu_events = ['LD_SPEC', 'SVE_LDST_SPEC', 'SVE_LD_GATHER_SPEC', 'SVE_LDST_NONCONTIG_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC', 'SIMD_INST_SPEC']
+
+    def decode(self, f):
+        gmovpair_d_lv(dest=s0, dest2=s1, src1=f.Zn)
+        gathernt_w_1of2(dest=T0, src3=f.Pg, src1=s0, src2=f.Rm, imm=(UOFF64,NOSHIFT))
+        gathernt_w_2of2(dest=T0, src3=f.Pg, src1=s1, src2=f.Rm, imm=(UOFF64,NOSHIFT))
+        movprfx_d_uv(dest=f.Zt, src2=T0)
+
+
+
+class stnt1b_z_p_ar_s_x32_unscaled(_JSON_stnt1b_z_p_ar_s_x32_unscaled):  # SVE2
+
+    mem_tag_checked = 'always'
+    pmu_events = ['ST_SPEC', 'SVE_LDST_SPEC', 'SVE_ST_SCATTER_SPEC', 'SVE_LDST_NONCONTIG_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC', 'SIMD_INST_SPEC']
+
+    def decode(self, f):
+        gmovlpair_d_lv(dest=s0, dest2=s1, src1=f.Zn)
+        scatternt_b_1of4(src3=f.Pg, src1=s0, src2=f.Rm, imm=(UOFF64,NOSHIFT))
+        stdvsc_b_uv(src1=f.Zt, fsu_imm=PULL_WORD0)
+        scatternt_b_2of4(src3=f.Pg, src1=s1, src2=f.Rm, imm=(UOFF64,NOSHIFT))
+        stdvsc_b_uv(src1=f.Zt, fsu_imm=PULL_WORD1)
+
+        gmovhpair_d_lv(dest=s0, dest2=s1, src1=f.Zn)
+        scatternt_b_3of4(src3=f.Pg, src1=s0, src2=f.Rm, imm=(UOFF64,NOSHIFT))
+        stdvsc_b_uv(src1=f.Zt, fsu_imm=PULL_WORD2)
+        scatternt_b_4of4(src3=f.Pg, src1=s1, src2=f.Rm, imm=(UOFF64,NOSHIFT))
+        stdvsc_b_uv(src1=f.Zt, fsu_imm=PULL_WORD3)
+
+
+
+class stnt1b_z_p_ar_d_64_unscaled(_JSON_stnt1b_z_p_ar_d_64_unscaled):  # SVE2
+
+    mem_tag_checked = 'always'
+    pmu_events = ['ST_SPEC', 'SVE_LDST_SPEC', 'SVE_ST_SCATTER_SPEC', 'SVE_LDST_NONCONTIG_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC', 'SIMD_INST_SPEC']
+
+    def decode(self, f):
+        gmovpair_d_lv(dest=s0, dest2=s1, src1=f.Zn)
+        scatternt_b_1of2(src3=f.Pg, src1=s0, src2=f.Rm, imm=(UOFF64,NOSHIFT))
+        stdvsc_b_uv(src1=f.Zt, fsu_imm=PULL_WORD0)
+        scatternt_b_2of2(src3=f.Pg, src1=s1, src2=f.Rm, imm=(UOFF64,NOSHIFT))
+        stdvsc_b_uv(src1=f.Zt, fsu_imm=PULL_WORD2)
+
+
+class stnt1d_z_p_ar_d_64_unscaled(_JSON_stnt1d_z_p_ar_d_64_unscaled):  # SVE2
+
+    mem_tag_checked = 'always'
+    pmu_events = ['ST_SPEC', 'SVE_LDST_SPEC', 'SVE_ST_SCATTER_SPEC', 'SVE_LDST_NONCONTIG_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC', 'SIMD_INST_SPEC']
+
+    def decode(self, f):
+        gmovpair_d_lv(dest=s0, dest2=s1, src1=f.Zn)
+        scatternt_d_1of2(src3=f.Pg, src1=s0, src2=f.Rm, imm=(UOFF64,NOSHIFT))
+        stdvsc_d_uv(src1=f.Zt, fsu_imm=PULL_DWORD0)
+        scatternt_d_2of2(src3=f.Pg, src1=s1, src2=f.Rm, imm=(UOFF64,NOSHIFT))
+        stdvsc_d_uv(src1=f.Zt, fsu_imm=PULL_DWORD1)
+
+
+
+class stnt1h_z_p_ar_s_x32_unscaled(_JSON_stnt1h_z_p_ar_s_x32_unscaled):  # SVE2
+
+    mem_tag_checked = 'always'
+    pmu_events = ['ST_SPEC', 'SVE_LDST_SPEC', 'SVE_ST_SCATTER_SPEC', 'SVE_LDST_NONCONTIG_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC', 'SIMD_INST_SPEC']
+
+    def decode(self, f):
+        gmovlpair_d_lv(dest=s0, dest2=s1, src1=f.Zn)
+        scatternt_h_1of4(src3=f.Pg, src1=s0, src2=f.Rm, imm=(UOFF64,NOSHIFT))
+        stdvsc_h_uv(src1=f.Zt, fsu_imm=PULL_WORD0)
+        scatternt_h_2of4(src3=f.Pg, src1=s1, src2=f.Rm, imm=(UOFF64,NOSHIFT))
+        stdvsc_h_uv(src1=f.Zt, fsu_imm=PULL_WORD1)
+
+        gmovhpair_d_lv(dest=s0, dest2=s1, src1=f.Zn)
+        scatternt_h_3of4(src3=f.Pg, src1=s0, src2=f.Rm, imm=(UOFF64,NOSHIFT))
+        stdvsc_h_uv(src1=f.Zt, fsu_imm=PULL_WORD2)
+        scatternt_h_4of4(src3=f.Pg, src1=s1, src2=f.Rm, imm=(UOFF64,NOSHIFT))
+        stdvsc_h_uv(src1=f.Zt, fsu_imm=PULL_WORD3)
+
+
+
+class stnt1h_z_p_ar_d_64_unscaled(_JSON_stnt1h_z_p_ar_d_64_unscaled):  # SVE2
+
+    mem_tag_checked = 'always'
+    pmu_events = ['ST_SPEC', 'SVE_LDST_SPEC', 'SVE_ST_SCATTER_SPEC', 'SVE_LDST_NONCONTIG_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC', 'SIMD_INST_SPEC']
+
+    def decode(self, f):
+        gmovpair_d_lv(dest=s0, dest2=s1, src1=f.Zn)
+        scatternt_h_1of2(src3=f.Pg, src1=s0, src2=f.Rm, imm=(UOFF64,NOSHIFT))
+        stdvsc_h_uv(src1=f.Zt, fsu_imm=PULL_WORD0)
+        scatternt_h_2of2(src3=f.Pg, src1=s1, src2=f.Rm, imm=(UOFF64,NOSHIFT))
+        stdvsc_h_uv(src1=f.Zt, fsu_imm=PULL_WORD2)
+
+
+
+class stnt1w_z_p_ar_s_x32_unscaled(_JSON_stnt1w_z_p_ar_s_x32_unscaled):  # SVE2
+
+    mem_tag_checked = 'always'
+    pmu_events = ['ST_SPEC', 'SVE_LDST_SPEC', 'SVE_ST_SCATTER_SPEC', 'SVE_LDST_NONCONTIG_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC', 'SIMD_INST_SPEC']
+
+    def decode(self, f):
+        gmovlpair_d_lv(dest=s0, dest2=s1, src1=f.Zn)
+        scatternt_w_1of4(src3=f.Pg, src1=s0, src2=f.Rm, imm=(UOFF64,NOSHIFT))
+        stdvsc_s_uv(src1=f.Zt, fsu_imm=PULL_WORD0)
+        scatternt_w_2of4(src3=f.Pg, src1=s1, src2=f.Rm, imm=(UOFF64,NOSHIFT))
+        stdvsc_s_uv(src1=f.Zt, fsu_imm=PULL_WORD1)
+
+        gmovhpair_d_lv(dest=s0, dest2=s1, src1=f.Zn)
+        scatternt_w_3of4(src3=f.Pg, src1=s0, src2=f.Rm, imm=(UOFF64,NOSHIFT))
+        stdvsc_s_uv(src1=f.Zt, fsu_imm=PULL_WORD2)
+        scatternt_w_4of4(src3=f.Pg, src1=s1, src2=f.Rm, imm=(UOFF64,NOSHIFT))
+        stdvsc_s_uv(src1=f.Zt, fsu_imm=PULL_WORD3)
+
+
+class stnt1w_z_p_ar_d_64_unscaled(_JSON_stnt1w_z_p_ar_d_64_unscaled):  # SVE2
+
+    mem_tag_checked = 'always'
+    pmu_events = ['ST_SPEC', 'SVE_LDST_SPEC', 'SVE_ST_SCATTER_SPEC', 'SVE_LDST_NONCONTIG_SPEC', 'SVE_UOP_SPEC', 'SVE_INST_SPEC', 'SIMD_INST_SPEC']
+
+    def decode(self, f):
+        gmovpair_d_lv(dest=s0, dest2=s1, src1=f.Zn)
+        scatternt_w_1of2(src3=f.Pg, src1=s0, src2=f.Rm, imm=(UOFF64,NOSHIFT))
+        stdvsc_s_uv(src1=f.Zt, fsu_imm=PULL_WORD0)
+        scatternt_w_2of2(src3=f.Pg, src1=s1, src2=f.Rm, imm=(UOFF64,NOSHIFT))
+        stdvsc_s_uv(src1=f.Zt, fsu_imm=PULL_WORD2)

@@ -1,0 +1,4 @@
+{
+  "rollup_formula": "formulas_test.py",
+  "timeseries_formula": "formulas_test.py"
+}

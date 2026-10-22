@@ -1,0 +1,15 @@
+[
+    {
+        "name": "base",
+        "exe": "{panthera_root}/bin/tigris",
+        "parameters": [
+            "-instruction_stream", "{workload_path}",
+            "-memory_stream", "{memstream_path}",
+            "-cfg", "{panthera_root}/config/model/core/prefetching/tigris/core.cfg",
+            "-max_instructions", "10000000"
+        ],
+        "evp": [
+            "-i", "top.instruction=30000", "@tigris.cfg"
+        ]
+    }
+]

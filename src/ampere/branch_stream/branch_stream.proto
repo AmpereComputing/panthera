@@ -1,0 +1,42 @@
+/*
+ * Copyright (c) 2021 Ampere Computing. All rights reserved.
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+
+syntax = "proto3";
+
+import "instruction_stream.proto"; // Re-use SysReg and Context types
+
+package ampere.bs;
+
+// The Branch message will be repeated until the end of the stream
+message Branch {
+	/*
+	 * Note that the Type enum values are synchronized against RTL's
+	 * BTB_AllBranchType_e struct defined in rtl/Subsystems/Cpu/CpuPkg.sv, and they
+	 * should not be changed without considering it because it is helpful for them
+	 * to coincide with RTL's values.
+	 */
+    enum Type {
+        NONE = 0;
+        CONDITIONAL_DIRECT = 1;
+        UNCONDITIONAL_DIRECT = 2;
+        UNCONDITIONAL_INDIRECT = 3;
+        CALL_DIRECT = 4;
+        CALL_INDIRECT = 5;
+        RETURN = 6;
+    }
+
+    uint64 pc = 1;          // Program counter of the branch instruction
+    bool taken = 2;         // True if the branch is taken
+    Type type = 3;          // The type of branch
+    uint64 target = 4;      // Target address (PC) of the branch instruction (if taken)
+}
+
+message Event {
+    oneof event {
+        is.SysReg sysreg = 3;
+        is.Context context = 4;
+        Branch branch = 5;
+    }
+}

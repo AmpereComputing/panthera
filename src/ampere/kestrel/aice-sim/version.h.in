@@ -1,0 +1,11 @@
+//
+// Copyright (c) 2018-2024 Ampere Computing. All rights reserved.
+// SPDX-License-Identifier: BSD-3-Clause
+//
+
+#pragma once
+
+#define AMPERE_CORE_GIT_SHA "@AMPERE_CORE_GIT_SHA@"
+#define AMPERE_CORE_GIT_REF "@AMPERE_CORE_GIT_REF@"
+#define AMPERE_CORE_GIT_STATE "@AMPERE_CORE_GIT_STATE@"
+

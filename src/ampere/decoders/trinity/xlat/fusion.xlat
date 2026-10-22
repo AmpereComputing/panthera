@@ -1,0 +1,1276 @@
+# Copyright (c) 2022-2024 Ampere Computing. All rights reserved.
+# SPDX-License-Identifier: BSD-3-Clause
+
+from ampere.xlat import Signal, Translation, Fusion
+from proj.uop import *
+
+def no_shift_or_sign_extension(insn):
+    if hasattr(insn, 'option') and hasattr(insn, 'imm3'):
+        return insn.option.value < 4 and insn.imm3.value == 0
+    elif hasattr(insn, 'shift') and hasattr(insn, 'imm6'):
+        return insn.shift.value == 0 and insn.imm6.value < 4
+    else:
+        return True
+
+class MOVK_32_MOVK_64(Fusion):
+    """MOVK+MOVK fusion"""
+    sequence = [MOVK_32_movewide, MOVK_64_movewide]
+
+    MOVK_32_movewide.fusion_type = '00'
+    MOVK_64_movewide.fusion_type = '00'
+    fusion_type = '10'
+    
+    pmu_events = ['DP_SPEC']
+
+    def decode(self, f, f2):
+        if f.hw.value == 0b00:
+            #MOVK32_0 + MOVK64_16
+            movzk32_0b(dest=f.Rd, imm=(f2.imm16, f.imm16))
+        elif f.hw.value == 0b01:
+            #MOVK32_16 + MOVK64_0
+            movzk32_0b(dest=f.Rd, imm=(f.imm16, f2.imm16))
+        else:
+            not_implemented()
+
+class MOVK_64_MOVK_64(Fusion):
+    """MOVK+MOVK fusion"""
+    sequence = [MOVK_64_movewide, MOVK_64_movewide]
+
+    MOVK_64_movewide.fusion_type = '00'
+    fusion_type = '10'
+    
+    pmu_events = ['DP_SPEC']
+
+    def decode(self, f, f2):
+        if f.hw.value == 0b00:
+            #MOVK64_0 + MOVK64_16
+            movkk64_0b(dest=f.Rd, src2=f.Rd, imm=(f2.imm16, f.imm16))
+        elif f.hw.value == 0b01:
+            if f2.hw.value == 0b00:
+                #MOVK64_16 + MOVK64_0
+                movkk64_0b(dest=f.Rd, src2=f.Rd, imm=(f.imm16, f2.imm16))
+            elif f2.hw.value == 0b10:
+                #MOVK64_16 + MOVK64_32
+                movkk64_2b(dest=f.Rd, src2=f.Rd, imm=(f2.imm16, f.imm16))
+            else: 
+                not_implemented()
+        elif f.hw.value == 0b10:
+            #MOVK64_32 + MOVK64_48
+            movkk64_4b(dest=f.Rd, src2=f.Rd, imm=(f2.imm16, f.imm16))
+        else:
+            not_implemented()            
+        
+class MOV_MOVK_32(Fusion):
+    """MOVZ+MOVK fusion"""
+    sequence = [[MOVK_32_movewide, MOVK_64_movewide, MOVZ_32_movewide, MOVZ_64_movewide], MOVK_32_movewide]
+
+    MOVK_32_movewide.fusion_type = '00'
+    MOVK_64_movewide.fusion_type = '00'
+    MOVZ_32_movewide.fusion_type = '00'
+    MOVZ_64_movewide.fusion_type = '00'
+    fusion_type = '01'
+    
+    pmu_events = ['DP_SPEC']
+
+    def decode(self, f, f2):
+        if f.hw.value == 0b00:
+            movzk32_0b(dest=f.Rd, imm=(f2.imm16, f.imm16))
+        else:
+            not_implemented()
+
+class MOVZ_MOVK_64(Fusion):
+    """MOVZ+MOVK fusion"""
+    sequence = [[MOVZ_32_movewide, MOVZ_64_movewide], MOVK_64_movewide]
+
+    MOVZ_32_movewide.fusion_type = '00'
+    MOVZ_64_movewide.fusion_type = '00'
+    fusion_type = '10'
+    
+    pmu_events = ['DP_SPEC']
+
+    def decode(self, f, f2):
+        if f.hw.value == 0b00:
+            #MOVZ32/64_0 + MOVK64_16
+            movzk64_0b(dest=f.Rd, imm=(f2.imm16, f.imm16))
+        elif f.hw.value == 0b01:
+            if f2.hw.value == 0b00:
+                #MOVZ32/64_16 + MOVK64_0
+                movzk64_0b(dest=f.Rd, imm=(f.imm16, f2.imm16))
+            elif f2.hw.value == 0b10:
+                #MOVZ32/64_16 + MOVK64_32
+                movzk64_2b(dest=f.Rd, imm=(f2.imm16, f.imm16))
+            else: 
+                not_implemented()
+        elif f.hw.value == 0b10:
+            #MOVZ32/64_32 + MOVK64_48
+            movzk64_4b(dest=f.Rd, imm=(f2.imm16, f.imm16))
+        else:
+            not_implemented()
+
+class AESE_AESMC(Fusion):
+    """AESE+AESMC fusion"""
+    sequence = [AESE_B_cryptoaes, AESMC_B_cryptoaes]
+
+    AESE_B_cryptoaes.fusion_type = '00'
+    fusion_type = '01'
+    
+    pmu_events = ['CRYPTO_SPEC']
+
+    def decode(self, f, f2):
+        aesef_b_lv(dest=f.Rd, src1=f.Rd, src2=f.Rn)
+
+class AESD_AESIMC(Fusion):
+    """AESD+AESIMC fusion"""
+    sequence = [AESD_B_cryptoaes, AESIMC_B_cryptoaes]
+
+    AESD_B_cryptoaes.fusion_type = '00'
+    fusion_type = '01'
+    
+    pmu_events = ['CRYPTO_SPEC']
+
+    def decode(self, f, f2):
+        aesdf_b_lv(dest=f.Rd, src1=f.Rd, src2=f.Rn)
+
+class ADRP_ADDIMM(Fusion):
+    """ADRP+Add (immediate) fusion"""
+    sequence = [ADRP_only_pcreladdr, ADD_64_addsub_imm]
+
+    ADRP_only_pcreladdr.fusion_type = '00'
+    fusion_type = '01'
+    
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f, f2):
+        # This looks exactly like an ADRP, the difference in execution is that in the fusion case, in IdrXlt rtl, we
+        # will mux the imm12 of the ADDIMM onto the Opcode field instead of zeros, so the lower bits will be different
+        adr(dest=f.Rd, imm=(f.immhi,f.immlo, Signal('000000000000')), use_pc=True, imm_signext=True, is_adrp=True)
+
+class SUBS_Bcond(Fusion):
+    # example in dv/env/top/asm/tests/cond_branch
+    sequence = [[SUBS_64S_addsub_ext, SUBS_64_addsub_shift, SUBS_64S_addsub_imm, SUBS_32S_addsub_ext, SUBS_32_addsub_shift, SUBS_32S_addsub_imm], B_only_condbranch]
+    requirements = [no_shift_or_sign_extension, None]
+
+    SUBS_32S_addsub_ext.fusion_type = '00'
+    SUBS_32_addsub_shift.fusion_type = '00'
+    SUBS_32S_addsub_imm.fusion_type = '00'
+    SUBS_64S_addsub_ext.fusion_type = '00'
+    SUBS_64_addsub_shift.fusion_type = '00'
+    SUBS_64S_addsub_imm.fusion_type = '00'
+    fusion_type = '11'
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f, f2):
+        
+        if isinstance(self.translations[0], SUBS_32_addsub_shift):
+            if f2.cond.value == 0b0000:
+                subs32__bc_eq(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=Signal("011000"))
+            elif f2.cond.value == 0b0010:
+                subs32__bc_cs(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=Signal("011000"))
+            elif f2.cond.value == 0b0100:
+                subs32__bc_mi(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=Signal("011000"))
+            elif f2.cond.value == 0b0110:
+                subs32__bc_vs(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=Signal("011000"))
+            elif f2.cond.value == 0b1000:
+                subs32__bc_hi(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=Signal("011000"))
+            elif f2.cond.value == 0b1010:
+                subs32__bc_ge(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=Signal("011000"))
+            elif f2.cond.value == 0b1100:
+                subs32__bc_gt(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=Signal("011000"))
+            elif f2.cond.value >= 0b1110:
+                subs32__bc_al(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=Signal("011000"))
+            elif f2.cond.value == 0b0001:
+                subs32__bc_ne(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=Signal("011000"))
+            elif f2.cond.value == 0b0011:
+                subs32__bc_cc(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=Signal("011000"))
+            elif f2.cond.value == 0b0101:
+                subs32__bc_pl(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=Signal("011000"))
+            elif f2.cond.value == 0b0111:
+                subs32__bc_vc(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=Signal("011000"))
+            elif f2.cond.value == 0b1001:
+                subs32__bc_ls(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=Signal("011000"))
+            elif f2.cond.value == 0b1011:
+                subs32__bc_lt(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=Signal("011000"))
+            elif f2.cond.value == 0b1101:
+                subs32__bc_le(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=Signal("011000"))
+
+        elif isinstance(self.translations[0], SUBS_32S_addsub_ext):
+            if f2.cond.value == 0b0000:
+                subs32__bc_eq(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=(f.option,Signal("000")), src1_is_stack_pointer=True)
+            elif f2.cond.value == 0b0010:
+                subs32__bc_cs(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=(f.option,Signal("000")), src1_is_stack_pointer=True)
+            elif f2.cond.value == 0b0100:
+                subs32__bc_mi(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=(f.option,Signal("000")), src1_is_stack_pointer=True)
+            elif f2.cond.value == 0b0110:
+                subs32__bc_vs(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=(f.option,Signal("000")), src1_is_stack_pointer=True)
+            elif f2.cond.value == 0b1000:
+                subs32__bc_hi(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=(f.option,Signal("000")), src1_is_stack_pointer=True)
+            elif f2.cond.value == 0b1010:
+                subs32__bc_ge(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=(f.option,Signal("000")), src1_is_stack_pointer=True)
+            elif f2.cond.value == 0b1100:
+                subs32__bc_gt(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=(f.option,Signal("000")), src1_is_stack_pointer=True)
+            elif f2.cond.value >= 0b1110:
+                subs32__bc_al(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=(f.option,Signal("000")), src1_is_stack_pointer=True)
+            elif f2.cond.value == 0b0001:
+                subs32__bc_ne(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=(f.option,Signal("000")), src1_is_stack_pointer=True)
+            elif f2.cond.value == 0b0011:
+                subs32__bc_cc(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=(f.option,Signal("000")), src1_is_stack_pointer=True)
+            elif f2.cond.value == 0b0101:
+                subs32__bc_pl(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=(f.option,Signal("000")), src1_is_stack_pointer=True)
+            elif f2.cond.value == 0b0111:
+                subs32__bc_vc(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=(f.option,Signal("000")), src1_is_stack_pointer=True)
+            elif f2.cond.value == 0b1001:
+                subs32__bc_ls(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=(f.option,Signal("000")), src1_is_stack_pointer=True)
+            elif f2.cond.value == 0b1011:
+                subs32__bc_lt(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=(f.option,Signal("000")), src1_is_stack_pointer=True)
+            elif f2.cond.value == 0b1101:
+                subs32__bc_le(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=(f.option,Signal("000")), src1_is_stack_pointer=True)
+
+        elif isinstance(self.translations[0], SUBS_32S_addsub_imm):
+            if f2.cond.value == 0b0000:
+                subs32__bc_eq(dest=f.Rd, flagdest=f0, src2=f.Rn, imm=(f.sh,f.imm12), src2_is_stack_pointer=True)
+            elif f2.cond.value == 0b0010:
+                subs32__bc_cs(dest=f.Rd, flagdest=f0, src2=f.Rn, imm=(f.sh,f.imm12), src2_is_stack_pointer=True)
+            elif f2.cond.value == 0b0100:
+                subs32__bc_mi(dest=f.Rd, flagdest=f0, src2=f.Rn, imm=(f.sh,f.imm12), src2_is_stack_pointer=True)
+            elif f2.cond.value == 0b0110:
+                subs32__bc_vs(dest=f.Rd, flagdest=f0, src2=f.Rn, imm=(f.sh,f.imm12), src2_is_stack_pointer=True)
+            elif f2.cond.value == 0b1000:
+                subs32__bc_hi(dest=f.Rd, flagdest=f0, src2=f.Rn, imm=(f.sh,f.imm12), src2_is_stack_pointer=True)
+            elif f2.cond.value == 0b1010:
+                subs32__bc_ge(dest=f.Rd, flagdest=f0, src2=f.Rn, imm=(f.sh,f.imm12), src2_is_stack_pointer=True)
+            elif f2.cond.value == 0b1100:
+                subs32__bc_gt(dest=f.Rd, flagdest=f0, src2=f.Rn, imm=(f.sh,f.imm12), src2_is_stack_pointer=True)
+            elif f2.cond.value >= 0b1110:
+                subs32__bc_al(dest=f.Rd, flagdest=f0, src2=f.Rn, imm=(f.sh,f.imm12), src2_is_stack_pointer=True)
+            elif f2.cond.value == 0b0001:
+                subs32__bc_ne(dest=f.Rd, flagdest=f0, src2=f.Rn, imm=(f.sh,f.imm12), src2_is_stack_pointer=True)
+            elif f2.cond.value == 0b0011:
+                subs32__bc_cc(dest=f.Rd, flagdest=f0, src2=f.Rn, imm=(f.sh,f.imm12), src2_is_stack_pointer=True)
+            elif f2.cond.value == 0b0101:
+                subs32__bc_pl(dest=f.Rd, flagdest=f0, src2=f.Rn, imm=(f.sh,f.imm12), src2_is_stack_pointer=True)
+            elif f2.cond.value == 0b0111:
+                subs32__bc_vc(dest=f.Rd, flagdest=f0, src2=f.Rn, imm=(f.sh,f.imm12), src2_is_stack_pointer=True)
+            elif f2.cond.value == 0b1001:
+                subs32__bc_ls(dest=f.Rd, flagdest=f0, src2=f.Rn, imm=(f.sh,f.imm12), src2_is_stack_pointer=True)
+            elif f2.cond.value == 0b1011:
+                subs32__bc_lt(dest=f.Rd, flagdest=f0, src2=f.Rn, imm=(f.sh,f.imm12), src2_is_stack_pointer=True)
+            elif f2.cond.value == 0b1101:
+                subs32__bc_le(dest=f.Rd, flagdest=f0, src2=f.Rn, imm=(f.sh,f.imm12), src2_is_stack_pointer=True)
+
+        elif isinstance(self.translations[0], SUBS_64_addsub_shift):
+            if f2.cond.value == 0b0000:
+                subs64__bc_eq(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=Signal("011000"))
+            elif f2.cond.value == 0b0010:
+                subs64__bc_cs(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=Signal("011000"))
+            elif f2.cond.value == 0b0100:
+                subs64__bc_mi(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=Signal("011000"))
+            elif f2.cond.value == 0b0110:
+                subs64__bc_vs(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=Signal("011000"))
+            elif f2.cond.value == 0b1000:
+                subs64__bc_hi(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=Signal("011000"))
+            elif f2.cond.value == 0b1010:
+                subs64__bc_ge(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=Signal("011000"))
+            elif f2.cond.value == 0b1100:
+                subs64__bc_gt(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=Signal("011000"))
+            elif f2.cond.value >= 0b1110:
+                subs64__bc_al(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=Signal("011000"))
+            elif f2.cond.value == 0b0001:
+                subs64__bc_ne(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=Signal("011000"))
+            elif f2.cond.value == 0b0011:
+                subs64__bc_cc(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=Signal("011000"))
+            elif f2.cond.value == 0b0101:
+                subs64__bc_pl(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=Signal("011000"))
+            elif f2.cond.value == 0b0111:
+                subs64__bc_vc(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=Signal("011000"))
+            elif f2.cond.value == 0b1001:
+                subs64__bc_ls(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=Signal("011000"))
+            elif f2.cond.value == 0b1011:
+                subs64__bc_lt(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=Signal("011000"))
+            elif f2.cond.value == 0b1101:
+                subs64__bc_le(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=Signal("011000"))
+                
+        elif isinstance(self.translations[0], SUBS_64S_addsub_ext):
+            if f2.cond.value == 0b0000:
+                subs64__bc_eq(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=(f.option,Signal("000")), src1_is_stack_pointer=True)
+            elif f2.cond.value == 0b0010:
+                subs64__bc_cs(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=(f.option,Signal("000")), src1_is_stack_pointer=True)
+            elif f2.cond.value == 0b0100:
+                subs64__bc_mi(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=(f.option,Signal("000")), src1_is_stack_pointer=True)
+            elif f2.cond.value == 0b0110:
+                subs64__bc_vs(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=(f.option,Signal("000")), src1_is_stack_pointer=True)
+            elif f2.cond.value == 0b1000:
+                subs64__bc_hi(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=(f.option,Signal("000")), src1_is_stack_pointer=True)
+            elif f2.cond.value == 0b1010:
+                subs64__bc_ge(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=(f.option,Signal("000")), src1_is_stack_pointer=True)
+            elif f2.cond.value == 0b1100:
+                subs64__bc_gt(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=(f.option,Signal("000")), src1_is_stack_pointer=True)
+            elif f2.cond.value >= 0b1110:
+                subs64__bc_al(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=(f.option,Signal("000")), src1_is_stack_pointer=True)
+            elif f2.cond.value == 0b0001:
+                subs64__bc_ne(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=(f.option,Signal("000")), src1_is_stack_pointer=True)
+            elif f2.cond.value == 0b0011:
+                subs64__bc_cc(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=(f.option,Signal("000")), src1_is_stack_pointer=True)
+            elif f2.cond.value == 0b0101:
+                subs64__bc_pl(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=(f.option,Signal("000")), src1_is_stack_pointer=True)
+            elif f2.cond.value == 0b0111:
+                subs64__bc_vc(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=(f.option,Signal("000")), src1_is_stack_pointer=True)
+            elif f2.cond.value == 0b1001:
+                subs64__bc_ls(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=(f.option,Signal("000")), src1_is_stack_pointer=True)
+            elif f2.cond.value == 0b1011:
+                subs64__bc_lt(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=(f.option,Signal("000")), src1_is_stack_pointer=True)
+            elif f2.cond.value == 0b1101:
+                subs64__bc_le(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=(f.option,Signal("000")), src1_is_stack_pointer=True)
+                    
+        elif isinstance(self.translations[0], SUBS_64S_addsub_imm):
+            if f2.cond.value == 0b0000:
+                subs64__bc_eq(dest=f.Rd, flagdest=f0, src2=f.Rn, imm=(f.sh,f.imm12), src2_is_stack_pointer=True)
+            elif f2.cond.value == 0b0010:
+                subs64__bc_cs(dest=f.Rd, flagdest=f0, src2=f.Rn, imm=(f.sh,f.imm12), src2_is_stack_pointer=True)
+            elif f2.cond.value == 0b0100:
+                subs64__bc_mi(dest=f.Rd, flagdest=f0, src2=f.Rn, imm=(f.sh,f.imm12), src2_is_stack_pointer=True)
+            elif f2.cond.value == 0b0110:
+                subs64__bc_vs(dest=f.Rd, flagdest=f0, src2=f.Rn, imm=(f.sh,f.imm12), src2_is_stack_pointer=True)
+            elif f2.cond.value == 0b1000:
+                subs64__bc_hi(dest=f.Rd, flagdest=f0, src2=f.Rn, imm=(f.sh,f.imm12), src2_is_stack_pointer=True)
+            elif f2.cond.value == 0b1010:
+                subs64__bc_ge(dest=f.Rd, flagdest=f0, src2=f.Rn, imm=(f.sh,f.imm12), src2_is_stack_pointer=True)
+            elif f2.cond.value == 0b1100:
+                subs64__bc_gt(dest=f.Rd, flagdest=f0, src2=f.Rn, imm=(f.sh,f.imm12), src2_is_stack_pointer=True)
+            elif f2.cond.value >= 0b1110:
+                subs64__bc_al(dest=f.Rd, flagdest=f0, src2=f.Rn, imm=(f.sh,f.imm12), src2_is_stack_pointer=True)
+            elif f2.cond.value == 0b0001:
+                subs64__bc_ne(dest=f.Rd, flagdest=f0, src2=f.Rn, imm=(f.sh,f.imm12), src2_is_stack_pointer=True)
+            elif f2.cond.value == 0b0011:
+                subs64__bc_cc(dest=f.Rd, flagdest=f0, src2=f.Rn, imm=(f.sh,f.imm12), src2_is_stack_pointer=True)
+            elif f2.cond.value == 0b0101:
+                subs64__bc_pl(dest=f.Rd, flagdest=f0, src2=f.Rn, imm=(f.sh,f.imm12), src2_is_stack_pointer=True)
+            elif f2.cond.value == 0b0111:
+                subs64__bc_vc(dest=f.Rd, flagdest=f0, src2=f.Rn, imm=(f.sh,f.imm12), src2_is_stack_pointer=True)
+            elif f2.cond.value == 0b1001:
+                subs64__bc_ls(dest=f.Rd, flagdest=f0, src2=f.Rn, imm=(f.sh,f.imm12), src2_is_stack_pointer=True)
+            elif f2.cond.value == 0b1011:
+                subs64__bc_lt(dest=f.Rd, flagdest=f0, src2=f.Rn, imm=(f.sh,f.imm12), src2_is_stack_pointer=True)
+            elif f2.cond.value == 0b1101:
+                subs64__bc_le(dest=f.Rd, flagdest=f0, src2=f.Rn, imm=(f.sh,f.imm12), src2_is_stack_pointer=True)
+                
+        else:
+            not_implemented(flagdest=f0)
+
+class ADDS_Bcond(Fusion):
+    sequence = [[ADDS_32S_addsub_ext, ADDS_32S_addsub_imm, ADDS_32_addsub_shift, ADDS_64S_addsub_ext, ADDS_64S_addsub_imm, ADDS_64_addsub_shift], B_only_condbranch]
+    requirements = [no_shift_or_sign_extension, None]
+
+    ADDS_32S_addsub_ext.fusion_type = '00'
+    ADDS_32S_addsub_imm.fusion_type = '00'
+    ADDS_32_addsub_shift.fusion_type = '00'
+    ADDS_64S_addsub_ext.fusion_type = '00'
+    ADDS_64S_addsub_imm.fusion_type = '00'
+    ADDS_64_addsub_shift.fusion_type = '00'
+    fusion_type = '11'
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f, f2):
+        
+        if isinstance(self.translations[0], ADDS_32_addsub_shift):
+            if f2.cond.value == 0b0000:
+                adds32__bc_eq(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=(Signal("011"),f.opcBit12,f.opcBit11,f.opcBit10))
+            elif f2.cond.value == 0b0010:
+                adds32__bc_cs(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=(Signal("011"),f.opcBit12,f.opcBit11,f.opcBit10))
+            elif f2.cond.value == 0b0100:
+                adds32__bc_mi(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=(Signal("011"),f.opcBit12,f.opcBit11,f.opcBit10))
+            elif f2.cond.value == 0b0110:
+                adds32__bc_vs(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=(Signal("011"),f.opcBit12,f.opcBit11,f.opcBit10))
+            elif f2.cond.value == 0b1000:
+                adds32__bc_hi(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=(Signal("011"),f.opcBit12,f.opcBit11,f.opcBit10))
+            elif f2.cond.value == 0b1010:
+                adds32__bc_ge(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=(Signal("011"),f.opcBit12,f.opcBit11,f.opcBit10))
+            elif f2.cond.value == 0b1100:
+                adds32__bc_gt(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=(Signal("011"),f.opcBit12,f.opcBit11,f.opcBit10))
+            elif f2.cond.value >= 0b1110:
+                adds32__bc_al(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=(Signal("011"),f.opcBit12,f.opcBit11,f.opcBit10))
+            elif f2.cond.value == 0b0001:
+                adds32__bc_ne(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=(Signal("011"),f.opcBit12,f.opcBit11,f.opcBit10))
+            elif f2.cond.value == 0b0011:
+                adds32__bc_cc(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=(Signal("011"),f.opcBit12,f.opcBit11,f.opcBit10))
+            elif f2.cond.value == 0b0101:
+                adds32__bc_pl(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=(Signal("011"),f.opcBit12,f.opcBit11,f.opcBit10))
+            elif f2.cond.value == 0b0111:
+                adds32__bc_vc(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=(Signal("011"),f.opcBit12,f.opcBit11,f.opcBit10))
+            elif f2.cond.value == 0b1001:
+                adds32__bc_ls(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=(Signal("011"),f.opcBit12,f.opcBit11,f.opcBit10))
+            elif f2.cond.value == 0b1011:
+                adds32__bc_lt(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=(Signal("011"),f.opcBit12,f.opcBit11,f.opcBit10))
+            elif f2.cond.value == 0b1101:
+                adds32__bc_le(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=(Signal("011"),f.opcBit12,f.opcBit11,f.opcBit10))
+
+        elif isinstance(self.translations[0], ADDS_32S_addsub_ext):
+            if f2.cond.value == 0b0000:
+                adds32__bc_eq(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=(f.option,f.imm3), src1_is_stack_pointer=True)
+            elif f2.cond.value == 0b0010:
+                adds32__bc_cs(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=(f.option,f.imm3), src1_is_stack_pointer=True)
+            elif f2.cond.value == 0b0100:
+                adds32__bc_mi(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=(f.option,f.imm3), src1_is_stack_pointer=True)
+            elif f2.cond.value == 0b0110:
+                adds32__bc_vs(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=(f.option,f.imm3), src1_is_stack_pointer=True)
+            elif f2.cond.value == 0b1000:
+                adds32__bc_hi(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=(f.option,f.imm3), src1_is_stack_pointer=True)
+            elif f2.cond.value == 0b1010:
+                adds32__bc_ge(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=(f.option,f.imm3), src1_is_stack_pointer=True)
+            elif f2.cond.value == 0b1100:
+                adds32__bc_gt(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=(f.option,f.imm3), src1_is_stack_pointer=True)
+            elif f2.cond.value >= 0b1110:
+                adds32__bc_al(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=(f.option,f.imm3), src1_is_stack_pointer=True)
+            elif f2.cond.value == 0b0001:
+                adds32__bc_ne(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=(f.option,f.imm3), src1_is_stack_pointer=True)
+            elif f2.cond.value == 0b0011:
+                adds32__bc_cc(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=(f.option,f.imm3), src1_is_stack_pointer=True)
+            elif f2.cond.value == 0b0101:
+                adds32__bc_pl(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=(f.option,f.imm3), src1_is_stack_pointer=True)
+            elif f2.cond.value == 0b0111:
+                adds32__bc_vc(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=(f.option,f.imm3), src1_is_stack_pointer=True)
+            elif f2.cond.value == 0b1001:
+                adds32__bc_ls(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=(f.option,f.imm3), src1_is_stack_pointer=True)
+            elif f2.cond.value == 0b1011:
+                adds32__bc_lt(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=(f.option,f.imm3), src1_is_stack_pointer=True)
+            elif f2.cond.value == 0b1101:
+                adds32__bc_le(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=(f.option,f.imm3), src1_is_stack_pointer=True)
+                
+        elif isinstance(self.translations[0], ADDS_32S_addsub_imm):
+            if f2.cond.value == 0b0000:
+                adds32__bc_eq(dest=f.Rd, flagdest=f0, src2=f.Rn, imm=(f.sh,f.imm12), src2_is_stack_pointer=True)
+            elif f2.cond.value == 0b0010:
+                adds32__bc_cs(dest=f.Rd, flagdest=f0, src2=f.Rn, imm=(f.sh,f.imm12), src2_is_stack_pointer=True)
+            elif f2.cond.value == 0b0100:
+                adds32__bc_mi(dest=f.Rd, flagdest=f0, src2=f.Rn, imm=(f.sh,f.imm12), src2_is_stack_pointer=True)
+            elif f2.cond.value == 0b0110:
+                adds32__bc_vs(dest=f.Rd, flagdest=f0, src2=f.Rn, imm=(f.sh,f.imm12), src2_is_stack_pointer=True)
+            elif f2.cond.value == 0b1000:
+                adds32__bc_hi(dest=f.Rd, flagdest=f0, src2=f.Rn, imm=(f.sh,f.imm12), src2_is_stack_pointer=True)
+            elif f2.cond.value == 0b1010:
+                adds32__bc_ge(dest=f.Rd, flagdest=f0, src2=f.Rn, imm=(f.sh,f.imm12), src2_is_stack_pointer=True)
+            elif f2.cond.value == 0b1100:
+                adds32__bc_gt(dest=f.Rd, flagdest=f0, src2=f.Rn, imm=(f.sh,f.imm12), src2_is_stack_pointer=True)
+            elif f2.cond.value >= 0b1110:
+                adds32__bc_al(dest=f.Rd, flagdest=f0, src2=f.Rn, imm=(f.sh,f.imm12), src2_is_stack_pointer=True)
+            elif f2.cond.value == 0b0001:
+                adds32__bc_ne(dest=f.Rd, flagdest=f0, src2=f.Rn, imm=(f.sh,f.imm12), src2_is_stack_pointer=True)
+            elif f2.cond.value == 0b0011:
+                adds32__bc_cc(dest=f.Rd, flagdest=f0, src2=f.Rn, imm=(f.sh,f.imm12), src2_is_stack_pointer=True)
+            elif f2.cond.value == 0b0101:
+                adds32__bc_pl(dest=f.Rd, flagdest=f0, src2=f.Rn, imm=(f.sh,f.imm12), src2_is_stack_pointer=True)
+            elif f2.cond.value == 0b0111:
+                adds32__bc_vc(dest=f.Rd, flagdest=f0, src2=f.Rn, imm=(f.sh,f.imm12), src2_is_stack_pointer=True)
+            elif f2.cond.value == 0b1001:
+                adds32__bc_ls(dest=f.Rd, flagdest=f0, src2=f.Rn, imm=(f.sh,f.imm12), src2_is_stack_pointer=True)
+            elif f2.cond.value == 0b1011:
+                adds32__bc_lt(dest=f.Rd, flagdest=f0, src2=f.Rn, imm=(f.sh,f.imm12), src2_is_stack_pointer=True)
+            elif f2.cond.value == 0b1101:
+                adds32__bc_le(dest=f.Rd, flagdest=f0, src2=f.Rn, imm=(f.sh,f.imm12), src2_is_stack_pointer=True)
+
+        elif isinstance(self.translations[0], ADDS_64_addsub_shift):
+            if f2.cond.value == 0b0000:
+                adds64__bc_eq(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=(Signal("011"),f.opcBit12,f.opcBit11,f.opcBit10))
+            elif f2.cond.value == 0b0010:
+                adds64__bc_cs(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=(Signal("011"),f.opcBit12,f.opcBit11,f.opcBit10))
+            elif f2.cond.value == 0b0100:
+                adds64__bc_mi(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=(Signal("011"),f.opcBit12,f.opcBit11,f.opcBit10))
+            elif f2.cond.value == 0b0110:
+                adds64__bc_vs(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=(Signal("011"),f.opcBit12,f.opcBit11,f.opcBit10))
+            elif f2.cond.value == 0b1000:
+                adds64__bc_hi(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=(Signal("011"),f.opcBit12,f.opcBit11,f.opcBit10))
+            elif f2.cond.value == 0b1010:
+                adds64__bc_ge(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=(Signal("011"),f.opcBit12,f.opcBit11,f.opcBit10))
+            elif f2.cond.value == 0b1100:
+                adds64__bc_gt(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=(Signal("011"),f.opcBit12,f.opcBit11,f.opcBit10))
+            elif f2.cond.value >= 0b1110:
+                adds64__bc_al(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=(Signal("011"),f.opcBit12,f.opcBit11,f.opcBit10))
+            elif f2.cond.value == 0b0001:
+                adds64__bc_ne(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=(Signal("011"),f.opcBit12,f.opcBit11,f.opcBit10))
+            elif f2.cond.value == 0b0011:
+                adds64__bc_cc(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=(Signal("011"),f.opcBit12,f.opcBit11,f.opcBit10))
+            elif f2.cond.value == 0b0101:
+                adds64__bc_pl(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=(Signal("011"),f.opcBit12,f.opcBit11,f.opcBit10))
+            elif f2.cond.value == 0b0111:
+                adds64__bc_vc(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=(Signal("011"),f.opcBit12,f.opcBit11,f.opcBit10))
+            elif f2.cond.value == 0b1001:
+                adds64__bc_ls(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=(Signal("011"),f.opcBit12,f.opcBit11,f.opcBit10))
+            elif f2.cond.value == 0b1011:
+                adds64__bc_lt(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=(Signal("011"),f.opcBit12,f.opcBit11,f.opcBit10))
+            elif f2.cond.value == 0b1101:
+                adds64__bc_le(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=(Signal("011"),f.opcBit12,f.opcBit11,f.opcBit10))
+
+        elif isinstance(self.translations[0], ADDS_64S_addsub_ext):
+            if f2.cond.value == 0b0000:
+                adds64__bc_eq(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=(f.option,f.imm3), src1_is_stack_pointer=True)
+            elif f2.cond.value == 0b0010:
+                adds64__bc_cs(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=(f.option,f.imm3), src1_is_stack_pointer=True)
+            elif f2.cond.value == 0b0100:
+                adds64__bc_mi(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=(f.option,f.imm3), src1_is_stack_pointer=True)
+            elif f2.cond.value == 0b0110:
+                adds64__bc_vs(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=(f.option,f.imm3), src1_is_stack_pointer=True)
+            elif f2.cond.value == 0b1000:
+                adds64__bc_hi(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=(f.option,f.imm3), src1_is_stack_pointer=True)
+            elif f2.cond.value == 0b1010:
+                adds64__bc_ge(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=(f.option,f.imm3), src1_is_stack_pointer=True)
+            elif f2.cond.value == 0b1100:
+                adds64__bc_gt(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=(f.option,f.imm3), src1_is_stack_pointer=True)
+            elif f2.cond.value >= 0b1110:
+                adds64__bc_al(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=(f.option,f.imm3), src1_is_stack_pointer=True)
+            elif f2.cond.value == 0b0001:
+                adds64__bc_ne(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=(f.option,f.imm3), src1_is_stack_pointer=True)
+            elif f2.cond.value == 0b0011:
+                adds64__bc_cc(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=(f.option,f.imm3), src1_is_stack_pointer=True)
+            elif f2.cond.value == 0b0101:
+                adds64__bc_pl(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=(f.option,f.imm3), src1_is_stack_pointer=True)
+            elif f2.cond.value == 0b0111:
+                adds64__bc_vc(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=(f.option,f.imm3), src1_is_stack_pointer=True)
+            elif f2.cond.value == 0b1001:
+                adds64__bc_ls(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=(f.option,f.imm3), src1_is_stack_pointer=True)
+            elif f2.cond.value == 0b1011:
+                adds64__bc_lt(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=(f.option,f.imm3), src1_is_stack_pointer=True)
+            elif f2.cond.value == 0b1101:
+                adds64__bc_le(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=(f.option,f.imm3), src1_is_stack_pointer=True)
+
+        elif isinstance(self.translations[0], ADDS_64S_addsub_imm):
+            if f2.cond.value == 0b0000:
+                adds64__bc_eq(dest=f.Rd, flagdest=f0, src2=f.Rn, imm=(f.sh,f.imm12), src2_is_stack_pointer=True)
+            elif f2.cond.value == 0b0010:
+                adds64__bc_cs(dest=f.Rd, flagdest=f0, src2=f.Rn, imm=(f.sh,f.imm12), src2_is_stack_pointer=True)
+            elif f2.cond.value == 0b0100:
+                adds64__bc_mi(dest=f.Rd, flagdest=f0, src2=f.Rn, imm=(f.sh,f.imm12), src2_is_stack_pointer=True)
+            elif f2.cond.value == 0b0110:
+                adds64__bc_vs(dest=f.Rd, flagdest=f0, src2=f.Rn, imm=(f.sh,f.imm12), src2_is_stack_pointer=True)
+            elif f2.cond.value == 0b1000:
+                adds64__bc_hi(dest=f.Rd, flagdest=f0, src2=f.Rn, imm=(f.sh,f.imm12), src2_is_stack_pointer=True)
+            elif f2.cond.value == 0b1010:
+                adds64__bc_ge(dest=f.Rd, flagdest=f0, src2=f.Rn, imm=(f.sh,f.imm12), src2_is_stack_pointer=True)
+            elif f2.cond.value == 0b1100:
+                adds64__bc_gt(dest=f.Rd, flagdest=f0, src2=f.Rn, imm=(f.sh,f.imm12), src2_is_stack_pointer=True)
+            elif f2.cond.value >= 0b1110:
+                adds64__bc_al(dest=f.Rd, flagdest=f0, src2=f.Rn, imm=(f.sh,f.imm12), src2_is_stack_pointer=True)
+            elif f2.cond.value == 0b0001:
+                adds64__bc_ne(dest=f.Rd, flagdest=f0, src2=f.Rn, imm=(f.sh,f.imm12), src2_is_stack_pointer=True)
+            elif f2.cond.value == 0b0011:
+                adds64__bc_cc(dest=f.Rd, flagdest=f0, src2=f.Rn, imm=(f.sh,f.imm12), src2_is_stack_pointer=True)
+            elif f2.cond.value == 0b0101:
+                adds64__bc_pl(dest=f.Rd, flagdest=f0, src2=f.Rn, imm=(f.sh,f.imm12), src2_is_stack_pointer=True)
+            elif f2.cond.value == 0b0111:
+                adds64__bc_vc(dest=f.Rd, flagdest=f0, src2=f.Rn, imm=(f.sh,f.imm12), src2_is_stack_pointer=True)
+            elif f2.cond.value == 0b1001:
+                adds64__bc_ls(dest=f.Rd, flagdest=f0, src2=f.Rn, imm=(f.sh,f.imm12), src2_is_stack_pointer=True)
+            elif f2.cond.value == 0b1011:
+                adds64__bc_lt(dest=f.Rd, flagdest=f0, src2=f.Rn, imm=(f.sh,f.imm12), src2_is_stack_pointer=True)
+            elif f2.cond.value == 0b1101:
+                adds64__bc_le(dest=f.Rd, flagdest=f0, src2=f.Rn, imm=(f.sh,f.imm12), src2_is_stack_pointer=True)
+                
+        else:
+            not_implemented(flagdest=f0)
+
+class ANDS_Bcond(Fusion):
+    sequence = [[ANDS_32S_log_imm, ANDS_32_log_shift, ANDS_64S_log_imm, ANDS_64_log_shift], B_only_condbranch]
+    requirements = [no_shift_or_sign_extension, None]
+
+    ANDS_32S_log_imm.fusion_type = '00'
+    ANDS_32_log_shift.fusion_type = '00'
+    ANDS_64S_log_imm.fusion_type = '00'
+    ANDS_64_log_shift.fusion_type = '00'
+    fusion_type = '11'
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f, f2):
+        
+        if isinstance(self.translations[0], ANDS_32S_log_imm):
+            if f2.cond.value == 0b0000:
+                ands32__bc_eq(dest=f.Rd, flagdest=f0, src2=f.Rn, imm=(f.N,f.immr,f.imms))
+            elif f2.cond.value == 0b0010:
+                ands32__bc_cs(dest=f.Rd, flagdest=f0, src2=f.Rn, imm=(f.N,f.immr,f.imms))
+            elif f2.cond.value == 0b0100:
+                ands32__bc_mi(dest=f.Rd, flagdest=f0, src2=f.Rn, imm=(f.N,f.immr,f.imms))
+            elif f2.cond.value == 0b0110:
+                ands32__bc_vs(dest=f.Rd, flagdest=f0, src2=f.Rn, imm=(f.N,f.immr,f.imms))
+            elif f2.cond.value == 0b1000:
+                ands32__bc_hi(dest=f.Rd, flagdest=f0, src2=f.Rn, imm=(f.N,f.immr,f.imms))
+            elif f2.cond.value == 0b1010:
+                ands32__bc_ge(dest=f.Rd, flagdest=f0, src2=f.Rn, imm=(f.N,f.immr,f.imms))
+            elif f2.cond.value == 0b1100:
+                ands32__bc_gt(dest=f.Rd, flagdest=f0, src2=f.Rn, imm=(f.N,f.immr,f.imms))
+            elif f2.cond.value >= 0b1110:
+                ands32__bc_al(dest=f.Rd, flagdest=f0, src2=f.Rn, imm=(f.N,f.immr,f.imms))
+            elif f2.cond.value == 0b0001:
+                ands32__bc_ne(dest=f.Rd, flagdest=f0, src2=f.Rn, imm=(f.N,f.immr,f.imms))
+            elif f2.cond.value == 0b0011:
+                ands32__bc_cc(dest=f.Rd, flagdest=f0, src2=f.Rn, imm=(f.N,f.immr,f.imms))
+            elif f2.cond.value == 0b0101:
+                ands32__bc_pl(dest=f.Rd, flagdest=f0, src2=f.Rn, imm=(f.N,f.immr,f.imms))
+            elif f2.cond.value == 0b0111:
+                ands32__bc_vc(dest=f.Rd, flagdest=f0, src2=f.Rn, imm=(f.N,f.immr,f.imms))
+            elif f2.cond.value == 0b1001:
+                ands32__bc_ls(dest=f.Rd, flagdest=f0, src2=f.Rn, imm=(f.N,f.immr,f.imms))
+            elif f2.cond.value == 0b1011:
+                ands32__bc_lt(dest=f.Rd, flagdest=f0, src2=f.Rn, imm=(f.N,f.immr,f.imms))
+            elif f2.cond.value == 0b1101:
+                ands32__bc_le(dest=f.Rd, flagdest=f0, src2=f.Rn, imm=(f.N,f.immr,f.imms))
+
+        elif isinstance(self.translations[0], ANDS_32_log_shift):
+            if f2.cond.value == 0b0000:
+                ands32__bc_eq(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=f.imm6)
+            elif f2.cond.value == 0b0010:
+                ands32__bc_cs(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=f.imm6)
+            elif f2.cond.value == 0b0100:
+                ands32__bc_mi(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=f.imm6)
+            elif f2.cond.value == 0b0110:
+                ands32__bc_vs(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=f.imm6)
+            elif f2.cond.value == 0b1000:
+                ands32__bc_hi(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=f.imm6)
+            elif f2.cond.value == 0b1010:
+                ands32__bc_ge(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=f.imm6)
+            elif f2.cond.value == 0b1100:
+                ands32__bc_gt(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=f.imm6)
+            elif f2.cond.value >= 0b1110:
+                ands32__bc_al(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=f.imm6)
+            elif f2.cond.value == 0b0001:
+                ands32__bc_ne(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=f.imm6)
+            elif f2.cond.value == 0b0011:
+                ands32__bc_cc(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=f.imm6)
+            elif f2.cond.value == 0b0101:
+                ands32__bc_pl(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=f.imm6)
+            elif f2.cond.value == 0b0111:
+                ands32__bc_vc(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=f.imm6)
+            elif f2.cond.value == 0b1001:
+                ands32__bc_ls(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=f.imm6)
+            elif f2.cond.value == 0b1011:
+                ands32__bc_lt(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=f.imm6)
+            elif f2.cond.value == 0b1101:
+                ands32__bc_le(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=f.imm6)
+
+        elif isinstance(self.translations[0], ANDS_64S_log_imm):
+            if f2.cond.value == 0b0000:
+                ands64__bc_eq(dest=f.Rd, flagdest=f0, src2=f.Rn, imm=(f.N,f.immr,f.imms))
+            elif f2.cond.value == 0b0010:
+                ands64__bc_cs(dest=f.Rd, flagdest=f0, src2=f.Rn, imm=(f.N,f.immr,f.imms))
+            elif f2.cond.value == 0b0100:
+                ands64__bc_mi(dest=f.Rd, flagdest=f0, src2=f.Rn, imm=(f.N,f.immr,f.imms))
+            elif f2.cond.value == 0b0110:
+                ands64__bc_vs(dest=f.Rd, flagdest=f0, src2=f.Rn, imm=(f.N,f.immr,f.imms))
+            elif f2.cond.value == 0b1000:
+                ands64__bc_hi(dest=f.Rd, flagdest=f0, src2=f.Rn, imm=(f.N,f.immr,f.imms))
+            elif f2.cond.value == 0b1010:
+                ands64__bc_ge(dest=f.Rd, flagdest=f0, src2=f.Rn, imm=(f.N,f.immr,f.imms))
+            elif f2.cond.value == 0b1100:
+                ands64__bc_gt(dest=f.Rd, flagdest=f0, src2=f.Rn, imm=(f.N,f.immr,f.imms))
+            elif f2.cond.value >= 0b1110:
+                ands64__bc_al(dest=f.Rd, flagdest=f0, src2=f.Rn, imm=(f.N,f.immr,f.imms))
+            elif f2.cond.value == 0b0001:
+                ands64__bc_ne(dest=f.Rd, flagdest=f0, src2=f.Rn, imm=(f.N,f.immr,f.imms))
+            elif f2.cond.value == 0b0011:
+                ands64__bc_cc(dest=f.Rd, flagdest=f0, src2=f.Rn, imm=(f.N,f.immr,f.imms))
+            elif f2.cond.value == 0b0101:
+                ands64__bc_pl(dest=f.Rd, flagdest=f0, src2=f.Rn, imm=(f.N,f.immr,f.imms))
+            elif f2.cond.value == 0b0111:
+                ands64__bc_vc(dest=f.Rd, flagdest=f0, src2=f.Rn, imm=(f.N,f.immr,f.imms))
+            elif f2.cond.value == 0b1001:
+                ands64__bc_ls(dest=f.Rd, flagdest=f0, src2=f.Rn, imm=(f.N,f.immr,f.imms))
+            elif f2.cond.value == 0b1011:
+                ands64__bc_lt(dest=f.Rd, flagdest=f0, src2=f.Rn, imm=(f.N,f.immr,f.imms))
+            elif f2.cond.value == 0b1101:
+                ands64__bc_le(dest=f.Rd, flagdest=f0, src2=f.Rn, imm=(f.N,f.immr,f.imms))
+
+        elif isinstance(self.translations[0], ANDS_64_log_shift):
+            if f2.cond.value == 0b0000:
+                ands64__bc_eq(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=f.imm6)
+            elif f2.cond.value == 0b0010:
+                ands64__bc_cs(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=f.imm6)
+            elif f2.cond.value == 0b0100:
+                ands64__bc_mi(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=f.imm6)
+            elif f2.cond.value == 0b0110:
+                ands64__bc_vs(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=f.imm6)
+            elif f2.cond.value == 0b1000:
+                ands64__bc_hi(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=f.imm6)
+            elif f2.cond.value == 0b1010:
+                ands64__bc_ge(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=f.imm6)
+            elif f2.cond.value == 0b1100:
+                ands64__bc_gt(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=f.imm6)
+            elif f2.cond.value >= 0b1110:
+                ands64__bc_al(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=f.imm6)
+            elif f2.cond.value == 0b0001:
+                ands64__bc_ne(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=f.imm6)
+            elif f2.cond.value == 0b0011:
+                ands64__bc_cc(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=f.imm6)
+            elif f2.cond.value == 0b0101:
+                ands64__bc_pl(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=f.imm6)
+            elif f2.cond.value == 0b0111:
+                ands64__bc_vc(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=f.imm6)
+            elif f2.cond.value == 0b1001:
+                ands64__bc_ls(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=f.imm6)
+            elif f2.cond.value == 0b1011:
+                ands64__bc_lt(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=f.imm6)
+            elif f2.cond.value == 0b1101:
+                ands64__bc_le(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=f.imm6)
+
+        else:
+            not_implemented(flagdest=f0)
+
+class BICS_Bcond(Fusion):
+    sequence = [[BICS_32_log_shift, BICS_64_log_shift], B_only_condbranch]
+    requirements = [no_shift_or_sign_extension, None]
+
+    BICS_32_log_shift.fusion_type = '00'
+    BICS_64_log_shift.fusion_type = '00'
+    fusion_type = '11'
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f, f2):
+        
+        if isinstance(self.translations[0], BICS_32_log_shift):
+            if f2.cond.value == 0b0000:
+                bics32__bc_eq(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=f.imm6)
+            elif f2.cond.value == 0b0010:
+                bics32__bc_cs(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=f.imm6)
+            elif f2.cond.value == 0b0100:
+                bics32__bc_mi(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=f.imm6)
+            elif f2.cond.value == 0b0110:
+                bics32__bc_vs(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=f.imm6)
+            elif f2.cond.value == 0b1000:
+                bics32__bc_hi(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=f.imm6)
+            elif f2.cond.value == 0b1010:
+                bics32__bc_ge(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=f.imm6)
+            elif f2.cond.value == 0b1100:
+                bics32__bc_gt(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=f.imm6)
+            elif f2.cond.value >= 0b1110:
+                bics32__bc_al(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=f.imm6)
+            elif f2.cond.value == 0b0001:
+                bics32__bc_ne(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=f.imm6)
+            elif f2.cond.value == 0b0011:
+                bics32__bc_cc(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=f.imm6)
+            elif f2.cond.value == 0b0101:
+                bics32__bc_pl(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=f.imm6)
+            elif f2.cond.value == 0b0111:
+                bics32__bc_vc(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=f.imm6)
+            elif f2.cond.value == 0b1001:
+                bics32__bc_ls(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=f.imm6)
+            elif f2.cond.value == 0b1011:
+                bics32__bc_lt(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=f.imm6)
+            elif f2.cond.value == 0b1101:
+                bics32__bc_le(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=f.imm6)
+
+        elif isinstance(self.translations[0], BICS_64_log_shift):
+            if f2.cond.value == 0b0000:
+                bics64__bc_eq(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=f.imm6)
+            elif f2.cond.value == 0b0010:
+                bics64__bc_cs(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=f.imm6)
+            elif f2.cond.value == 0b0100:
+                bics64__bc_mi(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=f.imm6)
+            elif f2.cond.value == 0b0110:
+                bics64__bc_vs(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=f.imm6)
+            elif f2.cond.value == 0b1000:
+                bics64__bc_hi(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=f.imm6)
+            elif f2.cond.value == 0b1010:
+                bics64__bc_ge(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=f.imm6)
+            elif f2.cond.value == 0b1100:
+                bics64__bc_gt(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=f.imm6)
+            elif f2.cond.value >= 0b1110:
+                bics64__bc_al(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=f.imm6)
+            elif f2.cond.value == 0b0001:
+                bics64__bc_ne(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=f.imm6)
+            elif f2.cond.value == 0b0011:
+                bics64__bc_cc(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=f.imm6)
+            elif f2.cond.value == 0b0101:
+                bics64__bc_pl(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=f.imm6)
+            elif f2.cond.value == 0b0111:
+                bics64__bc_vc(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=f.imm6)
+            elif f2.cond.value == 0b1001:
+                bics64__bc_ls(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=f.imm6)
+            elif f2.cond.value == 0b1011:
+                bics64__bc_lt(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=f.imm6)
+            elif f2.cond.value == 0b1101:
+                bics64__bc_le(dest=f.Rd, flagdest=f0, src1=f.Rn, src2=f.Rm, imm=f.imm6)
+
+        else:
+            not_implemented(flagdest=f0)
+
+class CCMN_Bcond(Fusion):
+    sequence = [[CCMN_32_condcmp_imm, CCMN_64_condcmp_imm, CCMN_32_condcmp_reg, CCMN_64_condcmp_reg], B_only_condbranch]
+
+    CCMN_32_condcmp_imm.fusion_type = '00'
+    CCMN_32_condcmp_reg.fusion_type = '00'
+    CCMN_64_condcmp_imm.fusion_type = '00'
+    CCMN_64_condcmp_reg.fusion_type = '00'
+    fusion_type = '11'
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f, f2):
+        
+        if isinstance(self.translations[0], CCMN_32_condcmp_imm):
+            if f2.cond.value == 0b0000:
+                ccmn32__bc_eq(flagdest=f0, src2=f.Rn, src3=f0, imm=(f.imm5,f.cond,f.nzcv))
+            elif f2.cond.value == 0b0010:
+                ccmn32__bc_cs(flagdest=f0, src2=f.Rn, src3=f0, imm=(f.imm5,f.cond,f.nzcv))
+            elif f2.cond.value == 0b0100:
+                ccmn32__bc_mi(flagdest=f0, src2=f.Rn, src3=f0, imm=(f.imm5,f.cond,f.nzcv))
+            elif f2.cond.value == 0b0110:
+                ccmn32__bc_vs(flagdest=f0, src2=f.Rn, src3=f0, imm=(f.imm5,f.cond,f.nzcv))
+            elif f2.cond.value == 0b1000:
+                ccmn32__bc_hi(flagdest=f0, src2=f.Rn, src3=f0, imm=(f.imm5,f.cond,f.nzcv))
+            elif f2.cond.value == 0b1010:
+                ccmn32__bc_ge(flagdest=f0, src2=f.Rn, src3=f0, imm=(f.imm5,f.cond,f.nzcv))
+            elif f2.cond.value == 0b1100:
+                ccmn32__bc_gt(flagdest=f0, src2=f.Rn, src3=f0, imm=(f.imm5,f.cond,f.nzcv))
+            elif f2.cond.value >= 0b1110:
+                ccmn32__bc_al(flagdest=f0, src2=f.Rn, src3=f0, imm=(f.imm5,f.cond,f.nzcv))
+            elif f2.cond.value == 0b0001:
+                ccmn32__bc_ne(flagdest=f0, src2=f.Rn, src3=f0, imm=(f.imm5,f.cond,f.nzcv))
+            elif f2.cond.value == 0b0011:
+                ccmn32__bc_cc(flagdest=f0, src2=f.Rn, src3=f0, imm=(f.imm5,f.cond,f.nzcv))
+            elif f2.cond.value == 0b0101:
+                ccmn32__bc_pl(flagdest=f0, src2=f.Rn, src3=f0, imm=(f.imm5,f.cond,f.nzcv))
+            elif f2.cond.value == 0b0111:
+                ccmn32__bc_vc(flagdest=f0, src2=f.Rn, src3=f0, imm=(f.imm5,f.cond,f.nzcv))
+            elif f2.cond.value == 0b1001:
+                ccmn32__bc_ls(flagdest=f0, src2=f.Rn, src3=f0, imm=(f.imm5,f.cond,f.nzcv))
+            elif f2.cond.value == 0b1011:
+                ccmn32__bc_lt(flagdest=f0, src2=f.Rn, src3=f0, imm=(f.imm5,f.cond,f.nzcv))
+            elif f2.cond.value == 0b1101:
+                ccmn32__bc_le(flagdest=f0, src2=f.Rn, src3=f0, imm=(f.imm5,f.cond,f.nzcv))
+
+        elif isinstance(self.translations[0], CCMN_32_condcmp_reg):
+            if f2.cond.value == 0b0000:
+                ccmn32__bc_eq(flagdest=f0, src1=f.Rn, src2=f.Rm, src3=f0, imm=(f.cond,f.nzcv))
+            elif f2.cond.value == 0b0010:
+                ccmn32__bc_cs(flagdest=f0, src1=f.Rn, src2=f.Rm, src3=f0, imm=(f.cond,f.nzcv))
+            elif f2.cond.value == 0b0100:
+                ccmn32__bc_mi(flagdest=f0, src1=f.Rn, src2=f.Rm, src3=f0, imm=(f.cond,f.nzcv))
+            elif f2.cond.value == 0b0110:
+                ccmn32__bc_vs(flagdest=f0, src1=f.Rn, src2=f.Rm, src3=f0, imm=(f.cond,f.nzcv))
+            elif f2.cond.value == 0b1000:
+                ccmn32__bc_hi(flagdest=f0, src1=f.Rn, src2=f.Rm, src3=f0, imm=(f.cond,f.nzcv))
+            elif f2.cond.value == 0b1010:
+                ccmn32__bc_ge(flagdest=f0, src1=f.Rn, src2=f.Rm, src3=f0, imm=(f.cond,f.nzcv))
+            elif f2.cond.value == 0b1100:
+                ccmn32__bc_gt(flagdest=f0, src1=f.Rn, src2=f.Rm, src3=f0, imm=(f.cond,f.nzcv))
+            elif f2.cond.value >= 0b1110:
+                ccmn32__bc_al(flagdest=f0, src1=f.Rn, src2=f.Rm, src3=f0, imm=(f.cond,f.nzcv))
+            elif f2.cond.value == 0b0001:
+                ccmn32__bc_ne(flagdest=f0, src1=f.Rn, src2=f.Rm, src3=f0, imm=(f.cond,f.nzcv))
+            elif f2.cond.value == 0b0011:
+                ccmn32__bc_cc(flagdest=f0, src1=f.Rn, src2=f.Rm, src3=f0, imm=(f.cond,f.nzcv))
+            elif f2.cond.value == 0b0101:
+                ccmn32__bc_pl(flagdest=f0, src1=f.Rn, src2=f.Rm, src3=f0, imm=(f.cond,f.nzcv))
+            elif f2.cond.value == 0b0111:
+                ccmn32__bc_vc(flagdest=f0, src1=f.Rn, src2=f.Rm, src3=f0, imm=(f.cond,f.nzcv))
+            elif f2.cond.value == 0b1001:
+                ccmn32__bc_ls(flagdest=f0, src1=f.Rn, src2=f.Rm, src3=f0, imm=(f.cond,f.nzcv))
+            elif f2.cond.value == 0b1011:
+                ccmn32__bc_lt(flagdest=f0, src1=f.Rn, src2=f.Rm, src3=f0, imm=(f.cond,f.nzcv))
+            elif f2.cond.value == 0b1101:
+                ccmn32__bc_le(flagdest=f0, src1=f.Rn, src2=f.Rm, src3=f0, imm=(f.cond,f.nzcv))
+                
+        elif isinstance(self.translations[0], CCMN_64_condcmp_imm):
+            if f2.cond.value == 0b0000:
+                ccmn64__bc_eq(flagdest=f0, src2=f.Rn, src3=f0, imm=(f.imm5,f.cond,f.nzcv))
+            elif f2.cond.value == 0b0010:
+                ccmn64__bc_cs(flagdest=f0, src2=f.Rn, src3=f0, imm=(f.imm5,f.cond,f.nzcv))
+            elif f2.cond.value == 0b0100:
+                ccmn64__bc_mi(flagdest=f0, src2=f.Rn, src3=f0, imm=(f.imm5,f.cond,f.nzcv))
+            elif f2.cond.value == 0b0110:
+                ccmn64__bc_vs(flagdest=f0, src2=f.Rn, src3=f0, imm=(f.imm5,f.cond,f.nzcv))
+            elif f2.cond.value == 0b1000:
+                ccmn64__bc_hi(flagdest=f0, src2=f.Rn, src3=f0, imm=(f.imm5,f.cond,f.nzcv))
+            elif f2.cond.value == 0b1010:
+                ccmn64__bc_ge(flagdest=f0, src2=f.Rn, src3=f0, imm=(f.imm5,f.cond,f.nzcv))
+            elif f2.cond.value == 0b1100:
+                ccmn64__bc_gt(flagdest=f0, src2=f.Rn, src3=f0, imm=(f.imm5,f.cond,f.nzcv))
+            elif f2.cond.value >= 0b1110:
+                ccmn64__bc_al(flagdest=f0, src2=f.Rn, src3=f0, imm=(f.imm5,f.cond,f.nzcv))
+            elif f2.cond.value == 0b0001:
+                ccmn64__bc_ne(flagdest=f0, src2=f.Rn, src3=f0, imm=(f.imm5,f.cond,f.nzcv))
+            elif f2.cond.value == 0b0011:
+                ccmn64__bc_cc(flagdest=f0, src2=f.Rn, src3=f0, imm=(f.imm5,f.cond,f.nzcv))
+            elif f2.cond.value == 0b0101:
+                ccmn64__bc_pl(flagdest=f0, src2=f.Rn, src3=f0, imm=(f.imm5,f.cond,f.nzcv))
+            elif f2.cond.value == 0b0111:
+                ccmn64__bc_vc(flagdest=f0, src2=f.Rn, src3=f0, imm=(f.imm5,f.cond,f.nzcv))
+            elif f2.cond.value == 0b1001:
+                ccmn64__bc_ls(flagdest=f0, src2=f.Rn, src3=f0, imm=(f.imm5,f.cond,f.nzcv))
+            elif f2.cond.value == 0b1011:
+                ccmn64__bc_lt(flagdest=f0, src2=f.Rn, src3=f0, imm=(f.imm5,f.cond,f.nzcv))
+            elif f2.cond.value == 0b1101:
+                ccmn64__bc_le(flagdest=f0, src2=f.Rn, src3=f0, imm=(f.imm5,f.cond,f.nzcv))
+
+        elif isinstance(self.translations[0], CCMN_64_condcmp_reg):
+            if f2.cond.value == 0b0000:
+                ccmn64__bc_eq(flagdest=f0, src1=f.Rn, src2=f.Rm, src3=f0, imm=(f.cond,f.nzcv))
+            elif f2.cond.value == 0b0010:
+                ccmn64__bc_cs(flagdest=f0, src1=f.Rn, src2=f.Rm, src3=f0, imm=(f.cond,f.nzcv))
+            elif f2.cond.value == 0b0100:
+                ccmn64__bc_mi(flagdest=f0, src1=f.Rn, src2=f.Rm, src3=f0, imm=(f.cond,f.nzcv))
+            elif f2.cond.value == 0b0110:
+                ccmn64__bc_vs(flagdest=f0, src1=f.Rn, src2=f.Rm, src3=f0, imm=(f.cond,f.nzcv))
+            elif f2.cond.value == 0b1000:
+                ccmn64__bc_hi(flagdest=f0, src1=f.Rn, src2=f.Rm, src3=f0, imm=(f.cond,f.nzcv))
+            elif f2.cond.value == 0b1010:
+                ccmn64__bc_ge(flagdest=f0, src1=f.Rn, src2=f.Rm, src3=f0, imm=(f.cond,f.nzcv))
+            elif f2.cond.value == 0b1100:
+                ccmn64__bc_gt(flagdest=f0, src1=f.Rn, src2=f.Rm, src3=f0, imm=(f.cond,f.nzcv))
+            elif f2.cond.value >= 0b1110:
+                ccmn64__bc_al(flagdest=f0, src1=f.Rn, src2=f.Rm, src3=f0, imm=(f.cond,f.nzcv))
+            elif f2.cond.value == 0b0001:
+                ccmn64__bc_ne(flagdest=f0, src1=f.Rn, src2=f.Rm, src3=f0, imm=(f.cond,f.nzcv))
+            elif f2.cond.value == 0b0011:
+                ccmn64__bc_cc(flagdest=f0, src1=f.Rn, src2=f.Rm, src3=f0, imm=(f.cond,f.nzcv))
+            elif f2.cond.value == 0b0101:
+                ccmn64__bc_pl(flagdest=f0, src1=f.Rn, src2=f.Rm, src3=f0, imm=(f.cond,f.nzcv))
+            elif f2.cond.value == 0b0111:
+                ccmn64__bc_vc(flagdest=f0, src1=f.Rn, src2=f.Rm, src3=f0, imm=(f.cond,f.nzcv))
+            elif f2.cond.value == 0b1001:
+                ccmn64__bc_ls(flagdest=f0, src1=f.Rn, src2=f.Rm, src3=f0, imm=(f.cond,f.nzcv))
+            elif f2.cond.value == 0b1011:
+                ccmn64__bc_lt(flagdest=f0, src1=f.Rn, src2=f.Rm, src3=f0, imm=(f.cond,f.nzcv))
+            elif f2.cond.value == 0b1101:
+                ccmn64__bc_le(flagdest=f0, src1=f.Rn, src2=f.Rm, src3=f0, imm=(f.cond,f.nzcv))
+
+class CCMP_Bcond(Fusion):
+    sequence = [[CCMP_32_condcmp_imm, CCMP_64_condcmp_imm, CCMP_32_condcmp_reg, CCMP_64_condcmp_reg], B_only_condbranch]
+
+    CCMP_32_condcmp_imm.fusion_type = '00'
+    CCMP_32_condcmp_reg.fusion_type = '00'
+    CCMP_64_condcmp_imm.fusion_type = '00'
+    CCMP_64_condcmp_reg.fusion_type = '00'
+    fusion_type = '11'
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f, f2):
+        
+        if isinstance(self.translations[0], CCMP_32_condcmp_imm):
+            if f2.cond.value == 0b0000:
+                ccmp32__bc_eq(flagdest=f0, src2=f.Rn, src3=f0, imm=(f.imm5,f.cond,f.nzcv))
+            elif f2.cond.value == 0b0010:
+                ccmp32__bc_cs(flagdest=f0, src2=f.Rn, src3=f0, imm=(f.imm5,f.cond,f.nzcv))
+            elif f2.cond.value == 0b0100:
+                ccmp32__bc_mi(flagdest=f0, src2=f.Rn, src3=f0, imm=(f.imm5,f.cond,f.nzcv))
+            elif f2.cond.value == 0b0110:
+                ccmp32__bc_vs(flagdest=f0, src2=f.Rn, src3=f0, imm=(f.imm5,f.cond,f.nzcv))
+            elif f2.cond.value == 0b1000:
+                ccmp32__bc_hi(flagdest=f0, src2=f.Rn, src3=f0, imm=(f.imm5,f.cond,f.nzcv))
+            elif f2.cond.value == 0b1010:
+                ccmp32__bc_ge(flagdest=f0, src2=f.Rn, src3=f0, imm=(f.imm5,f.cond,f.nzcv))
+            elif f2.cond.value == 0b1100:
+                ccmp32__bc_gt(flagdest=f0, src2=f.Rn, src3=f0, imm=(f.imm5,f.cond,f.nzcv))
+            elif f2.cond.value >= 0b1110:
+                ccmp32__bc_al(flagdest=f0, src2=f.Rn, src3=f0, imm=(f.imm5,f.cond,f.nzcv))
+            elif f2.cond.value == 0b0001:
+                ccmp32__bc_ne(flagdest=f0, src2=f.Rn, src3=f0, imm=(f.imm5,f.cond,f.nzcv))
+            elif f2.cond.value == 0b0011:
+                ccmp32__bc_cc(flagdest=f0, src2=f.Rn, src3=f0, imm=(f.imm5,f.cond,f.nzcv))
+            elif f2.cond.value == 0b0101:
+                ccmp32__bc_pl(flagdest=f0, src2=f.Rn, src3=f0, imm=(f.imm5,f.cond,f.nzcv))
+            elif f2.cond.value == 0b0111:
+                ccmp32__bc_vc(flagdest=f0, src2=f.Rn, src3=f0, imm=(f.imm5,f.cond,f.nzcv))
+            elif f2.cond.value == 0b1001:
+                ccmp32__bc_ls(flagdest=f0, src2=f.Rn, src3=f0, imm=(f.imm5,f.cond,f.nzcv))
+            elif f2.cond.value == 0b1011:
+                ccmp32__bc_lt(flagdest=f0, src2=f.Rn, src3=f0, imm=(f.imm5,f.cond,f.nzcv))
+            elif f2.cond.value == 0b1101:
+                ccmp32__bc_le(flagdest=f0, src2=f.Rn, src3=f0, imm=(f.imm5,f.cond,f.nzcv))
+
+        elif isinstance(self.translations[0], CCMP_32_condcmp_reg):
+            if f2.cond.value == 0b0000:
+                ccmp32__bc_eq(flagdest=f0, src1=f.Rn, src2=f.Rm, src3=f0, imm=(f.cond,f.nzcv))
+            elif f2.cond.value == 0b0010:
+                ccmp32__bc_cs(flagdest=f0, src1=f.Rn, src2=f.Rm, src3=f0, imm=(f.cond,f.nzcv))
+            elif f2.cond.value == 0b0100:
+                ccmp32__bc_mi(flagdest=f0, src1=f.Rn, src2=f.Rm, src3=f0, imm=(f.cond,f.nzcv))
+            elif f2.cond.value == 0b0110:
+                ccmp32__bc_vs(flagdest=f0, src1=f.Rn, src2=f.Rm, src3=f0, imm=(f.cond,f.nzcv))
+            elif f2.cond.value == 0b1000:
+                ccmp32__bc_hi(flagdest=f0, src1=f.Rn, src2=f.Rm, src3=f0, imm=(f.cond,f.nzcv))
+            elif f2.cond.value == 0b1010:
+                ccmp32__bc_ge(flagdest=f0, src1=f.Rn, src2=f.Rm, src3=f0, imm=(f.cond,f.nzcv))
+            elif f2.cond.value == 0b1100:
+                ccmp32__bc_gt(flagdest=f0, src1=f.Rn, src2=f.Rm, src3=f0, imm=(f.cond,f.nzcv))
+            elif f2.cond.value >= 0b1110:
+                ccmp32__bc_al(flagdest=f0, src1=f.Rn, src2=f.Rm, src3=f0, imm=(f.cond,f.nzcv))
+            elif f2.cond.value == 0b0001:
+                ccmp32__bc_ne(flagdest=f0, src1=f.Rn, src2=f.Rm, src3=f0, imm=(f.cond,f.nzcv))
+            elif f2.cond.value == 0b0011:
+                ccmp32__bc_cc(flagdest=f0, src1=f.Rn, src2=f.Rm, src3=f0, imm=(f.cond,f.nzcv))
+            elif f2.cond.value == 0b0101:
+                ccmp32__bc_pl(flagdest=f0, src1=f.Rn, src2=f.Rm, src3=f0, imm=(f.cond,f.nzcv))
+            elif f2.cond.value == 0b0111:
+                ccmp32__bc_vc(flagdest=f0, src1=f.Rn, src2=f.Rm, src3=f0, imm=(f.cond,f.nzcv))
+            elif f2.cond.value == 0b1001:
+                ccmp32__bc_ls(flagdest=f0, src1=f.Rn, src2=f.Rm, src3=f0, imm=(f.cond,f.nzcv))
+            elif f2.cond.value == 0b1011:
+                ccmp32__bc_lt(flagdest=f0, src1=f.Rn, src2=f.Rm, src3=f0, imm=(f.cond,f.nzcv))
+            elif f2.cond.value == 0b1101:
+                ccmp32__bc_le(flagdest=f0, src1=f.Rn, src2=f.Rm, src3=f0, imm=(f.cond,f.nzcv))
+                
+        elif isinstance(self.translations[0], CCMP_64_condcmp_imm):
+            if f2.cond.value == 0b0000:
+                ccmp64__bc_eq(flagdest=f0, src2=f.Rn, src3=f0, imm=(f.imm5,f.cond,f.nzcv))
+            elif f2.cond.value == 0b0010:
+                ccmp64__bc_cs(flagdest=f0, src2=f.Rn, src3=f0, imm=(f.imm5,f.cond,f.nzcv))
+            elif f2.cond.value == 0b0100:
+                ccmp64__bc_mi(flagdest=f0, src2=f.Rn, src3=f0, imm=(f.imm5,f.cond,f.nzcv))
+            elif f2.cond.value == 0b0110:
+                ccmp64__bc_vs(flagdest=f0, src2=f.Rn, src3=f0, imm=(f.imm5,f.cond,f.nzcv))
+            elif f2.cond.value == 0b1000:
+                ccmp64__bc_hi(flagdest=f0, src2=f.Rn, src3=f0, imm=(f.imm5,f.cond,f.nzcv))
+            elif f2.cond.value == 0b1010:
+                ccmp64__bc_ge(flagdest=f0, src2=f.Rn, src3=f0, imm=(f.imm5,f.cond,f.nzcv))
+            elif f2.cond.value == 0b1100:
+                ccmp64__bc_gt(flagdest=f0, src2=f.Rn, src3=f0, imm=(f.imm5,f.cond,f.nzcv))
+            elif f2.cond.value >= 0b1110:
+                ccmp64__bc_al(flagdest=f0, src2=f.Rn, src3=f0, imm=(f.imm5,f.cond,f.nzcv))
+            elif f2.cond.value == 0b0001:
+                ccmp64__bc_ne(flagdest=f0, src2=f.Rn, src3=f0, imm=(f.imm5,f.cond,f.nzcv))
+            elif f2.cond.value == 0b0011:
+                ccmp64__bc_cc(flagdest=f0, src2=f.Rn, src3=f0, imm=(f.imm5,f.cond,f.nzcv))
+            elif f2.cond.value == 0b0101:
+                ccmp64__bc_pl(flagdest=f0, src2=f.Rn, src3=f0, imm=(f.imm5,f.cond,f.nzcv))
+            elif f2.cond.value == 0b0111:
+                ccmp64__bc_vc(flagdest=f0, src2=f.Rn, src3=f0, imm=(f.imm5,f.cond,f.nzcv))
+            elif f2.cond.value == 0b1001:
+                ccmp64__bc_ls(flagdest=f0, src2=f.Rn, src3=f0, imm=(f.imm5,f.cond,f.nzcv))
+            elif f2.cond.value == 0b1011:
+                ccmp64__bc_lt(flagdest=f0, src2=f.Rn, src3=f0, imm=(f.imm5,f.cond,f.nzcv))
+            elif f2.cond.value == 0b1101:
+                ccmp64__bc_le(flagdest=f0, src2=f.Rn, src3=f0, imm=(f.imm5,f.cond,f.nzcv))
+
+        elif isinstance(self.translations[0], CCMP_64_condcmp_reg):
+            if f2.cond.value == 0b0000:
+                ccmp64__bc_eq(flagdest=f0, src1=f.Rn, src2=f.Rm, src3=f0, imm=(f.cond,f.nzcv))
+            elif f2.cond.value == 0b0010:
+                ccmp64__bc_cs(flagdest=f0, src1=f.Rn, src2=f.Rm, src3=f0, imm=(f.cond,f.nzcv))
+            elif f2.cond.value == 0b0100:
+                ccmp64__bc_mi(flagdest=f0, src1=f.Rn, src2=f.Rm, src3=f0, imm=(f.cond,f.nzcv))
+            elif f2.cond.value == 0b0110:
+                ccmp64__bc_vs(flagdest=f0, src1=f.Rn, src2=f.Rm, src3=f0, imm=(f.cond,f.nzcv))
+            elif f2.cond.value == 0b1000:
+                ccmp64__bc_hi(flagdest=f0, src1=f.Rn, src2=f.Rm, src3=f0, imm=(f.cond,f.nzcv))
+            elif f2.cond.value == 0b1010:
+                ccmp64__bc_ge(flagdest=f0, src1=f.Rn, src2=f.Rm, src3=f0, imm=(f.cond,f.nzcv))
+            elif f2.cond.value == 0b1100:
+                ccmp64__bc_gt(flagdest=f0, src1=f.Rn, src2=f.Rm, src3=f0, imm=(f.cond,f.nzcv))
+            elif f2.cond.value >= 0b1110:
+                ccmp64__bc_al(flagdest=f0, src1=f.Rn, src2=f.Rm, src3=f0, imm=(f.cond,f.nzcv))
+            elif f2.cond.value == 0b0001:
+                ccmp64__bc_ne(flagdest=f0, src1=f.Rn, src2=f.Rm, src3=f0, imm=(f.cond,f.nzcv))
+            elif f2.cond.value == 0b0011:
+                ccmp64__bc_cc(flagdest=f0, src1=f.Rn, src2=f.Rm, src3=f0, imm=(f.cond,f.nzcv))
+            elif f2.cond.value == 0b0101:
+                ccmp64__bc_pl(flagdest=f0, src1=f.Rn, src2=f.Rm, src3=f0, imm=(f.cond,f.nzcv))
+            elif f2.cond.value == 0b0111:
+                ccmp64__bc_vc(flagdest=f0, src1=f.Rn, src2=f.Rm, src3=f0, imm=(f.cond,f.nzcv))
+            elif f2.cond.value == 0b1001:
+                ccmp64__bc_ls(flagdest=f0, src1=f.Rn, src2=f.Rm, src3=f0, imm=(f.cond,f.nzcv))
+            elif f2.cond.value == 0b1011:
+                ccmp64__bc_lt(flagdest=f0, src1=f.Rn, src2=f.Rm, src3=f0, imm=(f.cond,f.nzcv))
+            elif f2.cond.value == 0b1101:
+                ccmp64__bc_le(flagdest=f0, src1=f.Rn, src2=f.Rm, src3=f0, imm=(f.cond,f.nzcv))
+
+class ALU64_CBNZ(Fusion):
+    """64 bit {SUB, AND, EOR} + CBNZ fusion"""
+    sequence = [[SUB_64_addsub_ext, SUB_64_addsub_shift, SUB_64_addsub_imm, AND_64_log_imm, AND_64_log_shift, EOR_64_log_imm, EOR_64_log_shift], CBNZ_64_compbranch]
+
+    SUB_64_addsub_ext.fusion_type = '00'
+    SUB_64_addsub_shift.fusion_type = '00'
+    SUB_64_addsub_imm.fusion_type = '00'
+    AND_64_log_imm.fusion_type = '00'
+    AND_64_log_shift.fusion_type = '00'
+    EOR_64_log_imm.fusion_type = '00'
+    EOR_64_log_shift.fusion_type = '00'
+    fusion_type = '01'
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f, f2):
+        
+        if isinstance(self.translations[0], SUB_64_addsub_ext):
+            sub64_cbnz(dest=f.Rd, src1=f.Rn, src2=f.Rm, imm=(f.option,f.imm3), dest_is_stack_pointer=True, src1_is_stack_pointer=True)
+        elif isinstance(self.translations[0], SUB_64_addsub_shift):
+            sub64_cbnz(dest=f.Rd, src1=f.Rn, src2=f.Rm, imm=(Signal("011"),f.opcBit12,f.opcBit11,f.opcBit10))
+        elif isinstance(self.translations[0], SUB_64_addsub_imm):
+            sub64_cbnz(dest=f.Rd, src2=f.Rn, imm=(f.sh,f.imm12), dest_is_stack_pointer=True, src2_is_stack_pointer=True)
+        elif isinstance(self.translations[0], AND_64_log_imm):
+            and64_imm_cbnz(dest=f.Rd, src2=f.Rn, imm=(f.N,f.immr,f.imms), dest_is_stack_pointer=True)
+        elif isinstance(self.translations[0], AND_64_log_shift):
+            and64_cbnz(dest=f.Rd, src1=f.Rn, src2=f.Rm, imm=f.imm6)
+        elif isinstance(self.translations[0], EOR_64_log_imm):
+            eor64_imm_cbnz(dest=f.Rd, src2=f.Rn, imm=(f.N,f.immr,f.imms), dest_is_stack_pointer=True)
+        elif isinstance(self.translations[0], EOR_64_log_shift):
+            eor64_cbnz(dest=f.Rd, src1=f.Rn, src2=f.Rm, imm=f.imm6)
+
+class ALU64_CBZ(Fusion):
+    """64 bit {SUB, AND, EOR} + CBZ fusion"""
+    sequence = [[SUB_64_addsub_ext, SUB_64_addsub_shift, SUB_64_addsub_imm, AND_64_log_imm, AND_64_log_shift, EOR_64_log_imm, EOR_64_log_shift], CBZ_64_compbranch]
+
+    SUB_64_addsub_ext.fusion_type = '00'
+    SUB_64_addsub_shift.fusion_type = '00'
+    SUB_64_addsub_imm.fusion_type = '00'
+    AND_64_log_imm.fusion_type = '00'
+    AND_64_log_shift.fusion_type = '00'
+    EOR_64_log_imm.fusion_type = '00'
+    EOR_64_log_shift.fusion_type = '00'
+    fusion_type = '10'   
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f, f2):
+        
+        if isinstance(self.translations[0], SUB_64_addsub_ext):
+            sub64_cbz(dest=f.Rd, src1=f.Rn, src2=f.Rm, imm=(f.option,f.imm3), dest_is_stack_pointer=True, src1_is_stack_pointer=True)
+        elif isinstance(self.translations[0], SUB_64_addsub_shift):
+            sub64_cbz(dest=f.Rd, src1=f.Rn, src2=f.Rm, imm=(Signal("011"),f.opcBit12,f.opcBit11,f.opcBit10))
+        elif isinstance(self.translations[0], SUB_64_addsub_imm):
+            sub64_cbz(dest=f.Rd, src2=f.Rn, imm=(f.sh,f.imm12), dest_is_stack_pointer=True, src2_is_stack_pointer=True)
+        elif isinstance(self.translations[0], AND_64_log_imm):
+            and64_imm_cbz(dest=f.Rd, src2=f.Rn, imm=(f.N,f.immr,f.imms), dest_is_stack_pointer=True)
+        elif isinstance(self.translations[0], AND_64_log_shift):
+            and64_cbz(dest=f.Rd, src1=f.Rn, src2=f.Rm, imm=f.imm6)
+        elif isinstance(self.translations[0], EOR_64_log_imm):
+            eor64_imm_cbz(dest=f.Rd, src2=f.Rn, imm=(f.N,f.immr,f.imms), dest_is_stack_pointer=True)
+        elif isinstance(self.translations[0], EOR_64_log_shift):
+            eor64_cbz(dest=f.Rd, src1=f.Rn, src2=f.Rm, imm=f.imm6)
+
+class ALU32_CBNZ(Fusion):
+    """32 bit {SUB, AND, EOR} + CBNZ fusion"""
+    sequence = [[SUB_32_addsub_ext, SUB_32_addsub_shift, SUB_32_addsub_imm, AND_32_log_imm, AND_32_log_shift, EOR_32_log_imm, EOR_32_log_shift], CBNZ_32_compbranch]
+
+    SUB_32_addsub_ext.fusion_type = '00'
+    SUB_32_addsub_shift.fusion_type = '00'
+    SUB_32_addsub_imm.fusion_type = '00'
+    AND_32_log_imm.fusion_type = '00'
+    AND_32_log_shift.fusion_type = '00'
+    EOR_32_log_imm.fusion_type = '00'
+    EOR_32_log_shift.fusion_type = '00'
+    fusion_type = '01'
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f, f2):
+        
+        if isinstance(self.translations[0], SUB_32_addsub_ext):
+            sub32_cbnz(dest=f.Rd, src1=f.Rn, src2=f.Rm, imm=(f.option,f.imm3), dest_is_stack_pointer=True, src1_is_stack_pointer=True)
+        elif isinstance(self.translations[0], SUB_32_addsub_shift):
+            sub32_cbnz(dest=f.Rd, src1=f.Rn, src2=f.Rm, imm=(Signal("011"),f.opcBit12,f.opcBit11,f.opcBit10))
+        elif isinstance(self.translations[0], SUB_32_addsub_imm):
+            sub32_cbnz(dest=f.Rd, src2=f.Rn, imm=(f.sh,f.imm12), dest_is_stack_pointer=True, src2_is_stack_pointer=True)
+        elif isinstance(self.translations[0], AND_32_log_imm):
+            and32_imm_cbnz(dest=f.Rd, src2=f.Rn, imm=(f.N,f.immr,f.imms), dest_is_stack_pointer=True)
+        elif isinstance(self.translations[0], AND_32_log_shift):
+            and32_cbnz(dest=f.Rd, src1=f.Rn, src2=f.Rm, imm=f.imm6)
+        elif isinstance(self.translations[0], EOR_32_log_imm):
+            eor32_imm_cbnz(dest=f.Rd, src2=f.Rn, imm=(f.N,f.immr,f.imms), dest_is_stack_pointer=True)
+        elif isinstance(self.translations[0], EOR_32_log_shift):
+            eor32_cbnz(dest=f.Rd, src1=f.Rn, src2=f.Rm, imm=f.imm6)
+
+class ALU32_CBZ(Fusion):
+    """32 bit {SUB, AND, EOR} + CBZ fusion"""
+    sequence = [[SUB_32_addsub_ext, SUB_32_addsub_shift, SUB_32_addsub_imm, AND_32_log_imm, AND_32_log_shift, EOR_32_log_imm, EOR_32_log_shift], CBZ_32_compbranch]
+
+    SUB_32_addsub_ext.fusion_type = '00'
+    SUB_32_addsub_shift.fusion_type = '00'
+    SUB_32_addsub_imm.fusion_type = '00'
+    AND_32_log_imm.fusion_type = '00'
+    AND_32_log_shift.fusion_type = '00'
+    EOR_32_log_imm.fusion_type = '00'
+    EOR_32_log_shift.fusion_type = '00'
+    fusion_type = '10'
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f, f2):
+        
+        if isinstance(self.translations[0], SUB_32_addsub_ext):
+            sub32_cbz(dest=f.Rd, src1=f.Rn, src2=f.Rm, imm=(f.option,f.imm3), dest_is_stack_pointer=True, src1_is_stack_pointer=True)
+        elif isinstance(self.translations[0], SUB_32_addsub_shift):
+            sub32_cbz(dest=f.Rd, src1=f.Rn, src2=f.Rm, imm=(Signal("011"),f.opcBit12,f.opcBit11,f.opcBit10))
+        elif isinstance(self.translations[0], SUB_32_addsub_imm):
+            sub32_cbz(dest=f.Rd, src2=f.Rn, imm=(f.sh,f.imm12), dest_is_stack_pointer=True, src2_is_stack_pointer=True)
+        elif isinstance(self.translations[0], AND_32_log_imm):
+            and32_imm_cbz(dest=f.Rd, src2=f.Rn, imm=(f.N,f.immr,f.imms), dest_is_stack_pointer=True)
+        elif isinstance(self.translations[0], AND_32_log_shift):
+            and32_cbz(dest=f.Rd, src1=f.Rn, src2=f.Rm, imm=f.imm6)
+        elif isinstance(self.translations[0], EOR_32_log_imm):
+            eor32_imm_cbz(dest=f.Rd, src2=f.Rn, imm=(f.N,f.immr,f.imms), dest_is_stack_pointer=True)
+        elif isinstance(self.translations[0], EOR_32_log_shift):
+            eor32_cbz(dest=f.Rd, src1=f.Rn, src2=f.Rm, imm=f.imm6)
+
+class ADD64_ADD1(Fusion):
+    """64 bit ADD + ADD1 fusion"""
+    sequence = [[ADD_64_addsub_ext, ADD_64_addsub_shift], ADD_64_addsub_imm]
+
+    ADD_64_addsub_ext.fusion_type = '00'
+    ADD_64_addsub_shift.fusion_type = '00'
+    fusion_type = '11'
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f, f2):
+        
+        if isinstance(self.translations[0], ADD_64_addsub_ext):
+            add64_p1(dest=f.Rd, src1=f.Rn, src2=f.Rm, imm=(f.option,f.imm3), dest_is_stack_pointer=True, src1_is_stack_pointer=True)
+        elif isinstance(self.translations[0], ADD_64_addsub_shift):
+            add64_p1(dest=f.Rd, src1=f.Rn, src2=f.Rm, imm=(Signal("011"),f.opcBit12,f.opcBit11,f.opcBit10))
+
+
+
+class ADD32_ADD1(Fusion):
+    """32 bit ADD + ADD1 fusion"""
+    sequence = [[ADD_32_addsub_ext, ADD_32_addsub_shift], ADD_32_addsub_imm]
+
+    ADD_32_addsub_ext.fusion_type = '00'
+    ADD_32_addsub_shift.fusion_type = '00'
+    fusion_type = '11'
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f, f2):
+        
+        if isinstance(self.translations[0], ADD_32_addsub_ext):
+            add32_p1(dest=f.Rd, src1=f.Rn, src2=f.Rm, imm=(f.option,f.imm3), dest_is_stack_pointer=True, src1_is_stack_pointer=True)
+        elif isinstance(self.translations[0], ADD_32_addsub_shift):
+            add32_p1(dest=f.Rd, src1=f.Rn, src2=f.Rm, imm=(Signal("011"),f.opcBit12,f.opcBit11,f.opcBit10))
+
+
+class SUB64_SUB1(Fusion):
+    """64 bit SUB + SUB1 fusion"""
+    sequence = [[SUB_64_addsub_ext, SUB_64_addsub_shift], SUB_64_addsub_imm]
+
+    SUB_64_addsub_ext.fusion_type = '00'
+    SUB_64_addsub_shift.fusion_type = '00'
+    fusion_type = '11'
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f, f2):
+        
+        if isinstance(self.translations[0], SUB_64_addsub_ext):
+            sub64_m1(dest=f.Rd, src1=f.Rn, src2=f.Rm, imm=(f.option,f.imm3), dest_is_stack_pointer=True, src1_is_stack_pointer=True)
+        elif isinstance(self.translations[0], SUB_64_addsub_shift):
+            sub64_m1(dest=f.Rd, src1=f.Rn, src2=f.Rm, imm=(Signal("011"),f.opcBit12,f.opcBit11,f.opcBit10))
+
+
+
+class SUB32_SUB1(Fusion):
+    """32 bit SUB + SUB1 fusion"""
+    sequence = [[SUB_32_addsub_ext, SUB_32_addsub_shift], SUB_32_addsub_imm]
+
+    SUB_32_addsub_ext.fusion_type = '00'
+    SUB_32_addsub_shift.fusion_type = '00'
+    fusion_type = '11'
+
+    pmu_events = ['A64SCALAR_SPEC', 'DP_SPEC', 'INT_SPEC']
+
+    def decode(self, f, f2):
+        
+        if isinstance(self.translations[0], SUB_32_addsub_ext):
+            sub32_m1(dest=f.Rd, src1=f.Rn, src2=f.Rm, imm=(f.option,f.imm3), dest_is_stack_pointer=True, src1_is_stack_pointer=True)
+        elif isinstance(self.translations[0], SUB_32_addsub_shift):
+            sub32_m1(dest=f.Rd, src1=f.Rn, src2=f.Rm, imm=(Signal("011"),f.opcBit12,f.opcBit11,f.opcBit10))

@@ -1,0 +1,11 @@
+init
+*.csv
+*.bbv
+*.qcow2
+*.log
+*.json
+is_traces.*
+rtl_traces.*
+junk.*
+*.calculate_simpoints.*
+*.png

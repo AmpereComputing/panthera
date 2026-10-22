@@ -1,0 +1,29 @@
+# Copyright (c) 2019 Ampere Computing. All rights reserved.
+# SPDX-License-Identifier: BSD-3-Clause
+
+from ampere.xlat import Signal, Translation
+from uop import *
+
+
+s0 = Signal('100011')
+s1 = Signal('100100')
+
+class ADD_64_addsub_shift(Translation):
+    """Add (shifted register)"""
+    pattern = '1  0  0 01011 --    0 ----- ------ ----- -----'
+    pfields = 'sf op S       shift    Rm    imm6   Rn    Rd  '
+
+    asmtemplate = 'ADD  <Xd>, <Xn>, <Xm>{, <shift> #<amount>}'
+
+    def decode(self, f):
+        if f.shift.value == 0b00 and f.imm6.value <= 0b000100:
+            add64(dest=f.Rd, src1=f.Rn, src2=f.Rm, imm=(Signal("01100000"),f.imm6))
+        elif f.shift.value == 0b00 and f.imm6.value > 0b000100:
+            lslv64(dest=s0, src1=f.Rm, imm=f.imm6)
+            add64(dest=f.Rd, src1=f.Rn, src2=s0, imm=Signal("01100000000000"))
+        elif f.shift.value == 0b01:
+            ubfm64(dest=s0, src1=f.Rm, src2=f.Rm, imm=(f.imm6,Signal("111111")))
+            add64(dest=f.Rd, src1=f.Rn, src2=s0, imm=Signal("01100000000000"))
+        elif f.shift.value == 0b10:
+            sbfm64(dest=s0, src1=f.Rm, src2=f.Rm, imm=(f.imm6,Signal("111111")))
+            add64(dest=f.Rd, src1=f.Rn, src2=s0, imm=Signal("01100000000000"))

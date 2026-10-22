@@ -1,0 +1,8 @@
+# Copyright (c) 2018-2019 Ampere Computing. All rights reserved.
+# SPDX-License-Identifier: BSD-3-Clause
+
+uops:
+  addz:
+    unit: ixu
+    opcode: 0x53
+    opcode_mask: 0xFF

@@ -1,0 +1,12 @@
+// python
+// environment
++_=/path/to/dvtools/bin/fet
+// file
++sknobs.files=test
+// command line
++chkpt_file=/path/to/checkpoints/bm_something/bm_something_2.chkpt
+// file
++sknobs.files=                                                                              
+// file
++sknobs.files=        
+// /path/to/benchmarks/snippet.knobs

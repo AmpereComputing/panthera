@@ -1,0 +1,10 @@
+[
+  {
+    "name": "java14-dacapo-biojava",
+    "file": "../../../core/test/java14-dacapo-biojava_3.is.xz",
+    "pan_cache_preload_file": "../../../core/test/java14-dacapo-biojava_3.ms.xz",
+    "suite": "test",
+    "weight": 1.0,
+    "workload": "java14-dacapo-biojava"
+  }
+]

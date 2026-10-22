@@ -1,0 +1,199 @@
+#!/usr/bin/env python3
+# Copyright (c) 2018-2026 Ampere Computing. All rights reserved.
+# SPDX-License-Identifier: BSD-3-Clause
+
+"""XLAT package commands.
+
+This is a front-end script for processing files with the XLAT package.
+It can, for example, produce decode logic for an instruction decoder,
+or produce logic for decoding Uops.
+
+To use it, choose a sub-command and appropriate arguments. Sub-commands
+have their own help, which you can see by running:
+
+    xlat <subcommand> -h
+
+"""
+
+import argparse
+import importlib
+import importlib.util
+import logging
+import multiprocessing
+import os
+import sys
+import traceback
+
+import ampere.xlat as xlat
+
+from ampere.xlat import generate, set, XlatContext, XlatError
+
+logging.basicConfig(format='%(levelname)s: %(message)s', datefmt='%I:%M:%S')
+log = logging.getLogger('ampere')
+
+
+def main():
+    global args
+    args = parse_args()
+    do_xlat(args)
+
+
+def parse_args():
+    global args
+    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser.add_argument('--debug', action='store_true', help='Enable debugging (stack trace)')
+    parser.add_argument('-i', '--import', action='append', default=[], dest='imports',
+                        help='Auxiliary module to import')
+
+    args, remaining_args = parser.parse_known_args()
+
+    parser.add_argument('input_files', nargs='+', help='Input files containing predicates')
+    parser.add_argument('--stdout', action='store_true', help='Print predicate functions to stdout')
+    parser.add_argument('-o', '--output', help='Output file name')
+    parser.add_argument('--fmt', help='Output format for generator (default: function)', default='function',
+                        choices=['function', 'case', 'logic', 'espresso', 'ascii'])
+
+    parser.add_argument('--scope-check', help='Force functions to return x if their scopes are not satisfied')
+    parser.add_argument('--annotate', action='store_true', help='Annotate functions with espresso input table')
+
+    parser.add_argument('-j', '--jobs', type=int, default=multiprocessing.cpu_count(),
+                        help='Maximum number of parallel espresso jobs')
+
+    parser.add_argument('--enforce-fusion-requirements', action='store_true', default=False,
+                        help='Use "requirements" functions in fused instruction to gate decode')
+
+    for mod in args.imports:
+        importlib.import_module(mod)
+
+    xlat.add_initializer_arguments(parser)
+    parser.parse_args(remaining_args, namespace=args)
+    xlat.run_initializers(args)
+
+    return parser.parse_args()
+
+
+def do_xlat(args):
+    xlat_globals = {}
+
+    if args.enforce_fusion_requirements:
+        xlat.translation.enforce_fusion_requirements = True
+
+    for input_file in args.input_files:
+        if not os.path.exists(input_file):
+            raise XlatError(f'No such file or directory: {input_file}')
+
+        process_input(args, input_file, xlat_globals)
+
+
+def minimize_pla(arg):
+    input_file, function, pla, mux, input_table = arg
+    if pla:
+        with XlatContext(f'minimizing function "{function}" from file {input_file}'):
+            pla.minimize()
+    return pla, mux, input_table
+
+
+def process_input(args, input_file, xlat_globals):
+    global_vars = xlat_globals if input_file.endswith('.xlat') else {}
+    exec(compile(open(input_file).read(), input_file, mode='exec'), global_vars)
+
+    if not generate.Generator.all_generators:
+        return
+
+    pkg = package_name(input_file)
+
+    results = []
+
+    with output_file(args, input_file) as out:
+        print(f'package {pkg};', file=out)
+
+        errors = 0
+
+        for gen in generate.Generator.all_generators:
+            try:
+                with XlatContext(f'processing {input_file}, function "{gen.output}"'):
+                    pla, mux = gen.generate(minimize=False)
+                    results.append((input_file, gen.output, pla, mux, pla.to_espresso() if pla and args.annotate else None))
+            except XlatError as e:
+                log.error(str(e))
+                errors += 1
+
+        if errors:
+            log.error('Exiting due to errors.')
+            exit(-1)
+
+        with multiprocessing.Pool(processes=args.jobs) as pool:
+            results = pool.map(minimize_pla, results)
+
+        for idx, (pla, mux, input_table) in enumerate(results):
+            gen = generate.Generator.all_generators[idx]
+            if mux:
+                # FIXME: probably don't want to generate this mux implicitly. Raise an error instead?
+                print(f'{mux:function}', file=out)
+            if pla:
+                if input_table:
+                    print(f'/*\n{input_table}\n*/', file=out)
+                if args.scope_check and scope_check_applies(gen):
+                    print_with_scope_check(gen, pla, args.scope_check, out)
+                else:
+                    print(f'{pla:{args.fmt}}', file=out)
+
+        print('endpackage', file=out)
+
+    generate.Generator.all_generators.clear()
+
+
+def package_name(input_file):
+    return os.path.basename(input_file).split('.')[0]
+
+
+def output_file(args, input_file):
+    if args.stdout:
+        if args.output:
+            raise XlatError('cannot specify both -o and --stdout')
+        return sys.stdout
+    elif args.output:
+        return open(args.output, 'w')
+    else:
+        return open(output_file_name(input_file), 'w')
+
+
+def output_file_name(input_file):
+    stem, suffix = os.path.splitext(input_file)
+    if suffix == '.py':
+        return stem
+    else:
+        return input_file + '.sv'
+
+
+def print_with_scope_check(gen, pla, scope_check_guard, out):
+    function_body = f'{pla:function}'.split('\n')
+    while function_body.pop() != 'endfunction':
+        pass
+    function_body += f'''
+`ifdef {scope_check_guard}
+  if ({gen.source_set._scope.output}({', '.join([input for input in pla._inputs])}) !== 1) {pla._outputs[0]} = 'x;
+`endif
+endfunction
+'''.split('\n')
+    print('\n'.join(function_body), file=out)
+
+
+def scope_check_applies(gen):
+    if isinstance(gen.source_set, set.Set):
+        scope = gen.source_set._scope
+        return isinstance(scope, generate.Generator) and not scope.do_not_generate and scope.inputs == gen.inputs
+    else:
+        return False
+
+
+if __name__ == '__main__':
+    args = None
+    try:
+        main()
+    except XlatError as e:
+        if not args or args.debug:
+            traceback.print_exc()
+        else:
+            log.error(str(e))
+        exit(-1)

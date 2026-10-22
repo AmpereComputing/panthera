@@ -1,0 +1,330 @@
+% Copyright (c) 2023 Ampere Computing. All rights reserved.
+% SPDX-License-Identifier: BSD-3-Clause
+\documentclass{article}
+\usepackage{graphicx}
+\usepackage{palatino}
+\usepackage{hyperref}
+\usepackage{longtable}
+\usepackage{fancyhdr}
+\setlength{\headheight}{15.2pt}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyfoot[C]{AMPERE COMPUTING PROPRIETARY}
+\fancyfoot[R]{\thepage}
+\usepackage[left=1cm, right=1cm]{geometry}
+\title{Trinity Compiler Guide \\ Version 1.1.0\\ AMPERE COMPUTING PROPRIETARY}
+\date{2023-09-06}
+\begin{document}
+\maketitle
+\section{Change Log}
+\begin{longtable}{|l|p{4in}|}
+  \hline
+  {\bf Version} & {\bf Changes} \\ \hline
+  \hline
+  \endfirsthead
+  0.9 & Initial version \\ \hline
+  0.9.1 & Update typo in block diagram. Update FMOV, SMOV/UMOV latencies \\ \hline
+  1.0.0 & Add late accumulate optimization description \\ \hline
+  1.1.0 & Add MIDR\_EL1 value \\ \hline
+\end{longtable}
+
+\section{Core overview}
+
+The Ampere core is a highly efficient, superscalar, out-of-order
+microarchitecture optimized for scalability and cloud computing
+workloads. It delivers predictable performance while supporting
+advanced security and virtualization features, such as nested
+virtualization, ground-up speculative side-channel mitigation, and
+architectural support for defense against ROP/JOP-style software
+attacks. \\
+
+% MIDR_EL1 value for the Trinity configuration.
+
+\begin{figure}
+\caption{Processor Identifier}
+\begin{center}
+  \begin{tabular}{|l|l|} \hline
+    MIDR\_EL1 value &  {\tt 0xC00FAC50} \\ \hline
+    \end{tabular}
+\end{center}
+\end{figure}
+The third-generation core, codenamed Trinity, is an ARMv8.7+
+implementation, adding support for the FEAT\_WFxT, FEAT\_CSSC, FEAT\_PAN3
+and FEAT\_AFP extensions.  As in our second-generation core, Trinity
+also supports Memory Tagging Extension and SM3/SM4 cryptography
+instructions, as well as many system-level features and numerous
+performance and power efficiency improvements. \\
+
+The front end has state-of-the-art branch prediction, with a 10-cycle
+recovery time from a mispredicted branch. The L1 instruction cache is
+32KB; to support efficient execution of workloads with a large code
+footprint, the I-cache has a high-bandwidth, low-latency connection to
+the unified L2 cache. \\
+
+Instructions coming out of the front end are decoded into internal
+micro-ops (uops). The decode stage can consume up to 5 instructions
+per cycle and output up to 4 uops (some pairs of instructions can be
+‘fused’ into a single uop). \\
+
+Uops proceed from decode through register renaming and are dispatched
+into 8 independent schedulers: 4 integer, 2 FP, and 2 memory. The
+integer and FP schedulers can each issue one uop per cycle, while the
+memory schedulers can each issue one load and one store (address
+calculation or data read) per cycle. \\
+
+The memory unit contains a 64KB write-through L1 data cache with a
+3-cycle latency, which can support two 128-bit loads and one store
+update per cycle and has a full 64-byte path for data coming in from
+the L2. The memory system includes advanced memory disambiguation
+support to improve out-of-order execution of interleaved loads and
+stores and a highly accurate L1 data prefetcher. \\
+
+To support large code and data footprints, the core has separate
+memory management units (MMUs) for code and data, each of which can
+manage up to 8 simultaneous page walks. All entries in all TLBs are
+‘universal’, meaning they can store any page size, allowing software
+to make best use of large pages. The front end has a 64-entry L1
+ITLB. The memory unit has a 64-entry L1 DTLB and a 2560-entry unified
+L2 DTLB. \\
+
+The L2 is a 2MB cache which is private to each core. It stores both
+code and data and is inclusive of the L1 caches. The L2 can service a
+full 64-byte read and write every cycle, and can track up to 48
+outstanding memory requests to the SOC. As part of the core’s focus on
+scalability, the L2 dynamically tracks traffic levels on the SOC mesh,
+and can adjust its request rate to minimize delays due to congestion
+within the SOC. \\
+
+\begin{center}
+\includegraphics[height=16cm]{trinity-block-diagram-crop.pdf}
+\end{center}
+
+\section{Execution pipeline overview}
+
+Micro-ops are issued from a scheduler into one of twelve execution
+pipelines. Each pipeline can generally accept and complete one uop per
+cycle. The execution pipelines are shown in the following table, along
+with the symbol used in the Pipelines column of the instruction
+information tables below (the symbol ‘AB’ means the uop can execute on
+any of the four integer pipelines, and ‘XY’ means it can execute on
+either FP/vector pipe).
+
+\begin{tabular}{|l|l|}
+\hline
+{\bf Pipeline} & {\bf Symbol used in tables} \\ 
+\hline
+2 x integer single-cycle, branch, and flags read/write & A  \\
+2 x Integer single-cycle and complex shifts            & B  \\
+Integer multi-cycle                                    & BS \\
+2 x load                                               & L  \\
+2 x store address calculation                          & S  \\
+FP and vector operations, and flag write               & X  \\
+FP and vector operations, and some crypto operations   & Y  \\
+FP store data and FP to integer moves                  & Z \\
+\hline 
+\end{tabular}
+
+\section{Instruction fusion}
+
+The instruction decoder can fuse some pairs of instructions that
+commonly occur together into a single uop, increasing the effective
+decode and execution width of the core. Placing these instruction
+pairs consecutively in memory will enable fusion and improve
+performance. \\
+
+The supported instruction fusions are:\\
+\begin{longtable}{|p{2in}|p{1in}|p{1in}|p{2in}|}
+\caption{Supported Fusions}
+\\\hline
+{\bf Description} & {\bf First instruction} & {\bf Second instruction} & {\bf Notes} \\
+\hline
+\endfirsthead
+
+\hline
+\multicolumn{4}{|r|}{{\tablename\ \thetable{} -- Continued from previous page}} \\
+\hline
+{\bf Description} & {\bf First instruction} & {\bf Second instruction} & {\bf Notes} \\
+\hline
+\endhead
+
+\hline
+\multicolumn{4}{|r|}{{Continued on next page}} \\
+\hline
+\endfoot
+\hline
+\endlastfoot
+
+Flag producer + conditional branch & SUBS (CMP), ADDS, ANDS, BICS, CCMP, CCMN & B.cond (direct conditional branch) & First instruction must decode to 1 uop (see tables below) – only LSL shift $<$= 4 and no sign extension \\ \hline
+Arithmetic + compare and branch if zero/non-zero & SUB, AND, EOR & CBZ, CBNZ & First instruction must decode to 1 uop (see tables below) – only LSL shift $<$= 4 and no sign extension \\ \hline
+Immediate construction & MOVK, MOVZ  & MOVK &
+\parbox{2in}{
+\begin{enumerate}
+\item Destination registers must be the same 
+\item First instruction has shift count 0 and second instruction has shift count 16; or, first has 32 and second has 48
+\end{enumerate}} \\ \hline
+PC-relative address generation & ADRP & ADD (immediate) &
+\parbox{2in}{
+  \begin{enumerate} \item Destination registers must be the same
+\item Register source (Rn) of ADD must be the same as the destination (Rd)
+\item ADD cannot use shift/sign-extension
+\end{enumerate}} \\ \hline
+AES encrypt / decrypt & AESE,AESD & AESMC, AESIMC &
+\parbox{2in}{
+\begin{enumerate} \item Destination registers must be the same
+\item Register source (Rn) of AESMC/AESIMC must be the same as the destination (Rd)
+\end{enumerate}} \\ \hline
+Compute A+B+1 or A-B-1 & ADD, SUB (register-register) & ADD, SUB (register, \#1) &
+\parbox{2in}{
+\begin{enumerate}
+\item Destination registers must be the same
+\item First instruction must decode to 1 uop (see tables below) – only LSL shift $<$= 4 and no sign extension
+\item Destination of the first instruction must be the register source (Rn) of the second instruction
+\end{enumerate}
+Example: \\
+ADD X0, X1, X2\\
+ADD X0, X0, \#1}
+\\ \hline
+Anything+NOP & Any instruction & NOP  & \\  \hline
+Anything+B & Any instruction & B & \\ 
+\hline
+\end{longtable}
+
+
+
+\section{Instruction alignment}
+
+Branch density and branch target alignment can affect performance. For
+best performance, consider the following guidelines:
+\begin{itemize}
+\item Avoid placing more than four branch instructions in an aligned
+  32-byte memory region.
+\item branch targets to 32-byte boundaries to ensure that the
+  instruction fetch unit can issue the maximum number of instructions
+  after the branch.
+\item Loops should span as few aligned 32-byte memory regions as
+  possible; in particular, small loops of up to 8 instructions should
+  reside within a single 32-byte region if possible.
+\end{itemize}
+
+\section{Dispatch constraints}
+
+The instruction decoder consumes up to 5 instructions per cycle, and
+outputs up to 4 uops. Instructions which decode to three or more uops
+have some restrictions on where they can fall within a group of 4 uops
+being output in the same cycle. If the output uops from a single cycle
+are numbered as decode slot 0/1/2/3, then the restrictions are:
+\begin{itemize}
+\item 3-uop instructions cannot have their first uop in slot 3; that
+  is, a 3-uop instruction can be decoded all in one cycle, or with two
+  uops in one cycle and one uop in the next cycle.
+\item Instructions that decode to 4 or more uops must have their first
+  uop in slot 0, 1 or 2.
+\end{itemize}
+The decoder can dispatch two branches (taken or not taken) per cycle.
+
+\section{Data alignment}
+
+The ARM architecture allows most load and store instructions to have
+arbitrarily aligned addresses. As long as the data for a single load
+or store operation all falls within a 64-byte cache line, the core can
+handle any alignment without penalty. Loads which cross a 64-byte
+boundary have longer latency, and stores which cross a 64-byte
+boundary see lower bandwidth when writing the cache. \\
+
+LDP (load-pair) and STP (store-pair) instructions of up to 16 bytes
+are executed as a single memory access, so for best performance the
+total range of memory being accessed by the instruction should not
+split cache lines. This is in contrast to some older cores which may
+have implemented LDP/STP as two separate loads or stores, so that
+alignment to half of the total memory size would be sufficient to
+avoid line splits. \\
+
+A load which gets some (but not all) of its data from a recently
+executed older store may also have longer latency. This can happen if
+loads and stores with different sizes and/or alignments are
+intermixed. \\
+
+Two stores of 8 bytes or less to the same cache line, without any
+intervening stores, may see increased bandwidth to the cache.
+
+\section{Optimizing memory copy}
+
+For maximum throughput of memory copy and similar loops, vector loads
+and stores are preferred over load-pair/store-pair because they can
+transfer 16 bytes of data using a single register, reducing the
+pressure on register renaming. Stores should be aligned on a 16-byte
+boundary whenever possible. If the source and destination cannot both
+be 16-byte aligned, it is better to align the destination. The
+following example shows a recommended sequence for a long memory copy:
+\begin{verbatim}
+loop_start:
+ldr   q0, [x0, #16]
+ldr   q1, [x0, #32]
+ldr   q2, [x0, #48]
+ldr   q3, [x0, #64]!
+str   q0, [x1, #16]
+str   q1, [x1, #32]
+str   q2, [x1, #48]
+str   q3, [x1, #64]!
+subs  x2, x2, #64
+b.ne  loop_start
+\end{verbatim}
+
+\section{FP/vector bypassing}
+
+Floating point and vector execution is divided into different units,
+which contain operations which are commonly used together. The
+bypassing logic is optimized to give the best latency for operations
+within the same unit. \\
+
+The latencies in the instruction tables assume that the result is
+consumed within the same unit. If the result is consumed in a
+different FP unit, the producing instruction may have a longer
+effective latency. In the instruction tables below, the FP unit column
+shows which unit an instruction executes in; if two units are shown,
+then the instruction consumes its input registers in the first unit,
+and produces its output register in the second unit. \\
+
+The units and the extra latency to bypass between units are shown in this table: \\
+\begin{tabular}{|l|l|p{2in}|}
+\hline
+{\bf Unit name} & {\bf Function}  & {\bf Extra latency if result is consumed in a different unit} \\ \hline
+MA & FP arithmetic and multiplication, single/double precision & 2 or 3 (6 cycles total)  \\
+HP & FP arithmetic and multiplication, half precision & 2  \\
+DV & FP division and square root & 0  \\
+BY & Simple logical and shuffle operations & 0  \\
+BU & Bfloat16 arithmetic & 5  \\
+SI & ASIMD integer arithmetic and logical & 1 or 2  \\
+MU & ASIMD integer multiplication & 3 to SI, 4 to others  \\
+CU & Cryptography operations & 1 or 2  \\ \hline
+\end{tabular}
+\\
+
+Instructions which cross elements from one lane to another, such as
+ by-element, lengthening, and pairwise instructions, may incur extra
+ latency depending on the producer of the data sources and which
+ operand of the instruction is consuming the data. This lane-crossing
+ latency is 1 cycle in the SI and MU units, 2 cycles in the HP unit,
+ and 2 or 3 cycles in the MA unit. A single instruction will not have
+ both cross-unit and cross-element extra latency. \\
+
+All FP units other than DV are fully pipelined and can complete one
+ operation per cycle, and most operations are supported on both FP
+ execution pipelines for maximum throughput. \\
+
+ \subsection{Late accumulate optimization}
+
+ For BU operations and MU operations that have accumulator operands
+ (except for the byte-width mla and mls MU instructions), the
+ accumulator operand is permitted to arrive 3 cycles after the
+ operation issues.  This optimization has the effect of shortening the
+ observed latency when performing a sequence of similar operations
+ that support the late accumulate optimization.  When the late
+ accumulate optimization is not used, say because the program is not
+ performing a sequence of late-accumulate operations, MU operations
+ are nominally 6 or 7 cycles. BU operations are nominally 7 cycles.
+
+
+\section{Instruction information}
+\input{trinity-table}
+\end{document}

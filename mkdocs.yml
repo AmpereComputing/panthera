@@ -1,0 +1,73 @@
+# Copyright (c) 2021-2026 Ampere Computing. All rights reserved.
+# SPDX-License-Identifier: BSD-3-Clause
+
+site_name: Ampere Panthera
+site_dir: public
+docs_dir: doc
+nav:
+  - 'User Guide':
+    - UserGuide.md
+    - user-guide/model-soc.md
+    - user-guide/model-memory.md
+    - user-guide/debugging.md
+    - user-guide/cheetah.md
+    - user-guide/parameters.md
+    - user-guide/kestrel.md
+  - 'Analysis':
+    - analysis/stream_tools.md
+    - analysis/rollup.md
+    - analysis/jupyter.md
+    - analysis/event-processor.md
+    - analysis/catscan.md
+    - analysis/events-tracing.md
+    - analysis/report.md
+  - 'Micros':
+    - micros/benchmarks.md
+    - micros/tracing-microbenchmarks.md
+    - micros/manual-tracing-example.md
+    - micros/tracing-adhoc.md
+  - 'Tracing':
+    - tracing/tracing-simple.md
+    - tracing/tracing-simpoints.md
+  - 'Design':
+    - design/floorplans.md
+    - design/furiosa.md
+  - 'Development':
+    - development/conventions.md
+    - development/formatting.md
+    - development/testing.md
+    - development/linking.md
+    - development/reviews.md
+theme:
+  name: material
+  palette:
+    # Palette toggle for light mode
+    - scheme: default
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    # Palette toggle for dark mode
+    - scheme: slate
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.path
+    - navigation.sections
+    - search.highlight
+    - content.action.edit
+    - content.code.copy
+markdown_extensions:
+  - toc:
+      permalink: true
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format

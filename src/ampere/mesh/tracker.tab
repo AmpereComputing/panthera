@@ -1,0 +1,93 @@
+# Copyright (c) 2021-2022 Ampere Computing. All rights reserved.
+# SPDX-License-Identifier: BSD-3-Clause
+
+@namespace "ampere::mesh"
+
+MainState
+=========
+Idle
+Read
+MakeUnique
+CopyBack
+FillCache
+ReadMemory
+WriteMemory
+SendDataToMemory
+UpdateSF
+Evict
+Clean
+Dealloc
+=============
+@event_data {"name": "tracker_state", "description": "tracker main state"}
+
+
+SnoopState
+==========
+Idle
+Snoop
+SnoopFwd
+Clean
+==========
+@event_data {"name": "tracker_snoop_state", "description": "tracker snoop state"}
+
+
+SFOp
+====
+None
+ReadLock
+ReadSetWay
+SetUniqueUnlock
+SetSharedUnlock
+Invalidate
+Reset
+ResumeAsMiss
+============
+@event_data {"name": "snoop_filter_op", "description": "Snoop Filter operation"}
+
+SFCmd
+====
+None
+SF_NOP
+SF_LA
+SF_LU
+SF_RD
+SF_WR
+SF_NOR
+============
+@event_data {"name": "snoop_filter_nextop", "description": "Snoop Filter operation"}
+
+
+CacheOp
+=======
+None
+Read
+ReadInvalidate
+FillClean
+FillDirty
+==============
+@event_data {"name": "slc_op", "description": "System Level Cache operation"}
+
+
+SFStatus
+========
+Miss
+Hit
+Full
+Lock
+========
+@event_data  {"name": "sf_status", "description": "Result of Snoop Filter lookup"}
+
+
+CacheStatus
+===========
+Miss
+HitClean
+HitDirty
+INV
+SC
+UC
+UD
+SD
+x
+===========
+@event_data {"name": "slc_status", "description": "Result of SLC lookup"}

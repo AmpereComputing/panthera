@@ -1,0 +1,68 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "urn:panthera:cheetah:specification",
+    "title": "Cheetah Specification",
+    "description": "A specification of configurations to run within Panthera sim",
+    "type": "array",
+    "items": {
+        "type": "object",
+        "properties": {
+            "name": {
+                "type": "string",
+                "description": "Name of configuration"
+            },
+            "exe": {
+                "type": "string",
+                "description": "Simulator executable"
+            },
+            "workloads": {
+                "type": "string",
+                "description": "Workloads path (otherwise uses default)"
+            },
+            "pre_sim": {
+                "type": "array",
+                "description": "Pre-commands",
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "type": ["string", "array"]
+                    }
+                }
+            },
+            "sim_parameters": {
+                "type": "array",
+                "description": "Parameters to panthera sim",
+                "items": {
+                    "type": ["string", "array"]
+                }
+            },
+            "parameters": {
+                "type": "array",
+                "description": "Parameters to simulator",
+                "items": {
+                    "type": ["string", "array"]
+                }
+            },
+            "evp": {
+                "type": "array",
+                "description": "Parameters to evp (not including summarize)",
+                "items": {
+                    "type": ["string", "array"]
+                }
+            },
+            "post_sim": {
+                "type": "array",
+                "description": "Post-commands",
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "type": ["string", "array"]
+                    }
+                }
+            }
+        },
+        "required": [
+            "name"
+        ]
+    }
+}

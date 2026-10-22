@@ -1,0 +1,23 @@
+
+        SystemC 2.3.2-Accellera --- Nov 22 2019 01:38:44
+        Copyright (c) 1996-2017 by all Contributors,
+        ALL RIGHTS RESERVED
+
+(0000000000000000000000000000000000000000, refs/heads/example, CLEAN)
+Info: /ampere/panthera: End of elaboration. Starting simulation.
+Heartbeat: Warmup     1234845 cycles,  1000000 instructions, IPC = 0.81
+Heartbeat: Warmup     2028222 cycles,  2000000 instructions, IPC = 1.26
+Heartbeat: Warmup     3050655 cycles,  3000000 instructions, IPC = 0.98
+Heartbeat: Warmup     4095226 cycles,  4000000 instructions, IPC = 0.96
+Heartbeat: Warmup     5133512 cycles,  5000000 instructions, IPC = 0.96
+Heartbeat: Warmup     5967845 cycles,  6000000 instructions, IPC = 1.20
+====================== top.core.gpc =================================
+txid       alloc_id   complete  PC (VA)        MemOp's VA             mnemonic
+============================================================
+Error: /ampere/panthera: Simulation brain dead
+In file: /path/to/panthera/src/ampere/core/gpc.cc:586
+In process: top.clock.sc_tick @ 2117301579 ps
+Info: /OSCI/SystemC: Simulation stopped by user.
+Warning: /ampere/panthera: No simulation cycles in measurement region.
+In file: /path/to/panthera/src/ampere/core/gpc.cc:657
+ERROR: 10:59:13 simulator returned non-zero exit status (1)

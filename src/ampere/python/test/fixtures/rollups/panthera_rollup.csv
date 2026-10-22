@@ -1,0 +1,4 @@
+trace,workload,sys.soc_0.core_0.ipc,warmup_instructions,measurement_instructions
+something_0,something,1.5,10,100000
+something_1,something,1.2,10,1000
+something_2,something,2.3,10,50

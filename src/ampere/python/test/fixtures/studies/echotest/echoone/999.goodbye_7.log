@@ -1,0 +1,7 @@
+Info: /ampere/panthera: End of elaboration. Starting simulation.
+In process: sys.soc_0.core_0.clock.sc_tick @ 1436487741 ps
+Info: /OSCI/SystemC: Simulation stopped by user.
+Panthera completed     : 19282 cycles, 44265 instructions total, in 28 cpu sec (36 wall sec)
+ Simulator warmup      :  9050 cycles, 10000 instructions, 1.104 IPC, 11.81 kHz,  41.53 kips, 159.66 MB virtmem
+ Simulator measurement : 10232 cycles, 34265 instructions, 3.348 IPC, 3.98 kHz,  15.37 kips, 159.66 MB virtmem
+All commands exited successfully.

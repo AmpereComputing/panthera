@@ -1,0 +1,6 @@
+#!/bin/bash
+# Copyright (c) 2024-2025 Ampere Computing. All rights reserved.
+# SPDX-License-Identifier: BSD-3-Clause
+
+
+echo "Info: /OSCI/SystemC: Simulation stopped by user."

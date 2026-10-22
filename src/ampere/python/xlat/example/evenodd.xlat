@@ -1,0 +1,28 @@
+# Copyright (c) 2020 Ampere Computing. All rights reserved.
+# SPDX-License-Identifier: BSD-3-Clause
+
+from uop import *
+from ampere.xlat import Fusion, Signal, Translation
+
+s0 = Signal('100011')
+s1 = Signal('100100')
+
+
+class ADDS_64S_addsub_ext(Translation):
+    """Add (extended register), setting flags"""
+    pattern = '1  0  1 01011 00  1 ----- ---    ---  ----- -----'
+    pfields = 'sf op S       opt    Rm   option imm3  Rn    Rd  '
+
+    asmtemplate = 'ADDS  <Xd>, <Xn|SP>, <R><m>{, <extend> {#<amount>}}'
+
+    def decode(self, f):
+        if f.option.value in {0, 1, 2, 3}:
+            adds64(dest=f.Rd, flag_dest=1, src1=f.Rn, src2=f.Rm, imm=(f.option,Signal("000000000"), f.imm3), src1_is_stack_pointer=True)
+        elif f.option.value in {4, 5}:
+            sxt32(dest=s0, src1=f.Rm, imm=(Signal("000"),f.option))
+            adds64(dest=f.Rd, flag_dest=1, src1=f.Rn, src2=s0, imm=(Signal("011000000000"), f.imm3), src1_is_stack_pointer=True)
+        elif f.option.value == 6:
+            sxt64(dest=s0, src1=f.Rm, imm=(Signal("000"),f.option))
+            adds64(dest=f.Rd, flag_dest=1, src1=f.Rn, src2=s0, imm=(Signal("011000000000"), f.imm3), src1_is_stack_pointer=True)
+        elif f.option.value == 7:
+            adds64(dest=f.Rd, flag_dest=1, src1=f.Rn, src2=f.Rm, imm=(Signal("011000000000"), f.imm3), src1_is_stack_pointer=True)

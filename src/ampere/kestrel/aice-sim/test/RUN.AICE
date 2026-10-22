@@ -1,0 +1,56 @@
+#!/bin/bash
+# Copyright (c) 2025-2026 Ampere Computing. All rights reserved.
+# SPDX-License-Identifier: BSD-3-Clause
+
+if [ "$#" -ne 2 ]; then
+    echo "Usage: $0 <panthera-install-dir> <trace.trc>" >&2
+    exit 2
+fi
+
+install=$1
+trc=$2
+if [ ! -d "${install}" ]; then
+    echo "Missing install dir: ${install}"
+    exit 1
+fi
+if [ ! -f "${trc}" ]; then
+    echo "Missing trace: ${trc}"
+    exit 1
+fi
+echo "Running ${trc} ..."
+leaf=$(basename ${trc})
+root=${leaf%.*} # strip extension
+
+odir=output
+mkdir -p ${odir}
+es=${odir}/events-${root}.es
+csv=${odir}/mar-activity-${root}.csv
+catapult=${odir}/long-catapult-${root}.json.gz
+log=${odir}/log-${root}.txt
+ocmd=${odir}/cmd-${root}.sh
+
+
+echo simulating...
+
+#      -top.memory.random_latency_mean 400 
+
+rm -f ${es}
+
+limit="--start top.commit.commit=0 --stop top.commit.commit=80000"
+cmd="${install}/bin/panthera sim ${install}/bin/aice-sim -cfg ${install}/config/model/kestrel/aice/aice.cfg -top.fetch.input_trace ${trc} -dbg 0 -- -i 10us ${limit} @kestrel/aice/aice_base.cfg +capture ${es}"
+
+#  -event_stream_name ${es} >> ${log} 2>&1
+echo "CMD:  ${cmd}"
+echo ${cmd} > ${ocmd}
+${cmd}  > ${log} 2>&1
+tail ${log}
+
+# echo converting...
+# time ${install}/bin/panthera events.tracing @${install}/config/events.tracing/aice-events.cfg -c ${es} -o ${catapult}
+
+echo catscan command:
+echo 
+echo "   ${install}/bin/panthera catscan ${es} @${install}/config/events.tracing/aice-events.cfg"
+echo
+
+echo "To emit ${csv}, post-process ${es} with a user-provided evp script."

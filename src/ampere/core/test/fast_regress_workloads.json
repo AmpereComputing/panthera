@@ -1,0 +1,51 @@
+[
+  {
+    "name": "gcc",
+    "file": "502.gcc-3.13171_chop.is.xz",
+    "workload": "502.gcc",
+    "suite": "SPEC2107int",
+    "weight": 1.0
+  },
+  {
+    "name": "mcf",
+    "file": "505.mcf-1.59701_chop.is.xz",
+    "workload": "505.mcf",
+    "suite": "SPEC2107int",
+    "weight": 1.0
+  },
+  {
+    "name": "namd",
+    "file": "508.namd-1.114894_chop.is.xz",
+    "workload": "508.namd",
+    "suite": "SPEC2107int",
+    "weight": 1.0
+  },
+  {
+    "name": "xalancbmk",
+    "file": "523.xalancbmk-1.8395_chop.is.xz",
+    "workload": "523.xalancbmk",
+    "suite": "SPEC2107int",
+    "weight": 1.0
+  },
+  {
+    "name": "x264",
+    "file": "525.x264-3.94854_chop.is.xz",
+    "workload": "525.x264",
+    "suite": "SPEC2107int",
+    "weight": 1.0
+  },
+  {
+    "name": "nab",
+    "file": "544.nab-1.65277_chop.is.xz",
+    "workload": "544.nab",
+    "suite": "SPEC2107int",
+    "weight": 1.0
+  },
+  {
+    "name": "exchange2",
+    "file": "548.exchange2-1.18342_chop.is.xz",
+    "workload": "548.exchange2",
+    "suite": "SPEC2107int",
+    "weight": 1.0
+  }
+]

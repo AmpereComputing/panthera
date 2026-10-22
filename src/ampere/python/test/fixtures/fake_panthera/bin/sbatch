@@ -1,0 +1,53 @@
+#!/bin/bash
+# Copyright (c) 2024-2025 Ampere Computing. All rights reserved.
+# SPDX-License-Identifier: BSD-3-Clause
+
+
+BIN_DIR="$(realpath "$(dirname "${BASH_SOURCE[0]}")")"
+SBATCH_FILE=
+for var in "$@"; do
+    if [[ "$var" == *".sbatch" ]]; then
+        SBATCH_FILE="$var"
+    fi
+done
+
+if [[ "$SBATCH_FILE" == "" ]]; then
+    >&2 echo "No sbatch file in args"
+    exit 1
+fi
+
+FIRST_LINE="$(sed -n 1p "$SBATCH_FILE")"
+if [ ! -f "$SBATCH_FILE" ] || [ "$FIRST_LINE" != '#!/bin/bash' ] || ! grep -q '#SBATCH ' "$SBATCH_FILE" ; then
+    >&2 echo "$SBATCH_FILE does not look like an sbatch file"
+    exit 1
+fi
+
+SECOND_LINE="$(sed -n 2p "$SBATCH_FILE")"
+if [ "$SECOND_LINE" != '#SBATCH --job-name=test_study' ] || ! grep -q '/fixtures/fake_panthera/bin/panthera ' "$SBATCH_FILE" ; then
+    >&2 echo "$SBATCH_FILE does not look like an testing sbatch file"
+    exit 1
+fi
+
+CHDIR=$(grep '#SBATCH --chdir=' "$SBATCH_FILE" | sed -s 's/.*=//' | sed -s 's/"//g')
+JOBS=$(grep '#SBATCH --array=' "$SBATCH_FILE" | sed -s 's/.*=1-//' | sed -s 's/%.*//')
+
+if [[ "$CHDIR" != "${TMPDIR:-/tmp}/"* || ! "$JOBS" =~ ^[0-9]+$ ]]; then
+    >&2 echo "Invalid sbatch args, --chdir=$CHDIR, --array=$JOBS"
+    exit 1
+fi
+
+echo "0"
+
+pushd "$CHDIR" > /dev/null
+
+>&2 echo "SBATCH file:"
+>&2 cat "$SBATCH_FILE"
+
+for i in $(seq 1 $JOBS); do
+    >&2 echo "Running job: $i"
+    touch "./0_$i.log"
+    # /bin/bash is used since /tmp is sometimes mounted without exec option
+    SLURM_ARRAY_JOB_ID=0 SLURM_ARRAY_TASK_ID=$i PATH="$BIN_DIR:$PATH" /bin/bash "$SBATCH_FILE" | tee "./0_$i.slurm.log"
+done
+
+popd > /dev/null

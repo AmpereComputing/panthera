@@ -1,0 +1,30 @@
+# Copyright (c) 2018 Ampere Computing. All rights reserved.
+# SPDX-License-Identifier: BSD-3-Clause
+
+10001000011xxxxx0xxxxxxxxxxxxxxx # ldxp   w0 w10 : mem0p ign16
+10001000011xxxxx1xxxxxxxxxxxxxxx # ldaxp  w0 w10 : mem0p ign16
+11001000011xxxxx0xxxxxxxxxxxxxxx # ldxp   x0 x10 : mem0p ign16
+11001000011xxxxx1xxxxxxxxxxxxxxx # ldaxp  x0 x10 : mem0p ign16
+0010100001xxxxxxxxxxxxxxxxxxxxxx # ldnp   w0 w10 : mem7
+0010110001xxxxxxxxxxxxxxxxxxxxxx # ldnp   s0 s10 : mem7
+0110110001xxxxxxxxxxxxxxxxxxxxxx # ldnp   d0 d10 : mem7
+1010100001xxxxxxxxxxxxxxxxxxxxxx # ldnp   x0 x10 : mem7
+1010110001xxxxxxxxxxxxxxxxxxxxxx # ldnp   q0 q10 : mem7
+0010100011xxxxxxxxxxxxxxxxxxxxxx # ldp    w0 w10 x5sp : mem7post x5sp mem7off
+0010110011xxxxxxxxxxxxxxxxxxxxxx # ldp    s0 s10 x5sp : mem7post x5sp mem7off
+0110100011xxxxxxxxxxxxxxxxxxxxxx # ldpsw  x0 x10 x5sp : mem7post x5sp mem7off
+0110110011xxxxxxxxxxxxxxxxxxxxxx # ldp    d0 d10 x5sp : mem7post x5sp mem7off
+1010100011xxxxxxxxxxxxxxxxxxxxxx # ldp    x0 x10 x5sp : mem7post x5sp mem7off
+1010110011xxxxxxxxxxxxxxxxxxxxxx # ldp    q0 q10 x5sp : mem7post x5sp mem7off
+0010100101xxxxxxxxxxxxxxxxxxxxxx # ldp    w0 w10 : mem7
+0010110101xxxxxxxxxxxxxxxxxxxxxx # ldp    s0 s10 : mem7
+0110100101xxxxxxxxxxxxxxxxxxxxxx # ldpsw  x0 x10 : mem7
+0110110101xxxxxxxxxxxxxxxxxxxxxx # ldp    d0 d10 : mem7
+1010100101xxxxxxxxxxxxxxxxxxxxxx # ldp    x0 x10 : mem7
+1010110101xxxxxxxxxxxxxxxxxxxxxx # ldp    q0 q10 : mem7
+0010100111xxxxxxxxxxxxxxxxxxxxxx # ldp    w0 w10 x5sp : mem7 x5sp mem7off
+0010110111xxxxxxxxxxxxxxxxxxxxxx # ldp    s0 s10 x5sp : mem7 x5sp mem7off
+0110100111xxxxxxxxxxxxxxxxxxxxxx # ldpsw  x0 x10 x5sp : mem7 x5sp mem7off
+0110110111xxxxxxxxxxxxxxxxxxxxxx # ldp    d0 d10 x5sp : mem7 x5sp mem7off
+1010100111xxxxxxxxxxxxxxxxxxxxxx # ldp    x0 x10 x5sp : mem7 x5sp mem7off
+1010110111xxxxxxxxxxxxxxxxxxxxxx # ldp    q0 q10 x5sp : mem7 x5sp mem7off

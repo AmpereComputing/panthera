@@ -1,0 +1,497 @@
+\begin{longtable}{|l|l|l|}
+\caption{Instructions fusable with MOVPRFX} \\
+\hline
+Instruction & Unpredicated movprfx & Predicated movprfx\\
+\hline
+\endfirsthead
+\hline
+\multicolumn{3}{|r|}{{\tablename\ \thetable{} -- Continued from previous page}} \\
+\hline
+Instruction & Unpredicated movprfx & Predicated movprfx\\
+\hline
+\endhead
+\hline
+\multicolumn{3}{|r|}{{Continued on next page}} \\
+\hline
+\endfoot
+\hline
+\endlastfoot
+ABS & YES & YES\\
+\hline
+ADCLB & YES & NA\\
+\hline
+ADCLT & YES & NA\\
+\hline
+ADD & YES & YES\\
+\hline
+ADDP & YES & NA\\
+\hline
+AND & YES & YES\\
+\hline
+ASR & YES & YES\\
+\hline
+ASRD & YES & YES\\
+\hline
+ASRR & YES & YES\\
+\hline
+BCAX & YES & NA\\
+\hline
+BFADD & YES & YES\\
+\hline
+BFCVT & YES & YES\\
+\hline
+BFDOT & YES & NA\\
+\hline
+BFMAX & YES & YES\\
+\hline
+BFMAXNM & YES & YES\\
+\hline
+BFMIN & YES & YES\\
+\hline
+BFMINNM & YES & YES\\
+\hline
+BFMLA & YES & YES\\
+\hline
+BFMLALB & YES & NA\\
+\hline
+BFMLALT & YES & NA\\
+\hline
+BFMLS & YES & YES\\
+\hline
+BFMMLA & YES & NA\\
+\hline
+BFMUL & YES & YES\\
+\hline
+BFSUB & YES & YES\\
+\hline
+BIC & YES & YES\\
+\hline
+BSL & YES & NA\\
+\hline
+BSL1N & YES & NA\\
+\hline
+BSL2N & YES & NA\\
+\hline
+CADD & YES & NA\\
+\hline
+CDOT & YES & NA\\
+\hline
+CLASTA & YES & NA\\
+\hline
+CLASTB & YES & NA\\
+\hline
+CLS & YES & YES\\
+\hline
+CLZ & YES & YES\\
+\hline
+CMLA & YES & NA\\
+\hline
+CNOT & YES & YES\\
+\hline
+CNT & YES & YES\\
+\hline
+CPY & YES & YES\\
+\hline
+DECD & YES & NA\\
+\hline
+DECH & YES & NA\\
+\hline
+DECP & YES & NA\\
+\hline
+DECW & YES & NA\\
+\hline
+EOR & YES & YES\\
+\hline
+EOR3 & YES & NA\\
+\hline
+EORBT & YES & NA\\
+\hline
+EORTB & YES & NA\\
+\hline
+FABD & YES & YES\\
+\hline
+FABS & YES & YES\\
+\hline
+FADD & YES & YES\\
+\hline
+FADDP & YES & NA\\
+\hline
+FCADD & YES & YES\\
+\hline
+FCMLA & YES & YES\\
+\hline
+FCPY & YES & YES\\
+\hline
+FCVT & YES & YES\\
+\hline
+FCVTX & YES & YES\\
+\hline
+FCVTZS & YES & YES\\
+\hline
+FCVTZU & YES & YES\\
+\hline
+FDIV & YES & YES\\
+\hline
+FDIVR & YES & YES\\
+\hline
+FLOGB & YES & YES\\
+\hline
+FMAD & YES & YES\\
+\hline
+FMAX & YES & YES\\
+\hline
+FMAXNM & YES & YES\\
+\hline
+FMAXNMP & YES & NA\\
+\hline
+FMAXP & YES & NA\\
+\hline
+FMIN & YES & YES\\
+\hline
+FMINNM & YES & YES\\
+\hline
+FMINNMP & YES & NA\\
+\hline
+FMINP & YES & NA\\
+\hline
+FMLA & YES & YES\\
+\hline
+FMLALB & YES & NA\\
+\hline
+FMLALLBB & YES & NA\\
+\hline
+FMLALLBT & YES & NA\\
+\hline
+FMLALLTB & YES & NA\\
+\hline
+FMLALLTT & YES & NA\\
+\hline
+FMLALT & YES & NA\\
+\hline
+FMLS & YES & YES\\
+\hline
+FMLSLB & YES & NA\\
+\hline
+FMLSLT & YES & NA\\
+\hline
+FMSB & YES & YES\\
+\hline
+FMUL & YES & YES\\
+\hline
+FMULX & YES & YES\\
+\hline
+FNEG & YES & YES\\
+\hline
+FNMAD & YES & YES\\
+\hline
+FNMLA & YES & YES\\
+\hline
+FNMLS & YES & YES\\
+\hline
+FNMSB & YES & YES\\
+\hline
+FRECPX & YES & YES\\
+\hline
+FRINTA & YES & YES\\
+\hline
+FRINTI & YES & YES\\
+\hline
+FRINTM & YES & YES\\
+\hline
+FRINTN & YES & YES\\
+\hline
+FRINTP & YES & YES\\
+\hline
+FRINTX & YES & YES\\
+\hline
+FRINTZ & YES & YES\\
+\hline
+FSCALE & YES & YES\\
+\hline
+FSQRT & YES & YES\\
+\hline
+FSUB & YES & YES\\
+\hline
+FSUBR & YES & YES\\
+\hline
+FTMAD & YES & NA\\
+\hline
+INCD & YES & NA\\
+\hline
+INCH & YES & NA\\
+\hline
+INCP & YES & NA\\
+\hline
+INCW & YES & NA\\
+\hline
+INSR & YES & NA\\
+\hline
+LSL & YES & YES\\
+\hline
+LSLR & YES & YES\\
+\hline
+LSR & YES & YES\\
+\hline
+LSRR & YES & YES\\
+\hline
+MAD & YES & YES\\
+\hline
+MLA & YES & YES\\
+\hline
+MLS & YES & YES\\
+\hline
+MSB & YES & YES\\
+\hline
+MUL & YES & YES\\
+\hline
+NBSL & YES & NA\\
+\hline
+NEG & YES & YES\\
+\hline
+NOT & YES & YES\\
+\hline
+ORR & YES & YES\\
+\hline
+RBIT & YES & YES\\
+\hline
+REVB & YES & YES\\
+\hline
+REVH & YES & YES\\
+\hline
+REVW & YES & YES\\
+\hline
+SABA & YES & NA\\
+\hline
+SABALB & YES & NA\\
+\hline
+SABALT & YES & NA\\
+\hline
+SABD & YES & YES\\
+\hline
+SADALP & YES & YES\\
+\hline
+SBCLB & YES & NA\\
+\hline
+SBCLT & YES & NA\\
+\hline
+SCVTF & YES & YES\\
+\hline
+SDIV & YES & YES\\
+\hline
+SDIVR & YES & YES\\
+\hline
+SDOT & YES & NA\\
+\hline
+SHADD & YES & YES\\
+\hline
+SHSUB & YES & YES\\
+\hline
+SHSUBR & YES & YES\\
+\hline
+SMAX & YES & YES\\
+\hline
+SMAXP & YES & NA\\
+\hline
+SMIN & YES & YES\\
+\hline
+SMINP & YES & NA\\
+\hline
+SMLALB & YES & NA\\
+\hline
+SMLALT & YES & NA\\
+\hline
+SMLSLB & YES & NA\\
+\hline
+SMLSLT & YES & NA\\
+\hline
+SMMLA & YES & NA\\
+\hline
+SMULH & YES & YES\\
+\hline
+SQABS & YES & YES\\
+\hline
+SQADD & YES & YES\\
+\hline
+SQCADD & YES & NA\\
+\hline
+SQDECD & YES & NA\\
+\hline
+SQDECH & YES & NA\\
+\hline
+SQDECP & YES & NA\\
+\hline
+SQDECW & YES & NA\\
+\hline
+SQDMLALB & YES & NA\\
+\hline
+SQDMLALBT & YES & NA\\
+\hline
+SQDMLALT & YES & NA\\
+\hline
+SQDMLSLB & YES & NA\\
+\hline
+SQDMLSLBT & YES & NA\\
+\hline
+SQDMLSLT & YES & NA\\
+\hline
+SQINCD & YES & NA\\
+\hline
+SQINCH & YES & NA\\
+\hline
+SQINCP & YES & NA\\
+\hline
+SQINCW & YES & NA\\
+\hline
+SQNEG & YES & YES\\
+\hline
+SQRDCMLAH & YES & NA\\
+\hline
+SQRDMLAH & YES & NA\\
+\hline
+SQRDMLSH & YES & NA\\
+\hline
+SQRSHL & YES & YES\\
+\hline
+SQRSHLR & YES & YES\\
+\hline
+SQSHL & YES & YES\\
+\hline
+SQSHLR & YES & YES\\
+\hline
+SQSHLU & YES & YES\\
+\hline
+SQSUB & YES & YES\\
+\hline
+SQSUBR & YES & YES\\
+\hline
+SRHADD & YES & YES\\
+\hline
+SRSHL & YES & YES\\
+\hline
+SRSHLR & YES & YES\\
+\hline
+SRSHR & YES & YES\\
+\hline
+SRSRA & YES & NA\\
+\hline
+SSRA & YES & NA\\
+\hline
+SUB & YES & YES\\
+\hline
+SUBR & YES & YES\\
+\hline
+SUDOT & YES & NA\\
+\hline
+SUQADD & YES & YES\\
+\hline
+SXTB & YES & YES\\
+\hline
+SXTH & YES & YES\\
+\hline
+SXTW & YES & YES\\
+\hline
+UABA & YES & NA\\
+\hline
+UABALB & YES & NA\\
+\hline
+UABALT & YES & NA\\
+\hline
+UABD & YES & YES\\
+\hline
+UADALP & YES & YES\\
+\hline
+UCVTF & YES & YES\\
+\hline
+UDIV & YES & YES\\
+\hline
+UDIVR & YES & YES\\
+\hline
+UDOT & YES & NA\\
+\hline
+UHADD & YES & YES\\
+\hline
+UHSUB & YES & YES\\
+\hline
+UHSUBR & YES & YES\\
+\hline
+UMAX & YES & YES\\
+\hline
+UMAXP & YES & NA\\
+\hline
+UMIN & YES & YES\\
+\hline
+UMINP & YES & NA\\
+\hline
+UMLALB & YES & NA\\
+\hline
+UMLALT & YES & NA\\
+\hline
+UMLSLB & YES & NA\\
+\hline
+UMLSLT & YES & NA\\
+\hline
+UMMLA & YES & NA\\
+\hline
+UMULH & YES & YES\\
+\hline
+UQADD & YES & YES\\
+\hline
+UQDECD & YES & NA\\
+\hline
+UQDECH & YES & NA\\
+\hline
+UQDECP & YES & NA\\
+\hline
+UQDECW & YES & NA\\
+\hline
+UQINCD & YES & NA\\
+\hline
+UQINCH & YES & NA\\
+\hline
+UQINCP & YES & NA\\
+\hline
+UQINCW & YES & NA\\
+\hline
+UQRSHL & YES & YES\\
+\hline
+UQRSHLR & YES & YES\\
+\hline
+UQSHL & YES & YES\\
+\hline
+UQSHLR & YES & YES\\
+\hline
+UQSUB & YES & YES\\
+\hline
+UQSUBR & YES & YES\\
+\hline
+URECPE & YES & YES\\
+\hline
+URHADD & YES & YES\\
+\hline
+URSHL & YES & YES\\
+\hline
+URSHLR & YES & YES\\
+\hline
+URSHR & YES & YES\\
+\hline
+URSQRTE & YES & YES\\
+\hline
+URSRA & YES & NA\\
+\hline
+USDOT & YES & NA\\
+\hline
+USMMLA & YES & NA\\
+\hline
+USQADD & YES & YES\\
+\hline
+USRA & YES & NA\\
+\hline
+UXTB & YES & YES\\
+\hline
+UXTH & YES & YES\\
+\hline
+UXTW & YES & YES\\
+\hline
+XAR & YES & NA\\
+\hline
+\end{longtable}

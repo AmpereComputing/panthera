@@ -1,0 +1,25 @@
+package modal_decoder;
+
+function automatic logic IxuVld(input logic [31:0] Instruction0, input logic [1:0] QuadNum, input logic [1:0] UopNum, input logic WideMode);
+  IxuVld = Instruction0[23] & ~Instruction0[24] & Instruction0[25] & ~Instruction0[26] & ~Instruction0[27] & Instruction0[28] & Instruction0[29] & Instruction0[30] & Instruction0[31] & ~QuadNum[0] & ~QuadNum[1] & ~UopNum[0] & ~UopNum[1];
+endfunction
+
+
+function automatic logic [13:0] IxuOpcode(input logic [31:0] Instruction0, input logic [1:0] QuadNum, input logic [1:0] UopNum, input logic WideMode);
+  IxuOpcode[0] = ~WideMode;
+  IxuOpcode[1] = ~WideMode;
+  IxuOpcode[2] = 1'b1;
+  IxuOpcode[3] = WideMode;
+  IxuOpcode[4] = 1'b0;
+  IxuOpcode[5] = 1'b0;
+  IxuOpcode[6] = 1'b1;
+  IxuOpcode[7] = 1'b1;
+  IxuOpcode[8] = 1'b0;
+  IxuOpcode[9] = 1'b0;
+  IxuOpcode[10] = 1'b0;
+  IxuOpcode[11] = 1'b0;
+  IxuOpcode[12] = 1'b0;
+  IxuOpcode[13] = 1'b0;
+endfunction
+
+endpackage

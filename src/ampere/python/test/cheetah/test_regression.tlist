@@ -1,0 +1,26 @@
+[
+    {
+        "name": "test1_1",
+        "workload": "test1",
+        "weight": "1",
+        "file": "test1.1.is.xz"
+    },
+    {
+        "name": "test1_2",
+        "workload": "test1",
+        "weight": "2",
+        "file": "test1.2.is.xz"
+    },
+    {
+        "name": "test2_1",
+        "workload": "test2",
+        "weight": "3",
+        "file": "test2.1.is.xz"
+    },
+    {
+        "name": "test2_2",
+        "workload": "test2",
+        "weight": "1",
+        "file": "test2.2.is.xz"
+    }
+]

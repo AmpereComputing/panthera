@@ -1,0 +1,133 @@
+{
+    "latencies":
+    {
+        "BU2": {
+            "unit": "BU",
+            "unit_suffix": 2,
+            "levels": {
+                "LATE": 2,
+                "LOCAL": 7,
+                "NORMAL": 7
+            }
+        },
+        "BU3": {
+            "unit": "BU",
+            "unit_suffix": 3,
+            "levels": {
+                "LATE": 3,
+                "LOCAL": 7,
+                "NORMAL": 7
+            }
+        },
+        "BY": {
+            "unit": "BY",
+            "levels": {
+                "LOCAL": 2,
+                "NORMAL": 2
+            }
+        },
+        "CU2": {
+            "unit": "CU",
+            "unit_suffix": 2,
+            "levels": {
+                "LOCAL": 2,
+                "NORMAL": 3
+            }
+        },
+        "CU3": {
+            "unit": "CU",
+            "unit_suffix": 3,
+            "levels": {
+                "LOCAL": 2,
+                "NORMAL": 4
+            }
+        },
+        "CU5": {
+            "unit": "CU",
+            "unit_suffix": 5,
+            "levels": {
+                "LOCAL": 4,
+                "NORMAL": 6
+            }
+        },
+        "HP3": {
+            "unit": "HP",
+            "unit_suffix": 3,
+            "levels": {
+                "LOCAL": 3,
+                "NORMAL": 5
+            }
+        },
+        "HP4": {
+            "unit": "HP",
+            "unit_suffix": 4,
+            "levels": {
+                "LOCAL": 4,
+                "NORMAL": 5
+            }
+        },
+        "MA3": {
+            "unit": "MA",
+            "unit_suffix": 3,
+            "levels": {
+                "LOCAL": 3,
+                "NORMAL": 6
+            }
+        },
+        "MA5": {
+            "unit": "MA",
+            "unit_suffix": 5,
+            "levels": {
+                "LOCAL": 4,
+                "NORMAL": 6
+            }
+        },
+        "MU": {
+            "unit": "MU",
+            "levels": {
+                "LATE": 3,
+                "LOCAL": 6,
+                "NORMAL": 7
+            }
+        },
+        "MU3": {
+            "unit": "MU",
+            "unit_suffix": 3,
+            "levels": {
+                "LOCAL": 2,
+                "NORMAL": 4
+            }
+        },
+        "SI2": {
+            "unit": "SI",
+            "unit_suffix": 2,
+            "levels": {
+                "LATE": 2,
+                "LOCAL": 2,
+                "NORMAL": 3
+            }
+        },
+        "SI3": {
+            "unit": "SI",
+            "unit_suffix": 3,
+            "levels": {
+                "LATE": 2,
+                "LOCAL": 2,
+                "NORMAL": 4
+            }
+        },
+        "SI5": {
+            "unit": "SI",
+            "unit_suffix": 5,
+            "levels": {
+                "LATE": 6,
+                "LOCAL": 6,
+                "NORMAL": 6
+            }
+        }
+    },
+    "locality": {
+        "SI": ["MU"],
+        "MU": ["SI"]
+    }
+}

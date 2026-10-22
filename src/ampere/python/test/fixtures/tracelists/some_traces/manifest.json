@@ -1,0 +1,19 @@
+[
+    {
+        "cooldown_instructions": 0,
+        "elf_file": "trace_1/trace_1.elf",
+        "elf_sha256sum": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "file": "trace_1/trace_1.is.xz",
+        "full_offline_warmup_file": "trace_1/trace_1.ms.xz",
+        "full_offline_warmup_sha256sum": "69c820d6287c2f1f3db02add02fc97531086df017bf70b238edce1b2f46e24e1",
+        "measurement_instructions": 100000,
+        "name": "trace_1",
+        "pan_branch_warmup_file": "trace_1/trace_1.bs.xz",
+        "pan_branch_warmup_file_sha256sum": "d48ba600449c50289f0b6b06396ec3b93116b8bfd6b36740b1959f54a8413fce",
+        "sha256sum": "3b8925e559a1e991ed5c98d5e94cd4e425e10c2d0cb5d2273af8392920d99868",
+        "suite": "snippets",
+        "warmup_instructions": 0,
+        "weight": "1.0",
+        "workload": "some_traces"
+    }
+]

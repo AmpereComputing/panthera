@@ -1,0 +1,26 @@
+# Run the simulator. The binary is not in the source directory. It will be in
+# your build area. For example, if your build area is called "crelease", look
+# in: panthera/crelease/src/ampere/example/5stage/
+./src/ampere/example/5stage/5stage
+
+# Dump out the cmdline parameters. -h will also work
+./src/ampere/example/5stage/5stage -help
+
+# The simulator spits out an events.es file. You can view the contents using
+panthera/install/bin/es_viewer ./events.es | less
+
+# Convert the events file into a json for viewing in the Catapult viewer
+# using the events.tracing directive to panthera. The events.cfg file
+# indicates which event names to place into the output.json. It is found in
+# the source tree.
+panthera/install/bin/panthera events.tracing @../src/ampere/example/5stage/events.cfg events.es -o output.json
+
+# You can view the json file using a Chrome or Edge browser. Point your
+# browser to chrome://tracing or edge://tracing and then click the Load
+# button and give it the output.json file.
+
+# Change the latency of one of the pipestages 
+./src/ampere/example/5stage/5stage -top.decode_to_execute.latency 5
+
+# Make the simulator have a super-scalar width of 2
+./src/ampere/example/5stage/5stage -top.fetch_to_decode.bandwidth 2 -top.decode_to_execute.bandwidth 2 -top.execute_to_writeback.bandwidth 2 -top.writeback_to_commit.bandwidth 2

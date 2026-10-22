@@ -1,0 +1,15 @@
+These scripts are meant to further automate SPEC2017 simpoint generation,
+beyond capture_traces.py & co. They are meant to be run in number order, with
+invocations like: 
+
+# PANTHERA_ROOT=/path/to/panthera
+# sudo ./00_generate_disk_images.py /path/to/spec2017/INT spec2017int_ref_cmdlines.json
+# ./01_collect_simpoints.py \
+	--json /path/to/spec2017int_ref_cmdlines.json \
+	--kernel /path/to/Image \
+	--bbv-plugin ${PANTHERA_ROOT}/install/lib/libbbv_generator.so \
+	--bbv-interval 10000000 \
+	--warmup-instrs 10000000 \
+	--tracing-plugin ${PANTHERA_ROOT}/install/lib/libinstruction_tracer.so \
+	--capture-traces ${PANTHERA_ROOT}/src/ampere/tracing_tools/scripts/capture_traces.py
+# ./02_generate_workload_json.py --json spec2017int_ref_cmdlines.json --workloads-json spec2017int_ref_workloads.json

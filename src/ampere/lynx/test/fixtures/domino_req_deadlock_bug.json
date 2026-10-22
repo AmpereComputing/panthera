@@ -1,0 +1,4294 @@
+    {
+        "components": [
+            {
+                "die_id": 0,
+                "type": "RTR",
+                "x": 0,
+                "y": 0
+            },
+            {
+                "didx": 0,
+                "die_id": 0,
+                "port": 2,
+                "type": "IOR",
+                "x": 0,
+                "y": 0
+            },
+            {
+                "die_id": 0,
+                "port": 3,
+                "type": "ADI",
+                "x": 0,
+                "y": 0
+            },
+            {
+                "die_id": 0,
+                "type": "RTR",
+                "x": 0,
+                "y": 1
+            },
+            {
+                "didx": 0,
+                "die_id": 0,
+                "port": 2,
+                "type": "PmHA",
+                "x": 0,
+                "y": 1
+            },
+            {
+                "die_id": 0,
+                "type": "RTR",
+                "x": 0,
+                "y": 2
+            },
+            {
+                "die_id": 0,
+                "port": 0,
+                "type": "ADI",
+                "x": 0,
+                "y": 2
+            },
+            {
+                "die_id": 0,
+                "port": 1,
+                "type": "ADI",
+                "x": 0,
+                "y": 2
+            },
+            {
+                "didx": 0,
+                "die_id": 0,
+                "port": 3,
+                "type": "IOR",
+                "x": 0,
+                "y": 2
+            },
+            {
+                "die_id": 0,
+                "type": "RTR",
+                "x": 1,
+                "y": 0
+            },
+            {
+                "didx": 0,
+                "die_id": 0,
+                "port": 1,
+                "type": "PmHA",
+                "x": 1,
+                "y": 0
+            },
+            {
+                "die_id": 0,
+                "port": 3,
+                "type": "ADI",
+                "x": 1,
+                "y": 0
+            },
+            {
+                "die_id": 0,
+                "type": "RTR",
+                "x": 1,
+                "y": 1
+            },
+            {
+                "didx": 0,
+                "die_id": 0,
+                "port": 0,
+                "type": "PmHA",
+                "x": 1,
+                "y": 1
+            },
+            {
+                "didx": 0,
+                "die_id": 0,
+                "port": 2,
+                "type": "PmHA",
+                "x": 1,
+                "y": 1
+            },
+            {
+                "die_id": 0,
+                "type": "RTR",
+                "x": 1,
+                "y": 2
+            },
+            {
+                "didx": 0,
+                "die_id": 0,
+                "port": 0,
+                "type": "PmHA",
+                "x": 1,
+                "y": 2
+            },
+            {
+                "die_id": 0,
+                "port": 2,
+                "type": "ADI",
+                "x": 1,
+                "y": 2
+            },
+            {
+                "die_id": 0,
+                "type": "RTR",
+                "x": 2,
+                "y": 0
+            },
+            {
+                "didx": 0,
+                "die_id": 0,
+                "port": 1,
+                "type": "PmHA",
+                "x": 2,
+                "y": 0
+            },
+            {
+                "die_id": 0,
+                "port": 3,
+                "type": "ADI",
+                "x": 2,
+                "y": 0
+            },
+            {
+                "die_id": 0,
+                "type": "RTR",
+                "x": 2,
+                "y": 1
+            },
+            {
+                "didx": 0,
+                "die_id": 0,
+                "port": 0,
+                "type": "PmHA",
+                "x": 2,
+                "y": 1
+            },
+            {
+                "didx": 0,
+                "die_id": 0,
+                "port": 2,
+                "type": "PmHA",
+                "x": 2,
+                "y": 1
+            },
+            {
+                "die_id": 0,
+                "type": "RTR",
+                "x": 2,
+                "y": 2
+            },
+            {
+                "didx": 0,
+                "die_id": 0,
+                "port": 0,
+                "type": "PmHA",
+                "x": 2,
+                "y": 2
+            },
+            {
+                "die_id": 0,
+                "port": 2,
+                "type": "ADI",
+                "x": 2,
+                "y": 2
+            },
+            {
+                "die_id": 0,
+                "type": "RTR",
+                "x": 3,
+                "y": 0
+            },
+            {
+                "die_id": 0,
+                "port": 0,
+                "type": "ADI",
+                "x": 3,
+                "y": 0
+            },
+            {
+                "didx": 0,
+                "die_id": 0,
+                "port": 1,
+                "type": "PmHA",
+                "x": 3,
+                "y": 0
+            },
+            {
+                "didx": 0,
+                "die_id": 0,
+                "port": 2,
+                "type": "MCU",
+                "x": 3,
+                "y": 0
+            },
+            {
+                "die_id": 0,
+                "type": "RTR",
+                "x": 3,
+                "y": 1
+            },
+            {
+                "didx": 0,
+                "die_id": 0,
+                "port": 0,
+                "type": "PmHA",
+                "x": 3,
+                "y": 1
+            },
+            {
+                "didx": 0,
+                "die_id": 0,
+                "port": 2,
+                "type": "MCU",
+                "x": 3,
+                "y": 1
+            },
+            {
+                "didx": 0,
+                "die_id": 0,
+                "port": 3,
+                "type": "MCU",
+                "x": 3,
+                "y": 1
+            },
+            {
+                "die_id": 0,
+                "type": "RTR",
+                "x": 3,
+                "y": 2
+            },
+            {
+                "didx": 0,
+                "die_id": 0,
+                "port": 0,
+                "type": "PmHA",
+                "x": 3,
+                "y": 2
+            },
+            {
+                "didx": 0,
+                "die_id": 0,
+                "port": 3,
+                "type": "MCU",
+                "x": 3,
+                "y": 2
+            },
+            {
+                "die_id": 1,
+                "type": "RTR",
+                "x": 0,
+                "y": 0
+            },
+            {
+                "didx": 0,
+                "die_id": 1,
+                "port": 2,
+                "type": "IOR",
+                "x": 0,
+                "y": 0
+            },
+            {
+                "die_id": 1,
+                "port": 3,
+                "type": "ADI",
+                "x": 0,
+                "y": 0
+            },
+            {
+                "die_id": 1,
+                "type": "RTR",
+                "x": 0,
+                "y": 1
+            },
+            {
+                "didx": 0,
+                "die_id": 1,
+                "port": 2,
+                "type": "PmHA",
+                "x": 0,
+                "y": 1
+            },
+            {
+                "die_id": 1,
+                "type": "RTR",
+                "x": 0,
+                "y": 2
+            },
+            {
+                "die_id": 1,
+                "port": 0,
+                "type": "ADI",
+                "x": 0,
+                "y": 2
+            },
+            {
+                "die_id": 1,
+                "port": 1,
+                "type": "ADI",
+                "x": 0,
+                "y": 2
+            },
+            {
+                "didx": 0,
+                "die_id": 1,
+                "port": 3,
+                "type": "IOR",
+                "x": 0,
+                "y": 2
+            },
+            {
+                "die_id": 1,
+                "type": "RTR",
+                "x": 1,
+                "y": 0
+            },
+            {
+                "didx": 0,
+                "die_id": 1,
+                "port": 1,
+                "type": "PmHA",
+                "x": 1,
+                "y": 0
+            },
+            {
+                "die_id": 1,
+                "port": 3,
+                "type": "ADI",
+                "x": 1,
+                "y": 0
+            },
+            {
+                "die_id": 1,
+                "type": "RTR",
+                "x": 1,
+                "y": 1
+            },
+            {
+                "didx": 0,
+                "die_id": 1,
+                "port": 0,
+                "type": "PmHA",
+                "x": 1,
+                "y": 1
+            },
+            {
+                "didx": 0,
+                "die_id": 1,
+                "port": 2,
+                "type": "PmHA",
+                "x": 1,
+                "y": 1
+            },
+            {
+                "die_id": 1,
+                "type": "RTR",
+                "x": 1,
+                "y": 2
+            },
+            {
+                "didx": 0,
+                "die_id": 1,
+                "port": 0,
+                "type": "PmHA",
+                "x": 1,
+                "y": 2
+            },
+            {
+                "die_id": 1,
+                "port": 2,
+                "type": "ADI",
+                "x": 1,
+                "y": 2
+            },
+            {
+                "die_id": 1,
+                "type": "RTR",
+                "x": 2,
+                "y": 0
+            },
+            {
+                "didx": 0,
+                "die_id": 1,
+                "port": 1,
+                "type": "PmHA",
+                "x": 2,
+                "y": 0
+            },
+            {
+                "die_id": 1,
+                "port": 3,
+                "type": "ADI",
+                "x": 2,
+                "y": 0
+            },
+            {
+                "die_id": 1,
+                "type": "RTR",
+                "x": 2,
+                "y": 1
+            },
+            {
+                "didx": 0,
+                "die_id": 1,
+                "port": 0,
+                "type": "PmHA",
+                "x": 2,
+                "y": 1
+            },
+            {
+                "didx": 0,
+                "die_id": 1,
+                "port": 2,
+                "type": "PmHA",
+                "x": 2,
+                "y": 1
+            },
+            {
+                "die_id": 1,
+                "type": "RTR",
+                "x": 2,
+                "y": 2
+            },
+            {
+                "didx": 0,
+                "die_id": 1,
+                "port": 0,
+                "type": "PmHA",
+                "x": 2,
+                "y": 2
+            },
+            {
+                "die_id": 1,
+                "port": 2,
+                "type": "ADI",
+                "x": 2,
+                "y": 2
+            },
+            {
+                "die_id": 1,
+                "type": "RTR",
+                "x": 3,
+                "y": 0
+            },
+            {
+                "die_id": 1,
+                "port": 0,
+                "type": "ADI",
+                "x": 3,
+                "y": 0
+            },
+            {
+                "didx": 0,
+                "die_id": 1,
+                "port": 1,
+                "type": "PmHA",
+                "x": 3,
+                "y": 0
+            },
+            {
+                "didx": 0,
+                "die_id": 1,
+                "port": 2,
+                "type": "MCU",
+                "x": 3,
+                "y": 0
+            },
+            {
+                "die_id": 1,
+                "type": "RTR",
+                "x": 3,
+                "y": 1
+            },
+            {
+                "didx": 0,
+                "die_id": 1,
+                "port": 0,
+                "type": "PmHA",
+                "x": 3,
+                "y": 1
+            },
+            {
+                "didx": 0,
+                "die_id": 1,
+                "port": 2,
+                "type": "MCU",
+                "x": 3,
+                "y": 1
+            },
+            {
+                "didx": 0,
+                "die_id": 1,
+                "port": 3,
+                "type": "MCU",
+                "x": 3,
+                "y": 1
+            },
+            {
+                "die_id": 1,
+                "type": "RTR",
+                "x": 3,
+                "y": 2
+            },
+            {
+                "didx": 0,
+                "die_id": 1,
+                "port": 0,
+                "type": "PmHA",
+                "x": 3,
+                "y": 2
+            },
+            {
+                "didx": 0,
+                "die_id": 1,
+                "port": 3,
+                "type": "MCU",
+                "x": 3,
+                "y": 2
+            },
+            {
+                "die_id": 2,
+                "type": "RTR",
+                "x": 0,
+                "y": 0
+            },
+            {
+                "didx": 0,
+                "die_id": 2,
+                "port": 2,
+                "type": "IOR",
+                "x": 0,
+                "y": 0
+            },
+            {
+                "die_id": 2,
+                "port": 3,
+                "type": "ADI",
+                "x": 0,
+                "y": 0
+            },
+            {
+                "die_id": 2,
+                "type": "RTR",
+                "x": 0,
+                "y": 1
+            },
+            {
+                "didx": 0,
+                "die_id": 2,
+                "port": 2,
+                "type": "PmHA",
+                "x": 0,
+                "y": 1
+            },
+            {
+                "die_id": 2,
+                "type": "RTR",
+                "x": 0,
+                "y": 2
+            },
+            {
+                "die_id": 2,
+                "port": 0,
+                "type": "ADI",
+                "x": 0,
+                "y": 2
+            },
+            {
+                "die_id": 2,
+                "port": 1,
+                "type": "ADI",
+                "x": 0,
+                "y": 2
+            },
+            {
+                "didx": 0,
+                "die_id": 2,
+                "port": 3,
+                "type": "IOR",
+                "x": 0,
+                "y": 2
+            },
+            {
+                "die_id": 2,
+                "type": "RTR",
+                "x": 1,
+                "y": 0
+            },
+            {
+                "didx": 0,
+                "die_id": 2,
+                "port": 1,
+                "type": "PmHA",
+                "x": 1,
+                "y": 0
+            },
+            {
+                "die_id": 2,
+                "port": 3,
+                "type": "ADI",
+                "x": 1,
+                "y": 0
+            },
+            {
+                "die_id": 2,
+                "type": "RTR",
+                "x": 1,
+                "y": 1
+            },
+            {
+                "didx": 0,
+                "die_id": 2,
+                "port": 0,
+                "type": "PmHA",
+                "x": 1,
+                "y": 1
+            },
+            {
+                "didx": 0,
+                "die_id": 2,
+                "port": 2,
+                "type": "PmHA",
+                "x": 1,
+                "y": 1
+            },
+            {
+                "die_id": 2,
+                "type": "RTR",
+                "x": 1,
+                "y": 2
+            },
+            {
+                "didx": 0,
+                "die_id": 2,
+                "port": 0,
+                "type": "PmHA",
+                "x": 1,
+                "y": 2
+            },
+            {
+                "die_id": 2,
+                "port": 2,
+                "type": "ADI",
+                "x": 1,
+                "y": 2
+            },
+            {
+                "die_id": 2,
+                "type": "RTR",
+                "x": 2,
+                "y": 0
+            },
+            {
+                "didx": 0,
+                "die_id": 2,
+                "port": 1,
+                "type": "PmHA",
+                "x": 2,
+                "y": 0
+            },
+            {
+                "die_id": 2,
+                "port": 3,
+                "type": "ADI",
+                "x": 2,
+                "y": 0
+            },
+            {
+                "die_id": 2,
+                "type": "RTR",
+                "x": 2,
+                "y": 1
+            },
+            {
+                "didx": 0,
+                "die_id": 2,
+                "port": 0,
+                "type": "PmHA",
+                "x": 2,
+                "y": 1
+            },
+            {
+                "didx": 0,
+                "die_id": 2,
+                "port": 2,
+                "type": "PmHA",
+                "x": 2,
+                "y": 1
+            },
+            {
+                "die_id": 2,
+                "type": "RTR",
+                "x": 2,
+                "y": 2
+            },
+            {
+                "didx": 0,
+                "die_id": 2,
+                "port": 0,
+                "type": "PmHA",
+                "x": 2,
+                "y": 2
+            },
+            {
+                "die_id": 2,
+                "port": 2,
+                "type": "ADI",
+                "x": 2,
+                "y": 2
+            },
+            {
+                "die_id": 2,
+                "type": "RTR",
+                "x": 3,
+                "y": 0
+            },
+            {
+                "die_id": 2,
+                "port": 0,
+                "type": "ADI",
+                "x": 3,
+                "y": 0
+            },
+            {
+                "didx": 0,
+                "die_id": 2,
+                "port": 1,
+                "type": "PmHA",
+                "x": 3,
+                "y": 0
+            },
+            {
+                "didx": 0,
+                "die_id": 2,
+                "port": 2,
+                "type": "MCU",
+                "x": 3,
+                "y": 0
+            },
+            {
+                "die_id": 2,
+                "type": "RTR",
+                "x": 3,
+                "y": 1
+            },
+            {
+                "didx": 0,
+                "die_id": 2,
+                "port": 0,
+                "type": "PmHA",
+                "x": 3,
+                "y": 1
+            },
+            {
+                "didx": 0,
+                "die_id": 2,
+                "port": 2,
+                "type": "MCU",
+                "x": 3,
+                "y": 1
+            },
+            {
+                "didx": 0,
+                "die_id": 2,
+                "port": 3,
+                "type": "MCU",
+                "x": 3,
+                "y": 1
+            },
+            {
+                "die_id": 2,
+                "type": "RTR",
+                "x": 3,
+                "y": 2
+            },
+            {
+                "didx": 0,
+                "die_id": 2,
+                "port": 0,
+                "type": "PmHA",
+                "x": 3,
+                "y": 2
+            },
+            {
+                "didx": 0,
+                "die_id": 2,
+                "port": 3,
+                "type": "MCU",
+                "x": 3,
+                "y": 2
+            },
+            {
+                "die_id": 3,
+                "type": "RTR",
+                "x": 0,
+                "y": 0
+            },
+            {
+                "didx": 0,
+                "die_id": 3,
+                "port": 2,
+                "type": "IOR",
+                "x": 0,
+                "y": 0
+            },
+            {
+                "die_id": 3,
+                "port": 3,
+                "type": "ADI",
+                "x": 0,
+                "y": 0
+            },
+            {
+                "die_id": 3,
+                "type": "RTR",
+                "x": 0,
+                "y": 1
+            },
+            {
+                "didx": 0,
+                "die_id": 3,
+                "port": 2,
+                "type": "PmHA",
+                "x": 0,
+                "y": 1
+            },
+            {
+                "die_id": 3,
+                "type": "RTR",
+                "x": 0,
+                "y": 2
+            },
+            {
+                "die_id": 3,
+                "port": 0,
+                "type": "ADI",
+                "x": 0,
+                "y": 2
+            },
+            {
+                "die_id": 3,
+                "port": 1,
+                "type": "ADI",
+                "x": 0,
+                "y": 2
+            },
+            {
+                "didx": 0,
+                "die_id": 3,
+                "port": 3,
+                "type": "IOR",
+                "x": 0,
+                "y": 2
+            },
+            {
+                "die_id": 3,
+                "type": "RTR",
+                "x": 1,
+                "y": 0
+            },
+            {
+                "didx": 0,
+                "die_id": 3,
+                "port": 1,
+                "type": "PmHA",
+                "x": 1,
+                "y": 0
+            },
+            {
+                "die_id": 3,
+                "port": 3,
+                "type": "ADI",
+                "x": 1,
+                "y": 0
+            },
+            {
+                "die_id": 3,
+                "type": "RTR",
+                "x": 1,
+                "y": 1
+            },
+            {
+                "didx": 0,
+                "die_id": 3,
+                "port": 0,
+                "type": "PmHA",
+                "x": 1,
+                "y": 1
+            },
+            {
+                "didx": 0,
+                "die_id": 3,
+                "port": 2,
+                "type": "PmHA",
+                "x": 1,
+                "y": 1
+            },
+            {
+                "die_id": 3,
+                "type": "RTR",
+                "x": 1,
+                "y": 2
+            },
+            {
+                "didx": 0,
+                "die_id": 3,
+                "port": 0,
+                "type": "PmHA",
+                "x": 1,
+                "y": 2
+            },
+            {
+                "die_id": 3,
+                "port": 2,
+                "type": "ADI",
+                "x": 1,
+                "y": 2
+            },
+            {
+                "die_id": 3,
+                "type": "RTR",
+                "x": 2,
+                "y": 0
+            },
+            {
+                "didx": 0,
+                "die_id": 3,
+                "port": 1,
+                "type": "PmHA",
+                "x": 2,
+                "y": 0
+            },
+            {
+                "die_id": 3,
+                "port": 3,
+                "type": "ADI",
+                "x": 2,
+                "y": 0
+            },
+            {
+                "die_id": 3,
+                "type": "RTR",
+                "x": 2,
+                "y": 1
+            },
+            {
+                "didx": 0,
+                "die_id": 3,
+                "port": 0,
+                "type": "PmHA",
+                "x": 2,
+                "y": 1
+            },
+            {
+                "didx": 0,
+                "die_id": 3,
+                "port": 2,
+                "type": "PmHA",
+                "x": 2,
+                "y": 1
+            },
+            {
+                "die_id": 3,
+                "type": "RTR",
+                "x": 2,
+                "y": 2
+            },
+            {
+                "didx": 0,
+                "die_id": 3,
+                "port": 0,
+                "type": "PmHA",
+                "x": 2,
+                "y": 2
+            },
+            {
+                "die_id": 3,
+                "port": 2,
+                "type": "ADI",
+                "x": 2,
+                "y": 2
+            },
+            {
+                "die_id": 3,
+                "type": "RTR",
+                "x": 3,
+                "y": 0
+            },
+            {
+                "die_id": 3,
+                "port": 0,
+                "type": "ADI",
+                "x": 3,
+                "y": 0
+            },
+            {
+                "didx": 0,
+                "die_id": 3,
+                "port": 1,
+                "type": "PmHA",
+                "x": 3,
+                "y": 0
+            },
+            {
+                "didx": 0,
+                "die_id": 3,
+                "port": 2,
+                "type": "MCU",
+                "x": 3,
+                "y": 0
+            },
+            {
+                "die_id": 3,
+                "type": "RTR",
+                "x": 3,
+                "y": 1
+            },
+            {
+                "didx": 0,
+                "die_id": 3,
+                "port": 0,
+                "type": "PmHA",
+                "x": 3,
+                "y": 1
+            },
+            {
+                "didx": 0,
+                "die_id": 3,
+                "port": 2,
+                "type": "MCU",
+                "x": 3,
+                "y": 1
+            },
+            {
+                "didx": 0,
+                "die_id": 3,
+                "port": 3,
+                "type": "MCU",
+                "x": 3,
+                "y": 1
+            },
+            {
+                "die_id": 3,
+                "type": "RTR",
+                "x": 3,
+                "y": 2
+            },
+            {
+                "didx": 0,
+                "die_id": 3,
+                "port": 0,
+                "type": "PmHA",
+                "x": 3,
+                "y": 2
+            },
+            {
+                "didx": 0,
+                "die_id": 3,
+                "port": 3,
+                "type": "MCU",
+                "x": 3,
+                "y": 2
+            },
+            {
+                "die_id": 4,
+                "type": "RTR",
+                "x": 0,
+                "y": 0
+            },
+            {
+                "die_id": 4,
+                "port": 1,
+                "type": "ADI",
+                "x": 0,
+                "y": 0
+            },
+            {
+                "didx": 0,
+                "die_id": 4,
+                "port": 2,
+                "type": "Core",
+                "x": 0,
+                "y": 0
+            },
+            {
+                "die_id": 4,
+                "type": "RTR",
+                "x": 0,
+                "y": 1
+            },
+            {
+                "die_id": 4,
+                "port": 1,
+                "type": "ADI",
+                "x": 0,
+                "y": 1
+            },
+            {
+                "didx": 0,
+                "die_id": 4,
+                "port": 2,
+                "type": "Core",
+                "x": 0,
+                "y": 1
+            },
+            {
+                "die_id": 4,
+                "type": "RTR",
+                "x": 0,
+                "y": 2
+            },
+            {
+                "die_id": 4,
+                "port": 1,
+                "type": "ADI",
+                "x": 0,
+                "y": 2
+            },
+            {
+                "didx": 0,
+                "die_id": 4,
+                "port": 2,
+                "type": "Core",
+                "x": 0,
+                "y": 2
+            },
+            {
+                "die_id": 4,
+                "type": "RTR",
+                "x": 0,
+                "y": 3
+            },
+            {
+                "die_id": 4,
+                "port": 1,
+                "type": "ADI",
+                "x": 0,
+                "y": 3
+            },
+            {
+                "didx": 0,
+                "die_id": 4,
+                "port": 2,
+                "type": "Core",
+                "x": 0,
+                "y": 3
+            },
+            {
+                "die_id": 4,
+                "type": "RTR",
+                "x": 1,
+                "y": 0
+            },
+            {
+                "didx": 0,
+                "die_id": 4,
+                "port": 1,
+                "type": "Core",
+                "x": 1,
+                "y": 0
+            },
+            {
+                "didx": 0,
+                "die_id": 4,
+                "port": 2,
+                "type": "PxHA",
+                "x": 1,
+                "y": 0
+            },
+            {
+                "die_id": 4,
+                "type": "RTR",
+                "x": 1,
+                "y": 1
+            },
+            {
+                "didx": 0,
+                "die_id": 4,
+                "port": 1,
+                "type": "Core",
+                "x": 1,
+                "y": 1
+            },
+            {
+                "didx": 0,
+                "die_id": 4,
+                "port": 2,
+                "type": "PxHA",
+                "x": 1,
+                "y": 1
+            },
+            {
+                "die_id": 4,
+                "type": "RTR",
+                "x": 1,
+                "y": 2
+            },
+            {
+                "didx": 0,
+                "die_id": 4,
+                "port": 1,
+                "type": "Core",
+                "x": 1,
+                "y": 2
+            },
+            {
+                "didx": 0,
+                "die_id": 4,
+                "port": 2,
+                "type": "PxHA",
+                "x": 1,
+                "y": 2
+            },
+            {
+                "die_id": 4,
+                "type": "RTR",
+                "x": 1,
+                "y": 3
+            },
+            {
+                "didx": 0,
+                "die_id": 4,
+                "port": 1,
+                "type": "Core",
+                "x": 1,
+                "y": 3
+            },
+            {
+                "didx": 0,
+                "die_id": 4,
+                "port": 2,
+                "type": "PxHA",
+                "x": 1,
+                "y": 3
+            },
+            {
+                "die_id": 4,
+                "type": "RTR",
+                "x": 2,
+                "y": 0
+            },
+            {
+                "didx": 0,
+                "die_id": 4,
+                "port": 1,
+                "type": "Core",
+                "x": 2,
+                "y": 0
+            },
+            {
+                "didx": 0,
+                "die_id": 4,
+                "port": 2,
+                "type": "PxHA",
+                "x": 2,
+                "y": 0
+            },
+            {
+                "die_id": 4,
+                "type": "RTR",
+                "x": 2,
+                "y": 1
+            },
+            {
+                "didx": 0,
+                "die_id": 4,
+                "port": 1,
+                "type": "Core",
+                "x": 2,
+                "y": 1
+            },
+            {
+                "didx": 0,
+                "die_id": 4,
+                "port": 2,
+                "type": "PxHA",
+                "x": 2,
+                "y": 1
+            },
+            {
+                "die_id": 4,
+                "type": "RTR",
+                "x": 2,
+                "y": 2
+            },
+            {
+                "didx": 0,
+                "die_id": 4,
+                "port": 1,
+                "type": "Core",
+                "x": 2,
+                "y": 2
+            },
+            {
+                "didx": 0,
+                "die_id": 4,
+                "port": 2,
+                "type": "PxHA",
+                "x": 2,
+                "y": 2
+            },
+            {
+                "die_id": 4,
+                "type": "RTR",
+                "x": 2,
+                "y": 3
+            },
+            {
+                "didx": 0,
+                "die_id": 4,
+                "port": 1,
+                "type": "Core",
+                "x": 2,
+                "y": 3
+            },
+            {
+                "didx": 0,
+                "die_id": 4,
+                "port": 2,
+                "type": "PxHA",
+                "x": 2,
+                "y": 3
+            },
+            {
+                "die_id": 4,
+                "type": "RTR",
+                "x": 3,
+                "y": 0
+            },
+            {
+                "didx": 0,
+                "die_id": 4,
+                "port": 1,
+                "type": "Core",
+                "x": 3,
+                "y": 0
+            },
+            {
+                "die_id": 4,
+                "type": "RTR",
+                "x": 3,
+                "y": 1
+            },
+            {
+                "didx": 0,
+                "die_id": 4,
+                "port": 1,
+                "type": "Core",
+                "x": 3,
+                "y": 1
+            },
+            {
+                "die_id": 4,
+                "type": "RTR",
+                "x": 3,
+                "y": 2
+            },
+            {
+                "didx": 0,
+                "die_id": 4,
+                "port": 1,
+                "type": "Core",
+                "x": 3,
+                "y": 2
+            },
+            {
+                "die_id": 4,
+                "type": "RTR",
+                "x": 3,
+                "y": 3
+            },
+            {
+                "didx": 0,
+                "die_id": 4,
+                "port": 1,
+                "type": "Core",
+                "x": 3,
+                "y": 3
+            },
+            {
+                "die_id": 5,
+                "type": "RTR",
+                "x": 0,
+                "y": 0
+            },
+            {
+                "die_id": 5,
+                "port": 1,
+                "type": "ADI",
+                "x": 0,
+                "y": 0
+            },
+            {
+                "didx": 0,
+                "die_id": 5,
+                "port": 2,
+                "type": "Core",
+                "x": 0,
+                "y": 0
+            },
+            {
+                "die_id": 5,
+                "type": "RTR",
+                "x": 0,
+                "y": 1
+            },
+            {
+                "die_id": 5,
+                "port": 1,
+                "type": "ADI",
+                "x": 0,
+                "y": 1
+            },
+            {
+                "didx": 0,
+                "die_id": 5,
+                "port": 2,
+                "type": "Core",
+                "x": 0,
+                "y": 1
+            },
+            {
+                "die_id": 5,
+                "type": "RTR",
+                "x": 0,
+                "y": 2
+            },
+            {
+                "die_id": 5,
+                "port": 1,
+                "type": "ADI",
+                "x": 0,
+                "y": 2
+            },
+            {
+                "didx": 0,
+                "die_id": 5,
+                "port": 2,
+                "type": "Core",
+                "x": 0,
+                "y": 2
+            },
+            {
+                "die_id": 5,
+                "type": "RTR",
+                "x": 0,
+                "y": 3
+            },
+            {
+                "die_id": 5,
+                "port": 1,
+                "type": "ADI",
+                "x": 0,
+                "y": 3
+            },
+            {
+                "didx": 0,
+                "die_id": 5,
+                "port": 2,
+                "type": "Core",
+                "x": 0,
+                "y": 3
+            },
+            {
+                "die_id": 5,
+                "type": "RTR",
+                "x": 1,
+                "y": 0
+            },
+            {
+                "didx": 0,
+                "die_id": 5,
+                "port": 1,
+                "type": "Core",
+                "x": 1,
+                "y": 0
+            },
+            {
+                "didx": 0,
+                "die_id": 5,
+                "port": 2,
+                "type": "PxHA",
+                "x": 1,
+                "y": 0
+            },
+            {
+                "die_id": 5,
+                "type": "RTR",
+                "x": 1,
+                "y": 1
+            },
+            {
+                "didx": 0,
+                "die_id": 5,
+                "port": 1,
+                "type": "Core",
+                "x": 1,
+                "y": 1
+            },
+            {
+                "didx": 0,
+                "die_id": 5,
+                "port": 2,
+                "type": "PxHA",
+                "x": 1,
+                "y": 1
+            },
+            {
+                "die_id": 5,
+                "type": "RTR",
+                "x": 1,
+                "y": 2
+            },
+            {
+                "didx": 0,
+                "die_id": 5,
+                "port": 1,
+                "type": "Core",
+                "x": 1,
+                "y": 2
+            },
+            {
+                "didx": 0,
+                "die_id": 5,
+                "port": 2,
+                "type": "PxHA",
+                "x": 1,
+                "y": 2
+            },
+            {
+                "die_id": 5,
+                "type": "RTR",
+                "x": 1,
+                "y": 3
+            },
+            {
+                "didx": 0,
+                "die_id": 5,
+                "port": 1,
+                "type": "Core",
+                "x": 1,
+                "y": 3
+            },
+            {
+                "didx": 0,
+                "die_id": 5,
+                "port": 2,
+                "type": "PxHA",
+                "x": 1,
+                "y": 3
+            },
+            {
+                "die_id": 5,
+                "type": "RTR",
+                "x": 2,
+                "y": 0
+            },
+            {
+                "didx": 0,
+                "die_id": 5,
+                "port": 1,
+                "type": "Core",
+                "x": 2,
+                "y": 0
+            },
+            {
+                "didx": 0,
+                "die_id": 5,
+                "port": 2,
+                "type": "PxHA",
+                "x": 2,
+                "y": 0
+            },
+            {
+                "die_id": 5,
+                "type": "RTR",
+                "x": 2,
+                "y": 1
+            },
+            {
+                "didx": 0,
+                "die_id": 5,
+                "port": 1,
+                "type": "Core",
+                "x": 2,
+                "y": 1
+            },
+            {
+                "didx": 0,
+                "die_id": 5,
+                "port": 2,
+                "type": "PxHA",
+                "x": 2,
+                "y": 1
+            },
+            {
+                "die_id": 5,
+                "type": "RTR",
+                "x": 2,
+                "y": 2
+            },
+            {
+                "didx": 0,
+                "die_id": 5,
+                "port": 1,
+                "type": "Core",
+                "x": 2,
+                "y": 2
+            },
+            {
+                "didx": 0,
+                "die_id": 5,
+                "port": 2,
+                "type": "PxHA",
+                "x": 2,
+                "y": 2
+            },
+            {
+                "die_id": 5,
+                "type": "RTR",
+                "x": 2,
+                "y": 3
+            },
+            {
+                "didx": 0,
+                "die_id": 5,
+                "port": 1,
+                "type": "Core",
+                "x": 2,
+                "y": 3
+            },
+            {
+                "didx": 0,
+                "die_id": 5,
+                "port": 2,
+                "type": "PxHA",
+                "x": 2,
+                "y": 3
+            },
+            {
+                "die_id": 5,
+                "type": "RTR",
+                "x": 3,
+                "y": 0
+            },
+            {
+                "didx": 0,
+                "die_id": 5,
+                "port": 1,
+                "type": "Core",
+                "x": 3,
+                "y": 0
+            },
+            {
+                "die_id": 5,
+                "type": "RTR",
+                "x": 3,
+                "y": 1
+            },
+            {
+                "didx": 0,
+                "die_id": 5,
+                "port": 1,
+                "type": "Core",
+                "x": 3,
+                "y": 1
+            },
+            {
+                "die_id": 5,
+                "type": "RTR",
+                "x": 3,
+                "y": 2
+            },
+            {
+                "didx": 0,
+                "die_id": 5,
+                "port": 1,
+                "type": "Core",
+                "x": 3,
+                "y": 2
+            },
+            {
+                "die_id": 5,
+                "type": "RTR",
+                "x": 3,
+                "y": 3
+            },
+            {
+                "didx": 0,
+                "die_id": 5,
+                "port": 1,
+                "type": "Core",
+                "x": 3,
+                "y": 3
+            },
+            {
+                "die_id": 6,
+                "type": "RTR",
+                "x": 0,
+                "y": 0
+            },
+            {
+                "die_id": 6,
+                "port": 1,
+                "type": "ADI",
+                "x": 0,
+                "y": 0
+            },
+            {
+                "didx": 0,
+                "die_id": 6,
+                "port": 2,
+                "type": "Core",
+                "x": 0,
+                "y": 0
+            },
+            {
+                "die_id": 6,
+                "type": "RTR",
+                "x": 0,
+                "y": 1
+            },
+            {
+                "die_id": 6,
+                "port": 1,
+                "type": "ADI",
+                "x": 0,
+                "y": 1
+            },
+            {
+                "didx": 0,
+                "die_id": 6,
+                "port": 2,
+                "type": "Core",
+                "x": 0,
+                "y": 1
+            },
+            {
+                "die_id": 6,
+                "type": "RTR",
+                "x": 0,
+                "y": 2
+            },
+            {
+                "die_id": 6,
+                "port": 1,
+                "type": "ADI",
+                "x": 0,
+                "y": 2
+            },
+            {
+                "didx": 0,
+                "die_id": 6,
+                "port": 2,
+                "type": "Core",
+                "x": 0,
+                "y": 2
+            },
+            {
+                "die_id": 6,
+                "type": "RTR",
+                "x": 0,
+                "y": 3
+            },
+            {
+                "die_id": 6,
+                "port": 1,
+                "type": "ADI",
+                "x": 0,
+                "y": 3
+            },
+            {
+                "didx": 0,
+                "die_id": 6,
+                "port": 2,
+                "type": "Core",
+                "x": 0,
+                "y": 3
+            },
+            {
+                "die_id": 6,
+                "type": "RTR",
+                "x": 1,
+                "y": 0
+            },
+            {
+                "didx": 0,
+                "die_id": 6,
+                "port": 1,
+                "type": "Core",
+                "x": 1,
+                "y": 0
+            },
+            {
+                "didx": 0,
+                "die_id": 6,
+                "port": 2,
+                "type": "PxHA",
+                "x": 1,
+                "y": 0
+            },
+            {
+                "die_id": 6,
+                "type": "RTR",
+                "x": 1,
+                "y": 1
+            },
+            {
+                "didx": 0,
+                "die_id": 6,
+                "port": 1,
+                "type": "Core",
+                "x": 1,
+                "y": 1
+            },
+            {
+                "didx": 0,
+                "die_id": 6,
+                "port": 2,
+                "type": "PxHA",
+                "x": 1,
+                "y": 1
+            },
+            {
+                "die_id": 6,
+                "type": "RTR",
+                "x": 1,
+                "y": 2
+            },
+            {
+                "didx": 0,
+                "die_id": 6,
+                "port": 1,
+                "type": "Core",
+                "x": 1,
+                "y": 2
+            },
+            {
+                "didx": 0,
+                "die_id": 6,
+                "port": 2,
+                "type": "PxHA",
+                "x": 1,
+                "y": 2
+            },
+            {
+                "die_id": 6,
+                "type": "RTR",
+                "x": 1,
+                "y": 3
+            },
+            {
+                "didx": 0,
+                "die_id": 6,
+                "port": 1,
+                "type": "Core",
+                "x": 1,
+                "y": 3
+            },
+            {
+                "didx": 0,
+                "die_id": 6,
+                "port": 2,
+                "type": "PxHA",
+                "x": 1,
+                "y": 3
+            },
+            {
+                "die_id": 6,
+                "type": "RTR",
+                "x": 2,
+                "y": 0
+            },
+            {
+                "didx": 0,
+                "die_id": 6,
+                "port": 1,
+                "type": "Core",
+                "x": 2,
+                "y": 0
+            },
+            {
+                "didx": 0,
+                "die_id": 6,
+                "port": 2,
+                "type": "PxHA",
+                "x": 2,
+                "y": 0
+            },
+            {
+                "die_id": 6,
+                "type": "RTR",
+                "x": 2,
+                "y": 1
+            },
+            {
+                "didx": 0,
+                "die_id": 6,
+                "port": 1,
+                "type": "Core",
+                "x": 2,
+                "y": 1
+            },
+            {
+                "didx": 0,
+                "die_id": 6,
+                "port": 2,
+                "type": "PxHA",
+                "x": 2,
+                "y": 1
+            },
+            {
+                "die_id": 6,
+                "type": "RTR",
+                "x": 2,
+                "y": 2
+            },
+            {
+                "didx": 0,
+                "die_id": 6,
+                "port": 1,
+                "type": "Core",
+                "x": 2,
+                "y": 2
+            },
+            {
+                "didx": 0,
+                "die_id": 6,
+                "port": 2,
+                "type": "PxHA",
+                "x": 2,
+                "y": 2
+            },
+            {
+                "die_id": 6,
+                "type": "RTR",
+                "x": 2,
+                "y": 3
+            },
+            {
+                "didx": 0,
+                "die_id": 6,
+                "port": 1,
+                "type": "Core",
+                "x": 2,
+                "y": 3
+            },
+            {
+                "didx": 0,
+                "die_id": 6,
+                "port": 2,
+                "type": "PxHA",
+                "x": 2,
+                "y": 3
+            },
+            {
+                "die_id": 6,
+                "type": "RTR",
+                "x": 3,
+                "y": 0
+            },
+            {
+                "didx": 0,
+                "die_id": 6,
+                "port": 1,
+                "type": "Core",
+                "x": 3,
+                "y": 0
+            },
+            {
+                "die_id": 6,
+                "type": "RTR",
+                "x": 3,
+                "y": 1
+            },
+            {
+                "didx": 0,
+                "die_id": 6,
+                "port": 1,
+                "type": "Core",
+                "x": 3,
+                "y": 1
+            },
+            {
+                "die_id": 6,
+                "type": "RTR",
+                "x": 3,
+                "y": 2
+            },
+            {
+                "didx": 0,
+                "die_id": 6,
+                "port": 1,
+                "type": "Core",
+                "x": 3,
+                "y": 2
+            },
+            {
+                "die_id": 6,
+                "type": "RTR",
+                "x": 3,
+                "y": 3
+            },
+            {
+                "didx": 0,
+                "die_id": 6,
+                "port": 1,
+                "type": "Core",
+                "x": 3,
+                "y": 3
+            },
+            {
+                "die_id": 7,
+                "type": "RTR",
+                "x": 0,
+                "y": 0
+            },
+            {
+                "die_id": 7,
+                "port": 1,
+                "type": "ADI",
+                "x": 0,
+                "y": 0
+            },
+            {
+                "didx": 0,
+                "die_id": 7,
+                "port": 2,
+                "type": "Core",
+                "x": 0,
+                "y": 0
+            },
+            {
+                "die_id": 7,
+                "type": "RTR",
+                "x": 0,
+                "y": 1
+            },
+            {
+                "die_id": 7,
+                "port": 1,
+                "type": "ADI",
+                "x": 0,
+                "y": 1
+            },
+            {
+                "didx": 0,
+                "die_id": 7,
+                "port": 2,
+                "type": "Core",
+                "x": 0,
+                "y": 1
+            },
+            {
+                "die_id": 7,
+                "type": "RTR",
+                "x": 0,
+                "y": 2
+            },
+            {
+                "die_id": 7,
+                "port": 1,
+                "type": "ADI",
+                "x": 0,
+                "y": 2
+            },
+            {
+                "didx": 0,
+                "die_id": 7,
+                "port": 2,
+                "type": "Core",
+                "x": 0,
+                "y": 2
+            },
+            {
+                "die_id": 7,
+                "type": "RTR",
+                "x": 0,
+                "y": 3
+            },
+            {
+                "die_id": 7,
+                "port": 1,
+                "type": "ADI",
+                "x": 0,
+                "y": 3
+            },
+            {
+                "didx": 0,
+                "die_id": 7,
+                "port": 2,
+                "type": "Core",
+                "x": 0,
+                "y": 3
+            },
+            {
+                "die_id": 7,
+                "type": "RTR",
+                "x": 1,
+                "y": 0
+            },
+            {
+                "didx": 0,
+                "die_id": 7,
+                "port": 1,
+                "type": "Core",
+                "x": 1,
+                "y": 0
+            },
+            {
+                "didx": 0,
+                "die_id": 7,
+                "port": 2,
+                "type": "PxHA",
+                "x": 1,
+                "y": 0
+            },
+            {
+                "die_id": 7,
+                "type": "RTR",
+                "x": 1,
+                "y": 1
+            },
+            {
+                "didx": 0,
+                "die_id": 7,
+                "port": 1,
+                "type": "Core",
+                "x": 1,
+                "y": 1
+            },
+            {
+                "didx": 0,
+                "die_id": 7,
+                "port": 2,
+                "type": "PxHA",
+                "x": 1,
+                "y": 1
+            },
+            {
+                "die_id": 7,
+                "type": "RTR",
+                "x": 1,
+                "y": 2
+            },
+            {
+                "didx": 0,
+                "die_id": 7,
+                "port": 1,
+                "type": "Core",
+                "x": 1,
+                "y": 2
+            },
+            {
+                "didx": 0,
+                "die_id": 7,
+                "port": 2,
+                "type": "PxHA",
+                "x": 1,
+                "y": 2
+            },
+            {
+                "die_id": 7,
+                "type": "RTR",
+                "x": 1,
+                "y": 3
+            },
+            {
+                "didx": 0,
+                "die_id": 7,
+                "port": 1,
+                "type": "Core",
+                "x": 1,
+                "y": 3
+            },
+            {
+                "didx": 0,
+                "die_id": 7,
+                "port": 2,
+                "type": "PxHA",
+                "x": 1,
+                "y": 3
+            },
+            {
+                "die_id": 7,
+                "type": "RTR",
+                "x": 2,
+                "y": 0
+            },
+            {
+                "didx": 0,
+                "die_id": 7,
+                "port": 1,
+                "type": "Core",
+                "x": 2,
+                "y": 0
+            },
+            {
+                "didx": 0,
+                "die_id": 7,
+                "port": 2,
+                "type": "PxHA",
+                "x": 2,
+                "y": 0
+            },
+            {
+                "die_id": 7,
+                "type": "RTR",
+                "x": 2,
+                "y": 1
+            },
+            {
+                "didx": 0,
+                "die_id": 7,
+                "port": 1,
+                "type": "Core",
+                "x": 2,
+                "y": 1
+            },
+            {
+                "didx": 0,
+                "die_id": 7,
+                "port": 2,
+                "type": "PxHA",
+                "x": 2,
+                "y": 1
+            },
+            {
+                "die_id": 7,
+                "type": "RTR",
+                "x": 2,
+                "y": 2
+            },
+            {
+                "didx": 0,
+                "die_id": 7,
+                "port": 1,
+                "type": "Core",
+                "x": 2,
+                "y": 2
+            },
+            {
+                "didx": 0,
+                "die_id": 7,
+                "port": 2,
+                "type": "PxHA",
+                "x": 2,
+                "y": 2
+            },
+            {
+                "die_id": 7,
+                "type": "RTR",
+                "x": 2,
+                "y": 3
+            },
+            {
+                "didx": 0,
+                "die_id": 7,
+                "port": 1,
+                "type": "Core",
+                "x": 2,
+                "y": 3
+            },
+            {
+                "didx": 0,
+                "die_id": 7,
+                "port": 2,
+                "type": "PxHA",
+                "x": 2,
+                "y": 3
+            },
+            {
+                "die_id": 7,
+                "type": "RTR",
+                "x": 3,
+                "y": 0
+            },
+            {
+                "didx": 0,
+                "die_id": 7,
+                "port": 1,
+                "type": "Core",
+                "x": 3,
+                "y": 0
+            },
+            {
+                "die_id": 7,
+                "type": "RTR",
+                "x": 3,
+                "y": 1
+            },
+            {
+                "didx": 0,
+                "die_id": 7,
+                "port": 1,
+                "type": "Core",
+                "x": 3,
+                "y": 1
+            },
+            {
+                "die_id": 7,
+                "type": "RTR",
+                "x": 3,
+                "y": 2
+            },
+            {
+                "didx": 0,
+                "die_id": 7,
+                "port": 1,
+                "type": "Core",
+                "x": 3,
+                "y": 2
+            },
+            {
+                "die_id": 7,
+                "type": "RTR",
+                "x": 3,
+                "y": 3
+            },
+            {
+                "didx": 0,
+                "die_id": 7,
+                "port": 1,
+                "type": "Core",
+                "x": 3,
+                "y": 3
+            },
+            {
+                "die_id": 8,
+                "type": "RTR",
+                "x": 0,
+                "y": 0
+            },
+            {
+                "die_id": 8,
+                "port": 1,
+                "type": "ADI",
+                "x": 0,
+                "y": 0
+            },
+            {
+                "didx": 0,
+                "die_id": 8,
+                "port": 2,
+                "type": "Core",
+                "x": 0,
+                "y": 0
+            },
+            {
+                "die_id": 8,
+                "type": "RTR",
+                "x": 0,
+                "y": 1
+            },
+            {
+                "die_id": 8,
+                "port": 1,
+                "type": "ADI",
+                "x": 0,
+                "y": 1
+            },
+            {
+                "didx": 0,
+                "die_id": 8,
+                "port": 2,
+                "type": "Core",
+                "x": 0,
+                "y": 1
+            },
+            {
+                "die_id": 8,
+                "type": "RTR",
+                "x": 0,
+                "y": 2
+            },
+            {
+                "die_id": 8,
+                "port": 1,
+                "type": "ADI",
+                "x": 0,
+                "y": 2
+            },
+            {
+                "didx": 0,
+                "die_id": 8,
+                "port": 2,
+                "type": "Core",
+                "x": 0,
+                "y": 2
+            },
+            {
+                "die_id": 8,
+                "type": "RTR",
+                "x": 0,
+                "y": 3
+            },
+            {
+                "die_id": 8,
+                "port": 1,
+                "type": "ADI",
+                "x": 0,
+                "y": 3
+            },
+            {
+                "didx": 0,
+                "die_id": 8,
+                "port": 2,
+                "type": "Core",
+                "x": 0,
+                "y": 3
+            },
+            {
+                "die_id": 8,
+                "type": "RTR",
+                "x": 1,
+                "y": 0
+            },
+            {
+                "didx": 0,
+                "die_id": 8,
+                "port": 1,
+                "type": "Core",
+                "x": 1,
+                "y": 0
+            },
+            {
+                "didx": 0,
+                "die_id": 8,
+                "port": 2,
+                "type": "PxHA",
+                "x": 1,
+                "y": 0
+            },
+            {
+                "die_id": 8,
+                "type": "RTR",
+                "x": 1,
+                "y": 1
+            },
+            {
+                "didx": 0,
+                "die_id": 8,
+                "port": 1,
+                "type": "Core",
+                "x": 1,
+                "y": 1
+            },
+            {
+                "didx": 0,
+                "die_id": 8,
+                "port": 2,
+                "type": "PxHA",
+                "x": 1,
+                "y": 1
+            },
+            {
+                "die_id": 8,
+                "type": "RTR",
+                "x": 1,
+                "y": 2
+            },
+            {
+                "didx": 0,
+                "die_id": 8,
+                "port": 1,
+                "type": "Core",
+                "x": 1,
+                "y": 2
+            },
+            {
+                "didx": 0,
+                "die_id": 8,
+                "port": 2,
+                "type": "PxHA",
+                "x": 1,
+                "y": 2
+            },
+            {
+                "die_id": 8,
+                "type": "RTR",
+                "x": 1,
+                "y": 3
+            },
+            {
+                "didx": 0,
+                "die_id": 8,
+                "port": 1,
+                "type": "Core",
+                "x": 1,
+                "y": 3
+            },
+            {
+                "didx": 0,
+                "die_id": 8,
+                "port": 2,
+                "type": "PxHA",
+                "x": 1,
+                "y": 3
+            },
+            {
+                "die_id": 8,
+                "type": "RTR",
+                "x": 2,
+                "y": 0
+            },
+            {
+                "didx": 0,
+                "die_id": 8,
+                "port": 1,
+                "type": "Core",
+                "x": 2,
+                "y": 0
+            },
+            {
+                "didx": 0,
+                "die_id": 8,
+                "port": 2,
+                "type": "PxHA",
+                "x": 2,
+                "y": 0
+            },
+            {
+                "die_id": 8,
+                "type": "RTR",
+                "x": 2,
+                "y": 1
+            },
+            {
+                "didx": 0,
+                "die_id": 8,
+                "port": 1,
+                "type": "Core",
+                "x": 2,
+                "y": 1
+            },
+            {
+                "didx": 0,
+                "die_id": 8,
+                "port": 2,
+                "type": "PxHA",
+                "x": 2,
+                "y": 1
+            },
+            {
+                "die_id": 8,
+                "type": "RTR",
+                "x": 2,
+                "y": 2
+            },
+            {
+                "didx": 0,
+                "die_id": 8,
+                "port": 1,
+                "type": "Core",
+                "x": 2,
+                "y": 2
+            },
+            {
+                "didx": 0,
+                "die_id": 8,
+                "port": 2,
+                "type": "PxHA",
+                "x": 2,
+                "y": 2
+            },
+            {
+                "die_id": 8,
+                "type": "RTR",
+                "x": 2,
+                "y": 3
+            },
+            {
+                "didx": 0,
+                "die_id": 8,
+                "port": 1,
+                "type": "Core",
+                "x": 2,
+                "y": 3
+            },
+            {
+                "didx": 0,
+                "die_id": 8,
+                "port": 2,
+                "type": "PxHA",
+                "x": 2,
+                "y": 3
+            },
+            {
+                "die_id": 8,
+                "type": "RTR",
+                "x": 3,
+                "y": 0
+            },
+            {
+                "didx": 0,
+                "die_id": 8,
+                "port": 1,
+                "type": "Core",
+                "x": 3,
+                "y": 0
+            },
+            {
+                "die_id": 8,
+                "type": "RTR",
+                "x": 3,
+                "y": 1
+            },
+            {
+                "didx": 0,
+                "die_id": 8,
+                "port": 1,
+                "type": "Core",
+                "x": 3,
+                "y": 1
+            },
+            {
+                "die_id": 8,
+                "type": "RTR",
+                "x": 3,
+                "y": 2
+            },
+            {
+                "didx": 0,
+                "die_id": 8,
+                "port": 1,
+                "type": "Core",
+                "x": 3,
+                "y": 2
+            },
+            {
+                "die_id": 8,
+                "type": "RTR",
+                "x": 3,
+                "y": 3
+            },
+            {
+                "didx": 0,
+                "die_id": 8,
+                "port": 1,
+                "type": "Core",
+                "x": 3,
+                "y": 3
+            },
+            {
+                "die_id": 9,
+                "type": "RTR",
+                "x": 0,
+                "y": 0
+            },
+            {
+                "die_id": 9,
+                "port": 1,
+                "type": "ADI",
+                "x": 0,
+                "y": 0
+            },
+            {
+                "didx": 0,
+                "die_id": 9,
+                "port": 2,
+                "type": "Core",
+                "x": 0,
+                "y": 0
+            },
+            {
+                "die_id": 9,
+                "type": "RTR",
+                "x": 0,
+                "y": 1
+            },
+            {
+                "die_id": 9,
+                "port": 1,
+                "type": "ADI",
+                "x": 0,
+                "y": 1
+            },
+            {
+                "didx": 0,
+                "die_id": 9,
+                "port": 2,
+                "type": "Core",
+                "x": 0,
+                "y": 1
+            },
+            {
+                "die_id": 9,
+                "type": "RTR",
+                "x": 0,
+                "y": 2
+            },
+            {
+                "die_id": 9,
+                "port": 1,
+                "type": "ADI",
+                "x": 0,
+                "y": 2
+            },
+            {
+                "didx": 0,
+                "die_id": 9,
+                "port": 2,
+                "type": "Core",
+                "x": 0,
+                "y": 2
+            },
+            {
+                "die_id": 9,
+                "type": "RTR",
+                "x": 0,
+                "y": 3
+            },
+            {
+                "die_id": 9,
+                "port": 1,
+                "type": "ADI",
+                "x": 0,
+                "y": 3
+            },
+            {
+                "didx": 0,
+                "die_id": 9,
+                "port": 2,
+                "type": "Core",
+                "x": 0,
+                "y": 3
+            },
+            {
+                "die_id": 9,
+                "type": "RTR",
+                "x": 1,
+                "y": 0
+            },
+            {
+                "didx": 0,
+                "die_id": 9,
+                "port": 1,
+                "type": "Core",
+                "x": 1,
+                "y": 0
+            },
+            {
+                "didx": 0,
+                "die_id": 9,
+                "port": 2,
+                "type": "PxHA",
+                "x": 1,
+                "y": 0
+            },
+            {
+                "die_id": 9,
+                "type": "RTR",
+                "x": 1,
+                "y": 1
+            },
+            {
+                "didx": 0,
+                "die_id": 9,
+                "port": 1,
+                "type": "Core",
+                "x": 1,
+                "y": 1
+            },
+            {
+                "didx": 0,
+                "die_id": 9,
+                "port": 2,
+                "type": "PxHA",
+                "x": 1,
+                "y": 1
+            },
+            {
+                "die_id": 9,
+                "type": "RTR",
+                "x": 1,
+                "y": 2
+            },
+            {
+                "didx": 0,
+                "die_id": 9,
+                "port": 1,
+                "type": "Core",
+                "x": 1,
+                "y": 2
+            },
+            {
+                "didx": 0,
+                "die_id": 9,
+                "port": 2,
+                "type": "PxHA",
+                "x": 1,
+                "y": 2
+            },
+            {
+                "die_id": 9,
+                "type": "RTR",
+                "x": 1,
+                "y": 3
+            },
+            {
+                "didx": 0,
+                "die_id": 9,
+                "port": 1,
+                "type": "Core",
+                "x": 1,
+                "y": 3
+            },
+            {
+                "didx": 0,
+                "die_id": 9,
+                "port": 2,
+                "type": "PxHA",
+                "x": 1,
+                "y": 3
+            },
+            {
+                "die_id": 9,
+                "type": "RTR",
+                "x": 2,
+                "y": 0
+            },
+            {
+                "didx": 0,
+                "die_id": 9,
+                "port": 1,
+                "type": "Core",
+                "x": 2,
+                "y": 0
+            },
+            {
+                "didx": 0,
+                "die_id": 9,
+                "port": 2,
+                "type": "PxHA",
+                "x": 2,
+                "y": 0
+            },
+            {
+                "die_id": 9,
+                "type": "RTR",
+                "x": 2,
+                "y": 1
+            },
+            {
+                "didx": 0,
+                "die_id": 9,
+                "port": 1,
+                "type": "Core",
+                "x": 2,
+                "y": 1
+            },
+            {
+                "didx": 0,
+                "die_id": 9,
+                "port": 2,
+                "type": "PxHA",
+                "x": 2,
+                "y": 1
+            },
+            {
+                "die_id": 9,
+                "type": "RTR",
+                "x": 2,
+                "y": 2
+            },
+            {
+                "didx": 0,
+                "die_id": 9,
+                "port": 1,
+                "type": "Core",
+                "x": 2,
+                "y": 2
+            },
+            {
+                "didx": 0,
+                "die_id": 9,
+                "port": 2,
+                "type": "PxHA",
+                "x": 2,
+                "y": 2
+            },
+            {
+                "die_id": 9,
+                "type": "RTR",
+                "x": 2,
+                "y": 3
+            },
+            {
+                "didx": 0,
+                "die_id": 9,
+                "port": 1,
+                "type": "Core",
+                "x": 2,
+                "y": 3
+            },
+            {
+                "didx": 0,
+                "die_id": 9,
+                "port": 2,
+                "type": "PxHA",
+                "x": 2,
+                "y": 3
+            },
+            {
+                "die_id": 9,
+                "type": "RTR",
+                "x": 3,
+                "y": 0
+            },
+            {
+                "didx": 0,
+                "die_id": 9,
+                "port": 1,
+                "type": "Core",
+                "x": 3,
+                "y": 0
+            },
+            {
+                "die_id": 9,
+                "type": "RTR",
+                "x": 3,
+                "y": 1
+            },
+            {
+                "didx": 0,
+                "die_id": 9,
+                "port": 1,
+                "type": "Core",
+                "x": 3,
+                "y": 1
+            },
+            {
+                "die_id": 9,
+                "type": "RTR",
+                "x": 3,
+                "y": 2
+            },
+            {
+                "didx": 0,
+                "die_id": 9,
+                "port": 1,
+                "type": "Core",
+                "x": 3,
+                "y": 2
+            },
+            {
+                "die_id": 9,
+                "type": "RTR",
+                "x": 3,
+                "y": 3
+            },
+            {
+                "didx": 0,
+                "die_id": 9,
+                "port": 1,
+                "type": "Core",
+                "x": 3,
+                "y": 3
+            },
+            {
+                "die_id": 10,
+                "type": "RTR",
+                "x": 0,
+                "y": 0
+            },
+            {
+                "die_id": 10,
+                "port": 1,
+                "type": "ADI",
+                "x": 0,
+                "y": 0
+            },
+            {
+                "didx": 0,
+                "die_id": 10,
+                "port": 2,
+                "type": "Core",
+                "x": 0,
+                "y": 0
+            },
+            {
+                "die_id": 10,
+                "type": "RTR",
+                "x": 0,
+                "y": 1
+            },
+            {
+                "die_id": 10,
+                "port": 1,
+                "type": "ADI",
+                "x": 0,
+                "y": 1
+            },
+            {
+                "didx": 0,
+                "die_id": 10,
+                "port": 2,
+                "type": "Core",
+                "x": 0,
+                "y": 1
+            },
+            {
+                "die_id": 10,
+                "type": "RTR",
+                "x": 0,
+                "y": 2
+            },
+            {
+                "die_id": 10,
+                "port": 1,
+                "type": "ADI",
+                "x": 0,
+                "y": 2
+            },
+            {
+                "didx": 0,
+                "die_id": 10,
+                "port": 2,
+                "type": "Core",
+                "x": 0,
+                "y": 2
+            },
+            {
+                "die_id": 10,
+                "type": "RTR",
+                "x": 0,
+                "y": 3
+            },
+            {
+                "die_id": 10,
+                "port": 1,
+                "type": "ADI",
+                "x": 0,
+                "y": 3
+            },
+            {
+                "didx": 0,
+                "die_id": 10,
+                "port": 2,
+                "type": "Core",
+                "x": 0,
+                "y": 3
+            },
+            {
+                "die_id": 10,
+                "type": "RTR",
+                "x": 1,
+                "y": 0
+            },
+            {
+                "didx": 0,
+                "die_id": 10,
+                "port": 1,
+                "type": "Core",
+                "x": 1,
+                "y": 0
+            },
+            {
+                "didx": 0,
+                "die_id": 10,
+                "port": 2,
+                "type": "PxHA",
+                "x": 1,
+                "y": 0
+            },
+            {
+                "die_id": 10,
+                "type": "RTR",
+                "x": 1,
+                "y": 1
+            },
+            {
+                "didx": 0,
+                "die_id": 10,
+                "port": 1,
+                "type": "Core",
+                "x": 1,
+                "y": 1
+            },
+            {
+                "didx": 0,
+                "die_id": 10,
+                "port": 2,
+                "type": "PxHA",
+                "x": 1,
+                "y": 1
+            },
+            {
+                "die_id": 10,
+                "type": "RTR",
+                "x": 1,
+                "y": 2
+            },
+            {
+                "didx": 0,
+                "die_id": 10,
+                "port": 1,
+                "type": "Core",
+                "x": 1,
+                "y": 2
+            },
+            {
+                "didx": 0,
+                "die_id": 10,
+                "port": 2,
+                "type": "PxHA",
+                "x": 1,
+                "y": 2
+            },
+            {
+                "die_id": 10,
+                "type": "RTR",
+                "x": 1,
+                "y": 3
+            },
+            {
+                "didx": 0,
+                "die_id": 10,
+                "port": 1,
+                "type": "Core",
+                "x": 1,
+                "y": 3
+            },
+            {
+                "didx": 0,
+                "die_id": 10,
+                "port": 2,
+                "type": "PxHA",
+                "x": 1,
+                "y": 3
+            },
+            {
+                "die_id": 10,
+                "type": "RTR",
+                "x": 2,
+                "y": 0
+            },
+            {
+                "didx": 0,
+                "die_id": 10,
+                "port": 1,
+                "type": "Core",
+                "x": 2,
+                "y": 0
+            },
+            {
+                "didx": 0,
+                "die_id": 10,
+                "port": 2,
+                "type": "PxHA",
+                "x": 2,
+                "y": 0
+            },
+            {
+                "die_id": 10,
+                "type": "RTR",
+                "x": 2,
+                "y": 1
+            },
+            {
+                "didx": 0,
+                "die_id": 10,
+                "port": 1,
+                "type": "Core",
+                "x": 2,
+                "y": 1
+            },
+            {
+                "didx": 0,
+                "die_id": 10,
+                "port": 2,
+                "type": "PxHA",
+                "x": 2,
+                "y": 1
+            },
+            {
+                "die_id": 10,
+                "type": "RTR",
+                "x": 2,
+                "y": 2
+            },
+            {
+                "didx": 0,
+                "die_id": 10,
+                "port": 1,
+                "type": "Core",
+                "x": 2,
+                "y": 2
+            },
+            {
+                "didx": 0,
+                "die_id": 10,
+                "port": 2,
+                "type": "PxHA",
+                "x": 2,
+                "y": 2
+            },
+            {
+                "die_id": 10,
+                "type": "RTR",
+                "x": 2,
+                "y": 3
+            },
+            {
+                "didx": 0,
+                "die_id": 10,
+                "port": 1,
+                "type": "Core",
+                "x": 2,
+                "y": 3
+            },
+            {
+                "didx": 0,
+                "die_id": 10,
+                "port": 2,
+                "type": "PxHA",
+                "x": 2,
+                "y": 3
+            },
+            {
+                "die_id": 10,
+                "type": "RTR",
+                "x": 3,
+                "y": 0
+            },
+            {
+                "didx": 0,
+                "die_id": 10,
+                "port": 1,
+                "type": "Core",
+                "x": 3,
+                "y": 0
+            },
+            {
+                "die_id": 10,
+                "type": "RTR",
+                "x": 3,
+                "y": 1
+            },
+            {
+                "didx": 0,
+                "die_id": 10,
+                "port": 1,
+                "type": "Core",
+                "x": 3,
+                "y": 1
+            },
+            {
+                "die_id": 10,
+                "type": "RTR",
+                "x": 3,
+                "y": 2
+            },
+            {
+                "didx": 0,
+                "die_id": 10,
+                "port": 1,
+                "type": "Core",
+                "x": 3,
+                "y": 2
+            },
+            {
+                "die_id": 10,
+                "type": "RTR",
+                "x": 3,
+                "y": 3
+            },
+            {
+                "didx": 0,
+                "die_id": 10,
+                "port": 1,
+                "type": "Core",
+                "x": 3,
+                "y": 3
+            },
+            {
+                "die_id": 11,
+                "type": "RTR",
+                "x": 0,
+                "y": 0
+            },
+            {
+                "die_id": 11,
+                "port": 1,
+                "type": "ADI",
+                "x": 0,
+                "y": 0
+            },
+            {
+                "didx": 0,
+                "die_id": 11,
+                "port": 2,
+                "type": "Core",
+                "x": 0,
+                "y": 0
+            },
+            {
+                "die_id": 11,
+                "type": "RTR",
+                "x": 0,
+                "y": 1
+            },
+            {
+                "die_id": 11,
+                "port": 1,
+                "type": "ADI",
+                "x": 0,
+                "y": 1
+            },
+            {
+                "didx": 0,
+                "die_id": 11,
+                "port": 2,
+                "type": "Core",
+                "x": 0,
+                "y": 1
+            },
+            {
+                "die_id": 11,
+                "type": "RTR",
+                "x": 0,
+                "y": 2
+            },
+            {
+                "die_id": 11,
+                "port": 1,
+                "type": "ADI",
+                "x": 0,
+                "y": 2
+            },
+            {
+                "didx": 0,
+                "die_id": 11,
+                "port": 2,
+                "type": "Core",
+                "x": 0,
+                "y": 2
+            },
+            {
+                "die_id": 11,
+                "type": "RTR",
+                "x": 0,
+                "y": 3
+            },
+            {
+                "die_id": 11,
+                "port": 1,
+                "type": "ADI",
+                "x": 0,
+                "y": 3
+            },
+            {
+                "didx": 0,
+                "die_id": 11,
+                "port": 2,
+                "type": "Core",
+                "x": 0,
+                "y": 3
+            },
+            {
+                "die_id": 11,
+                "type": "RTR",
+                "x": 1,
+                "y": 0
+            },
+            {
+                "didx": 0,
+                "die_id": 11,
+                "port": 1,
+                "type": "Core",
+                "x": 1,
+                "y": 0
+            },
+            {
+                "didx": 0,
+                "die_id": 11,
+                "port": 2,
+                "type": "PxHA",
+                "x": 1,
+                "y": 0
+            },
+            {
+                "die_id": 11,
+                "type": "RTR",
+                "x": 1,
+                "y": 1
+            },
+            {
+                "didx": 0,
+                "die_id": 11,
+                "port": 1,
+                "type": "Core",
+                "x": 1,
+                "y": 1
+            },
+            {
+                "didx": 0,
+                "die_id": 11,
+                "port": 2,
+                "type": "PxHA",
+                "x": 1,
+                "y": 1
+            },
+            {
+                "die_id": 11,
+                "type": "RTR",
+                "x": 1,
+                "y": 2
+            },
+            {
+                "didx": 0,
+                "die_id": 11,
+                "port": 1,
+                "type": "Core",
+                "x": 1,
+                "y": 2
+            },
+            {
+                "didx": 0,
+                "die_id": 11,
+                "port": 2,
+                "type": "PxHA",
+                "x": 1,
+                "y": 2
+            },
+            {
+                "die_id": 11,
+                "type": "RTR",
+                "x": 1,
+                "y": 3
+            },
+            {
+                "didx": 0,
+                "die_id": 11,
+                "port": 1,
+                "type": "Core",
+                "x": 1,
+                "y": 3
+            },
+            {
+                "didx": 0,
+                "die_id": 11,
+                "port": 2,
+                "type": "PxHA",
+                "x": 1,
+                "y": 3
+            },
+            {
+                "die_id": 11,
+                "type": "RTR",
+                "x": 2,
+                "y": 0
+            },
+            {
+                "didx": 0,
+                "die_id": 11,
+                "port": 1,
+                "type": "Core",
+                "x": 2,
+                "y": 0
+            },
+            {
+                "didx": 0,
+                "die_id": 11,
+                "port": 2,
+                "type": "PxHA",
+                "x": 2,
+                "y": 0
+            },
+            {
+                "die_id": 11,
+                "type": "RTR",
+                "x": 2,
+                "y": 1
+            },
+            {
+                "didx": 0,
+                "die_id": 11,
+                "port": 1,
+                "type": "Core",
+                "x": 2,
+                "y": 1
+            },
+            {
+                "didx": 0,
+                "die_id": 11,
+                "port": 2,
+                "type": "PxHA",
+                "x": 2,
+                "y": 1
+            },
+            {
+                "die_id": 11,
+                "type": "RTR",
+                "x": 2,
+                "y": 2
+            },
+            {
+                "didx": 0,
+                "die_id": 11,
+                "port": 1,
+                "type": "Core",
+                "x": 2,
+                "y": 2
+            },
+            {
+                "didx": 0,
+                "die_id": 11,
+                "port": 2,
+                "type": "PxHA",
+                "x": 2,
+                "y": 2
+            },
+            {
+                "die_id": 11,
+                "type": "RTR",
+                "x": 2,
+                "y": 3
+            },
+            {
+                "didx": 0,
+                "die_id": 11,
+                "port": 1,
+                "type": "Core",
+                "x": 2,
+                "y": 3
+            },
+            {
+                "didx": 0,
+                "die_id": 11,
+                "port": 2,
+                "type": "PxHA",
+                "x": 2,
+                "y": 3
+            },
+            {
+                "die_id": 11,
+                "type": "RTR",
+                "x": 3,
+                "y": 0
+            },
+            {
+                "didx": 0,
+                "die_id": 11,
+                "port": 1,
+                "type": "Core",
+                "x": 3,
+                "y": 0
+            },
+            {
+                "die_id": 11,
+                "type": "RTR",
+                "x": 3,
+                "y": 1
+            },
+            {
+                "didx": 0,
+                "die_id": 11,
+                "port": 1,
+                "type": "Core",
+                "x": 3,
+                "y": 1
+            },
+            {
+                "die_id": 11,
+                "type": "RTR",
+                "x": 3,
+                "y": 2
+            },
+            {
+                "didx": 0,
+                "die_id": 11,
+                "port": 1,
+                "type": "Core",
+                "x": 3,
+                "y": 2
+            },
+            {
+                "die_id": 11,
+                "type": "RTR",
+                "x": 3,
+                "y": 3
+            },
+            {
+                "didx": 0,
+                "die_id": 11,
+                "port": 1,
+                "type": "Core",
+                "x": 3,
+                "y": 3
+            }
+        ],
+        "connections": [
+            [
+                {
+                    "die_id": 11,
+                    "port": 1,
+                    "x": 0,
+                    "y": 0
+                },
+                {
+                    "die_id": 3,
+                    "port": 3,
+                    "x": 2,
+                    "y": 0
+                }
+            ],
+            [
+                {
+                    "die_id": 10,
+                    "port": 1,
+                    "x": 0,
+                    "y": 3
+                },
+                {
+                    "die_id": 3,
+                    "port": 3,
+                    "x": 1,
+                    "y": 0
+                }
+            ],
+            [
+                {
+                    "die_id": 9,
+                    "port": 1,
+                    "x": 0,
+                    "y": 3
+                },
+                {
+                    "die_id": 2,
+                    "port": 3,
+                    "x": 1,
+                    "y": 0
+                }
+            ],
+            [
+                {
+                    "die_id": 8,
+                    "port": 1,
+                    "x": 0,
+                    "y": 1
+                },
+                {
+                    "die_id": 2,
+                    "port": 0,
+                    "x": 3,
+                    "y": 0
+                }
+            ],
+            [
+                {
+                    "die_id": 6,
+                    "port": 1,
+                    "x": 0,
+                    "y": 2
+                },
+                {
+                    "die_id": 1,
+                    "port": 3,
+                    "x": 0,
+                    "y": 0
+                }
+            ],
+            [
+                {
+                    "die_id": 6,
+                    "port": 1,
+                    "x": 0,
+                    "y": 3
+                },
+                {
+                    "die_id": 1,
+                    "port": 3,
+                    "x": 1,
+                    "y": 0
+                }
+            ],
+            [
+                {
+                    "die_id": 4,
+                    "port": 1,
+                    "x": 0,
+                    "y": 0
+                },
+                {
+                    "die_id": 0,
+                    "port": 3,
+                    "x": 2,
+                    "y": 0
+                }
+            ],
+            [
+                {
+                    "die_id": 4,
+                    "port": 1,
+                    "x": 0,
+                    "y": 1
+                },
+                {
+                    "die_id": 0,
+                    "port": 0,
+                    "x": 3,
+                    "y": 0
+                }
+            ],
+            [
+                {
+                    "die_id": 1,
+                    "port": 3,
+                    "x": 0,
+                    "y": 0
+                },
+                {
+                    "die_id": 6,
+                    "port": 1,
+                    "x": 0,
+                    "y": 2
+                }
+            ],
+            [
+                {
+                    "die_id": 1,
+                    "port": 2,
+                    "x": 1,
+                    "y": 2
+                },
+                {
+                    "die_id": 3,
+                    "port": 2,
+                    "x": 1,
+                    "y": 2
+                }
+            ],
+            [
+                {
+                    "die_id": 7,
+                    "port": 1,
+                    "x": 0,
+                    "y": 1
+                },
+                {
+                    "die_id": 1,
+                    "port": 0,
+                    "x": 3,
+                    "y": 0
+                }
+            ],
+            [
+                {
+                    "die_id": 0,
+                    "port": 2,
+                    "x": 2,
+                    "y": 2
+                },
+                {
+                    "die_id": 2,
+                    "port": 2,
+                    "x": 2,
+                    "y": 2
+                }
+            ],
+            [
+                {
+                    "die_id": 2,
+                    "port": 1,
+                    "x": 0,
+                    "y": 2
+                },
+                {
+                    "die_id": 3,
+                    "port": 1,
+                    "x": 0,
+                    "y": 2
+                }
+            ],
+            [
+                {
+                    "die_id": 1,
+                    "port": 0,
+                    "x": 0,
+                    "y": 2
+                },
+                {
+                    "die_id": 0,
+                    "port": 0,
+                    "x": 0,
+                    "y": 2
+                }
+            ],
+            [
+                {
+                    "die_id": 0,
+                    "port": 0,
+                    "x": 3,
+                    "y": 0
+                },
+                {
+                    "die_id": 4,
+                    "port": 1,
+                    "x": 0,
+                    "y": 1
+                }
+            ],
+            [
+                {
+                    "die_id": 1,
+                    "port": 3,
+                    "x": 1,
+                    "y": 0
+                },
+                {
+                    "die_id": 6,
+                    "port": 1,
+                    "x": 0,
+                    "y": 3
+                }
+            ],
+            [
+                {
+                    "die_id": 8,
+                    "port": 1,
+                    "x": 0,
+                    "y": 0
+                },
+                {
+                    "die_id": 2,
+                    "port": 3,
+                    "x": 2,
+                    "y": 0
+                }
+            ],
+            [
+                {
+                    "die_id": 5,
+                    "port": 1,
+                    "x": 0,
+                    "y": 2
+                },
+                {
+                    "die_id": 0,
+                    "port": 3,
+                    "x": 0,
+                    "y": 0
+                }
+            ],
+            [
+                {
+                    "die_id": 0,
+                    "port": 3,
+                    "x": 0,
+                    "y": 0
+                },
+                {
+                    "die_id": 5,
+                    "port": 1,
+                    "x": 0,
+                    "y": 2
+                }
+            ],
+            [
+                {
+                    "die_id": 3,
+                    "port": 3,
+                    "x": 1,
+                    "y": 0
+                },
+                {
+                    "die_id": 10,
+                    "port": 1,
+                    "x": 0,
+                    "y": 3
+                }
+            ],
+            [
+                {
+                    "die_id": 1,
+                    "port": 2,
+                    "x": 2,
+                    "y": 2
+                },
+                {
+                    "die_id": 3,
+                    "port": 2,
+                    "x": 2,
+                    "y": 2
+                }
+            ],
+            [
+                {
+                    "die_id": 0,
+                    "port": 0,
+                    "x": 0,
+                    "y": 2
+                },
+                {
+                    "die_id": 1,
+                    "port": 0,
+                    "x": 0,
+                    "y": 2
+                }
+            ],
+            [
+                {
+                    "die_id": 3,
+                    "port": 3,
+                    "x": 0,
+                    "y": 0
+                },
+                {
+                    "die_id": 10,
+                    "port": 1,
+                    "x": 0,
+                    "y": 2
+                }
+            ],
+            [
+                {
+                    "die_id": 10,
+                    "port": 1,
+                    "x": 0,
+                    "y": 2
+                },
+                {
+                    "die_id": 3,
+                    "port": 3,
+                    "x": 0,
+                    "y": 0
+                }
+            ],
+            [
+                {
+                    "die_id": 0,
+                    "port": 2,
+                    "x": 1,
+                    "y": 2
+                },
+                {
+                    "die_id": 2,
+                    "port": 2,
+                    "x": 1,
+                    "y": 2
+                }
+            ],
+            [
+                {
+                    "die_id": 5,
+                    "port": 1,
+                    "x": 0,
+                    "y": 3
+                },
+                {
+                    "die_id": 0,
+                    "port": 3,
+                    "x": 1,
+                    "y": 0
+                }
+            ],
+            [
+                {
+                    "die_id": 0,
+                    "port": 1,
+                    "x": 0,
+                    "y": 2
+                },
+                {
+                    "die_id": 1,
+                    "port": 1,
+                    "x": 0,
+                    "y": 2
+                }
+            ],
+            [
+                {
+                    "die_id": 0,
+                    "port": 3,
+                    "x": 2,
+                    "y": 0
+                },
+                {
+                    "die_id": 4,
+                    "port": 1,
+                    "x": 0,
+                    "y": 0
+                }
+            ],
+            [
+                {
+                    "die_id": 3,
+                    "port": 0,
+                    "x": 0,
+                    "y": 2
+                },
+                {
+                    "die_id": 2,
+                    "port": 0,
+                    "x": 0,
+                    "y": 2
+                }
+            ],
+            [
+                {
+                    "die_id": 0,
+                    "port": 3,
+                    "x": 1,
+                    "y": 0
+                },
+                {
+                    "die_id": 5,
+                    "port": 1,
+                    "x": 0,
+                    "y": 3
+                }
+            ],
+            [
+                {
+                    "die_id": 2,
+                    "port": 2,
+                    "x": 2,
+                    "y": 2
+                },
+                {
+                    "die_id": 0,
+                    "port": 2,
+                    "x": 2,
+                    "y": 2
+                }
+            ],
+            [
+                {
+                    "die_id": 3,
+                    "port": 2,
+                    "x": 2,
+                    "y": 2
+                },
+                {
+                    "die_id": 1,
+                    "port": 2,
+                    "x": 2,
+                    "y": 2
+                }
+            ],
+            [
+                {
+                    "die_id": 1,
+                    "port": 1,
+                    "x": 0,
+                    "y": 2
+                },
+                {
+                    "die_id": 0,
+                    "port": 1,
+                    "x": 0,
+                    "y": 2
+                }
+            ],
+            [
+                {
+                    "die_id": 1,
+                    "port": 3,
+                    "x": 2,
+                    "y": 0
+                },
+                {
+                    "die_id": 7,
+                    "port": 1,
+                    "x": 0,
+                    "y": 0
+                }
+            ],
+            [
+                {
+                    "die_id": 3,
+                    "port": 3,
+                    "x": 2,
+                    "y": 0
+                },
+                {
+                    "die_id": 11,
+                    "port": 1,
+                    "x": 0,
+                    "y": 0
+                }
+            ],
+            [
+                {
+                    "die_id": 1,
+                    "port": 0,
+                    "x": 3,
+                    "y": 0
+                },
+                {
+                    "die_id": 7,
+                    "port": 1,
+                    "x": 0,
+                    "y": 1
+                }
+            ],
+            [
+                {
+                    "die_id": 9,
+                    "port": 1,
+                    "x": 0,
+                    "y": 2
+                },
+                {
+                    "die_id": 2,
+                    "port": 3,
+                    "x": 0,
+                    "y": 0
+                }
+            ],
+            [
+                {
+                    "die_id": 2,
+                    "port": 0,
+                    "x": 0,
+                    "y": 2
+                },
+                {
+                    "die_id": 3,
+                    "port": 0,
+                    "x": 0,
+                    "y": 2
+                }
+            ],
+            [
+                {
+                    "die_id": 7,
+                    "port": 1,
+                    "x": 0,
+                    "y": 0
+                },
+                {
+                    "die_id": 1,
+                    "port": 3,
+                    "x": 2,
+                    "y": 0
+                }
+            ],
+            [
+                {
+                    "die_id": 2,
+                    "port": 0,
+                    "x": 3,
+                    "y": 0
+                },
+                {
+                    "die_id": 8,
+                    "port": 1,
+                    "x": 0,
+                    "y": 1
+                }
+            ],
+            [
+                {
+                    "die_id": 2,
+                    "port": 2,
+                    "x": 1,
+                    "y": 2
+                },
+                {
+                    "die_id": 0,
+                    "port": 2,
+                    "x": 1,
+                    "y": 2
+                }
+            ],
+            [
+                {
+                    "die_id": 3,
+                    "port": 0,
+                    "x": 3,
+                    "y": 0
+                },
+                {
+                    "die_id": 11,
+                    "port": 1,
+                    "x": 0,
+                    "y": 1
+                }
+            ],
+            [
+                {
+                    "die_id": 2,
+                    "port": 3,
+                    "x": 0,
+                    "y": 0
+                },
+                {
+                    "die_id": 9,
+                    "port": 1,
+                    "x": 0,
+                    "y": 2
+                }
+            ],
+            [
+                {
+                    "die_id": 3,
+                    "port": 1,
+                    "x": 0,
+                    "y": 2
+                },
+                {
+                    "die_id": 2,
+                    "port": 1,
+                    "x": 0,
+                    "y": 2
+                }
+            ],
+            [
+                {
+                    "die_id": 3,
+                    "port": 2,
+                    "x": 1,
+                    "y": 2
+                },
+                {
+                    "die_id": 1,
+                    "port": 2,
+                    "x": 1,
+                    "y": 2
+                }
+            ],
+            [
+                {
+                    "die_id": 2,
+                    "port": 3,
+                    "x": 1,
+                    "y": 0
+                },
+                {
+                    "die_id": 9,
+                    "port": 1,
+                    "x": 0,
+                    "y": 3
+                }
+            ],
+            [
+                {
+                    "die_id": 11,
+                    "port": 1,
+                    "x": 0,
+                    "y": 1
+                },
+                {
+                    "die_id": 3,
+                    "port": 0,
+                    "x": 3,
+                    "y": 0
+                }
+            ],
+            [
+                {
+                    "die_id": 2,
+                    "port": 3,
+                    "x": 2,
+                    "y": 0
+                },
+                {
+                    "die_id": 8,
+                    "port": 1,
+                    "x": 0,
+                    "y": 0
+                }
+            ]
+        ]
+    }

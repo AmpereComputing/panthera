@@ -1,0 +1,329 @@
+# Copyright (c) 2021-2026 Ampere Computing. All rights reserved.
+# SPDX-License-Identifier: BSD-3-Clause
+
+from ampere.xlat import Signal, Translation
+from proj.uop import *
+from proj.xlat_register_constants import * # x30/ZR/xzr/SP_EL*/s0/s1/T0/T1/T2/T3/RGSR_EL1
+
+HARDCODE_IMP_CURRENT_ELR_SPR_ADDR = Signal('1111010110110010') ## ELR from GPR for ERETAA/AB
+
+class B_only_condbranch(_JSON_B_only_condbranch):
+
+    is_branch = True
+    is_unconditional_branch = 'cond'
+    # BTB_TYPE_CONDITIONAL_DIRECT
+
+    ## This b.al should be an unconditional branch
+    def decode(self, f):
+        if f.cond.value == 0b0000:
+            bc_eq(src3="flag", imm=f.imm19, imm_signext=True, imm_shift=2)
+        elif f.cond.value == 0b0010:
+            bc_cs(src3="flag", imm=f.imm19, imm_signext=True, imm_shift=2)
+        elif f.cond.value == 0b0100:
+            bc_mi(src3="flag", imm=f.imm19, imm_signext=True, imm_shift=2)
+        elif f.cond.value == 0b0110:
+            bc_vs(src3="flag", imm=f.imm19, imm_signext=True, imm_shift=2)
+        elif f.cond.value == 0b1000:
+            bc_hi(src3="flag", imm=f.imm19, imm_signext=True, imm_shift=2)
+        elif f.cond.value == 0b1010:
+            bc_ge(src3="flag", imm=f.imm19, imm_signext=True, imm_shift=2)
+        elif f.cond.value == 0b1100:
+            bc_gt(src3="flag", imm=f.imm19, imm_signext=True, imm_shift=2)
+        elif f.cond.value >= 0b1110:
+            bc_al(src3="flag", imm=f.imm19, imm_signext=True, imm_shift=2)
+        elif f.cond.value == 0b0001:
+            bc_ne(src3="flag", imm=f.imm19, imm_signext=True, imm_shift=2)
+        elif f.cond.value == 0b0011:
+            bc_cc(src3="flag", imm=f.imm19, imm_signext=True, imm_shift=2)
+        elif f.cond.value == 0b0101:
+            bc_pl(src3="flag", imm=f.imm19, imm_signext=True, imm_shift=2)
+        elif f.cond.value == 0b0111:
+            bc_vc(src3="flag", imm=f.imm19, imm_signext=True, imm_shift=2)
+        elif f.cond.value == 0b1001:
+            bc_ls(src3="flag", imm=f.imm19, imm_signext=True, imm_shift=2)
+        elif f.cond.value == 0b1011:
+            bc_lt(src3="flag", imm=f.imm19, imm_signext=True, imm_shift=2)
+        elif f.cond.value == 0b1101:
+            bc_le(src3="flag", imm=f.imm19, imm_signext=True, imm_shift=2)
+
+
+class B_only_branch_imm(_JSON_B_only_branch_imm):
+
+    is_branch = True
+    is_unconditional_branch = 'True'
+    # BTB_TYPE_UNCONDITIONAL_DIRECT
+
+    def decode(self, f):
+        b(imm=f.imm26, imm_signext=True, imm_shift=2)
+
+
+class BL_only_branch_imm(_JSON_BL_only_branch_imm):
+
+    is_branch = True
+    is_unconditional_branch = 'True'
+    is_call_direct = True
+    # BTB_TYPE_CALL_DIRECT
+
+    def decode(self, f):
+        ## This BL instruction is using the ADR instruction/uop to write the
+        ## a PC-relative address (+4) to X30 register (the link register)
+        ## It then must branch directly to the specified label, so we tell
+        ## IDR that the ADR is a branch.  Like B, the imm26 never needs to get
+        ## to the IXU for this instruction, the branch is handled by the front
+        ## end other than IDR calculating taken/not_taken targets with it
+        adr(dest=x30, imm=f.imm26, imm_signext=True, imm_shift=2, set_imm_to_pc_next=True)
+
+class BLR_64_branch_reg(_JSON_BLR_64_branch_reg):
+
+    is_branch = True
+    is_unconditional_branch = 'True'
+    is_call_indirect = True
+    is_indirect = True
+    # BTB_TYPE_CALL_INDIRECT
+
+    def decode(self, f):
+        if f.Rn.value == 0b011110: # If the source is x30
+            orr64(dest=s0, src1=f.Rn, src2=ZR, imm=Signal("000"))
+            adr(dest=x30, set_imm_to_pc_next=True)
+            br(src2=s0)
+        else:
+            adr(dest=x30, set_imm_to_pc_next=True)
+            br(src2=f.Rn)
+
+class BLRAAZ_64_branch_reg(_JSON_BLRAAZ_64_branch_reg):
+
+    is_branch = True
+    is_unconditional_branch = 'True'
+    is_call_indirect = True
+    is_indirect = True
+    # BTB_TYPE_CALL_INDIRECT
+    
+    def decode(self, f):
+        autia(dest=s0, src1=f.Rn, src2=f.Rm)
+        adr(dest=x30, set_imm_to_pc_next=True)
+        br(src2=s0)
+
+class BLRAA_64P_branch_reg(_JSON_BLRAA_64P_branch_reg):
+
+    is_branch = True
+    is_unconditional_branch = 'True'
+    is_call_indirect = True
+    is_indirect = True
+    # BTB_TYPE_CALL_INDIRECT
+    
+    def decode(self, f):
+        autia(dest=s0, src1=f.Rn, src2=f.Rm, src2_is_stack_pointer=True)
+        adr(dest=x30, set_imm_to_pc_next=True)
+        br(src2=s0)
+
+class BLRABZ_64_branch_reg(_JSON_BLRABZ_64_branch_reg):
+
+    is_branch = True
+    is_unconditional_branch = 'True'
+    is_call_indirect = True
+    is_indirect=True
+    # BTB_TYPE_CALL_INDIRECT
+    
+    def decode(self, f):
+        autib(dest=s0, src1=f.Rn, src2=f.Rm)
+        adr(dest=x30, set_imm_to_pc_next=True)
+        br(src2=s0)
+
+class BLRAB_64P_branch_reg(_JSON_BLRAB_64P_branch_reg):
+
+    is_branch = True
+    is_unconditional_branch = 'True'
+    is_call_indirect = True,
+    is_indirect=True
+    # BTB_TYPE_CALL_INDIRECT
+    
+    def decode(self, f):
+        autib(dest=s0, src1=f.Rn, src2=f.Rm, src2_is_stack_pointer=True)
+        adr(dest=x30, set_imm_to_pc_next=True)
+        br(src2=s0)
+
+class BR_64_branch_reg(_JSON_BR_64_branch_reg):
+
+    is_branch = True
+    is_unconditional_branch = 'True'
+    is_indirect = True
+    # BTB_TYPE_INDIRECT
+    
+    def decode(self, f):
+        br(src2=f.Rn)
+
+class BRAAZ_64_branch_reg(_JSON_BRAAZ_64_branch_reg):
+
+    is_branch = True
+    is_unconditional_branch = 'True'
+    is_indirect = True
+    # BTB_TYPE_INDIRECT
+
+    def decode(self, f):
+        autia(dest=s0, src1=f.Rn, src2=f.Rm)
+        br(src2=s0)
+
+class BRAA_64P_branch_reg(_JSON_BRAA_64P_branch_reg):
+
+    is_branch = True
+    is_unconditional_branch = 'True'
+    is_indirect = True
+    # BTB_TYPE_INDIRECT
+
+    def decode(self, f):
+        autia(dest=s0, src1=f.Rn, src2=f.Rm, src2_is_stack_pointer=True)
+        br(src2=s0)
+
+
+class BRABZ_64_branch_reg(_JSON_BRABZ_64_branch_reg):
+
+    is_branch = True
+    is_unconditional_branch = 'True'
+    is_indirect = True
+    # BTB_TYPE_INDIRECT
+
+    def decode(self, f):
+        autib(dest=s0, src1=f.Rn, src2=f.Rm)
+        br(src2=s0)
+
+class BRAB_64P_branch_reg(_JSON_BRAB_64P_branch_reg):
+
+    is_branch = True
+    is_unconditional_branch = 'True'
+    is_indirect = True
+    # BTB_TYPE_INDIRECT
+
+    def decode(self, f):
+        autib(dest=s0, src1=f.Rn, src2=f.Rm, src2_is_stack_pointer=True)
+        br(src2=s0)
+
+class CBNZ_32_compbranch(_JSON_CBNZ_32_compbranch):
+
+    is_branch = True
+    # BTB_TYPE_CONDITIONAL_DIRECT
+    
+    def decode(self, f):
+        cbnz32(src2=f.Rt, imm=f.imm19, imm_signext=True, imm_shift=2,)
+
+
+class CBNZ_64_compbranch(_JSON_CBNZ_64_compbranch):
+
+    is_branch = True
+    # BTB_TYPE_CONDITIONAL_DIRECT
+
+    def decode(self, f):
+        cbnz64(src2=f.Rt, imm=f.imm19, imm_signext=True, imm_shift=2)
+
+
+class CBZ_32_compbranch(_JSON_CBZ_32_compbranch):
+
+    is_branch = True
+    # BTB_TYPE_CONDITIONAL_DIRECT
+
+    def decode(self, f):
+        cbz32(src2=f.Rt, imm=f.imm19, imm_signext=True, imm_shift=2)
+
+
+class CBZ_64_compbranch(_JSON_CBZ_64_compbranch):
+
+    is_branch = True
+    # BTB_TYPE_CONDITIONAL_DIRECT
+
+    def decode(self, f):
+        cbz64(src2=f.Rt, imm=f.imm19, imm_signext=True, imm_shift=2)
+
+
+class DRPS_64E_branch_reg(_JSON_DRPS_64E_branch_reg):
+
+    is_branch = False
+
+    def decode(self, f):
+        # DRPS behaves as an ERET in the rest of the machine (IXU/GPC) but IDR needs to be
+        # able to tell the difference between eret/drps for PMU, so we will decode to an 
+        # eret uop, but set a IsDRPS in IdrInst field so IDR knows the difference
+        eret(is_drps=True)
+
+
+class ERET_64E_branch_reg(_JSON_ERET_64E_branch_reg):
+
+    is_branch = False
+
+    def decode(self, f):
+        eret(is_eret=True)
+
+class ERETAA_64E_branch_reg(_JSON_ERETAA_64E_branch_reg):
+
+    isolate = True # Since the first uop is an MRS, this must be isolated
+    is_branch = False
+    is_unconditional_branch = 'True'
+    is_indirect = True
+
+    def decode(self, f):
+        mfspr(dest=s0, imm=HARDCODE_IMP_CURRENT_ELR_SPR_ADDR)
+        autia(dest=s1, src1=s0, src2=f.Rn, src2_is_stack_pointer=True)
+        auteret(src2=s1, src1=s1, is_eret=True)
+
+class ERETAB_64E_branch_reg(_JSON_ERETAB_64E_branch_reg):
+
+    isolate = True # Since the first uop is an MRS, this must be isolated
+    is_branch = False
+    is_unconditional_branch = 'True'
+    is_indirect = True
+
+    def decode(self, f):
+        mfspr(dest=s0, imm=HARDCODE_IMP_CURRENT_ELR_SPR_ADDR)
+        autib(dest=s1, src1=s0, src2=f.Rn, src2_is_stack_pointer=True)
+        auteret(src2=s1, src1=s1, is_eret=True)
+
+class RET_64R_branch_reg(_JSON_RET_64R_branch_reg):
+
+    is_branch = True
+    is_unconditional_branch = 'True'
+    is_return = True
+    is_indirect = True
+    # BTB_TYPE_RETURN
+    
+    def decode(self, f):
+        br(src2=f.Rn)
+
+class RETAA_64E_branch_reg(_JSON_RETAA_64E_branch_reg):
+
+    is_branch = True
+    is_unconditional_branch = 'True'
+    is_return = True
+    is_indirect = True
+    # BTB_TYPE_RETURN
+
+    def decode(self, f):
+        autia(dest=s0, src1=x30, src2=f.Rn, src2_is_stack_pointer=True)
+        br(src2=s0)
+
+class RETAB_64E_branch_reg(_JSON_RETAB_64E_branch_reg):
+
+    is_branch = True
+    is_unconditional_branch = 'True'
+    is_return = True
+    is_indirect = True
+    # BTB_TYPE_RETURN
+
+    def decode(self, f):
+        autib(dest=s0, src1=x30, src2=f.Rn, src2_is_stack_pointer=True)
+        br(src2=s0)
+
+class TBNZ_only_testbranch(_JSON_TBNZ_only_testbranch):
+
+    is_branch = True
+    is_unconditional_branch=False
+    # BTB_TYPE_CONDITIONAL_DIRECT
+    
+    def decode(self, f):
+        tbnz(src2=f.Rt, ixu_imm=(f.b5,f.b40), imm=f.imm14, imm_signext=True, imm_shift=2)
+
+
+class TBZ_only_testbranch(_JSON_TBZ_only_testbranch):
+
+    is_branch = True
+    # BTB_TYPE_CONDITIONAL_DIRECT
+
+    def decode(self, f):
+        tbz(src2=f.Rt, ixu_imm=(f.b5,f.b40), imm=f.imm14, imm_signext=True, imm_shift=2)

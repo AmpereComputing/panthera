@@ -1,0 +1,42 @@
+# Copyright (c) 2023-2024 Ampere Computing. All rights reserved.
+# SPDX-License-Identifier: BSD-3-Clause
+
+@namespace "ampere::core"
+
+EarlyExitReason
+================
+Invalid
+SDivDenominatorZero
+SDivNumLessThanDenom
+SDivDenomPower2
+SDivNumEqualDenom
+SDivLeadingRedundantSignBits
+SDivAllPredicatedOff
+UDivDenominatorZero
+UDivNumLessThanDenom
+UDivDenomPower2
+UDivNumEqualDenom
+UDivLeadingRedundantSignBits
+UDivAllPredicatedOff
+FPDivNumZero
+FPDivDenomZero
+FPDivNumDenorm
+FPDivDenomDenorm
+FPDivNumInfinity
+FPDivDenomInfinity
+FPDivNumNan
+FPDivDenomNan
+FPDivDenomPower2
+FPDivAllPredicatedOff
+FPSqrtZero
+FPSqrtDenorm
+FPSqrtNan
+FPSqrtInfinity
+FPSqrtNegaitve
+FPSqrtEvenPower2
+FPSqrtOddPower2
+FPSqrtAllPredicatedOff
+================
+@event_data {"name": "early_exit_reason", "description": "early exit reason"}
+
+

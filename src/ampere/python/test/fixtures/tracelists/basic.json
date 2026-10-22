@@ -1,0 +1,30 @@
+[
+    {
+        "name": "1000.python_07",
+        "file": "1000.python_07.is.xz",
+        "weight": 1.0,
+        "workload": "1000.python",
+        "suite": "python"
+    },
+    {
+        "name": "999.goodbye_23",
+        "file": "999.goodbye_23.is.xz",
+        "weight": 0.5,
+        "workload": "999.goodbye",
+        "suite": "goodbye"
+    },
+    {
+        "name": "999.goodbye_7",
+        "file": "999.goodbye_7.is.xz",
+        "weight": 0.4,
+        "workload": "999.goodbye",
+        "suite": "goodbye"
+    },
+    {
+        "name": "999.hello",
+        "file": "999.hello.is.xz",
+        "weight": 1.0,
+        "workload": "999.hello",
+        "suite": "hello"
+    }
+]

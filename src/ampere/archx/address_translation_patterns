@@ -1,0 +1,44 @@
+# Copyright (c) 2020 Ampere Computing. All rights reserved.
+# SPDX-License-Identifier: BSD-3-Clause
+
+# AT S12E0R, <Xt> when op0 = 0b01, op1 = 0b100, CRn = 0b0111, CRm = 0b1000, op2 = 0b110
+11010101000 01 100 0111 1000 110 -----
+
+# AT S12E0W, <Xt> when op0 = 0b01, op1 = 0b100, CRn = 0b0111, CRm = 0b1000, op2 = 0b111
+11010101000 01 100 0111 1000 111 -----
+
+# AT S12E1R, <Xt> when op0 = 0b01, op1 = 0b100, CRn = 0b0111, CRm = 0b1000, op2 = 0b100
+11010101000 01 100 0111 1000 100 -----
+
+# AT S12E1W, <Xt> when op0 = 0b01, op1 = 0b100, CRn = 0b0111, CRm = 0b1000, op2 = 0b101
+11010101000 01 100 0111 1000 101 -----
+
+# AT S1E0R, <Xt> when op0 = 0b01, op1 = 0b000, CRn = 0b0111, CRm = 0b1000, op2 = 0b010
+11010101000 01 000 0111 1000 010 -----
+
+# AT S1E0W, <Xt> when op0 = 0b01, op1 = 0b000, CRn = 0b0111, CRm = 0b1000, op2 = 0b011
+11010101000 01 000 0111 1000 011 -----
+
+# AT S1E1R, <Xt> when op0 = 0b01, op1 = 0b000, CRn = 0b0111, CRm = 0b1000, op2 = 0b000
+11010101000 01 000 0111 1000 000 -----
+
+# AT S1E1RP, <Xt> when op0 = 0b01, op1 = 0b000, CRn = 0b0111, CRm = 0b1001, op2 = 0b000
+11010101000 01 000 0111 1001 000 -----
+
+# AT S1E1W, <Xt> when op0 = 0b01, op1 = 0b000, CRn = 0b0111, CRm = 0b1000, op2 = 0b001
+11010101000 01 000 0111 1000 001 -----
+
+# AT S1E1WP, <Xt> when op0 = 0b01, op1 = 0b000, CRn = 0b0111, CRm = 0b1001, op2 = 0b001
+11010101000 01 000 0111 1001 001 -----
+
+# AT S1E2R, <Xt> when op0 = 0b01, op1 = 0b100, CRn = 0b0111, CRm = 0b1000, op2 = 0b000
+11010101000 01 100 0111 1000 000 -----
+
+# AT S1E2W, <Xt> when op0 = 0b01, op1 = 0b100, CRn = 0b0111, CRm = 0b1000, op2 = 0b001
+11010101000 01 100 0111 1000 001 -----
+
+# AT S1E3R, <Xt> when op0 = 0b01, op1 = 0b110, CRn = 0b0111, CRm = 0b1000, op2 = 0b000
+11010101000 01 110 0111 1000 000 -----
+
+# AT S1E3W, <Xt> when op0 = 0b01, op1 = 0b110, CRn = 0b0111, CRm = 0b1000, op2 = 0b001
+11010101000 01 110 0111 1000 001 -----

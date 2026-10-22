@@ -1,0 +1,36 @@
+# Copyright (c) 2024 Ampere Computing. All rights reserved.
+# SPDX-License-Identifier: BSD-3-Clause
+
+[paths]
+# Install to source remapping
+ampere_python =
+    src/ampere/python
+    **/install/lib/python
+
+instruction_stream =
+    src/ampere/instruction_stream
+    **/install/lib/python/panthera/streams
+
+event_stream =
+    src/ampere/event_stream
+    **/install/lib/python/panthera/streams
+
+protobuf_utils =
+    src/ampere/protobuf_utils
+    **/install/lib/python/panthera/streams
+
+config =
+    src/ampere/config
+    **/install/config
+
+
+[run]
+relative_files = true
+omit = 
+    */.local/*
+    /usr/*
+    /nix/store/*
+    **/python/panthera/enums/*
+    **/*_pb2.py
+    **/test/*
+    **/test_*.py

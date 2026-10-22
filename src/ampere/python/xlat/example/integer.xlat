@@ -1,0 +1,164 @@
+# Copyright (c) 2019 Ampere Computing. All rights reserved.
+# SPDX-License-Identifier: BSD-3-Clause
+
+from uop import *
+from ampere.xlat import Fusion, Signal, Translation
+
+s0 = Signal('100011')
+s1 = Signal('100100')
+
+
+class MOVK_64_movewide(Translation):
+    """Move wide with keep"""
+    pattern = '1  11  100101 -- ---------------- -----'
+    pfields = 'sf opc        hw      imm16        Rd  '
+
+    asmtemplate = 'MOVK  <Xd>, #<imm>{, LSL #<shift>}'
+
+    def decode(self, f):
+        if f.hw.value == 0b00:
+            movk64_0b(dest=f.Rd, src2=f.Rd, imm=f.imm16)
+        elif f.hw.value == 0b01:
+            movk64_2b(dest=f.Rd, src2=f.Rd, imm=f.imm16)
+        elif f.hw.value == 0b10:
+            movk64_4b(dest=f.Rd, src2=f.Rd, imm=f.imm16)
+        elif f.hw.value == 0b11:
+            movk64_6b(dest=f.Rd, src2=f.Rd, imm=f.imm16)
+
+
+class MOVZ_64_movewide(Translation):
+    """Move wide with zero"""
+    pattern = '1  10  100101 -- ---------------- -----'
+    pfields = 'sf opc        hw      imm16        Rd  '
+
+    asmtemplate = 'MOVZ  <Xd>, #<imm>{, LSL #<shift>}'
+
+    def decode(self, f):
+        if f.hw.value == 0b00:
+            movz64_0b(dest=f.Rd, imm=f.imm16)
+        elif f.hw.value == 0b01:
+            movz64_2b(dest=f.Rd, imm=f.imm16)
+        elif f.hw.value == 0b10:
+            movz64_4b(dest=f.Rd, imm=f.imm16)
+        elif f.hw.value == 0b11:
+            movz64_6b(dest=f.Rd, imm=f.imm16)
+
+
+class SUBS_64S_addsub_ext(Translation):
+    """Subtract (extended register), setting flags"""
+    pattern = '1  1  1 01011 00  1 ----- ---    ---  ----- -----'
+    pfields = 'sf op S       opt    Rm   option imm3  Rn    Rd  '
+
+    asmtemplate = 'SUBS  <Xd>, <Xn|SP>, <R><m>{, <extend> {#<amount>}}'
+    src1_is_stack_pointer = True
+
+    def decode(self, f):
+        if f.option.value == 0b000:
+          if f.imm3 == 0b000:
+            subs64(dest=f.Rd, flag_dest=1, src1=f.Rn, src2=f.Rm, imm=(f.option,Signal("00000000000")))
+          else:
+            lsl64_imm(dest=s0, src1=f.Rm, imm=f.imm3)
+            subs64(dest=f.Rd, flag_dest=1, src1=f.Rn, src2=s0, imm=(f.option,Signal("00000000000")))
+        elif f.option.value == 0b001:
+          if f.imm3 == 0b000:
+            subs64(dest=f.Rd, flag_dest=1, src1=f.Rn, src2=f.Rm, imm=(f.option,Signal("00000000000")))
+          else:
+            lsl64_imm(dest=s0, src1=f.Rm, imm=f.imm3)
+            subs64(dest=f.Rd, flag_dest=1, src1=f.Rn, src2=s0, imm=(f.option,Signal("00000000000")))
+        elif f.option.value == 0b010:
+          if f.imm3 == 0b000:
+            subs64(dest=f.Rd, flag_dest=1, src1=f.Rn, src2=f.Rm, imm=(f.option,Signal("00000000000")))
+          else:
+            lsl64_imm(dest=s0, src1=f.Rm, imm=f.imm3)
+            subs64(dest=f.Rd, flag_dest=1, src1=f.Rn, src2=s0, imm=(f.option,Signal("00000000000")))
+        elif f.option.value == 0b011:
+          if f.imm3 == 0b000:
+            subs64(dest=f.Rd, flag_dest=1, src1=f.Rn, src2=f.Rm, imm=(f.option,Signal("00000000000")))
+          else:
+            lsl64_imm(dest=s0, src1=f.Rm, imm=f.imm3)
+            subs64(dest=f.Rd, flag_dest=1, src1=f.Rn, src2=s0, imm=(f.option,Signal("00000000000")))
+        elif f.option.value == 0b100:
+            sbfm64(dest=s0, src1=f.Rm, src2=f.Rd, imm=(Signal("000"),f.imm3,Signal("000111")))
+            subs64(dest=f.Rd, flag_dest=1, src1=f.Rn, src2=s0, imm=(f.option,Signal("01100000000000")))
+        elif f.option.value == 0b101:
+            sbfm64(dest=s0, src1=f.Rm, src2=f.Rd, imm=(Signal("000"),f.imm3,Signal("001111")))
+            subs64(dest=f.Rd, flag_dest=1, src1=f.Rn, src2=s0, imm=(f.option,Signal("01100000000000")))
+        elif f.option.value == 0b110:
+            sbfm64(dest=s0, src1=f.Rm, src2=f.Rd, imm=(Signal("000"),f.imm3,Signal("011111")))
+            subs64(dest=f.Rd, flag_dest=1, src1=f.Rn, src2=s0, imm=(f.option,Signal("01100000000000")))
+        elif f.option.value == 0b111:
+          if f.imm3 == 0b000:
+            subs64(dest=f.Rd, flag_dest=1, src1=f.Rn, src2=f.Rm, imm=(f.option,Signal("01100000000000")))
+          else:
+            lsl64_imm(dest=s0, src1=f.Rm, imm=f.imm3)
+            subs64(dest=f.Rd, flag_dest=1, src1=f.Rn, src2=s0, imm=(f.option,Signal("01100000000000")))
+
+
+class ADDS_64S_addsub_ext(Translation):
+    """Add (extended register), setting flags"""
+    pattern = '1  0  1 01011 00  1 ----- ---    ---  ----- -----'
+    pfields = 'sf op S       opt    Rm   option imm3  Rn    Rd  '
+
+    asmtemplate = 'ADDS  <Xd>, <Xn|SP>, <R><m>{, <extend> {#<amount>}}'
+
+    def decode(self, f):
+        if f.option.value == 0b000:
+            adds64(dest=f.Rd, flag_dest=1, src1=f.Rn, src2=f.Rm, imm=(f.option,Signal("000000000"),f.imm3), src1_is_stack_pointer=True)
+        elif f.option.value == 0b001:
+            adds64(dest=f.Rd, flag_dest=1, src1=f.Rn, src2=f.Rm, imm=(f.option,Signal("000000000"),f.imm3), src1_is_stack_pointer=True)
+        elif f.option.value == 0b010:
+            adds64(dest=f.Rd, flag_dest=1, src1=f.Rn, src2=f.Rm, imm=(f.option,Signal("000000000"),f.imm3), src1_is_stack_pointer=True)
+        elif f.option.value == 0b011:
+            adds64(dest=f.Rd, flag_dest=1, src1=f.Rn, src2=f.Rm, imm=(f.option,Signal("000000000"),f.imm3), src1_is_stack_pointer=True)
+        elif f.option.value == 0b100:
+            sxt32(dest=s0, src1=f.Rm, imm=(Signal("000"),f.option))
+            adds64(dest=f.Rd, flag_dest=1, src1=f.Rn, src2=s0, imm=(Signal("011000000000"),f.imm3), src1_is_stack_pointer=True)
+        elif f.option.value == 0b101:
+            sxt32(dest=s0, src1=f.Rm, imm=(Signal("000"),f.option))
+            adds64(dest=f.Rd, flag_dest=1, src1=f.Rn, src2=s0, imm=(Signal("011000000000"),f.imm3), src1_is_stack_pointer=True)
+        elif f.option.value == 0b110:
+            sxt64(dest=s0, src1=f.Rm, imm=(Signal("000"),f.option))
+            adds64(dest=f.Rd, flag_dest=1, src1=f.Rn, src2=s0, imm=(Signal("011000000000"),f.imm3), src1_is_stack_pointer=True)
+        elif f.option.value == 0b111:
+            adds64(dest=f.Rd, flag_dest=1, src1=f.Rn, src2=f.Rm, imm=(Signal("011000000000"),f.imm3), src1_is_stack_pointer=True)
+
+
+class B_only_condbranch(Translation):
+    """Branch conditionally"""
+    pattern = '0101010 0  ------------------- 0  ----'
+    pfields = '        o1        imm19        o0 cond'
+
+    asmtemplate = 'B.<cond>  <label>'
+    is_branch = True
+
+    def decode(self, f):
+        if f.cond.value == 0b0000:
+            bc_eq(src3="flag", imm=f.imm19)
+        elif f.cond.value == 0b0010:
+            bc_cs(src3="flag", imm=f.imm19)
+        elif f.cond.value == 0b0100:
+            bc_mi(src3="flag", imm=f.imm19)
+        elif f.cond.value == 0b0110:
+            bc_vs(src3="flag", imm=f.imm19)
+        elif f.cond.value == 0b1000:
+            bc_hi(src3="flag", imm=f.imm19)
+        elif f.cond.value == 0b1010:
+            bc_ge(src3="flag", imm=f.imm19)
+        elif f.cond.value == 0b1100:
+            bc_gt(src3="flag", imm=f.imm19)
+        elif f.cond.value >= 0b1110:
+            bc_al(src3="flag", imm=f.imm19)
+        elif f.cond.value == 0b0001:
+            bc_ne(src3="flag", imm=f.imm19)
+        elif f.cond.value == 0b0011:
+            bc_cc(src3="flag", imm=f.imm19)
+        elif f.cond.value == 0b0101:
+            bc_pl(src3="flag", imm=f.imm19)
+        elif f.cond.value == 0b0111:
+            bc_vc(src3="flag", imm=f.imm19)
+        elif f.cond.value == 0b1001:
+            bc_ls(src3="flag", imm=f.imm19)
+        elif f.cond.value == 0b1011:
+            bc_lt(src3="flag", imm=f.imm19)
+        elif f.cond.value == 0b1101:
+            bc_le(src3="flag", imm=f.imm19)

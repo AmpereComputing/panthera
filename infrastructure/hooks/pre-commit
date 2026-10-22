@@ -1,0 +1,34 @@
+#!/usr/bin/env python3
+
+# This hook tests for TABs in files you are committing.
+# To install, go to the top level of the repository and do
+#   $ cd .git/hooks/ && ln -sf ../../infrastructure/hooks/pre-commit
+#
+# Taken from:
+#   https://www.grok-interactive.com/blog/githooks/
+
+import subprocess
+from collections import defaultdict
+
+files = subprocess.check_output('git diff --diff-filter=ACM --cached --name-only *.c *.cc *.cpp *.h *.hpp *.s *.py *.cfg *.txt *.md', shell=True, universal_newlines=True).rstrip().split('\n')
+offending_lines = defaultdict(lambda: [])
+
+for file in files:
+    if not file:
+      continue
+    with open(file) as inf:
+        for ln, line in enumerate(inf):
+            if '\t' in line:
+                offending_lines[file].append(ln + 1)
+
+if offending_lines:
+    print('''
+Pre-Commit Hook Failure (.git/hooks/pre-commit)
+TAB characters are illegal in source control and TABs were found at the following lines
+
+''')
+    for file, lines in offending_lines.items():
+        print(f'{file} {", ".join([str(ln) for ln in lines])}')
+    print('')
+    exit(1)
+

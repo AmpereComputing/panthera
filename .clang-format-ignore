@@ -1,0 +1,12 @@
+# Copyright (c) 2024 Ampere Computing. All rights reserved.
+# SPDX-License-Identifier: BSD-3-Clause
+
+googletest/*
+src/ampere/adis/*
+src/capstone/*
+src/effolkronium/*
+src/elfio/*
+src/fmt/*
+src/immer/*
+src/json/*
+src/unity/*

@@ -1,0 +1,181 @@
+/*
+ * Copyright (c) 2019-2021 Ampere Computing. All rights reserved.
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+
+syntax = "proto3";
+
+package ampere.is;
+
+message Address {
+    uint64 va = 1;
+    uint64 pa = 2;
+}
+
+message MemOp {
+    uint64 va = 1;
+    uint64 pa = 2;
+    bool   predicated_off = 3;
+    uint32 bytes = 4;
+}
+
+message Register {
+    // number == 0-29: x0-x29
+    // number == 30: lr
+    // number == 31: sp_el0
+    uint64 number = 1;
+    uint64 value = 2;
+}
+
+message VFPRegister {
+    uint64 number = 1;
+    uint64 ms_value = 2; // high 64 bits
+    uint64 ls_value = 3; // low 64 bits
+}
+
+message PredRegister {
+    uint32 number = 1; // p0..p15
+    uint32 value  = 2; // low 16b for VL=128b
+}
+
+message Exception {
+    uint32 exception_class = 1; // Contents of ESR_EL1.EC
+}
+
+/*
+ * AArch64 instruction data.
+ * The opcode field stores the 32bit instruction bytes.
+ * The memop field stores the addresses of 0, 1, or 2 memory operations.
+ * The register field stores selected source GPR register values.
+ * The vfp_register field stores selected source VFP register values.
+ * The dst_register field stores selected destination GPR register values.
+ * The dst_vfp_register field stores selected destination VFP register values.
+ * The src_pred_register field stores source predicate register values.
+ * The dst_pred_register field stores destination predicate register values.
+ * The src_nzcv field stores source PSTATE.NZCV register value.
+ * The dst_nzcv field stores destination PSTATE.NZCV register value.
+ */
+message Instruction {
+    Address program_counter = 1;
+    uint32 opcode = 2;
+    repeated MemOp memop = 3;
+    repeated Register register = 4;
+    repeated Register dst_register = 5;
+    repeated VFPRegister dst_vfp_register = 6;
+    repeated VFPRegister vfp_register = 7;
+    repeated PredRegister src_pred_register = 8;
+    repeated PredRegister dst_pred_register = 9;
+    optional uint32 src_nzcv = 10;
+    optional uint32 dst_nzcv = 11;
+    Exception exception = 16;
+}
+
+/* Memory accesses, with their contents */
+message Memory {
+    Address address = 1;
+    bytes value = 2;
+}
+
+/* System (CP) Register reads/writes */
+message SysReg {
+    enum Type {
+        /* Note: The values assigned to read/write here are exactly backwards
+         * from the 'L' bit in the system instruction class encoding, but
+         * changing it now would break backwards-compatibility of our streams -
+         * I am sorry. */
+        READ = 0;
+        WRITE = 1;
+    }
+    Type type = 1;
+    uint32 op0 = 2;
+    uint32 op1 = 3;
+    uint32 crn = 4;
+    uint32 crm = 5;
+    uint32 op2 = 6;
+    uint64 value = 7;
+}
+
+/* Execution context which may not be able to be inferred from other
+ * information - execution level, perhaps later PIDs, etc. */
+message Context {
+    enum Type {
+        EL = 0; /* execution level */
+    }
+    Type type = 1;
+    uint64 value = 2;
+}
+
+/* Out-of-band controls for the model itself */
+message Control {
+    enum Type {
+        /* Start measuring statistics, warmup period complete. If no warmup
+         * period, this event should be inserted before the first Instruction */
+        START_MEASUREMENT = 0;
+        /* Stop measuring statistics, code of interest is complete. The
+         * intention of this event is to allow the model to execute the final
+         * instruction to completion while allowing instructions after it to
+         * continue flowing through the model */
+        STOP_MEASUREMENT = 1;
+    }
+    Type type = 1;
+}
+
+message Features {
+    /* Stream contains sufficient SysReg, Context::EL, and Memory events
+     * containing contents of all used PTEs to allow faithful modeling of
+     * virtual memory translations */
+    bool memory_translation = 1;
+
+    /* Stream contains source register values (Instruction.register and
+     * Instruction.vfp_register) to help calculate the latency of divide and
+     * sqrt instructions */
+    bool divide_sqrt_registers = 2;
+
+    /* Stream contains source register values (via 'register' fields on
+     * Instruction events) to help calculate the scope of cache maintenance and
+     * TLBI instructions whose functionality depends upon those values */
+    bool cache_maintenance_registers = 3;
+
+    /* Stream contains source register values (via 'register' fields on
+     * Instruction events) to help calculate the target of software prefetch
+     * instructions */
+    bool prefetch_registers = 4;
+
+    /* Stream contains all modified destination registers. Every Instruction
+     * event will contain a 'dst_register' or 'dst_vfp_register' field with the
+     * new value of each register updated by this instruction. */
+    bool all_destination_registers = 5;
+
+    /* Stream contains Memory events with contents of all RAM read or written
+     * during this portion of the workload. */
+    bool memory_values = 6;
+
+    /* Some SVE memops use predicates which affects faulting behavior */
+    bool sve_predicated_memops = 7;
+
+    /* For when we have predicate registers in the trace */
+    bool sve_predicate_registers = 8;
+
+    /* Memops can indicate size (bytes) other than default from opcode */
+    bool memop_size = 9;
+
+    /* NZCV flags on instructions */
+    bool nzcv_flags_on_instructions = 10;
+
+    /* DC ZVA instructions contain memops with their addresses and size */
+    bool dc_zva_addresses = 11;
+}
+
+message Event {
+    oneof event {
+        Instruction instruction = 1;
+        Memory memory = 2;
+        SysReg sysreg = 3;
+        Context context = 4;
+
+        /* Protobuf uses one byte for fields <= 15; We're placing
+         * infrequently-used fields above 15 to allow for adding additional
+         * frequently-used fields later */
+        Control control = 16;
+    }
+}

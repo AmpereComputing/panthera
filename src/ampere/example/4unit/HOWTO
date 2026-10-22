@@ -1,0 +1,26 @@
+# Run the simulator. The binary is not in the source directory. It will be in
+# your build area. For example, if your build area is called "crelease", look
+# in: panthera/crelease/src/ampere/example/4unit/
+./src/ampere/example/4unit -cfg ../src/ampere/example/4unit/width4.cfg
+
+# Dump out the cmdline parameters. -h will also work
+./src/ampere/example/4unit -help
+
+# The simulator spits out an events.es file. You can view the contents using
+panthera/install/bin/es_viewer ./events.es | less
+
+# Check out the lifetime of the first transaction
+panthera/install/bin/es_viewer ./events.es | grep txid=1$
+
+# Convert the events file into a json for viewing in the Catapult viewer
+# using the events.tracing directive to panthera. The events.cfg file
+# indicates which event names to place into the output.json. It is found in
+# the source tree.
+panthera/install/bin/panthera events.tracing @../src/ampere/example/4unit/events.cfg events.es -o output.json
+
+# You can view the json file using a Chrome or Edge browser. Point your
+# browser to chrome://tracing or edge://tracing and then click the Load
+# button and give it the output.json file.
+
+# Change the parameters in the configuration files to play with the machine
+./src/ampere/example/4unit -cfg ../src/ampere/example/4unit/width8.cfg

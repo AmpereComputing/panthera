@@ -1,0 +1,103 @@
+package decoder;
+
+function automatic logic IxuVld(input logic [31:0] Instruction0, input logic [1:0] QuadNum, input logic [1:0] UopNum);
+  IxuVld = Instruction0[24] & ~Instruction0[25] & ~Instruction0[26] & ~Instruction0[27] & Instruction0[28] & ~Instruction0[30] & ~QuadNum[0] & ~QuadNum[1] & ~UopNum[0] & ~UopNum[1] |
+           ~Instruction0[21] & Instruction0[24] & Instruction0[25] & ~Instruction0[26] & Instruction0[27] & ~Instruction0[28] & ~Instruction0[29] & ~Instruction0[30] & ~QuadNum[0] & ~QuadNum[1] & ~UopNum[0] & ~UopNum[1] |
+           Instruction0[26] & ~Instruction0[27] & Instruction0[28] & ~Instruction0[29] & ~Instruction0[30] & ~QuadNum[0] & ~QuadNum[1] & ~UopNum[0] & ~UopNum[1] |
+           Instruction0[0] & ~Instruction0[4] & ~Instruction0[24] & ~Instruction0[25] & Instruction0[26] & ~Instruction0[27] & Instruction0[28] & ~Instruction0[29] & ~Instruction0[31] & ~QuadNum[0] & ~QuadNum[1] & ~UopNum[0] & ~UopNum[1] |
+           ~Instruction0[1] & ~Instruction0[4] & ~Instruction0[24] & ~Instruction0[25] & Instruction0[26] & ~Instruction0[27] & Instruction0[28] & ~Instruction0[29] & ~Instruction0[31] & ~QuadNum[0] & ~QuadNum[1] & ~UopNum[0] & ~UopNum[1] |
+           ~Instruction0[2] & ~Instruction0[4] & ~Instruction0[24] & ~Instruction0[25] & Instruction0[26] & ~Instruction0[27] & Instruction0[28] & ~Instruction0[29] & ~Instruction0[31] & ~QuadNum[0] & ~QuadNum[1] & ~UopNum[0] & ~UopNum[1] |
+           ~Instruction0[3] & ~Instruction0[4] & ~Instruction0[24] & ~Instruction0[25] & Instruction0[26] & ~Instruction0[27] & Instruction0[28] & ~Instruction0[29] & ~Instruction0[31] & ~QuadNum[0] & ~QuadNum[1] & ~UopNum[0] & ~UopNum[1] |
+           ~Instruction0[24] & ~Instruction0[25] & ~Instruction0[26] & ~Instruction0[27] & Instruction0[28] & Instruction0[31] & ~QuadNum[0] & ~QuadNum[1] & ~UopNum[0] & ~UopNum[1];
+endfunction
+
+
+function automatic logic [13:0] IxuOpcode(input logic [31:0] Instruction0, input logic [1:0] QuadNum, input logic [1:0] UopNum);
+  IxuOpcode[0] = Instruction0[1] & Instruction0[30] |
+                 ~Instruction0[25] & ~Instruction0[26] & Instruction0[31];
+  IxuOpcode[1] = ~Instruction0[2] & Instruction0[26] & Instruction0[30] |
+                 Instruction0[24] & ~Instruction0[25] & ~Instruction0[26] & Instruction0[31];
+  IxuOpcode[2] = ~Instruction0[2] & ~Instruction0[3] & Instruction0[26] & Instruction0[30] |
+                 Instruction0[2] & Instruction0[3] & Instruction0[26] & Instruction0[30];
+  IxuOpcode[3] = ~Instruction0[0] & Instruction0[2] & Instruction0[26] & Instruction0[30] |
+                 Instruction0[0] & ~Instruction0[2] & ~Instruction0[3] & Instruction0[26] & Instruction0[30] |
+                 ~Instruction0[0] & Instruction0[3] & Instruction0[26] & Instruction0[30] |
+                 Instruction0[1] & Instruction0[2] & Instruction0[3] & Instruction0[26] & Instruction0[30];
+  IxuOpcode[4] = ~Instruction0[24] & ~Instruction0[26];
+  IxuOpcode[5] = 1'b0;
+  IxuOpcode[6] = ~Instruction0[24] |
+                 Instruction0[26];
+  IxuOpcode[7] = 1'b0;
+  IxuOpcode[8] = Instruction0[0] & ~Instruction0[1] & Instruction0[2] & Instruction0[26] & Instruction0[30] |
+                 Instruction0[0] & Instruction0[2] & ~Instruction0[3] & Instruction0[26] & Instruction0[30] |
+                 Instruction0[0] & ~Instruction0[2] & Instruction0[3] & Instruction0[26] & Instruction0[30];
+  IxuOpcode[9] = 1'b0;
+  IxuOpcode[10] = 1'b0;
+  IxuOpcode[11] = 1'b0;
+  IxuOpcode[12] = 1'b0;
+  IxuOpcode[13] = 1'b0;
+endfunction
+
+
+function automatic logic GprDestVld(input logic [31:0] Instruction0, input logic [1:0] QuadNum, input logic [1:0] UopNum);
+  GprDestVld = Instruction0[24] & ~Instruction0[26];
+endfunction
+
+
+function automatic logic[4:0] GprDestLreg(input logic[31:0] Instruction0);
+  GprDestLreg = Instruction0[4:0];
+endfunction
+
+
+function automatic logic GprSrc1Vld(input logic [31:0] Instruction0, input logic [1:0] QuadNum, input logic [1:0] UopNum);
+  GprSrc1Vld = Instruction0[24] & ~Instruction0[26];
+endfunction
+
+
+function automatic logic[4:0] GprSrc1Lreg(input logic[31:0] Instruction0);
+  GprSrc1Lreg = Instruction0[9:5];
+endfunction
+
+
+function automatic logic GprSrc2Vld(input logic [31:0] Instruction0, input logic [1:0] QuadNum, input logic [1:0] UopNum);
+  GprSrc2Vld = Instruction0[27];
+endfunction
+
+
+function automatic logic[4:0] GprSrc2Lreg(input logic[31:0] Instruction0);
+  GprSrc2Lreg = Instruction0[20:16];
+endfunction
+
+
+function automatic logic ImmVld(input logic [31:0] Instruction0, input logic [1:0] QuadNum, input logic [1:0] UopNum);
+  ImmVld = 1'b1;
+endfunction
+
+
+function automatic logic[25:0] Imm(input logic[2:0] ImmMuxSel, input logic[31:0] Instruction0);
+  unique casez (ImmMuxSel)
+    3'b000:
+      Imm = {14'b00000000000000, Instruction0[21:10]};
+    3'b001:
+      Imm = {20'b00000000000000000000, Instruction0[15:10]};
+    3'b010:
+      Imm = {{5{Instruction0[23:23]}}, Instruction0[23:5], Instruction0[30:29]};
+    3'b011:
+      Imm = {7'b0000000, Instruction0[23:5]};
+    3'b100:
+      Imm = Instruction0[25:0];
+    default:
+      Imm = 'x;
+  endcase
+endfunction
+
+
+function automatic logic [2:0] ImmMuxSel(input logic [31:0] Instruction0, input logic [1:0] QuadNum, input logic [1:0] UopNum);
+  ImmMuxSel[0] = Instruction0[27] |
+                 Instruction0[26] & Instruction0[30];
+  ImmMuxSel[1] = ~Instruction0[24] & ~Instruction0[26] |
+                 Instruction0[30];
+  ImmMuxSel[2] = Instruction0[26] & ~Instruction0[30];
+endfunction
+
+endpackage

@@ -1,0 +1,28 @@
+{
+  sc_core_leak
+  Memcheck:Leak
+  fun:malloc
+  fun:_ZN7sc_core14sc_event_timed8allocateEv
+  ...
+}
+{
+  python_init_leak
+  Memcheck:Leak
+  ...
+  fun:*Py_InitializeEx*
+  ...
+}
+{
+  python_eval_leak
+  Memcheck:Leak
+  ...
+  fun:*PyEval_EvalCodeEx*
+  ...
+}
+{
+  python_eval_with_name_leak
+  Memcheck:Leak
+  ...
+  fun:*_PyEval_EvalCodeWithName*
+  ...
+}

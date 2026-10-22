@@ -1,0 +1,29 @@
+# Copyright (c) 2024 Ampere Computing. All rights reserved.
+# SPDX-License-Identifier: BSD-3-Clause
+
+@namespace "ampere::core"
+
+IDRAlignReason
+================
+Invalid
+IQEmpty
+IQRanOut
+SplitTriple
+SplitQuad
+TooManySIR
+TooManyBranch
+TooManyFusionDouble
+TooManyFusionTriple
+TooManyFusionQuad
+CannotFitDouble
+CannotFitTriple
+CannotFitQuad
+IsolatedStart
+IsolatedEnd
+FusionDelayHint
+DecoderFusionDoesNotFit
+AutoFusionDoesNotFit
+================
+@event_data {"name": "idr_align_reason", "description": "IDR::align uop group termination reason"}
+
+

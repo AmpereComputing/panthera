@@ -1,0 +1,26 @@
+# Copyright (c) 2021 Ampere Computing. All rights reserved.
+# SPDX-License-Identifier: BSD-3-Clause
+
+---
+unit_defaults:
+  ixu:
+    opcode_width: 0x0e
+    opcode: 0x00
+    latency: 1
+  ld:
+    opcode_width: 0x0e
+    opcode: 0x00
+    latency: 1
+  st:
+    opcode_width: 0x0e
+    opcode: 0x00
+    latency: 1
+  fsu:
+    opcode_width: 0x0f
+    opcode: 0x00000
+    latency: 1
+  idr:
+    opcode_width: 0x0f
+    opcode: 0x00000
+    latency: 1
+

@@ -1,0 +1,8 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<testsuites>
+    <testsuite name="test" time="0" failures="0" package="panthera" timestamp="2024-03-16T00:05:47" hostname="ci.example.invalid" tests="3" errors="0" incompletes="0">
+        <testcase name="test/config_0/dhrystone" status="run" classname="panthera" time="0" />
+        <testcase name="test/config_1/dhrystone" status="run" classname="panthera" time="0" />
+        <testcase name="test/config_2/dhrystone" status="run" classname="panthera" time="0" />
+    </testsuite>
+</testsuites>

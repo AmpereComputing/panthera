@@ -1,0 +1,161 @@
+package fusion;
+
+function automatic logic [13:0] IxuOpcode(input logic Fusion, input logic [31:0] Instruction0, input logic [31:0] Instruction1, input logic [1:0] QuadNum, input logic [1:0] UopNum);
+  IxuOpcode[0] = UopNum[0] |
+                 Instruction0[1] & ~Instruction0[25] |
+                 Instruction0[21] & Instruction0[22] & Instruction0[25] |
+                 ~Instruction0[22] & Instruction0[23] & Instruction0[25] |
+                 Instruction0[13] & Instruction0[14] & Instruction0[15] & ~Instruction0[30] |
+                 ~Instruction0[13] & Instruction0[15] & Instruction0[24] & Instruction0[30] |
+                 ~Instruction0[14] & Instruction0[15] & Instruction0[24] & Instruction0[30] |
+                 ~Fusion & ~Instruction0[15] & ~Instruction0[30];
+  IxuOpcode[1] = UopNum[0] |
+                 ~Instruction0[2] & ~Instruction0[25] |
+                 Instruction0[21] & ~Instruction0[22] & Instruction0[23] & Instruction0[25] |
+                 ~Instruction0[21] & Instruction0[22] & Instruction0[25] & ~Instruction0[29] |
+                 ~Fusion & Instruction0[14] & Instruction0[24] |
+                 ~Fusion & ~Instruction0[15] & Instruction0[24] |
+                 ~Fusion & Instruction0[21] & Instruction0[29] & Instruction0[30];
+  IxuOpcode[2] = ~Instruction0[2] & ~Instruction0[3] & ~Instruction0[25] |
+                 Instruction0[2] & Instruction0[3] & ~Instruction0[25] |
+                 ~Instruction0[21] & Instruction0[25] & ~Instruction0[29] |
+                 Instruction0[22] & Instruction0[29] |
+                 Instruction0[21] & Instruction0[23] & Instruction0[29];
+  IxuOpcode[3] = ~Instruction0[0] & Instruction0[2] & ~Instruction0[25] |
+                 Instruction0[0] & ~Instruction0[2] & ~Instruction0[3] & ~Instruction0[25] |
+                 ~Instruction0[0] & Instruction0[3] & ~Instruction0[25] |
+                 Instruction0[1] & Instruction0[2] & Instruction0[3] & ~Instruction0[25] |
+                 ~Instruction0[21] & Instruction0[22] & Instruction0[25] |
+                 Instruction0[21] & ~Instruction0[22] & Instruction0[25] & ~Instruction0[29] |
+                 Instruction0[22] & Instruction0[29] |
+                 ~Instruction0[13] & Instruction0[15] & ~Instruction0[30] & ~UopNum[0] |
+                 ~Instruction0[14] & Instruction0[15] & ~Instruction0[30] & ~UopNum[0] |
+                 ~Fusion & Instruction0[13] & Instruction0[14] & Instruction0[24] & Instruction0[30] & ~UopNum[0] |
+                 ~Fusion & ~Instruction0[15] & Instruction0[24] & Instruction0[30] & ~UopNum[0];
+  IxuOpcode[4] = ~Instruction0[13] & Instruction0[15] & Instruction0[24] & ~UopNum[0] |
+                 ~Instruction0[14] & Instruction0[15] & Instruction0[24] & ~UopNum[0] |
+                 ~Fusion & Instruction0[24] & Instruction0[30] & ~UopNum[0];
+  IxuOpcode[5] = ~Instruction0[13] & Instruction0[15] & Instruction0[24] & Instruction0[30] & ~UopNum[0] |
+                 ~Instruction0[14] & Instruction0[15] & Instruction0[24] & Instruction0[30] & ~UopNum[0];
+  IxuOpcode[6] = ~Instruction0[24] |
+                 ~Instruction0[13] & Instruction0[15] & Instruction0[30] & ~UopNum[0] |
+                 ~Instruction0[14] & Instruction0[15] & Instruction0[30] & ~UopNum[0];
+  IxuOpcode[7] = ~Instruction0[13] & Instruction0[15] & Instruction0[24] & ~UopNum[0] |
+                 ~Instruction0[14] & Instruction0[15] & Instruction0[24] & ~UopNum[0] |
+                 Instruction0[23] & Instruction0[25];
+  IxuOpcode[8] = Instruction0[0] & ~Instruction0[1] & Instruction0[2] & ~Instruction0[25] |
+                 Instruction0[0] & Instruction0[2] & ~Instruction0[3] & ~Instruction0[25] |
+                 Instruction0[0] & ~Instruction0[2] & Instruction0[3] & ~Instruction0[25] |
+                 Instruction0[21] & Instruction0[22] & Instruction0[25] & ~Instruction0[29] |
+                 ~Fusion & Instruction0[13] & Instruction0[14] & Instruction0[24] & Instruction0[30] & ~UopNum[0] |
+                 ~Fusion & ~Instruction0[15] & Instruction0[24] & Instruction0[30] & ~UopNum[0];
+  IxuOpcode[9] = ~Instruction0[13] & Instruction0[15] & ~Instruction0[30] & ~UopNum[0] |
+                 ~Instruction0[14] & Instruction0[15] & ~Instruction0[30] & ~UopNum[0] |
+                 Instruction0[30] & UopNum[0] |
+                 ~Fusion & Instruction0[13] & Instruction0[14] & Instruction0[24] & Instruction0[30] |
+                 ~Fusion & ~Instruction0[15] & Instruction0[24] & Instruction0[30];
+  IxuOpcode[10] = ~Instruction0[13] & Instruction0[15] & ~Instruction0[30] & ~UopNum[0] |
+                  ~Instruction0[14] & Instruction0[15] & ~Instruction0[30] & ~UopNum[0] |
+                  ~Fusion & Instruction0[13] & Instruction0[14] & Instruction0[24] & Instruction0[30] & ~UopNum[0] |
+                  ~Fusion & ~Instruction0[15] & Instruction0[24] & Instruction0[30] & ~UopNum[0];
+  IxuOpcode[11] = ~Instruction0[13] & Instruction0[15] & ~Instruction0[30] & ~UopNum[0] |
+                  ~Instruction0[14] & Instruction0[15] & ~Instruction0[30] & ~UopNum[0];
+  IxuOpcode[12] = Instruction0[13] & Instruction0[14] & Instruction0[24] & Instruction0[30] & ~UopNum[0] |
+                  ~Instruction0[15] & Instruction0[24] & Instruction0[30] & ~UopNum[0] |
+                  Fusion & ~Instruction1[25];
+  IxuOpcode[13] = 1'b0;
+endfunction
+
+
+function automatic logic GprDestVld(input logic Fusion, input logic [31:0] Instruction0, input logic [31:0] Instruction1, input logic [1:0] QuadNum, input logic [1:0] UopNum);
+  GprDestVld = Instruction0[25];
+endfunction
+
+
+function automatic logic[5:0] GprDestLreg(input logic[0:0] GprDestLregMuxSel, input logic[31:0] Instruction0);
+  unique casez (GprDestLregMuxSel)
+    1'b0:
+      GprDestLreg = {1'b0, Instruction0[4:0]};
+    1'b1:
+      GprDestLreg = 6'b100011;
+    default:
+      GprDestLreg = 'x;
+  endcase
+endfunction
+
+
+function automatic logic GprDestLregMuxSel(input logic Fusion, input logic [31:0] Instruction0, input logic [31:0] Instruction1, input logic [1:0] QuadNum, input logic [1:0] UopNum);
+  GprDestLregMuxSel = ~Instruction0[13] & Instruction0[15] & ~Instruction0[23] & ~UopNum[0] |
+                      ~Instruction0[14] & Instruction0[15] & ~Instruction0[23] & ~UopNum[0] |
+                      ~Fusion & ~Instruction0[23] & Instruction0[30] & ~UopNum[0];
+endfunction
+
+
+function automatic logic ImmVld(input logic Fusion, input logic [31:0] Instruction0, input logic [31:0] Instruction1, input logic [1:0] QuadNum, input logic [1:0] UopNum);
+  ImmVld = 1'b1;
+endfunction
+
+
+function automatic logic[31:0] Imm(input logic[3:0] ImmMuxSel, input logic[31:0] Instruction1, input logic[31:0] Instruction0);
+  unique casez (ImmMuxSel)
+    4'b0000:
+      Imm = {Instruction1[20:5], Instruction0[20:5]};
+    4'b0001:
+      Imm = {18'b000000000000000000, Instruction0[15:13], 11'b00000000000};
+    4'b0010:
+      Imm = {16'b0000000000000000, Instruction0[20:5]};
+    4'b0011:
+      Imm = {29'b00000000000000000000000000000, Instruction0[12:10]};
+    4'b0100:
+      Imm = {23'b00000000000000000000000, Instruction0[12:10], 6'b000111};
+    4'b0101:
+      Imm = {15'b000000000000000, Instruction0[15:13], 14'b01100000000000};
+    4'b0110:
+      Imm = {23'b00000000000000000000000, Instruction0[12:10], 6'b001111};
+    4'b0111:
+      Imm = {23'b00000000000000000000000, Instruction0[12:10], 6'b011111};
+    4'b1000:
+      Imm = {17'b00000000000000000, Instruction0[15:13], 9'b000000000, Instruction0[12:10]};
+    4'b1001:
+      Imm = {29'b00000000000000000000000000000, Instruction0[15:13]};
+    4'b1010:
+      Imm = {29'b00000000000000000011000000000, Instruction0[12:10]};
+    4'b1011:
+      Imm = {13'b0000000000000, Instruction0[23:5]};
+    default:
+      Imm = 'x;
+  endcase
+endfunction
+
+
+function automatic logic [3:0] ImmMuxSel(input logic Fusion, input logic [31:0] Instruction0, input logic [31:0] Instruction1, input logic [1:0] QuadNum, input logic [1:0] UopNum);
+  ImmMuxSel[0] = ~Instruction0[13] & Instruction0[14] & Instruction0[15] & ~Instruction0[23] & ~UopNum[0] |
+                 ~Instruction0[25] |
+                 ~Instruction0[14] & Instruction0[15] & ~Instruction0[30] & ~UopNum[0] |
+                 Instruction0[30] & UopNum[0] |
+                 Instruction0[14] & ~Instruction0[23] & Instruction0[30] |
+                 ~Instruction0[15] & ~Instruction0[23] & Instruction0[30] |
+                 Fusion & ~Instruction1[25];
+  ImmMuxSel[1] = ~Instruction0[30] & UopNum[0] |
+                 Instruction0[13] & Instruction0[14] & Instruction0[15] & ~Instruction0[30] |
+                 ~Fusion & ~Instruction0[24] |
+                 ~Fusion & Instruction0[13] & Instruction0[30] & ~UopNum[0] |
+                 ~Fusion & Instruction0[14] & Instruction0[30] & ~UopNum[0] |
+                 ~Fusion & ~Instruction0[15] & Instruction0[30] & ~UopNum[0];
+  ImmMuxSel[2] = Instruction0[15] & Instruction0[30] & UopNum[0] |
+                 ~Instruction0[13] & Instruction0[15] & Instruction0[24] & Instruction0[30] |
+                 ~Instruction0[14] & Instruction0[15] & Instruction0[24] & Instruction0[30];
+  ImmMuxSel[3] = ~Instruction0[25] |
+                 ~Fusion & ~Instruction0[30];
+endfunction
+
+
+function automatic logic [1:0] EndInst(input logic Fusion, input logic [31:0] Instruction0, input logic [31:0] Instruction1, input logic [1:0] QuadNum, input logic [1:0] UopNum);
+  EndInst[0] = UopNum[0] |
+               Instruction0[13] & Instruction0[14] & Instruction0[15] & ~Instruction0[30] |
+               ~Fusion & ~Instruction0[24] |
+               ~Fusion & ~Instruction0[15] & ~Instruction0[30];
+  EndInst[1] = Fusion;
+endfunction
+
+endpackage

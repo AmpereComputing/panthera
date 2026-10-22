@@ -1,0 +1,22 @@
+# Copyright (c) 2021 Ampere Computing. All rights reserved.
+# SPDX-License-Identifier: BSD-3-Clause
+
+# integer divide
+#sf op S          Rm         o1  Rn    Rd
+-  0  0 11010110 ----- 00001 -  ----- -----
+
+# FP scalar divide
+#M  S        ftype           Rm   opcode     Rn    Rd
+0 0 0 11110 (00|01|11)    1 ----- 0001   10 ----- -----
+
+# FP scalar sqrt
+#M  S       ftype                opc        Rn    Rd
+0 0 0 11110 (00|01|11)    1 0000 11  10000 ----- -----
+
+# FP vector divide
+#  Q U       a/sz  Rm      opcode    Rn    Rd
+(0 - 1 01110 0 10 ----- 00 111    1 ----- -----)|(0 - 1 01110 0 -  1 ----- 11111  1 ----- -----)
+
+# FP vector sqrt
+# Q U       a/sz            opcode     Rn    Rd
+0 - 1 01110 1 (1111|-100)00 11111  10 ----- -----

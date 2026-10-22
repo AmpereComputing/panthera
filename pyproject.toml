@@ -1,0 +1,115 @@
+# Copyright (c) 2024-2026 Ampere Computing. All rights reserved.
+# SPDX-License-Identifier: BSD-3-Clause
+
+[project]
+name = "panthera"
+requires-python = ">=3.10"
+dependencies = [
+    # Build
+    "capstone",
+    "openpyxl",
+    "protobuf==4.25.0",
+    "pyyaml",
+
+    # Rollup and python tools
+    "antlr4-python3-runtime",
+    "bokeh",
+    "check-jsonschema",
+    "gitpython",
+    "holoviews",
+    "hvplot",
+    "ipykernel",
+    "jinja2",
+    "linkify-it-py",
+    "lxml",
+    "markdown-it-py",
+    "matplotlib",
+    "mdit-py-plugins",
+    "meson",
+    "natsort",
+    "numpy",
+    "pandas",
+    "panel",
+    "paramiko",
+    "requests",
+    "scikit-learn",
+    "scipy",
+    "seaborn",
+    "urwid",
+    "xlsxwriter",
+]
+
+[project.optional-dependencies]
+dev = [
+    "coverage",
+    "lcov_cobertura",
+    "unittest-xml-reporting",
+]
+
+[tool.ruff]
+# Configure similar to black (except for line-length)
+line-length = 120
+indent-width = 4
+target-version = "py312"
+
+[tool.ruff.lint]
+# Enable Pyflakes (`F`) and a subset of the pycodestyle (`E`)  codes by default.
+# Unlike Flake8, Ruff doesn't enable pycodestyle warnings (`W`) or
+# McCabe complexity (`C901`) by default.
+select = [
+  "D3",
+  "E4",
+  "E7",
+  "E9",
+  "F",
+  "I",
+#  "SIM", # consider simplify warnings
+#  "D1", # consider docstring warnings
+#  "D4", # consider docstring warnings
+#  "ERA", # consider some un-commented code warnings
+#  "C4", # consider some comprehension warnings
+#  "PL", # consider some pylint warnings
+#  "PD", # consider some pandas warnings
+]
+ignore = [
+  "F401",
+  "F403",
+  "W191",
+  "E111",
+  "E114",
+  "E117",
+  "E402",
+  "E402",
+  "E722",
+  "E741",
+  "D206",
+  "D300",
+  "Q000",
+  "Q001",
+  "Q002",
+  "Q003",
+  "COM812",
+  "COM819",
+  "ISC001",
+  "ISC002"
+]
+
+# Allow fix for all enabled rules (when `--fix`) is provided.
+fixable = ["ALL"]
+unfixable = ["F401"]
+
+# Allow unused variables when underscore-prefixed.
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"
+docstring-code-format = true
+
+[tool.ruff.lint.per-file-ignores]
+"__init__" = ["F402"]
+"**/report/reports/**.py" = ["F821", "F405", "F403"]
+"**/matrix/**.py" = ["F402", "F405"]
+"**/config/rollup/**.py" = ["F821"]

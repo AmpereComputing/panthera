@@ -1,0 +1,33 @@
+# Copyright (c) 2021 Ampere Computing. All rights reserved.
+# SPDX-License-Identifier: BSD-3-Clause
+
+from ampere.xlat import Signal, Translation
+from proj.uop import *
+from proj.xlat_register_constants import * # x30/ZR/xzr/SP_EL*/s0/s1/T0/T1/T2/T3/RGSR_EL1
+
+class NVMRS_RS_systemmove(Translation):
+    """Move System Register"""
+    pattern = '1101010100 1 1 -  --- ---- ---- --- -----'
+    pfields = '           L   o0 op1 CRn  CRm  op2  Rt  '
+
+    asmtemplate = 'NVMRS  <Xt>, (<systemreg>|S<op0>_<op1>_<Cn>_<Cm>_<op2>)'
+
+    isolate = True
+    sysreg_access = True
+
+    def decode(self, f):
+        str_d_64_nv(src2=f.Rt, imm=(Signal("1"),f.o0,f.op1,f.CRn,f.CRm,f.op2))
+
+class NVMSR_SR_systemmove(Translation):
+    """DV hook for NV Move general-purpose register to System Register"""
+    pattern = '1101010100 0 1 -  --- ---- ---- --- -----'
+    pfields = '           L   o0 op1 CRn  CRm  op2  Rt  '
+
+    asmtemplate = 'NVMSR  (<systemreg>|S<op0>_<op1>_<Cn>_<Cm>_<op2>), <Xt>'
+
+    isolate = True
+    sysreg_access = True
+
+    def decode(self, f):
+        ldr_d_64_nv(src2=f.Rt, imm=(Signal("1"),f.o0,f.op1,f.CRn,f.CRm,f.op2))
+

@@ -1,0 +1,75 @@
+# Copyright (c) 2018-2025 Ampere Computing. All rights reserved.
+# SPDX-License-Identifier: BSD-3-Clause
+
+---
+BasedOnStyle: Google
+IndentWidth:     4
+---
+Language:        Cpp
+AccessModifierOffset: -4
+AllowShortBlocksOnASingleLine: Empty
+AllowShortEnumsOnASingleLine: false
+AllowShortFunctionsOnASingleLine: Inline
+AllowShortLambdasOnASingleLine: Inline
+AllowShortIfStatementsOnASingleLine: false
+AllowShortLoopsOnASingleLine: false
+BinPackArguments: false
+BinPackParameters: false
+BraceWrapping:   
+  AfterCaseLabel:  false
+  AfterClass:      true
+  AfterControlStatement: MultiLine
+  AfterEnum:       false
+  AfterExternBlock: false
+  AfterFunction:   true
+  AfterNamespace:  false
+  AfterObjCDeclaration: false
+  AfterStruct:     true
+  AfterUnion:      true
+  BeforeCatch:     false
+  BeforeElse:      false
+  BeforeLambdaBody: false
+  BeforeWhile:     false
+  IndentBraces:    false
+  SplitEmptyFunction: true
+  SplitEmptyRecord: false
+  SplitEmptyNamespace: true
+BreakBeforeBinaryOperators: NonAssignment
+BreakBeforeBraces: Custom
+ColumnLimit:     120
+IncludeBlocks:   Preserve
+IncludeCategories: 
+  - Regex:           '^<ext/.*\.h>'
+    Priority:        2
+  - Regex:           '^<.*\.h>'
+    Priority:        1
+  - Regex:           '^<.*'
+    Priority:        2
+  - Regex:           '.*'
+    Priority:        3
+IncludeIsMainRegex: '([-_](test|unittest))?$'
+IndentCaseLabels: false
+KeepEmptyLinesAtTheStartOfBlocks: false
+KeepEmptyLinesAtEOF: true
+PointerAlignment: Left
+SortIncludes:    false
+SortUsingDeclarations: true
+SpaceAfterTemplateKeyword: false
+SpacesBeforeTrailingComments: 1
+Standard:        c++20
+WhitespaceSensitiveMacros:
+  - BOOST_PP_STRINGIZE
+  - CF_SWIFT_NAME
+  - NS_SWIFT_NAME
+  - PP_STRINGIZE
+  - STRINGIZE
+  - make_enum
+  - make_enum_with_type
+  - make_enum_without_class
+  - make_enum_without_class_with_type
+  - make_ns_enum
+  - make_ns_enum_with_type
+  - make_ns_enum_without_class
+  - make_ns_enum_without_class_with_type
+...
+

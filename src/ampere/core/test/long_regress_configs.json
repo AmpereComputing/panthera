@@ -1,0 +1,63 @@
+[
+  {
+    "name": "nebula",
+    "exe": "{panthera_root}/bin/amperesys",
+    "parameters": [
+        "-cfg", "{panthera_root}/config/model/sys/nebula.cfg",
+        "-max_time", "200000ns",
+        "-sys.soc_0.core_0.instruction_stream_name", "{workload_path}",
+        "-sys.soc_0.core_0.gpc.max_instructions", "250000"
+    ]
+  },
+  {
+    "name": "domino",
+    "exe": "{panthera_root}/bin/amperesys",
+    "parameters": [
+        "-cfg", "{panthera_root}/config/model/sys/domino.cfg",
+        "-max_time", "200000ns",
+        "-sys.soc_0.core_0.instruction_stream_name", "{workload_path}",
+        "-sys.soc_0.core_0.gpc.max_instructions", "250000"
+    ]
+  },
+  {
+    "name": "domino_mte",
+    "exe": "{panthera_root}/bin/amperesys",
+    "parameters": [
+        "-cfg", "{panthera_root}/config/model/sys/domino.cfg",
+        "-sys.soc_0.core_0:append-cfg", "{panthera_root}/config/model/core/features/mte.cfg",
+        "-max_time", "200000ns",
+        "-sys.soc_0.core_0.instruction_stream_name", "{workload_path}",
+        "-sys.soc_0.core_0.gpc.max_instructions", "250000"
+    ]
+  },
+  {
+    "name": "rogue",
+    "exe": "{panthera_root}/bin/amperesys",
+    "parameters": [
+        "-cfg", "{panthera_root}/config/model/sys/rogue.cfg",
+        "-max_time", "200000ns",
+        "-sys.soc_0.core_0.instruction_stream_name", "{workload_path}",
+        "-sys.soc_0.core_0.gpc.max_instructions", "250000"
+    ]
+  },
+  {
+    "name": "banshee",
+    "exe": "{panthera_root}/bin/amperesys",
+    "parameters": [
+        "-cfg", "{panthera_root}/config/model/sys/banshee.cfg",
+        "-max_time", "200000ns",
+        "-sys.soc_0.core_0.instruction_stream_name", "{workload_path}",
+        "-sys.soc_0.core_0.gpc.max_instructions", "250000"
+    ]
+  },
+  {
+    "name": "siryn",
+    "exe": "{panthera_root}/bin/amperesys",
+    "parameters": [
+        "-cfg", "{panthera_root}/config/model/sys/siryn.cfg",
+        "-max_time", "200000ns",
+        "-sys.soc_0.core_0.instruction_stream_name", "{workload_path}",
+        "-sys.soc_0.core_0.gpc.max_instructions", "250000"
+    ]
+  }
+]

@@ -1,0 +1,94 @@
+# Copyright (c) 2018 Ampere Computing. All rights reserved.
+# SPDX-License-Identifier: BSD-3-Clause
+
+from xlat.xlatdefs import *
+
+
+class DefaultTranslation(Translation):
+    size           = 64
+    isBranch       = False
+    isBrUncond     = False
+    isBrCall       = False
+    isBrReturn     = False
+    FusionClass    = None
+    isBrk          = False
+    isHalt         = False
+    isFP           = False
+    isSIMD         = False
+    isSVE          = False
+    UndefIfDebug   = False
+    UndefNotDebug  = False
+    UndeffIfEL0    = False
+    UndefIfEL1     = False
+    UndefIfEL2     = False
+    UndefIfEL3     = False
+    TrapUnlessZen  = False
+    TrapUnlessFpen = False
+    TrapIfTTA      = False
+    ValidSyndrome  = False
+
+
+class ADD_addsub_ext(DefaultTranslation):
+    """Add (extended register)"""
+    pattern = '-  0  - 01011 00  1 ----- ---    ---  ----- -----'
+    pfields = 'sf op S       opt    Rm   option imm3  Rn    Rd  '
+    
+    asmtemplate = 'ADD  <Wd|WSP>, <Wn|WSP>, <Wm>{, <extend> {#<amount>}}'
+
+    def decode(self):
+        if sf == 0:
+            self.size = 32
+
+        if S:
+            self.FusionClass = 'pre_bcond'
+
+        if option == 0b011 and imm3.value < 4:
+           add(Rd, Rm, Rn, imm3, S, sf)
+        else:
+            if option.value < 0b100:
+                xtnd(s0, Rm, immval=(option, imm3))
+            else:
+                sxtnd(s0, Rm, immval=(option, imm3))
+            add(Rd, Rm, Rn, 0, S, sf)
+
+
+class ADD_addsub_imm(DefaultTranslation):
+    """Add (immediate)"""
+    pattern = '-  0  - 10001 --    ------------ ----- -----'
+    pfields = 'sf op S       shift    imm12      Rn    Rd  '
+    
+    asmtemplate = 'ADD  <Wd|WSP>, <Wn|WSP>, #<imm>{, <shift>}'
+
+    def decode(self):
+        if sf == 0:
+            self.size = 32
+
+        if S:
+            self.FusionClass = 'pre_bcond'
+
+        add(Rd, Rn, immval=imm12)
+
+
+class ADD_addsub_shift(DefaultTranslation):
+    """Add (shifted register)"""
+    pattern = '-  0  - 01011 --    0 ----- ------ ----- -----'
+    pfields = 'sf op S       shift    Rm    imm6   Rn    Rd  '
+    
+    asmtemplate = 'ADD  <Wd>, <Wn>, <Wm>{, <shift> #<amount>}'
+
+    def decode(self):
+        if sf == 0:
+            self.size = 32
+
+        if S:
+            self.FusionClass = 'pre_bcond'
+
+        if imm6.value < 4 and shift.value == 0b00:
+            add(Rd, Rm, Rn, imm6, S, sf) 
+        else: 
+            lsl64(s0, Rm, imm=(shift, imm6))
+            add(Rd, Rn, s0, flagdest=S, size=sf)
+
+
+
+

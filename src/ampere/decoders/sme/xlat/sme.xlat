@@ -1,0 +1,375 @@
+# Copyright (c) 2022-2026 Ampere Computing. All rights reserved.
+# SPDX-License-Identifier: BSD-3-Clause
+
+from ampere.xlat import Signal, Translation
+from proj.uop import *
+
+class addha_za_pp_z_32(_JSON_addha_za_pp_z_32):
+
+    sme = True
+
+    def decode(self, f):
+        return NotImplemented # SME
+
+
+class addha_za_pp_z_64(_JSON_addha_za_pp_z_64):
+
+    sme = True
+
+    def decode(self, f):
+        return NotImplemented #SME
+
+class addva_za_pp_z_32(_JSON_addva_za_pp_z_32):
+
+    sme = True
+    def decode(self, f):
+        return NotImplemented #SME
+
+
+class addva_za_pp_z_64(_JSON_addva_za_pp_z_64):
+
+    sme = True
+    def decode(self, f):
+        return NotImplemented #SME
+
+class fmopa_za_pp_zz_32(_JSON_fmopa_za_pp_zz_32):
+
+    sme = True
+    def decode(self, f):
+        return NotImplemented #SME
+
+
+class fmopa_za_pp_zz_64(_JSON_fmopa_za_pp_zz_64):
+
+    sme = True
+    def decode(self, f):
+        return NotImplemented # SME
+
+
+class fmops_za_pp_zz_32(_JSON_fmops_za_pp_zz_32):
+
+    sme = True
+    def decode(self, f):
+        return NotImplemented #SME
+
+
+class fmops_za_pp_zz_64(_JSON_fmops_za_pp_zz_64):
+
+    sme = True
+    def decode(self, f):
+        return NotImplemented #SME
+
+class mova_z_p_rza_b(_JSON_mova_z_p_rza_b):
+
+    sme = True
+    def decode(self, f):
+        return NotImplemented #SME
+
+
+class mova_z_p_rza_h(_JSON_mova_z_p_rza_h):
+
+    sme = True
+    def decode(self, f):
+        return NotImplemented #SME
+
+
+class mova_z_p_rza_w(_JSON_mova_z_p_rza_w):
+
+    sme = True
+    def decode(self, f):
+        return NotImplemented #SME
+
+
+class mova_z_p_rza_d(_JSON_mova_z_p_rza_d):
+
+    sme = True
+    def decode(self, f):
+        return NotImplemented #SME
+
+class mova_z_p_rza_q(_JSON_mova_z_p_rza_q):
+
+    sme = True
+    def decode(self, f):
+        return NotImplemented #SME
+
+
+class mova_za_p_rz_b(_JSON_mova_za_p_rz_b):
+
+    sme = True
+    def decode(self, f):
+        return NotImplemented #SME
+
+
+class mova_za_p_rz_h(_JSON_mova_za_p_rz_h):
+
+    sme = True
+    def decode(self, f):
+        return NotImplemented #SME
+
+
+class mova_za_p_rz_w(_JSON_mova_za_p_rz_w):
+
+    sme = True
+    def decode(self, f):
+        return NotImplemented #SME
+
+
+class mova_za_p_rz_d(_JSON_mova_za_p_rz_d):
+
+    sme = True
+    def decode(self, f):
+        return NotImplemented #SME
+
+
+class mova_za_p_rz_q(_JSON_mova_za_p_rz_q):
+
+    sme = True
+    def decode(self, f):
+        return NotImplemented #SME
+class revd_z_p_z_(_JSON_revd_z_p_z_m):
+    sme = True
+    movprfx = 'unpred' 
+
+    def decode(self, f):
+        return NotImplemented # SME
+class sclamp_z_zz_(_JSON_sclamp_z_zz_):
+
+    movprfx = 'unpred'
+
+    def decode(self, f):
+        return NotImplemented # SME
+
+
+class smopa_za_pp_zz_32(_JSON_smopa_za_pp_zz_32):
+
+    sme = True
+    def decode(self, f):
+        return NotImplemented # SME
+
+
+class smopa_za_pp_zz_64(_JSON_smopa_za_pp_zz_64):
+
+    sme = True
+
+    def decode(self, f):
+        return NotImplemented #SME
+
+
+class smops_za_pp_zz_32(_JSON_smops_za_pp_zz_32):
+
+    sme = True
+
+    def decode(self, f):
+        return NotImplemented #SME
+
+
+class smops_za_pp_zz_64(_JSON_smops_za_pp_zz_64):
+
+    sme = True
+
+    def decode(self, f):
+        return NotImplemented #SME
+class sumopa_za_pp_zz_32(_JSON_sumopa_za_pp_zz_32):
+
+    sme = True
+    def decode(self, f):
+        return NotImplemented #SME
+
+
+class sumopa_za_pp_zz_64(_JSON_sumopa_za_pp_zz_64):
+
+    sme = True
+    def decode(self, f):
+        return NotImplemented #SME
+
+
+class sumops_za_pp_zz_32(_JSON_sumops_za_pp_zz_32):
+
+    sme = True
+    def decode(self, f):
+        return NotImplemented #SME
+
+
+class sumops_za_pp_zz_64(_JSON_sumops_za_pp_zz_64):
+
+    sme = True
+    def decode(self, f):
+        return NotImplemented # SME
+class uclamp_z_zz_(_JSON_uclamp_z_zz_):
+
+    movprfx = 'unpred'
+    sme = True
+
+    def decode(self, f):
+        return NotImplemented #SME
+class umopa_za_pp_zz_32(_JSON_umopa_za_pp_zz_32):
+
+    sme = True
+    def decode(self, f):
+        return NotImplemented #SME
+
+
+class umopa_za_pp_zz_64(_JSON_umopa_za_pp_zz_64):
+
+    sme = True
+    def decode(self, f):
+        return NotImplemented #SME
+
+
+class umops_za_pp_zz_32(_JSON_umops_za_pp_zz_32):
+
+    sme = True
+    def decode(self, f):
+        return NotImplemented #SME
+
+
+class umops_za_pp_zz_64(_JSON_umops_za_pp_zz_64):
+
+    sme = True
+    def decode(self, f):
+        return NotImplemented #SME
+class usmopa_za_pp_zz_32(_JSON_usmopa_za_pp_zz_32):
+
+    sme = True
+    def decode(self, f):
+        return NotImplemented # SME
+
+
+class usmopa_za_pp_zz_64(_JSON_usmopa_za_pp_zz_64):
+
+    sme = True
+    def decode(self, f):
+        return NotImplemented #SME
+
+
+class usmops_za_pp_zz_32(_JSON_usmops_za_pp_zz_32):
+
+    sme = True
+    def decode(self, f):
+        return NotImplemented # SME
+
+
+class usmops_za_pp_zz_64(_JSON_usmops_za_pp_zz_64):
+
+    sme = True
+    def decode(self, f):
+        return NotImplemented #SME
+
+class addspl_r_ri_(_JSON_addspl_r_ri_):
+
+    def decode(self, f):
+        return NotImplemented
+
+
+class addsvl_r_ri_(_JSON_addsvl_r_ri_):
+
+    def decode(self, f):
+        return NotImplemented
+
+
+class bfmopa_za32_pp_zz_(_JSON_bfmopa_za32_pp_zz_):
+
+    def decode(self, f):
+        return NotImplemented
+
+
+class bfmops_za32_pp_zz_(_JSON_bfmops_za32_pp_zz_):
+
+    def decode(self, f):
+        return NotImplemented
+
+
+class fmopa_za32_pp_zz_16(_JSON_fmopa_za32_pp_zz_16):
+
+    def decode(self, f):
+        return NotImplemented
+
+
+class fmops_za32_pp_zz_16(_JSON_fmops_za32_pp_zz_16):
+
+    def decode(self, f):
+        return NotImplemented
+
+
+class ld1b_za_p_rrr_(_JSON_ld1b_za_p_rrr_):
+
+    def decode(self, f):
+        return NotImplemented
+
+
+class ld1d_za_p_rrr_(_JSON_ld1d_za_p_rrr_):
+
+    def decode(self, f):
+        return NotImplemented
+
+
+class ld1h_za_p_rrr_(_JSON_ld1h_za_p_rrr_):
+
+    def decode(self, f):
+        return NotImplemented
+
+
+class ld1q_za_p_rrr_(_JSON_ld1q_za_p_rrr_):
+
+    def decode(self, f):
+        return NotImplemented
+
+
+class ld1w_za_p_rrr_(_JSON_ld1w_za_p_rrr_):
+
+    def decode(self, f):
+        return NotImplemented
+
+
+class ldr_za_ri_(_JSON_ldr_za_ri_):
+
+    def decode(self, f):
+        return NotImplemented
+
+
+class rdsvl_r_i_(_JSON_rdsvl_r_i_):
+
+    def decode(self, f):
+        return NotImplemented
+
+
+class st1b_za_p_rrr_(_JSON_st1b_za_p_rrr_):
+
+    def decode(self, f):
+        return NotImplemented
+
+
+class st1d_za_p_rrr_(_JSON_st1d_za_p_rrr_):
+
+    def decode(self, f):
+        return NotImplemented
+
+
+class st1h_za_p_rrr_(_JSON_st1h_za_p_rrr_):
+
+    def decode(self, f):
+        return NotImplemented
+
+
+class st1q_za_p_rrr_(_JSON_st1q_za_p_rrr_):
+
+    def decode(self, f):
+        return NotImplemented
+
+
+class st1w_za_p_rrr_(_JSON_st1w_za_p_rrr_):
+
+    def decode(self, f):
+        return NotImplemented
+
+
+class str_za_ri_(_JSON_str_za_ri_):
+
+    def decode(self, f):
+        return NotImplemented
+
+
+class zero_za_i_(_JSON_zero_za_i_):
+
+    def decode(self, f):
+        return NotImplemented

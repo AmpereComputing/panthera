@@ -1,0 +1,109 @@
+# Copyright (c) 2021 Ampere Computing. All rights reserved.
+# SPDX-License-Identifier: BSD-3-Clause
+
+from ampere.xlat import Fusion, Translation, Uop
+
+class TestUop(Uop):
+    @property
+    def name(self):
+        return self.__class__.__name__
+
+    unit = 'ixu'
+
+class nop(TestUop):
+    pass
+
+class movz64_0b(TestUop):
+    dest_type = 'gpr'
+
+class movz64_2b(TestUop):
+    dest_type = 'gpr'
+
+class movz64_4b(TestUop):
+    dest_type = 'gpr'
+
+class movz64_6b(TestUop):
+    dest_type = 'gpr'
+
+class movk64_0b(TestUop):
+    dest_type = 'gpr'
+    src2_type = 'gpr'
+
+class movk64_2b(TestUop):
+    dest_type = 'gpr'
+    src2_type = 'gpr'
+
+class movk64_4b(TestUop):
+    dest_type = 'gpr'
+    src2_type = 'gpr'
+
+class movk64_6b(TestUop):
+    dest_type = 'gpr'
+    src2_type = 'gpr'
+
+class movzk64_0b(TestUop):
+    dest_type = 'gpr'
+
+class movzk64_4b(TestUop):
+    dest_type = 'gpr'
+
+
+class NOP(Translation):
+    """A No-Op"""
+    pattern = '11010101000000110010000000011111'
+
+    def decode(self, f):
+        nop()
+
+
+class MOVZ_64_movewide(Translation):
+    """Move wide with zero"""
+    pattern = '1  10  100101 -- ---------------- -----'
+    pfields = 'sf opc        hw      imm16        Rd  '
+
+    asmtemplate = 'MOVZ  <Xd>, #<imm>{, LSL #<shift>}'
+
+    fusion_type = '00'
+
+    def decode(self, f):
+        if f.hw.value == 0b00:
+            movz64_0b(dest=f.Rd, imm=f.imm16)
+        elif f.hw.value == 0b01:
+            movz64_2b(dest=f.Rd, imm=f.imm16)
+        elif f.hw.value == 0b10:
+            movz64_4b(dest=f.Rd, imm=f.imm16)
+        elif f.hw.value == 0b11:
+            movz64_6b(dest=f.Rd, imm=f.imm16)
+
+
+class MOVK_64_movewide(Translation):
+    """Move wide with keep"""
+    pattern = '1  11  100101 -- ---------------- -----'
+    pfields = 'sf opc        hw      imm16        Rd  '
+
+    asmtemplate = 'MOVK  <Xd>, #<imm>{, LSL #<shift>}'
+
+    def decode(self, f):
+        if f.hw.value == 0b00:
+            movk64_0b(dest=f.Rd, src2=f.Rd, imm=f.imm16)
+        elif f.hw.value == 0b01:
+            movk64_2b(dest=f.Rd, src2=f.Rd, imm=f.imm16)
+        elif f.hw.value == 0b10:
+            movk64_4b(dest=f.Rd, src2=f.Rd, imm=f.imm16)
+        elif f.hw.value == 0b11:
+            movk64_6b(dest=f.Rd, src2=f.Rd, imm=f.imm16)
+
+
+class MOVZ_MOVK(Fusion):
+    """MOVZ+MOVK fusion"""
+    sequence = [MOVZ_64_movewide, MOVK_64_movewide]
+
+    fusion_type = '01'
+
+    def decode(self, f, f2):
+        if f.hw.value == 0b00:
+            movzk64_0b(dest=f.Rd, imm=(f2.imm16, f.imm16))
+        elif f.hw.value == 0b10:
+            movzk64_4b(dest=f.Rd, imm=(f2.imm16, f.imm16))
+        else:
+            pass # etc. for other conditions

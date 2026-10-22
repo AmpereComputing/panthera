@@ -1,0 +1,297 @@
+# Copyright (c) 2021-2025 Ampere Computing. All rights reserved.
+# SPDX-License-Identifier: BSD-3-Clause
+
+@namespace "ampere::mesh::chi"
+
+RequestOpcode                |  Value     |is_read|is_alloc_read|is_write|is_imm_write|needs_comp_ack|is_copyback|is_snooping|allow_retry|
+==========================================================================================================================================
+ReqLCrdReturn                |  0x00      |       |             |        |            |              |           |           |           |
+ReadShared                   |  0x01      |   Y   |      Y      |        |            |     Y        |           |     Y     |     Y     |
+ReadClean                    |  0x02      |   Y   |      Y      |        |            |     Y        |           |     Y     |     Y     |
+ReadOnce                     |  0x03      |   Y   |             |        |            |              |           |     Y     |     Y     |
+ReadNoSnp                    |  0x04      |   Y   |             |        |            |              |           |           |     Y     |
+PCrdReturn                   |  0x05      |       |             |        |            |              |           |           |           |
+Reserved                     |  0x06      |       |             |        |            |              |           |           |           |
+ReadUnique                   |  0x07      |   Y   |      Y      |        |            |     Y        |           |     Y     |     Y     |
+CleanShared                  |  0x08      |       |             |        |            |              |           |     Y     |     Y     |
+CleanInvalid                 |  0x09      |       |             |        |            |              |           |     Y     |     Y     |
+MakeInvalid                  |  0x0A      |       |             |        |            |              |           |     Y     |     Y     |
+CleanUnique                  |  0x0B      |       |             |        |            |     Y        |           |     Y     |     Y     |
+MakeUnique                   |  0x0C      |       |             |        |            |     Y        |           |     Y     |     Y     |
+Evict                        |  0x0D      |       |             |        |            |              |           |     Y     |     Y     |
+# Reserved (EOBarrier)       |  0x0E      |       |             |        |            |              |           |           |           |
+# Reserved (ECBarrier)       |  0x0F      |       |             |        |            |              |           |           |           |
+# Reserved                   |  0x10      |       |             |        |            |              |           |           |           |
+ReadNoSnpSep                 |  0x11      |  Y    |             |        |            |              |           |           |     Y     |
+# Reserved                   |  0x12      |       |             |        |            |              |           |           |           |
+CleanSharedPersistSep        |  0x13      |       |             |        |            |              |           |     Y     |     Y     |
+DVMOp                        |  0x14      |       |             |        |            |              |           |           |     Y     |
+WriteEvictFull               |  0x15      |       |             |  Y     |            |              |     Y     |     Y     |     Y     |
+# Reserved (WriteCleanPtl)   |  0x16      |       |             |        |            |              |           |           |           |
+WriteCleanFull               |  0x17      |       |             |  Y     |            |              |     Y     |     Y     |     Y     |
+WriteUniquePtl               |  0x18      |       |             |  Y     |     Y      |              |           |     Y     |     Y     |
+WriteUniqueFull              |  0x19      |       |             |  Y     |     Y      |              |           |     Y     |     Y     |
+WriteBackPtl                 |  0x1A      |       |             |  Y     |            |              |           |     Y     |     Y     |
+WriteBackFull                |  0x1B      |       |             |  Y     |            |              |     Y     |     Y     |     Y     |
+WriteNoSnpPtl                |  0x1C      |       |             |  Y     |     Y      |              |           |           |     Y     |
+WriteNoSnpFull               |  0x1D      |       |             |  Y     |     Y      |              |           |           |     Y     |
+# Reserved                   |  0x1E-0x1F |       |             |        |            |              |           |           |           |
+WriteUniqueFullStash         |  0x20      |       |             |        |            |              |           |     Y     |     Y     |
+WriteUniquePtlStash          |  0x21      |       |             |        |            |              |           |     Y     |     Y     |
+StashOnceShared              |  0x22      |       |             |        |            |              |           |     Y     |     Y     |
+StashOnceUnique              |  0x23      |       |             |        |            |              |           |     Y     |     Y     |
+ReadOnceCleanInvalid         |  0x24      |       |             |        |            |              |           |     Y     |     Y     |
+ReadOnceMakeInvalid          |  0x25      |       |             |        |            |              |           |     Y     |     Y     |
+ReadNotSharedDirty           |  0x26      |   Y   |      Y      |        |            |     Y        |           |     Y     |     Y     |
+CleanSharedPersist           |  0x27      |       |             |        |            |              |           |     Y     |     Y     |
+AtomicStore_ADD              |  0x28      |       |             |        |            |              |           |     Y     |     Y     |
+AtomicStore_CLR              |  0x29      |       |             |        |            |              |           |     Y     |     Y     |
+AtomicStore_EOR              |  0x2A      |       |             |        |            |              |           |     Y     |     Y     |
+AtomicStore_SET              |  0x2B      |       |             |        |            |              |           |     Y     |     Y     |
+AtomicStore_SMAX             |  0x2C      |       |             |        |            |              |           |     Y     |     Y     |
+AtomicStore_SMIN             |  0x2D      |       |             |        |            |              |           |     Y     |     Y     |
+AtomicStore_UMAX             |  0x2E      |       |             |        |            |              |           |     Y     |     Y     |
+AtomicStore_UMIN             |  0x2F      |       |             |        |            |              |           |     Y     |     Y     |
+AtomicLoad_ADD               |  0x30      |       |             |        |            |              |           |     Y     |     Y     |
+AtomicLoad_CLR               |  0x31      |       |             |        |            |              |           |     Y     |     Y     |
+AtomicLoad_EOR               |  0x32      |       |             |        |            |              |           |     Y     |     Y     |
+AtomicLoad_SET               |  0x33      |       |             |        |            |              |           |     Y     |     Y     |
+AtomicLoad_SMAX              |  0x34      |       |             |        |            |              |           |     Y     |     Y     |
+AtomicLoad_SMIN              |  0x35      |       |             |        |            |              |           |     Y     |     Y     |
+AtomicLoad_UMAX              |  0x36      |       |             |        |            |              |           |     Y     |     Y     |
+AtomicLoad_UMIN              |  0x37      |       |             |        |            |              |           |     Y     |     Y     |
+AtomicSwap                   |  0x38      |       |             |        |            |              |           |     Y     |     Y     |
+AtomicCompare                |  0x39      |       |             |        |            |              |           |     Y     |     Y     |
+PrefetchTgt                  |  0x3A      |       |             |        |            |              |           |           |           |
+# Reserved                   |  0x3B-0x40 |       |             |        |            |              |           |           |           |
+MakeReadUnique               |  0x41      |       |             |        |            |     Y        |           |           |           |
+WriteEvictOrEvict            |  0x42      |       |             |        |            |     Y        |     Y     |     Y     |     Y     |
+WriteUniqueZero              |  0x43      |       |             |        |            |              |           |           |           |
+WriteNoSnpZero               |  0x44      |       |             |        |            |              |           |           |           |
+# Reserved                   |  0x45-0x46 |       |             |        |            |              |           |           |           |
+StashOnceSepShared           |  0x47      |       |             |        |            |              |           |           |           |
+StashOnceSepUnique           |  0x48      |       |             |        |            |              |           |           |           |
+# Reserved                   |  0x49-0x4B |       |             |        |            |              |           |           |           |
+ReadPreferUnique             |  0x4C      |       |             |        |            |     Y        |           |           |           |
+# Reserved                   |  0x4D-0x4F |       |             |        |            |              |           |           |           |
+WriteNoSnpFullCleanSh        |  0x50      |       |             |        |            |              |           |           |           |
+WriteNoSnpFullCleanInv       |  0x51      |       |             |        |            |              |           |           |           |
+WriteNoSnpFullCleanShPerSep  |  0x52      |       |             |        |            |              |           |           |           |
+# Reserved                   |  0x53      |       |             |        |            |              |           |           |           |
+WriteUniqueFullCleanSh       |  0x54      |       |             |        |            |              |           |           |           |
+# Reserved                   |  0x55      |       |             |        |            |              |           |           |           |
+WriteUniqueFullCleanShPerSep |  0x56      |       |             |        |            |              |           |           |           |
+# Reserved                   |  0x57      |       |             |        |            |              |           |           |           |
+WriteBackFullCleanSh         |  0x58      |       |             |        |            |              |           |           |           |
+WriteBackFullCleanInv        |  0x59      |       |             |        |            |              |           |           |           |
+WriteBackFullCleanShPerSep   |  0x5A      |       |             |        |            |              |           |           |           |
+# Reserved                   |  0x5B      |       |             |        |            |              |           |           |           |
+WriteCleanFullCleanSh        |  0x5C      |       |             |        |            |              |           |           |           |
+# Reserved                   |  0x5D      |       |             |        |            |              |           |           |           |
+WriteCleanFullCleanShPerSep  |  0x5E      |       |             |        |            |              |           |           |           |
+# Reserved                   |  0x5F      |       |             |        |            |              |           |           |           |
+WriteNoSnpPtlCleanSh         |  0x60      |       |             |        |            |              |           |           |           |
+WriteNoSnpPtlCleanInv        |  0x61      |       |             |        |            |              |           |           |           |
+WriteNoSnpPtlCleanShPerSep   |  0x62      |       |             |        |            |              |           |           |           |
+# Reserved                   |  0x63      |       |             |        |            |              |           |           |           |
+WriteUniquePtlCleanSh        |  0x64      |       |             |        |            |              |           |           |           |
+# Reserved                   |  0x65      |       |             |        |            |              |           |           |           |
+WriteUniquePtlCleanShPerSep  |  0x66      |       |             |        |            |              |           |           |           |
+# Reserved                   |  0x67-0x7F |       |             |        |            |              |           |           |           |
+# Reqs - Specific to PHA     |            |       |             |        |            |              |           |           |           |
+CleanInvalidPOPA             |  0x80      |       |             |        |            |              |           |           |           |
+# Snps - Specific to PHA     |            |       |             |        |            |              |           |           |           |
+# ************************ NOTE: These enums values must stay aligned with the SnoopOpcode numbers + 0x90 *********************
+SnpLCrdReturn             |   0x90        |       |             |        |            |              |           |           |           |
+SnpShared                 |   0x91        |       |             |        |            |              |           |           |           |
+SnpClean                  |   0x92        |       |             |        |            |              |           |           |           |
+SnpOnce                   |   0x93        |       |             |        |            |              |           |           |           |
+SnpNotSharedDirty         |   0x94        |       |             |        |            |              |           |           |           |
+SnpUniqueStash            |   0x95        |       |             |        |            |              |           |           |           |
+SnpMakeInvalidStash       |   0x96        |       |             |        |            |              |           |           |           |
+SnpUnique                 |   0x97        |       |             |        |            |              |           |           |           |
+SnpCleanShared            |   0x98        |       |             |        |            |              |           |           |           |
+SnpCleanInvalid           |   0x99        |       |             |        |            |              |           |           |           |
+SnpMakeInvalid            |   0x9A        |       |             |        |            |              |           |           |           |
+SnpStashUnique            |   0x9B        |       |             |        |            |              |           |           |           |
+SnpStashShared            |   0x9C        |       |             |        |            |              |           |           |           |
+SnpDVMOp                  |   0x9D        |       |             |        |            |              |           |           |           |
+# Reserved                | 0x9E-0x9F     |       |             |        |            |              |           |           |           |
+SnpQuery                  |   0xA0        |       |             |        |            |              |           |           |           |
+SnpSharedFwd              |   0xA1        |       |             |        |            |              |           |           |           |
+SnpCleanFwd               |   0xA2        |       |             |        |            |              |           |           |           |
+SnpOnceFwd                |   0xA3        |       |             |        |            |              |           |           |           |
+SnpNotSharedDirtyFwd      |   0xA4        |       |             |        |            |              |           |           |           |
+SnpPreferUnique           |   0xA5        |       |             |        |            |              |           |           |           |
+SnpPreferUniqueFwd        |   0xA6        |       |             |        |            |              |           |           |           |
+SnpUniqueFwd              |   0xA7        |       |             |        |            |              |           |           |           |
+# Reserved                | 0xA8-0xAF     |       |             |        |            |              |           |           |           |
+==========================================================================================================================================
+@event_data {"name": "chi_req_opcode", "description": "CHI request opcode"}
+
+
+ResponseOpcode            |  Value     |frees_request|
+======================================================
+RespLCrdReturn            |   0x0      |             |
+SnpResp                   |   0x1      |             |
+CompAck                   |   0x2      |             |
+RetryAck                  |   0x3      |      Y      |
+Comp                      |   0x4      |      Y      |
+CompDBIDResp              |   0x5      |      Y      |
+DBIDResp                  |   0x6      |             |
+PCrdGrant                 |   0x7      |             |
+ReadReceipt               |   0x8      |      Y      |
+SnpRespFwded              |   0x9      |             |
+TagMatch                  |   0xA      |             |
+RespSepData               |   0xB      |      Y      |
+Persist                   |   0xC      |             |
+CompPersist               |   0xD      |      Y      |
+DBIDRespOrd               |   0xE      |             |
+# Reserved                |   0xF      |             |
+StashDone                 |   0x10     |             |
+CompStashDone             |   0x11     |             |
+# Reserved                | 0x12-0x13  |             |
+CompCMO                   |   0x14     |      Y      |
+# Reserved                | 0x15-0x1F  |             |
+======================================================
+@event_data {"name": "chi_rsp_opcode", "description": "CHI response opcode"}
+
+
+SnoopOpcode               |  Value     |    is_fwd   |
+=======================================================
+SnpLCrdReturn             |   0x00     |             |
+SnpShared                 |   0x01     |             |
+SnpClean                  |   0x02     |             |
+SnpOnce                   |   0x03     |             |
+SnpNotSharedDirty         |   0x04     |             |
+SnpUniqueStash            |   0x05     |             |
+SnpMakeInvalidStash       |   0x06     |             |
+SnpUnique                 |   0x07     |             |
+SnpCleanShared            |   0x08     |             |
+SnpCleanInvalid           |   0x09     |             |
+SnpMakeInvalid            |   0x0A     |             |
+SnpStashUnique            |   0x0B     |             |
+SnpStashShared            |   0x0C     |             |
+SnpDVMOp                  |   0x0D     |             |
+# Reserved                | 0x0E-0x0F  |             |
+SnpQuery                  |   0x10     |             |
+SnpSharedFwd              |   0x11     |      Y      |
+SnpCleanFwd               |   0x12     |      Y      |
+SnpOnceFwd                |   0x13     |      Y      |
+SnpNotSharedDirtyFwd      |   0x14     |      Y      |
+SnpPreferUnique           |   0x15     |             |
+SnpPreferUniqueFwd        |   0x16     |      Y      |
+SnpUniqueFwd              |   0x17     |      Y      |
+# Reserved                | 0x18-0x1F  |             |
+# Stealing one reserved entry for the experiment of routing Evict on the snoop channel
+Evict                     |   0x1F     |
+========================================
+@event_data {"name": "chi_snp_opcode", "description": "CHI snoop opcode"}
+
+
+DataOpcode                |   Value    |
+========================================
+DataLCrdReturn            |    0x0     |
+SnpRespData               |    0x1     |
+CopyBackWrData            |    0x2     |
+NonCopyBackWrData         |    0x3     |
+CompData                  |    0x4     |
+SnpRespDataPtl            |    0x5     |
+SnpRespDataFwded          |    0x6     |
+WriteDataCancel           |    0x7     |
+# Reserved                |  0x8-0xA   |
+DataSepResp               |    0xB     |
+NCBWrDataCompAck          |    0xC     |
+# Reserved                |  0xD-0xF   |
+========================================
+@event_data {"name": "chi_dat_opcode", "description": "CHI data opcode"}
+
+
+FinalState
+==========
+I
+SC
+UC
+UD
+SD
+
+
+DataPull   | Value |
+====================
+NoRead     | 0     |
+Read       | 1     |
+
+
+RsvdcReq         |     Value      |
+===================================
+#                    1
+#                    09876543210
+RnType_CoreOrPHA | 0b00000000000  |
+RnType_ACR       | 0b00000000100  |
+RnType_IOR       | 0b00000001000  |
+RnType_AcXL2     | 0b00000001100  |
+RnType_ACR_MPro  | 0b00000010000  |
+RnType_ACR_SecPro| 0b00000010100  |
+LargeReq         | 0b00000100000  |
+P2PReq           | 0b00001000000  |
+# if P2PReq == 1 or LargeReq == 1
+# bits [9:7] is ReqLen
+P2PRO            | 0b10000000000 |
+# else P2PReq == 0 and LargeReq == 0
+EvictL3ToL2      | 0b00010000000  |
+CopyBackL2L3     | 0b00100000000 |
+# bits [11:9] is CXLMeta
+
+RsvdcDat      | Value |
+=======================
+# DataIDExt [2:0]
+L3Inv         | 0x08  |
+# Reserved    | [7:4] |
+
+
+DataSource            |  Value   |
+==================================
+NotSupported         |  0b000   |
+PrefetchTgtUseful    |  0b110   |
+PrefetchTgtNotUseful |  0b111   |
+==================================
+
+
+CBusyState |  Value |
+=====================
+None       |  0b000  |
+Low        |  0b001  |
+Medium     |  0b010  |
+High       |  0b011  |
+Four       |  0b100  |
+Five       |  0b101  |
+Six        |  0b110  |
+Seven      |  0b111  |
+=====================
+@event_data {"name": "chi_cbusy", "description": "CHI CBusy State"}
+
+ReqEvent
+============
+ReqRecvEvent
+ReqCmpEvent
+============
+
+RequestOrder
+============
+NoOrder
+RequestAccepted
+RequestOrder
+EndpointOrder
+
+
+ResponseErr
+=============
+NormalOkay
+ExclusiveOkay
+DataError
+NonDataError
+
+IOType
+============
+Read
+Write

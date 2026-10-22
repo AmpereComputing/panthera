@@ -1,0 +1,32 @@
+[
+  {
+     "name": "Trinity",
+     "exe": "{panthera_root}/bin/bobcat",
+     "parameters": [
+         "-top.core:cfg", "{panthera_root}/config/model/core/trinity/trinity-tage.cfg",
+         "-top.core.bpu.max_instructions", "200000",
+         "-csv", "{directory}/{job_name}.csv",
+         "-is", "{workload_path}"
+     ]
+  },
+  {
+     "name": "Connor",
+     "exe": "{panthera_root}/bin/bobcat",
+     "parameters": [
+         "-top.core:cfg", "{panthera_root}/config/model/core/connor/connor-tage.cfg",
+         "-top.core.bpu.max_instructions", "200000",
+         "-csv", "{directory}/{job_name}.csv",
+         "-is", "{workload_path}"
+     ]
+  },
+  {
+     "name": "Alita",
+     "exe": "{panthera_root}/bin/bobcat",
+     "parameters": [
+         "-top.core:cfg", "{panthera_root}/config/model/core/alita/alita-tage.cfg",
+         "-top.core.bpu.max_instructions", "200000",
+         "-csv", "{directory}/{job_name}.csv",
+         "-is", "{workload_path}"
+     ]
+  }
+]

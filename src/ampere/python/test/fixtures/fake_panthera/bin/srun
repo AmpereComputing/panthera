@@ -1,0 +1,24 @@
+#!/bin/bash
+# Copyright (c) 2024 Ampere Computing. All rights reserved.
+# SPDX-License-Identifier: BSD-3-Clause
+
+
+for var in "$@"; do
+    if [[ "$var" == "--"* ]]; then
+        shift
+    else
+        break
+    fi
+done
+
+if [[ "$1" == "/bin/bash" && "$2" == "-l" ]]; then
+    shift 2
+fi
+
+if [[ "$1" != "/usr/bin/ln" && "$1" != *"/panthera" ]]; then
+    >&2 echo "srun: wrong command: $@"
+    exit 1
+fi
+
+>&2 echo "srun: $@"
+exec "$@"

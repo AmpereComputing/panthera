@@ -1,0 +1,35 @@
+# Copyright (c) 2019-2024 Ampere Computing. All rights reserved.
+# SPDX-License-Identifier: BSD-3-Clause
+
+from uop import *
+from ampere.xlat import Fusion, Signal
+
+
+class MOVZ_MOVK(Fusion):
+    """MOVZ+MOVK fusion"""
+    sequence = [MOVZ_64_movewide, MOVK_64_movewide]
+
+    def decode(self, f, f2):
+        if f.hw.value == 0b00:
+            movz64_0b(dest=f.Rd, imm=(f2.imm16, f.imm16))
+        elif f.hw.value == 0b01:
+            movz64_2b(dest=f.Rd, imm=(f2.imm16, f.imm16))
+        elif f.hw.value == 0b10:
+            movz64_4b(dest=f.Rd, imm=(f2.imm16, f.imm16))
+        elif f.hw.value == 0b11:
+            movz64_6b(dest=f.Rd, imm=(f2.imm16, f.imm16))
+
+
+class ArithS_Bcond(Fusion):
+    def no_shift_or_sign_extension(insn):
+        return insn.option.value < 4 and insn.imm3.value == 0
+
+    sequence = [{SUBS_64S_addsub_ext, ADDS_64S_addsub_ext}, B_only_condbranch]
+    requirements = [no_shift_or_sign_extension, None]
+
+    def decode(self, f, f2):
+        if f2.cond.value == 0b0000:
+            # FIXME: in reality we need to choose the right opcode
+            subs64_bc_eq(dest=f.Rd, flag_dest=1, src1=f.Rn, src2=f.Rm, imm=(f.option,Signal("00000000000")), pcoffset=f2.imm19)
+        else:
+            pass # etc. for other conditions

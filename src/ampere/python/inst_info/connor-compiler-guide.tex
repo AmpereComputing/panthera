@@ -1,0 +1,494 @@
+% Copyright (c) 2025 Ampere Computing. All rights reserved.
+% SPDX-License-Identifier: BSD-3-Clause
+\documentclass{article}
+\usepackage{graphicx}
+\usepackage{palatino}
+\usepackage{hyperref}
+\usepackage{longtable}
+\usepackage{fancyhdr}
+\setlength{\headheight}{15.2pt}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyfoot[C]{AMPERE COMPUTING PROPRIETARY}
+\fancyfoot[R]{\thepage}
+\usepackage[left=1cm, right=1cm]{geometry}
+\title{Connor Compiler Guide \\ Version 0.1.0\\ AMPERE COMPUTING PROPRIETARY}
+\date{2025-02-14}
+\begin{document}
+\maketitle
+
+\tableofcontents
+\newpage
+\listoftables
+\newpage
+\section{Change Log}
+\begin{longtable}{|l|p{4in}|}
+  \hline
+  {\bf Version} & {\bf Changes} \\ \hline
+  \hline
+  \endfirsthead
+  0.1 & Initial version, updated MIDR\_EL1, cleaving, FEAT\_* \\ \hline
+  0.2 & Update microarchitecture overview \\ \hline
+\end{longtable}
+\newpage
+\section{Core overview}
+
+The Ampere core is a highly efficient, superscalar, out-of-order
+microarchitecture optimized for scalability and cloud computing
+workloads. It delivers predictable performance while supporting
+advanced security and virtualization features, such as nested
+virtualization, ground-up speculative side-channel mitigation, and
+architectural support for defense against ROP/JOP-style software
+attacks. \\
+
+The core, codenamed Connor, is an ARMv9.2+ implementation, adding
+support for the following extensions:
+\begin{itemize}
+\item FEAT\_SVE
+\item FEAT\_SVE\_AES
+\item FEAT\_SVE\_SHA3
+\item FEAT\_SVE\_SM4
+\item FEAT\_SVE\_PMULL128
+\item FEAT\_SVE2
+\item FEAT\_SVE\_B16B16
+\item FEAT\_B16B16
+\item FEAT\_FP8
+\item FEAT\_FP8FMA
+\item FEAT\_FPMR
+\item FEAT\_FAMINMAX
+\item FEAT\_LUT
+\item FEAT\_WFxT
+\item FEAT\_WFxT2
+\item FEAT\_CSSC
+\item FEAT\_PAN3
+\item FEAT\_LRCPC2
+\item FEAT\_AFP
+\item FEAT\_Armv9\_Crypto
+\end{itemize}
+As in our prior core, Connor
+also supports the Memory Tagging Extension and SM3/SM4 cryptography
+instructions, as well as many system-level features and numerous
+performance and power efficiency improvements. \\
+
+The front end has state-of-the-art branch prediction, with a 10-cycle
+recovery time from a mispredicted branch. The L1 instruction cache is
+32KB; to support efficient execution of workloads with a large code
+footprint, the I-cache has a high-bandwidth, low-latency connection to
+the unified L2 cache. \\
+
+Instructions coming out of the front end are decoded into internal
+micro-ops (uops). The decode stage can consume up to 8 instructions
+per cycle and output up to 8 uops. Some pairs of instructions can be
+‘fused’ into a single uop, and the Connor core supports several new
+fusion cases. \\
+
+Uops proceed from decode through register renaming and are dispatched
+into 8 independent schedulers: 4 integer, 2 FP, and 2 memory. The
+integer and FP schedulers can each issue one uop per cycle, while the
+memory schedulers can each issue one load and one store (address
+calculation or data read) per cycle. \\
+
+The memory unit contains a 64KB write-through L1 data cache with a
+4-cycle latency (5-cycles for operations performed on the
+floating-point unit), which can support two 128-bit loads and one
+store update per cycle and has a full 64-byte path for data coming in
+from the L2. The memory system includes advanced memory disambiguation
+support to improve out-of-order execution of interleaved loads and
+stores and a highly accurate L1 data prefetcher. \\
+
+The core has a unified memory management unit (MMU) which tracks up to
+12 parallel page walks for both instructions and data and contains a
+2560-entry L2 TLB. The front end has a 64-entry L1 ITLB, and the
+load-store unit has a 64-entry L1 DTLB. All entries in all TLBs
+are ‘universal’, meaning they can store any page size, allowing
+software to make best use of large pages. \\
+
+The L2 is a 3.5MB cache which is boot-time partitionable into a
+private L2 cache and portion of a larger shared L3 cache. The default
+configuration is 2.5MB for a private L2 and 1MB as part of a larger
+shared L3.  The L2 stores both code and data and is inclusive of the
+L1 caches. The L2 can service a full 64-byte read and write every
+cycle, and can track up to 64 outstanding memory requests to the
+SOC. As part of the core’s focus on scalability, the L2 dynamically
+tracks traffic levels on the SOC mesh, and can adjust its request rate
+to minimize delays due to congestion within the SOC. \\
+
+\begin{center}
+\includegraphics[height=16cm]{connor-block-diagram.pdf}
+\end{center}
+
+% MIDR_EL1 value for the Connor configuration.
+
+\begin{figure}
+\caption{Processor Identifier}
+\begin{center}
+  \begin{tabular}{|l|l|} \hline
+    MIDR\_EL1 value &  {\tt 0xC00FAC70}  \\ \hline
+    \end{tabular}
+\end{center}
+\end{figure}
+
+\section{Execution pipeline overview}
+
+Micro-ops are issued from a scheduler into one of twelve execution
+pipelines. Each pipeline can generally accept and complete one uop per
+cycle. The execution pipelines are shown in the following table, along
+with the symbol used in the Pipelines column of the instruction
+information tables below (the symbol ‘AB’ means the uop can execute on
+any of the four integer pipelines, and ‘XY’ means it can execute on
+either FP/vector pipe).
+
+\begin{tabular}{|l|l|}
+\hline
+{\bf Pipeline} & {\bf Symbol used in tables} \\ 
+\hline
+2 x integer single-cycle, branch, and flags read/write & A  \\
+2 x Integer single-cycle, complex shifts, flag write   & B  \\
+Integer multi-cycle                                    & BS \\
+2 x load                                               & L  \\
+2 x store address calculation, store data              & S  \\
+FP and vector operations, and flag write               & X  \\
+FP and vector operations, and some crypto operations   & Y  \\
+FP store data and FP to integer moves                  & Z \\
+\hline 
+\end{tabular}
+
+\section{Instruction fusion}
+
+The instruction decoder can fuse some pairs of instructions that
+commonly occur together into a single uop, increasing the effective
+decode and execution width of the core. Placing these instruction
+pairs consecutively in memory will enable fusion and improve
+performance. \\
+
+The supported instruction fusions are:\\
+\begin{longtable}{|p{2in}|p{1in}|p{1in}|p{2in}|}
+\caption{Supported Fusions}
+\\\hline
+{\bf Description} & {\bf First instruction} & {\bf Second instruction} & {\bf Notes} \\
+\hline
+\endfirsthead
+
+\hline
+\multicolumn{4}{|r|}{{\tablename\ \thetable{} -- Continued from previous page}} \\
+\hline
+{\bf Description} & {\bf First instruction} & {\bf Second instruction} & {\bf Notes} \\
+\hline
+\endhead
+
+\hline
+\multicolumn{4}{|r|}{{Continued on next page}} \\
+\hline
+\endfoot
+\hline
+\endlastfoot
+
+Flag producer + conditional branch &
+SUBS (CMP), ADDS, ANDS, BICS, CCMP, CCMN &
+B.cond (direct conditional branch) &
+First instruction must decode to 1 uop (see tables below) – only LSL shift $<$= 4 and no sign extension \\
+\hline
+
+Arithmetic + compare and branch if zero/non-zero &
+SUB, AND, EOR &
+CBZ, CBNZ &
+\parbox{2in}{
+  \begin{enumerate}
+  \item First instruction must decode to 1 uop (see tables below) – only LSL shift $<$= 4 and no sign extension
+  \item Destination of the arithmetic instruction must be source of CBZ/CBNZ
+\end{enumerate}} \\
+\hline
+
+ADD/SUB and set flags + Conditional set &
+ADDS, SUBS &
+CSET (alias of CSINC) &
+Destination registers match, or the destination of the ADDS/SUBS is ZR
+\\ \hline
+
+Immediate construction &
+MOVK, MOVZ &
+MOVK &
+\parbox{2in}{
+  \begin{enumerate}
+  \item Destination registers must be the same 
+  \item Shift count of the two instructions must differ by 16, e.g. first shifts by 0 and second by 16
+\end{enumerate}} \\
+\hline
+
+Add/subtract of 24-bit immediate &
+ADD, SUB (immediate) &
+ADD, SUB (immediate) &
+\parbox{2in}{
+  \begin{enumerate}
+  \item Destination registers must be the same
+  \item Destination (Rd) of the first instruction must be source (Rn) of the second
+  \item One immediate must be shifted by 12 bits, and the other one not
+\end{enumerate}
+Example: \\
+ADD X0, X1, \#1, lsl \#12 \\
+ADD X0, X0, \#0xfff} \\
+\hline
+
+PC-relative address generation &
+ADRP &
+ADD (immediate) &
+\parbox{2in}{
+  \begin{enumerate}
+  \item Destination registers must be the same
+  \item Register source (Rn) of ADD must be the same as the destination (Rd)
+  \item ADD cannot use shift/sign-extension
+\end{enumerate}} \\
+\hline
+
+Compute A+B+1 or A-B-1 &
+ADD, SUB (register-register) &
+ADD, SUB (register, \#1) &
+\parbox{2in}{
+  \begin{enumerate}
+  \item Destination registers must be the same
+  \item First instruction must decode to 1 uop (see tables below) – only LSL shift $<$= 4 and no sign extension
+  \item Destination of the first instruction must be the register source (Rn) of the second instruction
+  \end{enumerate}
+Example: \\
+ADD X0, X1, X2\\
+ADD X0, X0, \#1}
+\\ \hline
+
+Anything + NOP &
+Any single-uop non-branch instruction &
+NOP &
+\\ \hline
+
+Anything + B &
+Any single-uop non-branch instruction &
+B &
+\\ \hline
+
+AES encrypt / decrypt &
+AESE,AESD &
+AESMC, AESIMC &
+\parbox{2in}{
+  \begin{enumerate} \item Destination registers must be the same
+  \item Register source (Rn) of AESMC/AESIMC must be the same as the destination (Rd)
+\end{enumerate}} \\ \hline
+
+MOVPRFX &
+MOVPRFX &
+supported SVE instruction &
+\\ \hline
+\end{longtable}
+
+\section{SVE MOVPRFX fusion}
+
+The core implements an optimization called movprfx-fusion for SVE
+vector instructions.  When a suitable movprfx instruction precedes an
+SVE vector instruction eligible for this optimization, and the
+instructions align properly in the decoder, the movprfx and subsequent
+SVE vector instruction are merged into one instruction. The movprfx fusion
+optimization has several benefits:
+
+\begin{enumerate}
+  \item It reduces the number of instructions
+    the execution engine must track and process.
+  \item It converts destructive operations (that overwrite one source) into those that can have two independent sources.
+  \item It can convert predicated merging operations into predicated
+    zeroing operations.  Converting merging to zeroing can unlock
+    increased instruction level parallelism, by breaking loop-carried
+    dependences.
+\end{enumerate}
+
+The movprfx instruction has two variations: predicated and
+unpredicated.  The predicated movprfx can convert operations that
+default to merging with their destination register into operations
+that zero elements of the destination register. The merging and
+zeroing applies to elements whose governing predicate bit is
+zero. Eligible unpredicated SVE instructions can only fuse with
+suitable unpredicated movprfx instructions. Eligible predicated SVE
+instructions can fuse with suitable predicated or unpredicated movprfx
+instructions.
+
+See the ARM Architecture Reference Manual (ARM ARM) for the detailed
+rules for each instruction. At a high level, the requirements for
+a movprfx instruction to be fusable with the subsequent SVE vector
+instruction are:
+
+\begin{enumerate}
+  \item For predicated movprfx fusion, the movprfx predicate register name
+    must match the subsequent instruction's predicate register name.
+  \item For predicated movprfx fusion, the element size of the movprfx
+    instruction must be the larger of the destination element size and
+    the first source of the subsequent instruction.
+  \item The destination register of the movprfx instruction must be
+    the same as the destination register in the subsequent
+    instruction.
+  \item The destination register must not also be one of the sources
+    of the second instruction.
+\end{enumerate}
+
+See Section~\ref{sec-movprfx-table} for a detailed list of SVE vector
+instructions that are able to fuse with a suitable immediately prior
+movprfx instruction.
+
+\section{Instruction cleaving}
+
+Cleaving packs two uops into a single decode lane when they meet
+various restrictions. Cleaved uops will decode, dispatch and commit
+together, potentially greatly increasing the execution throughput of
+the core. As a result of cleaving, the decoder output can represent up
+to 8 uops. Cleaved uops require only one reorder buffer (ROB) entry,
+making the ROB appear larger when cleaving can be employed.
+
+A pair of consecutive instructions may be able to cleave if:
+\begin{itemize}
+\item They both decode to a single uop
+\item They do not read or write floating-point or vector registers
+\item Together they do not write more than two destination registers
+\item Together they do not have more than three register sources
+\item They do not both write arithmetic flags
+\item The first instruction is not a branch which could mispredict
+\item The second instruction cannot fault, e.g. a load or store
+\end{itemize}
+
+\section{Instruction alignment}
+
+Branch density and branch target alignment can affect performance. For
+best performance, consider the following guidelines:
+\begin{itemize}
+\item Avoid placing more than four branch instructions in an aligned
+  32-byte memory region.
+\item Align branch targets to 32-byte boundaries to ensure that the
+  instruction fetch unit can issue the maximum number of instructions
+  after the branch.
+\item Loops should span as few aligned 32-byte memory regions as
+  possible; in particular, small loops of up to 8 instructions should
+  reside within a single 32-byte region if possible.
+\end{itemize}
+
+For regular loops which perform the same control flow repeatedly,
+Domino can achieve significant frontend power savings by entering a
+special "loop mode". For loops with very few instructions (i.e. 3),
+this mode can additionally increase frontend throughput in some
+cases. Loop mode works best when loops have many iterations --- it is
+helpful to structure code such that inner loops have many iterations
+before exiting to the outer loop. In order to be a candidate for loop
+mode, a loop's iterations must contain 8 or fewer total cacheline
+transitions and/or taken branches, 32 or fewer instructions, and at
+least one direct branch which is consistently taken each
+iteration. When entering loop mode, loops with very short iterations will be unrolled in hardware (in multiples of the original loop iteration length) until there are at least 8 instructions per group of unrolled iterations. When unrolling, the above limitations apply to the full group of unrolled iterations: there must be 8 or fewer total cacheline transitions and taken branches. (For example, a 7-instruction loop containing 5 cacheline transitions/taken branches per iteration will not benefit from loop mode.)
+
+\section{Data alignment}
+
+The ARM architecture allows most load and store instructions to have
+arbitrarily aligned addresses. As long as the data for a single load
+or store operation all falls within a 64-byte cache line, the core can
+handle any alignment without penalty. Loads which cross a 64-byte
+boundary have longer latency, and stores which cross a 64-byte
+boundary see lower bandwidth when writing the cache. \\
+
+LDP (load-pair) and STP (store-pair) instructions of up to 16 bytes
+are executed as a single memory access, so for best performance the
+total range of memory being accessed by the instruction should not
+split cache lines. This is in contrast to some older cores which may
+have implemented LDP/STP as two separate loads or stores, so that
+alignment to half of the total memory size would be sufficient to
+avoid line splits. \\
+
+A load which gets some (but not all) of its data from a recently
+executed older store may also have longer latency. This can happen if
+loads and stores with different sizes and/or alignments are
+intermixed. \\
+
+Two stores of 8 bytes or less to the same cache line, without any
+intervening stores, may see increased write bandwidth to the cache.
+
+\section{Optimizing memory copy}
+
+For maximum throughput of memory copy and similar loops, vector loads
+and stores are preferred over load-pair/store-pair because they can
+transfer 16 bytes of data using a single register, reducing the
+pressure on register renaming. Stores should be aligned on a 16-byte
+boundary whenever possible. If the source and destination cannot both
+be 16-byte aligned, it is better to align the destination. The
+following example shows a recommended sequence for a long memory copy:
+\begin{verbatim}
+loop_start:
+ldr   q0, [x0, #16]
+ldr   q1, [x0, #32]
+ldr   q2, [x0, #48]
+ldr   q3, [x0, #64]!
+str   q0, [x1, #16]
+str   q1, [x1, #32]
+str   q2, [x1, #48]
+str   q3, [x1, #64]!
+subs  x2, x2, #64
+b.ne  loop_start
+\end{verbatim}
+
+\section{FP/vector bypassing}
+
+Floating point and vector execution is divided into different units,
+which contain operations which are commonly used together. The
+bypassing logic is optimized to give the best latency for operations
+within the same unit. \\
+
+The latencies in the instruction tables assume that the result is
+consumed within the same unit. If the result is consumed in a
+different FP unit, the producing instruction may have a longer
+effective latency. In the instruction tables below, the FP unit column
+shows which unit an instruction executes in; if two units are shown,
+then the instruction consumes its input registers in the first unit,
+and produces its output register in the second unit. \\
+
+The units and the extra latency to bypass between units are shown in this table: \\
+\begin{tabular}{|l|l|p{2in}|}
+\hline
+{\bf Unit name} & {\bf Function}  & {\bf Extra latency if result is consumed in a different unit} \\ \hline
+MA & FP arithmetic and multiplication, single/double precision & 2 or 3 (6 cycles total)  \\
+HP & FP arithmetic and multiplication, half precision & 2  \\
+DV & FP division and square root & 0  \\
+BY & Simple logical and shuffle operations & 0  \\
+BU & Bfloat16 arithmetic & 5  \\
+SI & ASIMD integer arithmetic and logical & 1 or 2  \\
+MU & ASIMD integer multiplication & 3 to SI, 4 to others  \\
+CU & Cryptography operations & 1 or 2  \\ \hline
+\end{tabular}
+\\
+
+Instructions which cross elements from one lane to another, such as
+ by-element, lengthening, and pairwise instructions, may incur extra
+ latency depending on the producer of the data sources and which
+ operand of the instruction is consuming the data. This lane-crossing
+ latency is 1 cycle in the SI and MU units, 2 cycles in the HP unit,
+ and 2 or 3 cycles in the MA unit. A single instruction will not have
+ both cross-unit and cross-element extra latency. \\
+
+All FP units other than DV are fully pipelined and can complete one
+ operation per cycle, and most operations are supported on both FP
+ execution pipelines for maximum throughput. \\
+
+ \subsection{Late accumulate optimization}
+
+ For BU operations and MU operations that have accumulator operands
+ (except for the byte-width MLA and MLS MU instructions), the
+ accumulator operand is permitted to arrive 3 cycles after the
+ operation issues.  This optimization has the effect of shortening the
+ observed latency when performing a sequence of similar operations
+ that support the late accumulate optimization.  When the late
+ accumulate optimization is not used, say because the program is not
+ performing a sequence of late-accumulate operations, MU operations
+ are nominally 6 or 7 cycles. BU operations are nominally 7 cycles.
+
+\newpage
+\section{Instruction information}
+\input{connor-table}
+\newpage
+\section{SVE Instructions Fusable with MOVPRFX}
+\label{sec-movprfx-table}
+This section lists the SVE vector instructions that are capable of
+fusing with a MOVPRFX when the constraints described in the ARM ARM
+are satisfied for the specific instruction. In the following table,
+the abbreviation ``NA'' means ``not applicable''; this applies to
+unpredicated instructions that cannot use the predicated form of
+movprfx.
+\input{connor-movprfx}
+\end{document}

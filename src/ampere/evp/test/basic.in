@@ -1,0 +1,8 @@
+param machine_width=4
+param rob.size=192
+param sys.soc_0.core_0.scheduler_configuration=[7,4]
+param three="four"
+100 one
+100 two
+200 one data1=42 data2=903
+300 two data1=21 data2=760
