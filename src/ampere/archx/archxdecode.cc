@@ -5,8 +5,8 @@
 #include <iostream>
 
 #include <boost/filesystem/path.hpp>
-#include <capstone.h>
-#include <arm64.h>
+#include <capstone/capstone.h>
+#include <capstone/arm64.h>
 
 #include "ampere/archx/instruction_is.h"
 #include "ampere/archx/inum.h"

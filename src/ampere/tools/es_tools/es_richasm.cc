@@ -12,8 +12,8 @@
 #include "ampere/event_stream/event_stream_reader.h"
 #define USING_CAPSTONE
 #if defined(USING_CAPSTONE)
-#include <platform.h>
-#include <capstone.h>
+#include <capstone/platform.h>
+#include <capstone/capstone.h>
 static csh disasm_handle;
 #endif
 #define USING_ADIS

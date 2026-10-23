@@ -161,16 +161,14 @@ set(MINIMUM_PYTHON_VERSION 3.10)
 # Older boost cmake versions prefer smaller versions first
 set(BOOST_OPTIONAL_PYTHON_VERSIONS python310 python311 python312)
 
-# FIXME: after cmake 3.29 FindBoost is no longer provided by CMake.
-# Since we currently use this, we use the OLD policy. But we need
-# to verify that it works with the NEW policy before updating this.
-cmake_policy(SET CMP0167 OLD)
-find_package(Boost 1.65.0 REQUIRED COMPONENTS filesystem iostreams program_options regex system OPTIONAL_COMPONENTS ${BOOST_OPTIONAL_PYTHON_VERSIONS} serialization)
+find_package(Boost 1.65.0 REQUIRED CONFIG
+    COMPONENTS filesystem iostreams process program_options regex system
+    OPTIONAL_COMPONENTS ${BOOST_OPTIONAL_PYTHON_VERSIONS} serialization)
 
 list(REVERSE BOOST_OPTIONAL_PYTHON_VERSIONS)
 foreach(python_version ${BOOST_OPTIONAL_PYTHON_VERSIONS})
     string(TOUPPER ${python_version} component_version)
-    if(Boost_${component_version}_FOUND)
+    if(Boost_${python_version}_FOUND OR Boost_${component_version}_FOUND)
         if(python_version MATCHES "python3.+")
             string(REGEX REPLACE "python3(.+)" "3.\\1" version ${python_version})
             find_package(Python3 ${version} EXACT QUIET COMPONENTS Interpreter Development)

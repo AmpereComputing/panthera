@@ -19,8 +19,8 @@ typedef uint_fast32_t uint_t;
 
 // #define USING_CAPSTONE
 #if defined(USING_CAPSTONE)
-#include <capstone.h>
-#include <platform.h>
+#include <capstone/capstone.h>
+#include <capstone/platform.h>
 static csh disasm_handle;
 #else
 #define USING_ADIS

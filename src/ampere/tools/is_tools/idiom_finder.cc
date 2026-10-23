@@ -3,8 +3,8 @@
 // SPDX-License-Identifier: BSD-3-Clause
 //
 
-#include <capstone.h>
-#include <platform.h>
+#include <capstone/capstone.h>
+#include <capstone/platform.h>
 #include <boost/circular_buffer.hpp>
 #include <iterator>
 #include <iostream>

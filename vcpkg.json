@@ -1,0 +1,26 @@
+{
+  "dependencies": [
+    "boost-circular-buffer",
+    "boost-filesystem",
+    "boost-format",
+    "boost-icl",
+    "boost-iostreams",
+    "boost-logic",
+    "boost-multiprecision",
+    "boost-process",
+    "boost-program-options",
+    "boost-python",
+    "boost-regex",
+    "boost-serialization",
+    "boost-system",
+    "capstone",
+    "fmt",
+    "glib",
+    "gtest",
+    "immer",
+    "keystone",
+    "nlohmann-json",
+    "protobuf",
+    "systemc"
+  ]
+}
