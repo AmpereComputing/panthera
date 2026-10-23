@@ -6,9 +6,9 @@ let
 in rec {
   # Unstable package release (main)
   unstable = import (builtins.fetchTarball {
-    name = "unstable_2025-10-13";
-    url = "https://github.com/NixOS/nixpkgs/archive/832e3b6db48508ae436c2c7bfc0cf914eac6938e.tar.gz";
-    sha256 = "1xyk39afidw5qxfnzj4pnzqmx973j1ja34sb2pg40j20fh676fmr";
+    name = "unstable_2026-10-23";
+    url = "https://github.com/NixOS/nixpkgs/archive/216591c3cca8800962fd3f50b8d83072742c2c23.tar.gz";
+    sha256 = "1csgg404gds0c0hw202z6zv8svh49fqc01flfj6biqjssss8ivmh";
   }) {};
   # Latest package release (25.05)
   latest = import (builtins.fetchTarball {
