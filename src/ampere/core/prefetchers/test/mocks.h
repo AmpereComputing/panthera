@@ -15,14 +15,14 @@ template<typename T, typename P>
 class poly_mock : public P, ampere::sc::poly<T>
 {
 protected:
-    static std::map<std::string, T *> &instances()
+    static std::map<std::string, T*>& instances()
     {
-        static std::map<std::string, T *> _instances;
+        static std::map<std::string, T*> _instances;
         return _instances;
     }
 
-    static void add_instance(const std::string &name, T *instance) { instances().emplace(name, instance); }
-    static void remove_instance(T *instance)
+    static void add_instance(const std::string& name, T* instance) { instances().emplace(name, instance); }
+    static void remove_instance(T* instance)
     {
         for (auto it = instances().begin(); it != instances().end(); ++it) {
             if (it->second == instance) {
@@ -34,18 +34,18 @@ protected:
 
 public:
     template<typename U = T>
-    inline static U *get_instance(const std::string &name)
+    inline static U* get_instance(const std::string& name)
     {
         if (auto i = instances().find(name); i != instances().end())
-            return dynamic_cast<U *>(i->second);
+            return dynamic_cast<U*>(i->second);
         return nullptr;
     }
 
     explicit poly_mock(sc_core::sc_module_name name) : P(name)
     {
-        add_instance(std::string(name), reinterpret_cast<T *>(this));
+        add_instance(std::string(name), reinterpret_cast<T*>(this));
     }
-    ~poly_mock() override { remove_instance(reinterpret_cast<T *>(this)); }
+    ~poly_mock() override { remove_instance(reinterpret_cast<T*>(this)); }
 };
 
 using ampere::archx::PhysAddr;

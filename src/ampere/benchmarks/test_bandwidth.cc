@@ -8,7 +8,7 @@
 #include "ampere/benchmarks/micro.h"
 
 extern "C" {
-void load_bandwidth(char *data_array_start, size_t data_array_size, unsigned iterations);
+void load_bandwidth(char* data_array_start, size_t data_array_size, unsigned iterations);
 }
 
 namespace ampere::benchmarks {

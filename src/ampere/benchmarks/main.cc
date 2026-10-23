@@ -4,7 +4,7 @@
 //
 #include "ampere/benchmarks/benchmark.h"
 
-int main(int argc, char **argv)
+int main(int argc, char** argv)
 {
     testing::InitGoogleTest(&argc, argv);
     auto status = RUN_ALL_TESTS();

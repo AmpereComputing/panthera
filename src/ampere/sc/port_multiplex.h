@@ -35,26 +35,26 @@ class TakerMultiplexer : public Connection,
     putter_port_type output_port{"output"};
 
     std::vector<unsigned> priorities;
-    std::vector<Taker<T> *> takers;
-    mutable std::vector<std::pair<Taker<T> *, unsigned>> arbitrated_takers;
+    std::vector<Taker<T>*> takers;
+    mutable std::vector<std::pair<Taker<T>*, unsigned>> arbitrated_takers;
     arbiter_func_type arbiter_func;
 
 public:
     class Setup
     {
         friend TakerMultiplexer;
-        using sources_type = std::vector<std::pair<taker_port_type *, std::optional<unsigned>>>;
-        const char *name = nullptr;
+        using sources_type = std::vector<std::pair<taker_port_type*, std::optional<unsigned>>>;
+        const char* name = nullptr;
         sources_type sources;
-        putter_port_type *output = nullptr;
+        putter_port_type* output = nullptr;
         arbiter_func_type arbiter_func;
 
     public:
         Setup() = default;
-        Setup(const Setup &) = delete;
-        Setup(Setup &&) = default;
+        Setup(const Setup&) = delete;
+        Setup(Setup&&) = default;
 
-        explicit Setup(const char *name, putter_port_type &output) : name(name), output(&output) {}
+        explicit Setup(const char* name, putter_port_type& output) : name(name), output(&output) {}
         explicit operator bool() const { return output; }
 
         ~Setup()
@@ -65,15 +65,15 @@ public:
 
         void arbiter(arbiter_func_type func) { arbiter_func = func; }
 
-        auto &connect_in(taker_port_type &source, std::optional<unsigned> priority = std::nullopt)
+        auto& connect_in(taker_port_type& source, std::optional<unsigned> priority = std::nullopt)
         {
             sources.emplace_back(&source, priority);
             return *this;
         }
     };
 
-    explicit TakerMultiplexer(const sc_core::sc_module_name &name,
-                              putter_port_type &output,
+    explicit TakerMultiplexer(const sc_core::sc_module_name& name,
+                              putter_port_type& output,
                               typename Setup::sources_type sources,
                               arbiter_func_type arbiter = {})
         : Connection(*get_nearest_ancestor<Module>(&output)->get_clock()),
@@ -97,13 +97,13 @@ public:
         clock.add_runnable(this);
     }
 
-    void add_target(Runnable *to, Runnable *from = nullptr) override
+    void add_target(Runnable* to, Runnable* from = nullptr) override
     {
         Connection::add_target(to, from);
         Connection::clock.add_zdelay_connection(from, to);
     }
 
-    void register_taker_port(sc_core::sc_port_base &port, const char *port_name [[maybe_unused]]) override
+    void register_taker_port(sc_core::sc_port_base& port, const char* port_name [[maybe_unused]]) override
     {
         this->add_target(get_nearest_ancestor<Runnable>(&port), this);
     }
@@ -117,19 +117,19 @@ public:
     bool can_put() const override { return true; }
     void put(T x [[maybe_unused]]) override {}
 
-    const T &get(uint64_t index [[maybe_unused]] = 0) const override { throw std::runtime_error{"forwards only"}; }
+    const T& get(uint64_t index [[maybe_unused]] = 0) const override { throw std::runtime_error{"forwards only"}; }
     uint64_t size() const override { throw std::runtime_error{"forwards only"}; }
 
     bool can_take() const override
     {
-        return std::any_of(arbitrated_takers.begin(), arbitrated_takers.end(), [](const auto &taker) {
+        return std::any_of(arbitrated_takers.begin(), arbitrated_takers.end(), [](const auto& taker) {
             return taker.first->can_take();
         });
     }
     T take() override
     {
         arbitrate();
-        for (const auto &taker : arbitrated_takers) {
+        for (const auto& taker : arbitrated_takers) {
             if (taker.first->can_take())
                 return taker.first->take();
         }
@@ -137,19 +137,19 @@ public:
     }
     void clear() override
     {
-        for (auto *taker : takers)
+        for (auto* taker : takers)
             taker->clear();
     }
-    void clear_if(const std::function<bool(const T &)> &pred) override
+    void clear_if(const std::function<bool(const T&)>& pred) override
     {
-        for (auto *taker : takers)
+        for (auto* taker : takers)
             taker->clear_if(pred);
     }
 
-    const T &peek(uint64_t index = 0) const override
+    const T& peek(uint64_t index = 0) const override
     {
         arbitrate();
-        for (const auto &taker : arbitrated_takers) {
+        for (const auto& taker : arbitrated_takers) {
             auto ready = taker.first->num_ready();
             if (ready > index)
                 return taker.first->peek(index);
@@ -161,36 +161,36 @@ public:
     uint64_t num_ready() const override
     {
         uint64_t total = 0;
-        for (auto *taker : takers)
+        for (auto* taker : takers)
             total += taker->num_ready();
 
         return total;
     }
 
-    const T &unsafe_peek(uint64_t index [[maybe_unused]] = 0) const override
+    const T& unsafe_peek(uint64_t index [[maybe_unused]] = 0) const override
     {
         throw std::runtime_error{"no unsafe peeking"};
     }
     uint64_t unsafe_size() const override { throw std::runtime_error{"no unsafe size"}; }
 
-    void add(taker_port_type &port)
+    void add(taker_port_type& port)
     {
-        auto *taker = dynamic_cast<Taker<T> *>(port.get_interface());
+        auto* taker = dynamic_cast<Taker<T>*>(port.get_interface());
         if (!taker)
             throw std::runtime_error{"not connected"};
         add_taker(*taker, &port);
     }
 
-    void add_with_priority(taker_port_type &port, unsigned priority)
+    void add_with_priority(taker_port_type& port, unsigned priority)
     {
-        auto *taker = dynamic_cast<Taker<T> *>(port.get_interface());
+        auto* taker = dynamic_cast<Taker<T>*>(port.get_interface());
         if (!taker)
             throw std::runtime_error{"not connected"};
         add_taker_with_priority(*taker, priority, &port);
     }
 
 private:
-    void add_taker(Taker<T> &taker, taker_port_type *target_port = nullptr)
+    void add_taker(Taker<T>& taker, taker_port_type* target_port = nullptr)
     {
         auto priority = priorities.empty() ? 0 : priorities.back() + 1;
         priorities.emplace_back(priority);
@@ -199,7 +199,7 @@ private:
         add_taker_port(target_port);
     }
 
-    void add_taker_with_priority(Taker<T> &taker, unsigned priority, taker_port_type *target_port = nullptr)
+    void add_taker_with_priority(Taker<T>& taker, unsigned priority, taker_port_type* target_port = nullptr)
     {
         if (auto existing =
                 std::find_if(priorities.begin(), priorities.end(), [=](auto other) { return priority < other; });
@@ -222,18 +222,18 @@ private:
         if (!arbiter_func)
             return;
 
-        std::sort(arbitrated_takers.begin(), arbitrated_takers.end(), [&](const auto &a, const auto &b) {
+        std::sort(arbitrated_takers.begin(), arbitrated_takers.end(), [&](const auto& a, const auto& b) {
             return arbiter_func(a.second, b.second);
         });
     }
 
-    void add_taker_port(taker_port_type *port)
+    void add_taker_port(taker_port_type* port)
     {
         if (port) {
-            auto &inner_port = source_ports.emplace_back(port->basename());
+            auto& inner_port = source_ports.emplace_back(port->basename());
             inner_port.bind(*port);
         } else {
-            auto &inner_port = source_ports.emplace_back();
+            auto& inner_port = source_ports.emplace_back();
             inner_port.bind(*this);
         }
     }

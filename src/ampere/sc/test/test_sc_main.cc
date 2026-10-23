@@ -8,7 +8,7 @@
 
 #include "ampere/sc/report.h"
 
-extern "C" int sc_main(int argc, char **argv)
+extern "C" int sc_main(int argc, char** argv)
 {
     testing::InitGoogleTest(&argc, argv);
     sc_report_handler::set_actions(SC_ID_INSTANCE_EXISTS_, SC_DO_NOTHING);

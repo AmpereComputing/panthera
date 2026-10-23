@@ -163,7 +163,7 @@ static void print_interval(uint64_t instruction_count, float line_fsize)
                dside_histo_page_interval.size());
 }
 
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
     uint64_t interval(0);
 

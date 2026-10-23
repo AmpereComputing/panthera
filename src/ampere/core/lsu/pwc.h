@@ -133,7 +133,7 @@ public:
     using BlockReason = LSUPWCBlockReason;
     using pwc_iterator = Base::pwc_iterator;
 
-    explicit LSUPWC(const sc_core::sc_module_name &name) : Base{name} {}
+    explicit LSUPWC(const sc_core::sc_module_name& name) : Base{name} {}
 
     struct Request
     {
@@ -145,7 +145,7 @@ public:
         uint64_t byte_enables;
         unsigned size;
 
-        Request(const LSUPWCEntry &entry, bool write_allocate, bool prefetch_only)
+        Request(const LSUPWCEntry& entry, bool write_allocate, bool prefetch_only)
             : id(entry.id),
               req(entry.req),
               write_through(entry.write_through),
@@ -176,19 +176,19 @@ public:
 
     pwc_iterator find(uint64_t id)
     {
-        return std::find_if(entries.begin(), entries.end(), [=](const auto &e) { return e.id == id; });
+        return std::find_if(entries.begin(), entries.end(), [=](const auto& e) { return e.id == id; });
     }
 
     template<util::either<VirtAddr, PhysAddr> A>
     auto find_oldest(A addr)
     {
-        return std::find_if(entries.begin(), entries.end(), [=](const auto &e) { return e.line_matches(addr); });
+        return std::find_if(entries.begin(), entries.end(), [=](const auto& e) { return e.line_matches(addr); });
     }
 
     template<util::either<VirtAddr, PhysAddr> A>
     auto find_youngest(A addr)
     {
-        return std::find_if(entries.rbegin(), entries.rend(), [=](const auto &e) { return e.line_matches(addr); });
+        return std::find_if(entries.rbegin(), entries.rend(), [=](const auto& e) { return e.line_matches(addr); });
     }
 
     bool try_combine(MemReq req, bool write_through)
@@ -201,11 +201,11 @@ public:
         }
         return false;
     }
-    const LSUPWCEntry &allocate(MemReq req, bool write_through, bool requires_combine = false);
+    const LSUPWCEntry& allocate(MemReq req, bool write_through, bool requires_combine = false);
 
     bool pending_store_release() const
     {
-        return std::any_of(entries.begin(), entries.end(), [](const auto &e) { return e.release; });
+        return std::any_of(entries.begin(), entries.end(), [](const auto& e) { return e.release; });
     }
 
     bool can_forward() const { return allow_forwarding; }
@@ -220,7 +220,7 @@ public:
         std::optional<uint64_t> entry_id;
         uint64_t matching_mask = 0;
 
-        for (const auto &entry : std::views::reverse(entries)) {
+        for (const auto& entry : std::views::reverse(entries)) {
             auto entry_addr = [&] {
                 if constexpr (std::is_same_v<A, PhysAddr>)
                     return entry.phys_addr();
@@ -266,7 +266,7 @@ public:
     bool should_wait_for_ofb() const { return wait_for_load_ofb; }
 
     void deallocate(PhysAddr addr);
-    void deallocate(const pwc_iterator &entry);
+    void deallocate(const pwc_iterator& entry);
 
     bool run() override;
 

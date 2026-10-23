@@ -15,7 +15,7 @@ int main()
 {
     Access_rbrc access;
     // 256 READ requests to same bank/rank/row
-    MemoryStreamWriterRankBankRowCol *writer = new MemoryStreamWriterRankBankRowCol("ms_same_bank_rank_row.ms", 1024);
+    MemoryStreamWriterRankBankRowCol* writer = new MemoryStreamWriterRankBankRowCol("ms_same_bank_rank_row.ms", 1024);
     for (int i = 0; i < 256; i++) {
         access.set_type(Access_rbrc_Type_READ);
         access.set_rank(1);
@@ -30,7 +30,7 @@ int main()
     delete writer;
 
     // 256 READ requests to different bank same rank/row
-    MemoryStreamWriterRankBankRowCol *writer1 =
+    MemoryStreamWriterRankBankRowCol* writer1 =
         new MemoryStreamWriterRankBankRowCol("ms_different_bank_same_rank_row.ms", 1024);
     for (int i = 0; i < 256; i++) {
         access.set_type(Access_rbrc_Type_READ);
@@ -46,7 +46,7 @@ int main()
     delete writer1;
 
     // 256 READ requests to same bank/rank/ different row
-    MemoryStreamWriterRankBankRowCol *writer2 =
+    MemoryStreamWriterRankBankRowCol* writer2 =
         new MemoryStreamWriterRankBankRowCol("ms_same_bank_rank_different_row.ms", 1024);
     for (int i = 0; i < 256; i++) {
         access.set_type(Access_rbrc_Type_READ);
@@ -62,7 +62,7 @@ int main()
     delete writer2;
 
     // 256 READ requests to same bank/rank/ different row
-    MemoryStreamWriterRankBankRowCol *writer3 =
+    MemoryStreamWriterRankBankRowCol* writer3 =
         new MemoryStreamWriterRankBankRowCol("ms_change_bank_rank_access.ms", 1024);
     int c = 0;
     for (int j = 0; j < 2; j++) {
@@ -99,7 +99,7 @@ int main()
     delete writer3;
 
     // 64 requests, first/last requests are write/read requests to same bank/rank/row
-    MemoryStreamWriterRankBankRowCol *writer4 = new MemoryStreamWriterRankBankRowCol("ms_read_after_write.ms", 1024);
+    MemoryStreamWriterRankBankRowCol* writer4 = new MemoryStreamWriterRankBankRowCol("ms_read_after_write.ms", 1024);
     c = 0;
     for (int k = 0; k < 1; k++) {
         access.set_type(Access_rbrc_Type_WRITE);
@@ -142,7 +142,7 @@ int main()
 
     // 256 requests, to test closed/open page hits
     // every 64 requests we are going to switch between rows whicle accessing same rank/bank
-    MemoryStreamWriterRankBankRowCol *writer5 = new MemoryStreamWriterRankBankRowCol("ms_cp_op_test.ms", 1024);
+    MemoryStreamWriterRankBankRowCol* writer5 = new MemoryStreamWriterRankBankRowCol("ms_cp_op_test.ms", 1024);
     c = 0;
     for (int k = 0; k < 128; k++) {
         access.set_type(Access_rbrc_Type_READ);
@@ -171,7 +171,7 @@ int main()
     delete writer5;
 
     // 64 requests, no requests between write after read
-    MemoryStreamWriterRankBankRowCol *writer6 =
+    MemoryStreamWriterRankBankRowCol* writer6 =
         new MemoryStreamWriterRankBankRowCol("ms_read_after_write_zero_requests.ms", 1024);
     c = 0;
     for (int i = 0; i < 32; i++) {

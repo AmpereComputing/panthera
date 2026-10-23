@@ -20,7 +20,7 @@ public:
     explicit PCGenerator(bool active, bool increment, bool single);
     bool can_take() const override;
     void clear() override;
-    void clear_if(const std::function<bool(const ProgramCounter &)> &pred) override { clear(); }
+    void clear_if(const std::function<bool(const ProgramCounter&)>& pred) override { clear(); }
     void reset(ProgramCounter pc);
     uint64_t num_ready() const override;
     ProgramCounter take() override;

@@ -23,7 +23,7 @@ protected:
     void train_impl(Fetch req, bool hit, bool prefetch, bool demand) override;
 
 private:
-    void table_print(std::ostream &os);
+    void table_print(std::ostream& os);
 
     // distance of 3 achieves highest performance
     Param<unsigned> distance{"distance", "how far to prefetch, in lines", 3};

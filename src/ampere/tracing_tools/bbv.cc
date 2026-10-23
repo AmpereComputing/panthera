@@ -8,7 +8,7 @@
 
 #include "bbv.h"
 
-VariableBBV::VariableBBV(const char *bbv_filename)
+VariableBBV::VariableBBV(const char* bbv_filename)
 {
     outfile = fopen(bbv_filename, "w+");
     if (!outfile) {
@@ -25,7 +25,7 @@ void VariableBBV::record_bb(uint64_t pc, uint64_t num_insns)
 void VariableBBV::end_bbv()
 {
     char prefix = 'P';
-    for (auto &bb : vector) {
+    for (auto& bb : vector) {
         fprintf(outfile, "%c:0x%" PRIx64 ":%" PRId64, prefix, bb.first, bb.second);
         prefix = ' ';
     }
@@ -39,7 +39,7 @@ VariableBBV::~VariableBBV()
     fclose(outfile);
 }
 
-BBV::BBV(const char *bbv_filename, uint64_t bbv_interval)
+BBV::BBV(const char* bbv_filename, uint64_t bbv_interval)
     : VariableBBV(bbv_filename), bbv_interval(bbv_interval), insn_count(0)
 {
 }

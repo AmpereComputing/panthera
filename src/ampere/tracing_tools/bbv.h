@@ -12,20 +12,20 @@
 class VariableBBV
 {
 public:
-    VariableBBV(const char *bbv_filename);
+    VariableBBV(const char* bbv_filename);
     void record_bb(uint64_t pc, uint64_t insn_count);
     void end_bbv();
     ~VariableBBV();
 
 private:
-    FILE *outfile;
+    FILE* outfile;
     std::unordered_map<uint64_t, uint64_t> vector;
 };
 
 class BBV : private VariableBBV
 {
 public:
-    BBV(const char *bbv_filename, uint64_t bbv_interval);
+    BBV(const char* bbv_filename, uint64_t bbv_interval);
     void record_bb(uint64_t pc, uint64_t insn_count);
 
 private:

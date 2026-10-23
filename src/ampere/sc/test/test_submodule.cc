@@ -16,21 +16,21 @@ namespace ampere::sc {
 class A : public Module, poly<A>
 {
 public:
-    explicit A(const sc_core::sc_module_name &name) : Module(name) {}
+    explicit A(const sc_core::sc_module_name& name) : Module(name) {}
     virtual int magic() { return 42; }
 };
 
 class B : public A, poly<B>
 {
 public:
-    explicit B(const sc_core::sc_module_name &name) : A(name) {}
+    explicit B(const sc_core::sc_module_name& name) : A(name) {}
     int magic() override { return 84; }
 };
 
 class Top : public Module
 {
 public:
-    explicit Top(const sc_core::sc_module_name &name) : Module(name) {}
+    explicit Top(const sc_core::sc_module_name& name) : Module(name) {}
     Submodule<A> a{"a"};
 };
 
@@ -70,7 +70,7 @@ TEST_F(SubmoduleTest, SubmoduleCreatesBWithShortestName)
 namespace n1 {
 struct C : public A, poly<C>
 {
-    explicit C(const sc_core::sc_module_name &name) : A(name) {}
+    explicit C(const sc_core::sc_module_name& name) : A(name) {}
     int magic() override { return 92; }
 };
 } // namespace n1
@@ -78,7 +78,7 @@ struct C : public A, poly<C>
 namespace n2 {
 struct C : public A, poly<C>
 {
-    explicit C(const sc_core::sc_module_name &name) : A(name) {}
+    explicit C(const sc_core::sc_module_name& name) : A(name) {}
     int magic() override { return 101; }
 };
 } // namespace n2
@@ -103,28 +103,28 @@ TEST_F(SubmoduleTest, SubmoduleDetectsAmbiguousName)
 class X : public Module
 {
 public:
-    explicit X(const sc_core::sc_module_name &name) : Module(name) {}
+    explicit X(const sc_core::sc_module_name& name) : Module(name) {}
     virtual int magic() = 0;
 };
 
 class Y : public implements<Y, X>
 {
 public:
-    explicit Y(const sc_core::sc_module_name &name) : implements<Y, X>(name) {}
+    explicit Y(const sc_core::sc_module_name& name) : implements<Y, X>(name) {}
     int magic() override { return 1; }
 };
 
 class Z : public implements<Z, X>
 {
 public:
-    explicit Z(const sc_core::sc_module_name &name) : implements<Z, X>(name) {}
+    explicit Z(const sc_core::sc_module_name& name) : implements<Z, X>(name) {}
     int magic() override { return 2; }
 };
 
 class ImplementsTop : public Module
 {
 public:
-    explicit ImplementsTop(const sc_core::sc_module_name &name) : Module(name) {}
+    explicit ImplementsTop(const sc_core::sc_module_name& name) : Module(name) {}
     Submodule<X> x{"x"};
 };
 
@@ -155,14 +155,14 @@ TEST_F(SubmoduleTest, SubmoduleImpelementations)
 }
 
 class I;
-using i_poly_def = poly_definition<I, poly_constructor_default, poly_constructor_clock, poly_constructor<const int &>>;
+using i_poly_def = poly_definition<I, poly_constructor_default, poly_constructor_clock, poly_constructor<const int&>>;
 
 class I : public Module, i_poly_def::base
 {
 public:
-    explicit I(const sc_core::sc_module_name &name) : Module(name) {}
-    I(const sc_core::sc_module_name &name, Clock *clock) : Module(name, clock) {}
-    I(const sc_core::sc_module_name &name, const int &x) : Module(name) {}
+    explicit I(const sc_core::sc_module_name& name) : Module(name) {}
+    I(const sc_core::sc_module_name& name, Clock* clock) : Module(name, clock) {}
+    I(const sc_core::sc_module_name& name, const int& x) : Module(name) {}
     virtual int magic() { return 1; }
 };
 
@@ -171,20 +171,20 @@ class J : public I, i_poly_def::implementation<J>
     int x = 2;
 
 public:
-    explicit J(const sc_core::sc_module_name &name) : I(name) {}
-    J(const sc_core::sc_module_name &name, Clock *clock) : I(name, clock), x(3) {}
-    J(const sc_core::sc_module_name &name, const int &x) : I(name, x), x(x) {}
+    explicit J(const sc_core::sc_module_name& name) : I(name) {}
+    J(const sc_core::sc_module_name& name, Clock* clock) : I(name, clock), x(3) {}
+    J(const sc_core::sc_module_name& name, const int& x) : I(name, x), x(x) {}
     int magic() override { return x; }
 };
 
 class OtherConstructorsTop : public Module
 {
 public:
-    explicit OtherConstructorsTop(const sc_core::sc_module_name &name) : Module(name), i("i") {}
-    explicit OtherConstructorsTop(const sc_core::sc_module_name &name, Clock *clock) : Module(name), i("i", clock) {}
-    explicit OtherConstructorsTop(const sc_core::sc_module_name &name, const int &x) : Module(name), i("i", x) {}
+    explicit OtherConstructorsTop(const sc_core::sc_module_name& name) : Module(name), i("i") {}
+    explicit OtherConstructorsTop(const sc_core::sc_module_name& name, Clock* clock) : Module(name), i("i", clock) {}
+    explicit OtherConstructorsTop(const sc_core::sc_module_name& name, const int& x) : Module(name), i("i", x) {}
     template<typename... Args>
-    explicit OtherConstructorsTop(int, const sc_core::sc_module_name &name, Args &&...args)
+    explicit OtherConstructorsTop(int, const sc_core::sc_module_name& name, Args&&... args)
         : Module(name), i("i", std::forward<Args>(args)...)
     {
     }
@@ -228,7 +228,7 @@ template<bool Default = true>
 class EnabledTop : public Module
 {
 public:
-    explicit EnabledTop(const sc_core::sc_module_name &name) : Module(name) {}
+    explicit EnabledTop(const sc_core::sc_module_name& name) : Module(name) {}
     EnabledSubmodule<Top> other{"other", Default};
 };
 

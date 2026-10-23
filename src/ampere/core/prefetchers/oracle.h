@@ -60,7 +60,7 @@ public:
     {
         return hint && hint != std::numeric_limits<uint64_t>::max() && hint != static_cast<uint64_t>(addr);
     }
-    virtual std::optional<int64_t> instruction_access_hint(const archx::Instruction &instruction) const { return {}; }
+    virtual std::optional<int64_t> instruction_access_hint(const archx::Instruction& instruction) const { return {}; }
     uint64_t request_access_hint(T req) const;
 
     bool should_train(T req) const;
@@ -75,9 +75,9 @@ public:
         if (!should_train(req))
             return;
 
-        auto &tracking = select_tracking(req);
-        auto &current_access = tracking.current_access;
-        auto &prefetch_offset = tracking.prefetch_offset;
+        auto& tracking = select_tracking(req);
+        auto& current_access = tracking.current_access;
+        auto& prefetch_offset = tracking.prefetch_offset;
 
         // accounts for out-of-order requests
         auto past_access = current_access > PAST_ACCESSES_LOCATE ? (current_access - PAST_ACCESSES_LOCATE) : 0;
@@ -128,9 +128,9 @@ public:
         if (was_in_flight == in_flight.end())
             return;
 
-        auto &tracking = select_tracking(req);
-        auto &previous_offsets = tracking.previous_offsets;
-        auto &prefetch_offset = tracking.prefetch_offset;
+        auto& tracking = select_tracking(req);
+        auto& previous_offsets = tracking.previous_offsets;
+        auto& prefetch_offset = tracking.prefetch_offset;
 
         if (previous_offsets.size() >= tracked_offsets)
             previous_offsets.pop_back();
@@ -147,13 +147,13 @@ public:
         cached.erase(addr_t(pa.line_address().value()));
     };
 
-    void connect(Driver &driver) { this->driver.bind(driver); }
-    void connect(DriverPort &driver) { this->driver.bind(driver); }
+    void connect(Driver& driver) { this->driver.bind(driver); }
+    void connect(DriverPort& driver) { this->driver.bind(driver); }
 
-    inline static bool try_setup(PT *prefetcher, DriverPort &port)
+    inline static bool try_setup(PT* prefetcher, DriverPort& port)
     {
         if (prefetcher) {
-            if (auto oracle = dynamic_cast<OraclePrefetcher<T, PT> *>(prefetcher); oracle) {
+            if (auto oracle = dynamic_cast<OraclePrefetcher<T, PT>*>(prefetcher); oracle) {
                 oracle->connect(port);
                 return true;
             }
@@ -162,10 +162,10 @@ public:
     }
 
     template<typename P>
-    inline static bool try_owned_setup(PT *prefetcher, P driver_func)
+    inline static bool try_owned_setup(PT* prefetcher, P driver_func)
     {
         if (prefetcher) {
-            if (auto oracle = dynamic_cast<OraclePrefetcher<T, PT> *>(prefetcher); oracle) {
+            if (auto oracle = dynamic_cast<OraclePrefetcher<T, PT>*>(prefetcher); oracle) {
                 oracle->owned_driver = driver_func();
                 oracle->connect(*oracle->owned_driver);
                 return true;
@@ -214,7 +214,7 @@ protected:
 
         explicit Accesses(uint64_t offset) : access_offset(offset) { accesses.reserve(ACCESSES_PER_BLOCK); }
 
-        unsigned add(addr_t addr, std::optional<uint64_t> hint, const Cached &cache, const InFlight &in_flight)
+        unsigned add(addr_t addr, std::optional<uint64_t> hint, const Cached& cache, const InFlight& in_flight)
         {
             auto line_addr = addr.line_address();
             bool already_present = cache.count(addr) || in_flight.count(addr);
@@ -227,11 +227,11 @@ protected:
             return (!added || already_present) ? 0 : 1;
         }
 
-        unsigned add(const archx::Instruction &instruction,
+        unsigned add(const archx::Instruction& instruction,
                      unsigned index,
                      std::optional<uint64_t> hint,
-                     const Cached &cache,
-                     const InFlight &in_flight)
+                     const Cached& cache,
+                     const InFlight& in_flight)
         {
             addr_t addr;
             if constexpr (is_virtual) {
@@ -292,7 +292,7 @@ protected:
 
             if (maybe_within(from_access, to_access)) {
                 if (auto addr_it = address_accesses.find(addr); addr_it != address_accesses.end()) {
-                    auto &addr_accesses = addr_it->second;
+                    auto& addr_accesses = addr_it->second;
                     auto access = addr_accesses.front();
                     auto global_access = access + access_offset;
                     if (!KEEP_SOME_ACCESSES || addr_accesses.size() > 1 || global_access <= from_access) {
@@ -313,9 +313,9 @@ protected:
             return access > (last_access() + 1 + (ACCESSES_PER_BLOCK * STALE_BLOCK_RATIO));
         }
 
-        std::optional<addr_t> try_prefetching(size_t access, const Cached &cache, const InFlight &in_flight)
+        std::optional<addr_t> try_prefetching(size_t access, const Cached& cache, const InFlight& in_flight)
         {
-            if (auto &[addr, addr_prefetched] = accesses[access]; !addr_prefetched) {
+            if (auto& [addr, addr_prefetched] = accesses[access]; !addr_prefetched) {
                 ++prefetched;
                 addr_prefetched = true;
                 if (!cache.count(addr) && !in_flight.count(addr))
@@ -328,8 +328,8 @@ protected:
         std::optional<std::pair<uint64_t, addr_t>> next_address(uint64_t from_access,
                                                                 uint64_t to_access,
                                                                 uint64_t max_access,
-                                                                const Cached &cache,
-                                                                const InFlight &in_flight)
+                                                                const Cached& cache,
+                                                                const InFlight& in_flight)
         {
             if (more_to_prefetch()) {
                 auto local_from_access = localize_access(from_access);
@@ -368,30 +368,30 @@ protected:
     Tracking code_tracking{initial_offset};
     Tracking data_tracking{initial_offset};
 
-    inline static bool should_record_access(const archx::Instruction &instruction, unsigned index)
+    inline static bool should_record_access(const archx::Instruction& instruction, unsigned index)
     {
         return tigris::valid_memory_operation(instruction, index);
     }
 
-    Tracking &select_tracking(T req)
+    Tracking& select_tracking(T req)
     {
         if (is_code || is_code_request(req))
             return code_tracking;
         return data_tracking;
     }
 
-    std::pair<uint64_t, Accesses *> create_or_reuse_block(AccessList &accesses)
+    std::pair<uint64_t, Accesses*> create_or_reuse_block(AccessList& accesses)
     {
         auto offset = accesses.empty() ? 0 : accesses.back().last_access() + 1;
-        auto *block = &((accesses.empty() || !accesses.back().accesses.empty()) ? accesses.emplace_back(offset)
+        auto* block = &((accesses.empty() || !accesses.back().accesses.empty()) ? accesses.emplace_back(offset)
                                                                                 : accesses.back());
         return {offset, block};
     }
 
     uint64_t populate()
     {
-        Accesses *code_block = nullptr;
-        Accesses *data_block = nullptr;
+        Accesses* code_block = nullptr;
+        Accesses* data_block = nullptr;
 
         if (is_code || include_code)
             code_block = create_or_reuse_block(code_tracking.accesses).second;
@@ -409,7 +409,7 @@ protected:
             try {
                 next_pc = driver->next_pc();
                 instruction = driver->fetch(next_pc);
-            } catch (const std::runtime_error &) {
+            } catch (const std::runtime_error&) {
                 break;
             }
             auto hint = instruction_access_hint(*instruction);
@@ -462,7 +462,7 @@ protected:
 #pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
 
     template<uint64_t GIVE_UP_DISTANCE, typename P, typename... Args>
-    auto do_or_populate(P func, AccessList &accesses, uint64_t from, uint64_t to, Args &&...args)
+    auto do_or_populate(P func, AccessList& accesses, uint64_t from, uint64_t to, Args&&... args)
         -> decltype((std::declval<Accesses>().*func)(from, to, std::forward<Args>(args)...))
     {
         for (size_t i = 0, populated = 0; i <= accesses.size();) {
@@ -496,7 +496,7 @@ protected:
 
 #pragma GCC diagnostic pop
 
-    auto locate(AccessList &accesses, uint64_t from_access, uint64_t to_access, addr_t addr, uint64_t hint)
+    auto locate(AccessList& accesses, uint64_t from_access, uint64_t to_access, addr_t addr, uint64_t hint)
     {
         try {
             if (has_hint(addr, hint)) {
@@ -509,10 +509,10 @@ protected:
                 }
             }
             return do_or_populate<ULLONG_MAX>(&Accesses::locate, accesses, from_access, to_access, addr, hint);
-        } catch (const std::out_of_range &) {
+        } catch (const std::out_of_range&) {
             auto access = accesses.front().access_offset;
-            for (const auto &block : accesses) {
-                for (const auto &[access_addr, prefetched] : block.accesses) {
+            for (const auto& block : accesses) {
+                for (const auto& [access_addr, prefetched] : block.accesses) {
                     if (addr == access_addr) {
                         std::cerr << fmt::format("Info: Found at access {} (block offset {}), prefetched: {}",
                                                  access,
@@ -539,12 +539,12 @@ protected:
         }
     }
 
-    auto next_address(AccessList &accesses, uint64_t from_access, uint64_t to_access, uint64_t max_access)
+    auto next_address(AccessList& accesses, uint64_t from_access, uint64_t to_access, uint64_t max_access)
     {
         try {
             return do_or_populate<MAX_NEXTADDR_LOOK_AHEAD>(
                 &Accesses::next_address, accesses, from_access, to_access, max_access, cached, in_flight);
-        } catch (const std::out_of_range &) {
+        } catch (const std::out_of_range&) {
             throw std::runtime_error(fmt::format("Dead on next address, from {} to {}, populated until {}",
                                                  from_access,
                                                  to_access,
@@ -552,7 +552,7 @@ protected:
         }
     }
 
-    unsigned cleanup(AccessList &accesses, uint64_t access)
+    unsigned cleanup(AccessList& accesses, uint64_t access)
     {
         unsigned removed = 0;
         for (auto it = accesses.begin(); it != accesses.end();) {
@@ -605,7 +605,7 @@ class L2P_Oracle : public OraclePrefetcher<MemReq>, public implementation<L2P_Or
 public:
     explicit L2P_Oracle(sc_core::sc_module_name name);
 
-    std::optional<int64_t> instruction_access_hint(const archx::Instruction &instruction) const override
+    std::optional<int64_t> instruction_access_hint(const archx::Instruction& instruction) const override
     {
         if (use_instruction_id_as_hint)
             return instruction.inum().id();

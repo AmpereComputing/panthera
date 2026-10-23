@@ -30,7 +30,7 @@ using ::testing::Return;
 struct MultiplePrefetcherTest : ampere::core::TestModule
 {
     core::L2P_Multiple multiple;
-    std::array<L2P_Strict_Mock *, 3> mocks;
+    std::array<L2P_Strict_Mock*, 3> mocks;
     MemReq req;
 
     sc::MockPutter<MemReq> prefetch_requests;
@@ -56,7 +56,7 @@ struct MultiplePrefetcherTest : ampere::core::TestModule
 
 TEST_F(MultiplePrefetcherTest, TrainNoTrigger)
 {
-    for (auto *mock : mocks)
+    for (auto* mock : mocks)
         EXPECT_CALL(*mock, train_impl(req, true, false, true));
 
     multiple.train(0, req, true, false, true, PrefetchType::NONE);
@@ -64,7 +64,7 @@ TEST_F(MultiplePrefetcherTest, TrainNoTrigger)
 
 TEST_F(MultiplePrefetcherTest, NoTriggerAllDrop)
 {
-    for (auto *mock : mocks)
+    for (auto* mock : mocks)
         EXPECT_CALL(*mock, drop_impl(req, core::PrefetchDropReason::CACHE_HIT));
 
     multiple.drop(req, core::PrefetchDropReason::CACHE_HIT);
@@ -72,7 +72,7 @@ TEST_F(MultiplePrefetcherTest, NoTriggerAllDrop)
 
 TEST_F(MultiplePrefetcherTest, NoTriggerAllOverflow)
 {
-    for (auto *mock : mocks)
+    for (auto* mock : mocks)
         EXPECT_CALL(*mock, overflow_impl(req));
 
     multiple.overflow(req);
@@ -80,7 +80,7 @@ TEST_F(MultiplePrefetcherTest, NoTriggerAllOverflow)
 
 TEST_F(MultiplePrefetcherTest, NoTriggerAllLaunch)
 {
-    for (auto *mock : mocks)
+    for (auto* mock : mocks)
         EXPECT_CALL(*mock, launch_impl(req));
 
     multiple.launch(req);
@@ -88,7 +88,7 @@ TEST_F(MultiplePrefetcherTest, NoTriggerAllLaunch)
 
 TEST_F(MultiplePrefetcherTest, Fill)
 {
-    for (auto *mock : mocks)
+    for (auto* mock : mocks)
         EXPECT_CALL(*mock, fill_impl(req, false, false));
 
     multiple.fill(0, req, false, false);
@@ -96,7 +96,7 @@ TEST_F(MultiplePrefetcherTest, Fill)
 
 TEST_F(MultiplePrefetcherTest, Evict)
 {
-    for (auto *mock : mocks)
+    for (auto* mock : mocks)
         EXPECT_CALL(*mock, evict_impl(0x0_pa, false, true));
 
     multiple.evict(0x0_pa, false, true);
@@ -106,7 +106,7 @@ TEST_F(MultiplePrefetcherTest, Flush)
 {
     auto flush = make<Flush>(0_pc, 0_pc, nullptr, nullptr, 0, archx::FlushType::ABORTED);
 
-    for (auto *mock : mocks)
+    for (auto* mock : mocks)
         EXPECT_CALL(*mock, flush_impl(flush));
 
     multiple.flush(flush);
@@ -115,7 +115,7 @@ TEST_F(MultiplePrefetcherTest, Flush)
 struct MultiplePrefetcherSingleTrainTest : MultiplePrefetcherTest
 {
     MemReq pref;
-    L2P_Strict_Mock *trigger_mock;
+    L2P_Strict_Mock* trigger_mock;
 
     void SetUp() override
     {
@@ -123,7 +123,7 @@ struct MultiplePrefetcherSingleTrainTest : MultiplePrefetcherTest
         pref = make<MemReq>(1, 0x8_pa, uarch_common::MemOp::LSU);
 
         MultiplePrefetcherTest::SetUp();
-        for (auto *mock : mocks)
+        for (auto* mock : mocks)
             EXPECT_CALL(*mock, train_impl(req, true, false, true));
 
         EXPECT_CALL(prefetch_requests, put(pref));
@@ -154,7 +154,7 @@ TEST_F(MultiplePrefetcherSingleTrainTest, TrainThenDropThenDropAgain)
 
     tick();
 
-    for (auto *mock : mocks)
+    for (auto* mock : mocks)
         EXPECT_CALL(*mock, drop_impl(this->pref, core::PrefetchDropReason::CACHE_HIT));
 
     multiple.drop(this->pref, core::PrefetchDropReason::CACHE_HIT);
@@ -183,7 +183,7 @@ struct MultiplePrefetcherMultipleTrainSameAddressTest : MultiplePrefetcherTest
         pref_2 = make<MemReq>(2, 0x8_pa, uarch_common::MemOp::LSU);
 
         MultiplePrefetcherTest::SetUp();
-        for (auto *mock : mocks)
+        for (auto* mock : mocks)
             EXPECT_CALL(*mock, train_impl(req, true, false, true));
 
         EXPECT_CALL(prefetch_requests, put(pref));
@@ -235,8 +235,8 @@ struct MultiplePrefetcherTranslationTest : MultiplePrefetcherTest
 
 TEST_F(MultiplePrefetcherTranslationTest, TranslationAfterTrain)
 {
-    auto *trigger_mock = mocks[1];
-    for (auto *mock : mocks)
+    auto* trigger_mock = mocks[1];
+    for (auto* mock : mocks)
         EXPECT_CALL(*mock, train_impl(req, true, false, true));
 
     core::PrefetchTranslateRequest<MemReq> trans_req{0x8_va, sc::Txn(), PrefetchType::NONE};

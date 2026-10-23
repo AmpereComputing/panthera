@@ -16,7 +16,7 @@ using ::testing::IsEmpty;
 struct PipelineTestMixin
 {
     int cycle{0};
-    Pipeline<int> *pipe_ref = nullptr;
+    Pipeline<int>* pipe_ref = nullptr;
 
     auto items() const { return std::vector(pipe_ref->begin(), pipe_ref->end()); }
 
@@ -33,7 +33,7 @@ struct PipelineTestMixin
     }
 
     PipelineTestMixin() = default;
-    explicit PipelineTestMixin(Pipeline<int> *pipe) : pipe_ref(pipe) {}
+    explicit PipelineTestMixin(Pipeline<int>* pipe) : pipe_ref(pipe) {}
 };
 
 bool a(Pipeline<int>::Data data)
@@ -294,7 +294,7 @@ TEST_F(StallingPipeline3, InvalidateAllWhileStalled)
 struct StretchedPipeline : Module, PipelineTestMixin
 {
     uint64_t gap = 1;
-    StretchedPipeline(const sc_core::sc_module_name &name, uint64_t gap = 1)
+    StretchedPipeline(const sc_core::sc_module_name& name, uint64_t gap = 1)
         : Module{name}, PipelineTestMixin(&pipe), gap{gap}
     {
     }
@@ -388,7 +388,7 @@ TEST_F(StretchedPipelineWithGapTest, IteratorSkips)
 
 struct StallingPipeline4 : public Module
 {
-    StallingPipeline4(const sc_core::sc_module_name &name,
+    StallingPipeline4(const sc_core::sc_module_name& name,
                       std::set<int> stall_a,
                       std::set<int> stall_b,
                       std::set<int> stall_c)
@@ -501,7 +501,7 @@ struct GroupedPipeline : Module
 {
     template<typename P, typename Q>
     GroupedPipeline(
-        const sc_core::sc_module_name &name, bool cross_stage_stall, unsigned width, P comp_data_func, Q comp_pipe_func)
+        const sc_core::sc_module_name& name, bool cross_stage_stall, unsigned width, P comp_data_func, Q comp_pipe_func)
         : Module{name},
           pipe{"pipe",
                {{"a", std::bind_front(&GroupedPipeline::a, this)},
@@ -514,7 +514,7 @@ struct GroupedPipeline : Module
     {
     }
 
-    GroupedPipeline(const sc_core::sc_module_name &name) : GroupedPipeline(name, false, 2, nullptr, nullptr) {}
+    GroupedPipeline(const sc_core::sc_module_name& name) : GroupedPipeline(name, false, 2, nullptr, nullptr) {}
 
     PipelineGroup<int> pipe;
 
@@ -651,7 +651,7 @@ TEST_F(PipelineGroupCollapsingTest, CanRun)
 
 struct PipelineGroupCompareDataTest : Test
 {
-    GroupedPipeline top{"top", false, 2, [](const int &a, const int &b) { return a < b; }, nullptr};
+    GroupedPipeline top{"top", false, 2, [](const int& a, const int& b) { return a < b; }, nullptr};
 };
 
 TEST_F(PipelineGroupCompareDataTest, CanRun)
@@ -673,7 +673,7 @@ TEST_F(PipelineGroupCompareDataTest, CanRun)
 
 struct PipelineGroupComparePipeTest : Test
 {
-    GroupedPipeline top{"top", false, 2, nullptr, [](const Pipeline<int> &a, const Pipeline<int> &b) {
+    GroupedPipeline top{"top", false, 2, nullptr, [](const Pipeline<int>& a, const Pipeline<int>& b) {
                             // This comparison function will run the pipe with the *largest* entry
                             // in the latest stage first (to intentionally mix up the run order)
                             for (size_t s = a.size() - 1; s > 0; s--) {

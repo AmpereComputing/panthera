@@ -13,7 +13,7 @@
 
 using namespace ampere::is;
 
-int main(int argc, char **argv)
+int main(int argc, char** argv)
 {
     if (argc != 2) {
         std::cout << argv[0] << " [instruction stream]" << std::endl;

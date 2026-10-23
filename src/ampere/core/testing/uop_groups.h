@@ -16,7 +16,7 @@ inline static DecodedUopGroup make_uop_group(unsigned amount, unsigned width)
 {
     DecodedUopGroup group(width);
     for (unsigned i = 0; i < amount; ++i) {
-        auto &uop = group.uops.emplace_back(core::create_nop_uop());
+        auto& uop = group.uops.emplace_back(core::create_nop_uop());
         uop->alloc_id = i + 1;
         ++group.lanes_used;
     }
@@ -29,7 +29,7 @@ inline static DecodedUopGroup make_uop_group(uint32_t opcode, unsigned amount, u
     auto pc = 0x0_pc;
     DecodedUopGroup group(width);
     for (unsigned i = 0; i < amount; ++i) {
-        auto &uop = group.uops.emplace_back(core::create_core_uop(opcode, pc));
+        auto& uop = group.uops.emplace_back(core::create_core_uop(opcode, pc));
         uop->alloc_id = i + 1;
         ++group.lanes_used;
         pc += 4;
@@ -38,13 +38,13 @@ inline static DecodedUopGroup make_uop_group(uint32_t opcode, unsigned amount, u
     return group;
 }
 
-inline static DecodedUopGroup make_uop_group_from_opcodes(const std::vector<uint32_t> &opcodes, unsigned width)
+inline static DecodedUopGroup make_uop_group_from_opcodes(const std::vector<uint32_t>& opcodes, unsigned width)
 {
     uint64_t alloc_id = 0;
     auto pc = 0x0_pc;
     DecodedUopGroup group(width);
     for (auto opcode : opcodes) {
-        auto &uop = group.uops.emplace_back(core::create_core_uop(opcode, pc));
+        auto& uop = group.uops.emplace_back(core::create_core_uop(opcode, pc));
         uop->alloc_id = ++alloc_id;
         ++group.lanes_used;
         pc += 4;

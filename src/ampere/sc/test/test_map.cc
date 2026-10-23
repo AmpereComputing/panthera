@@ -14,14 +14,14 @@
 
 struct MapObject : ampere::sc::Module
 {
-    explicit MapObject(const sc_core::sc_module_name &name) : Module(name) {}
+    explicit MapObject(const sc_core::sc_module_name& name) : Module(name) {}
 };
 
 struct MapTestBase : ampere::sc::TestModule
 {
     ampere::sc::sc_map<MapObject> map;
     template<typename... Args>
-    MapTestBase(Args &&...args) : map{"map", std::forward<Args>(args)...}
+    MapTestBase(Args&&... args) : map{"map", std::forward<Args>(args)...}
     {
     }
 };
@@ -56,7 +56,7 @@ TEST_F(MapTest, GetByName)
 TEST_F(MapTest, Iterate)
 {
     std::vector<std::string> names;
-    for (const auto &e : map)
+    for (const auto& e : map)
         names.emplace_back(e.name());
 
     EXPECT_THAT(names, ::testing::ElementsAre("map.a", "map.b", "map.c"));

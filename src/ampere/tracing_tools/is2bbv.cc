@@ -10,7 +10,7 @@
 
 using namespace ampere::is;
 
-int main(int argc, char **argv)
+int main(int argc, char** argv)
 {
     if (argc != 3) {
         std::cout << "Usage: is2bbv INSTRUCTION_STREAM BBV_FILENAME" << std::endl;
@@ -31,7 +31,7 @@ int main(int argc, char **argv)
                 break;
             }
         } else if (started && event.has_instruction()) {
-            const Instruction &instruction = event.instruction();
+            const Instruction& instruction = event.instruction();
             bb_instructions++;
             if (is_branch(instruction.opcode())) {
                 bbv.record_bb(instruction.program_counter().va(), bb_instructions);

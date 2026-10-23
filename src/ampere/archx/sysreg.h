@@ -59,7 +59,7 @@ struct SysReg
     {
     }
 
-    constexpr bool operator<(const SysReg &other) const
+    constexpr bool operator<(const SysReg& other) const
     {
         if (op0 != other.op0)
             return op0 < other.op0;
@@ -71,7 +71,7 @@ struct SysReg
             return crm < other.crm;
         return op2 < other.op2;
     }
-    constexpr bool operator==(const SysReg &other) const
+    constexpr bool operator==(const SysReg& other) const
     {
         return (op0 == other.op0 && op1 == other.op1 && crn == other.crn && crm == other.crm && op2 == other.op2);
     }

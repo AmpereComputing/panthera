@@ -22,9 +22,9 @@ namespace tracer {
 struct PhysPage
 {
     PhysPage(PhysAddr start, PageSize size) : start{start.page_address(size)}, size{size} {}
-    inline bool operator<(const PhysPage &other) const { return start < other.start; }
-    inline bool operator==(const PhysPage &other) const { return start == other.start && size == other.size; }
-    inline bool overlaps(const PhysPage &other) const { return !(other.end() < start || other.start > end()); }
+    inline bool operator<(const PhysPage& other) const { return start < other.start; }
+    inline bool operator==(const PhysPage& other) const { return start == other.start && size == other.size; }
+    inline bool overlaps(const PhysPage& other) const { return !(other.end() < start || other.start > end()); }
     inline PhysAddr end() const { return (start + size) - 1; }
     PhysAddr start;
     PageSize size;
@@ -33,7 +33,7 @@ struct PhysPage
 class PageContentsImpl
 {
 public:
-    PageContentsImpl(PhysPage &page) : page{page}
+    PageContentsImpl(PhysPage& page) : page{page}
     {
         size_t bytes = 1 << page.size.page_bits();
         size_t mask_bytes = 1 << (page.size.page_bits() - 3); // divide bytes in page by 8 (bits in a byte)
@@ -42,8 +42,8 @@ public:
     }
 
     // Disable copy constructor and assignment
-    PageContentsImpl(PageContentsImpl const &) = delete;
-    PageContentsImpl &operator=(PageContentsImpl const &) = delete;
+    PageContentsImpl(PageContentsImpl const&) = delete;
+    PageContentsImpl& operator=(PageContentsImpl const&) = delete;
 
     /*
      * Write bytes to the given page. Overwrite existing bytes only if
@@ -55,7 +55,7 @@ public:
      * regions which have been partially or fully written previously is very
      * simply implemented (at the expense of performance).
      */
-    void write(PhysAddr start, size_t bytes, const uint8_t *data, bool overwrite = false)
+    void write(PhysAddr start, size_t bytes, const uint8_t* data, bool overwrite = false)
     {
 #ifndef NDEBUG
         auto end = start + bytes - 1;
@@ -94,7 +94,7 @@ public:
 
         size_t byte_offset = start - page.start;
 
-        return *(uint64_t *)(contents + byte_offset);
+        return *(uint64_t*)(contents + byte_offset);
     }
 
     ~PageContentsImpl()
@@ -108,7 +108,7 @@ public:
 private:
     // Slow write path. Check every byte valid bit individually, write bytes
     // one-by-one.
-    void slow_write(PhysAddr start, size_t bytes, const uint8_t *data, bool overwrite = false)
+    void slow_write(PhysAddr start, size_t bytes, const uint8_t* data, bool overwrite = false)
     {
         while (bytes) {
             size_t byte_offset = start - page.start;
@@ -148,7 +148,7 @@ private:
         }
 
         // Handle mask aligned to 64 bytes in larger chunks
-        uint64_t *valid_mask_64 = (uint64_t *)valid_mask;
+        uint64_t* valid_mask_64 = (uint64_t*)valid_mask;
         while (bytes >= 64) {
             size_t byte_offset = start - page.start;
             size_t group = byte_offset >> 6;
@@ -177,12 +177,12 @@ private:
     }
 
     PhysPage page;
-    uint8_t *contents;
-    uint8_t *valid_mask;
+    uint8_t* contents;
+    uint8_t* valid_mask;
 };
 
 using PageContents = std::shared_ptr<PageContentsImpl>;
-PageContents make_page_contents(PhysPage &page)
+PageContents make_page_contents(PhysPage& page)
 {
     return std::make_shared<PageContentsImpl>(page);
 }

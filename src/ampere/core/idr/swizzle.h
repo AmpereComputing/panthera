@@ -41,13 +41,13 @@ class Swizzle
         bool load_balance_toggle;
         bool swizzle_history;
 
-        bool operator==(const Input &rhs) const
+        bool operator==(const Input& rhs) const
         {
             return (uop_count == rhs.uop_count && uop_memory == rhs.uop_memory
                     && load_balance_toggle == rhs.load_balance_toggle && swizzle_history == rhs.swizzle_history);
         }
 
-        friend void from_json(const json &j, Input &input)
+        friend void from_json(const json& j, Input& input)
         {
             input.uop_count = j.at(0).get<unsigned>();
             input.uop_memory = std::stoull(j.at(1).get<std::string>(), nullptr, 2);
@@ -64,7 +64,7 @@ class Swizzle
         bool set_swizzle_history{false};
         bool swizzle_history{false};
 
-        friend void from_json(const json &j, Output &output)
+        friend void from_json(const json& j, Output& output)
         {
             output.type = j.at(0).get<SwizzleType>();
             output.set_swizzle_history = j.at(1).get<bool>();
@@ -74,7 +74,7 @@ class Swizzle
 
     struct Hasher
     {
-        std::size_t operator()(const Input &k) const
+        std::size_t operator()(const Input& k) const
         {
             return ((std::hash<unsigned>()(k.uop_count << ((sizeof(bool) * 2) + sizeof(unsigned))))
                     | (std::hash<unsigned>()(k.uop_memory << (sizeof(bool) * 2)))
@@ -88,18 +88,18 @@ class Swizzle
         mutable std::unordered_map<Input, Output, Hasher> table;
 
     public:
-        Output get(const Input &input) const { return table[input]; }
+        Output get(const Input& input) const { return table[input]; }
 
         // Swizzle Input {uop cnt, mem uops lanes, load balance, swizzle history},  Swizzle Output {Type, set history}
-        friend void from_json(const json &j, Table &table)
+        friend void from_json(const json& j, Table& table)
         {
-            for (const auto &row : j) {
+            for (const auto& row : j) {
                 table.table.emplace(row.at(0).get<Input>(), row.at(1).get<Output>());
             }
         }
     };
 
-    static std::string_view swizzle_uops(DecodedUopGroup &uops, SwizzleType type);
+    static std::string_view swizzle_uops(DecodedUopGroup& uops, SwizzleType type);
 
     Param<bool> swizzle{"swizzle", "Swizzle uop groups depending on load/store history", false};
     Param<Table> swizzle_table{"swizzle_table", "Table for swizzles", {}};
@@ -108,9 +108,9 @@ class Swizzle
 
 public:
     explicit operator bool() const { return swizzle; }
-    std::string swizzle_uops(DecodedUopGroup &uops,
-                             const IDRLoadBalancing &load_balancing,
-                             const SchedulerCredits &sch);
+    std::string swizzle_uops(DecodedUopGroup& uops,
+                             const IDRLoadBalancing& load_balancing,
+                             const SchedulerCredits& sch);
 };
 
 } // namespace ampere::core

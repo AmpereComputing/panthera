@@ -20,14 +20,14 @@ using namespace boost::filesystem;
 class InstructionStreamWriterTest : public ::testing::Test
 {
 protected:
-    path test_file_name(const char *extension)
+    path test_file_name(const char* extension)
     {
-        const ::testing::TestInfo *const test_info = ::testing::UnitTest::GetInstance()->current_test_info();
+        const ::testing::TestInfo* const test_info = ::testing::UnitTest::GetInstance()->current_test_info();
         path p(test_info->name());
         p.replace_extension(extension);
         return p;
     }
-    void write_control(is::InstructionStreamWriter *writer, is::Control_Type type)
+    void write_control(is::InstructionStreamWriter* writer, is::Control_Type type)
     {
         is::Event event;
         is::Control control;
@@ -35,7 +35,7 @@ protected:
         event.mutable_control()->CopyFrom(control);
         writer->write(event);
     }
-    google::protobuf::io::FileOutputStream *output_stream;
+    google::protobuf::io::FileOutputStream* output_stream;
 };
 
 TEST_F(InstructionStreamWriterTest, testWrite)
@@ -46,7 +46,7 @@ TEST_F(InstructionStreamWriterTest, testWrite)
     features.set_memory_translation(true);
     features.set_memory_values(false);
 
-    is::InstructionStreamWriter *writer =
+    is::InstructionStreamWriter* writer =
         new is::InstructionStreamWriter(this->test_file_name("is").string().c_str(), features);
 
     is::Instruction instruction;
@@ -67,7 +67,7 @@ TEST_F(InstructionStreamWriterTest, testWrite)
     int fd = open(this->test_file_name("is").string().c_str(), O_RDONLY);
     ASSERT_GT(fd, 2);
 
-    google::protobuf::io::FileInputStream *input_stream;
+    google::protobuf::io::FileInputStream* input_stream;
     input_stream = new google::protobuf::io::FileInputStream(fd);
 
     uint32_t magic, is_version;
@@ -121,7 +121,7 @@ TEST_F(InstructionStreamWriterTest, testWriteXz)
     features.set_memory_translation(true);
     features.set_memory_values(false);
 
-    is::InstructionStreamWriter *writer = new is::InstructionStreamWriter(test_file_name("is.xz"), features);
+    is::InstructionStreamWriter* writer = new is::InstructionStreamWriter(test_file_name("is.xz"), features);
 
     write_control(writer, is::Control_Type_START_MEASUREMENT);
 
@@ -137,7 +137,7 @@ TEST_F(InstructionStreamWriterTest, testWriteXz)
     writer->finalize();
     delete writer;
 
-    is::InstructionStreamReader *reader = new is::InstructionStreamReader(test_file_name("is.xz"));
+    is::InstructionStreamReader* reader = new is::InstructionStreamReader(test_file_name("is.xz"));
 
     // are the feature bits preserved?
     ASSERT_FALSE(reader->features().divide_sqrt_registers());
@@ -176,7 +176,7 @@ TEST_F(InstructionStreamWriterTest, testWriteXz)
 TEST_F(InstructionStreamWriterTest, testInvalidControlOrdering)
 {
     is::Features features;
-    is::InstructionStreamWriter *writer =
+    is::InstructionStreamWriter* writer =
         new is::InstructionStreamWriter(this->test_file_name("is").string().c_str(), features);
     EXPECT_THROW(writer->finalize(), std::runtime_error);
     EXPECT_THROW(write_control(writer, is::Control_Type_STOP_MEASUREMENT), std::runtime_error);

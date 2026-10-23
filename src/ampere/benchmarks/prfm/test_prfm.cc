@@ -8,12 +8,12 @@
 
 extern "C" {
 int prefetch_code(int iterations);
-int prefetch_load_data_l1(char *data, int iterations);
-int prefetch_load_data_l2(char *data, int iterations);
-int prefetch_store_data_l1(char *data, int iterations);
-int prefetch_store_data_l2(char *data, int iterations);
-int prefetch_streaming_store_data_l1(char *data, int iterations);
-int prefetch_streaming_store_data_l2(char *data, int iterations);
+int prefetch_load_data_l1(char* data, int iterations);
+int prefetch_load_data_l2(char* data, int iterations);
+int prefetch_store_data_l1(char* data, int iterations);
+int prefetch_store_data_l2(char* data, int iterations);
+int prefetch_streaming_store_data_l1(char* data, int iterations);
+int prefetch_streaming_store_data_l2(char* data, int iterations);
 }
 
 namespace ampere::benchmarks {

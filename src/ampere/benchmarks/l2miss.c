@@ -2,24 +2,25 @@
 // Copyright (c) 2022-2025 Ampere Computing. All rights reserved.
 // SPDX-License-Identifier: BSD-3-Clause
 //
-#include "ampere/benchmarks/common/ops.h"
-#include "ampere/tracing_tools/tracing_hints.h"
-#include <stdint.h>
-#include <stdlib.h>
-#include <stdio.h>
 #include <assert.h>
-#include <unistd.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <sys/mman.h>
+#include <unistd.h>
 
-int main(int argc, char** argv)
-{
+#include "ampere/benchmarks/common/ops.h"
+#include "ampere/tracing_tools/tracing_hints.h"
+
+int main(int argc, char** argv) {
     const uint64_t kb = 1024;
     const uint64_t limit = kb * kb * kb;
     const size_t alignment = kb * kb * kb;
     int i = 0, j = 0;
     void* p = 0;
-    // added volatile to prevent compiler's optimizer from summarizing the loop effects
+    // added volatile to prevent compiler's optimizer from summarizing the loop
+    // effects
     volatile char* q = 0;
     int err_code = posix_memalign(&p, alignment, limit);
     if (err_code != 0) {
@@ -37,11 +38,12 @@ int main(int argc, char** argv)
     hint_start_tracing();
     hint_start_online_warmup();
     hint_start_measuring();
-    // in a kernel with 64K pages, 2 bits will be translated in our idx computation
-    // so 4 sets will be in play if we don't get a transparent huge page allocated.
+    // in a kernel with 64K pages, 2 bits will be translated in our idx
+    // computation so 4 sets will be in play if we don't get a transparent huge
+    // page allocated.
     for (j = 0; j < 100; j++) {
         HINT_ITERATION();
-        for (i = 0; i < 64; i++) { // 6b
+        for (i = 0; i < 64; i++) {  // 6b
             // L2 is 32K lines / 8 way = 4K sets. Line size is 64B
             int idx = i << 24;
             // printf("idx = %d (%08x)\n", idx, idx);

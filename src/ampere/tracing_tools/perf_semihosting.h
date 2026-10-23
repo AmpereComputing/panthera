@@ -44,7 +44,7 @@ struct perf_comm_event
 // Maximum comm length in the kernel
 #define TASK_COMM_LEN 16
 
-inline bool perf_comm_matches(const perf_comm_event *evt, const char *str)
+inline bool perf_comm_matches(const perf_comm_event* evt, const char* str)
 {
     return !strncasecmp(evt->comm, str, TASK_COMM_LEN - 1);
 }

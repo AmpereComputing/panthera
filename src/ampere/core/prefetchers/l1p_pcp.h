@@ -136,7 +136,7 @@ class PCP : public BackendPrefetcher<BackendMemReq>
         unsigned act_hi_cnt{0};
         unsigned act_lo_cnt{0};
 
-        explicit Table(const sc_core::sc_module_name &name)
+        explicit Table(const sc_core::sc_module_name& name)
             : ManagedCache<ProgramCounter, PCP::Entry>(name, PCP::Entry(PCP_SEARCH))
         {
             if (tag_bits_param) {
@@ -168,7 +168,7 @@ class PCP : public BackendPrefetcher<BackendMemReq>
             return address.extract_range(ms_tag_bit, line_bits + set_bits);
         }
 
-        Result lookup_or_insert(const BackendMemReq &request);
+        Result lookup_or_insert(const BackendMemReq& request);
 
         using ManagedCache<ProgramCounter, PCP::Entry>::get_sets;
     };
@@ -222,7 +222,7 @@ private:
     Param<bool> inc_on_ofb_hit{"inc_on_ofb_hit", "foo", false};
 
 public:
-    explicit PCP(const sc_core::sc_module_name &name) : BackendPrefetcher<BackendMemReq>(name) {}
+    explicit PCP(const sc_core::sc_module_name& name) : BackendPrefetcher<BackendMemReq>(name) {}
 
     using BackendPrefetcher<BackendMemReq>::train;
     void train(BackendMemReq request) { train(0, request, false, false, true, {}); }
@@ -251,8 +251,8 @@ public:
 
     void launch_related(BackendMemReq req);
 
-    void table_print(std::ostream &os) const;
-    void dump(std::ostream &) const override;
+    void table_print(std::ostream& os) const;
+    void dump(std::ostream&) const override;
 
     Event ev_train{"train", "Trained PCP"};
     Event ev_trigger{"trigger", "PCP triggered and is sitting on deck"};
@@ -282,8 +282,8 @@ public:
 private:
     Table table{"table"};
 
-    bool should_trigger(const Entry &entry) const;
-    void trigger_pf(const BackendMemReq &request);
+    bool should_trigger(const Entry& entry) const;
+    void trigger_pf(const BackendMemReq& request);
 
     unsigned last_train_idx{0};
     unsigned last_train_way{0};
@@ -304,11 +304,11 @@ private:
     };
     std::unordered_map<PhysAddr, InFlight> in_flight;
 
-    InFlight &add_inflight(const BackendMemReq &request)
+    InFlight& add_inflight(const BackendMemReq& request)
     {
 #ifdef PCP_MAX_INFLIGHT
         if (in_flight.size() > PCP_MAX_INFLIGHT) {
-            for (auto &[addr, e] : in_flight)
+            for (auto& [addr, e] : in_flight)
                 std::cerr << "phys_addr: " << addr << ", virt_addr: " << e.virt_addr << std::endl;
             AMPERE_ASSERT(false, "More in-flight than there should be");
         }
@@ -317,14 +317,14 @@ private:
             .first->second;
     }
 
-    InFlight *get_inflight(const BackendMemReq &request)
+    InFlight* get_inflight(const BackendMemReq& request)
     {
         if (auto e = in_flight.find(request.phys_addr->line_address()); e != in_flight.end())
             return &e->second;
         return nullptr;
     }
 
-    void remove_inflight(const BackendMemReq &request)
+    void remove_inflight(const BackendMemReq& request)
     {
         if (request.phys_addr) {
             in_flight.erase(request.phys_addr->line_address());
@@ -351,7 +351,7 @@ class L1P_PCP : public PCP, implementation<L1P_PCP, BackendPrefetcher<BackendMem
         "ignore_other_loads_in_instruction", "Allow PCP ignore loads other than the first in an instruction", false};
 
 public:
-    explicit L1P_PCP(const sc_core::sc_module_name &name);
+    explicit L1P_PCP(const sc_core::sc_module_name& name);
 
     bool run() override;
 

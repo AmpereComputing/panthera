@@ -20,14 +20,14 @@ struct PointerBenchmark : public BenchmarkWithSetup,
     size_t steps;
     size_t ops;
     size_t size;
-    T *data;
-    T **pointers;
+    T* data;
+    T** pointers;
     PointerBenchmark()
     {
         std::tie(step, steps, ops) = GetParam();
         size = step * steps;
         data = new T[size];
-        pointers = new T *[size];
+        pointers = new T*[size];
     }
     ~PointerBenchmark() override
     {
@@ -90,7 +90,7 @@ TEST_P(ArrayOfPointersPatternBenchmark, StrideBackwards)
 }
 
 template<typename T>
-std::string param_names(const testing::TestParamInfo<typename T::ParamType> &info)
+std::string param_names(const testing::TestParamInfo<typename T::ParamType>& info)
 {
     return fmt::format(
         "step{}Xsteps{}Xops{}", std::get<0>(info.param), std::get<1>(info.param), std::get<2>(info.param));

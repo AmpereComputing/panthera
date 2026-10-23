@@ -21,7 +21,7 @@
 
 namespace ampere::sc {
 
-void post_assert_event(Transaction &txn, const std::string &message);
+void post_assert_event(Transaction& txn, const std::string& message);
 
 }
 

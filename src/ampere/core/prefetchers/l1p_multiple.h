@@ -50,7 +50,7 @@ protected:
     bool commit_impl(uint64_t id, T req) override
     {
         bool can_commit_next = true;
-        for (auto &prefetcher : this->prefetchers) {
+        for (auto& prefetcher : this->prefetchers) {
             can_commit_next &= prefetcher.module->commit(id, req);
             this->forward_requests(prefetcher);
         }
@@ -121,20 +121,20 @@ protected:
 
     bool can_replay() const override
     {
-        return std::any_of(this->prefetchers.begin(), this->prefetchers.end(), [](const auto &pref) {
+        return std::any_of(this->prefetchers.begin(), this->prefetchers.end(), [](const auto& pref) {
             return pref.module->can_replay();
         });
     }
     bool can_prefetch_page(T req) const override
     {
-        return std::any_of(this->prefetchers.begin(), this->prefetchers.end(), [&](const auto &pref) {
+        return std::any_of(this->prefetchers.begin(), this->prefetchers.end(), [&](const auto& pref) {
             return pref.module->prefetch_type() == PrefetcherData<T>::get_type(req)
                    && pref.module->can_prefetch_page(req);
         });
     }
     bool can_allocate_pob(T req, archx::EL current_level) const override
     {
-        return std::any_of(this->prefetchers.begin(), this->prefetchers.end(), [&](const auto &pref) {
+        return std::any_of(this->prefetchers.begin(), this->prefetchers.end(), [&](const auto& pref) {
             return pref.module->prefetch_type() == PrefetcherData<T>::get_type(req)
                    && pref.module->can_allocate_pob(req, current_level);
         });
@@ -142,13 +142,13 @@ protected:
 
     bool can_issue_prefetch() const override
     {
-        return std::any_of(this->prefetchers.begin(), this->prefetchers.end(), [&](const auto &pref) {
+        return std::any_of(this->prefetchers.begin(), this->prefetchers.end(), [&](const auto& pref) {
             return pref.module->can_issue_prefetch();
         });
     }
     bool can_issue_prefetch(T req) const override
     {
-        return std::any_of(this->prefetchers.begin(), this->prefetchers.end(), [&](const auto &pref) {
+        return std::any_of(this->prefetchers.begin(), this->prefetchers.end(), [&](const auto& pref) {
             return pref.module->prefetch_type() == PrefetcherData<T>::get_type(req)
                    && pref.module->can_issue_prefetch();
         });
@@ -156,14 +156,14 @@ protected:
 
     bool can_allocate_ofb() const override
     {
-        return std::any_of(this->prefetchers.begin(), this->prefetchers.end(), [&](const auto &pref) {
+        return std::any_of(this->prefetchers.begin(), this->prefetchers.end(), [&](const auto& pref) {
             return pref.module->can_issue_prefetch();
         });
     }
 
     bool can_allocate_ofb(T req) const override
     {
-        return std::any_of(this->prefetchers.begin(), this->prefetchers.end(), [&](const auto &pref) {
+        return std::any_of(this->prefetchers.begin(), this->prefetchers.end(), [&](const auto& pref) {
             return pref.module->prefetch_type() == PrefetcherData<T>::get_type(req)
                    && pref.module->can_allocate_ofb(req);
         });

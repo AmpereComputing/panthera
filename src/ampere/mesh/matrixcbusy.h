@@ -16,7 +16,7 @@ using namespace sc;
 class MatrixCBusy : public CBusyBase, poly<MatrixCBusy>
 {
 public:
-    MatrixCBusy(const sc_core::sc_module_name &name);
+    MatrixCBusy(const sc_core::sc_module_name& name);
 
     Param<bool> enable{"enable", "Enable CBusy adjustments", false};
 
@@ -101,7 +101,7 @@ public:
     EventData<unsigned> evd_deallocates{"deallocates", "Number of deallocate events used in computation of rho"};
 
     void end_of_elaboration() override;
-    void dump(std::ostream &os) const override;
+    void dump(std::ostream& os) const override;
 
 private:
     float rho_scale_factor{1.0};
@@ -115,7 +115,7 @@ private:
     void reset_counters(uint8_t index);
     uint8_t phase(Cycle cycle) const;
     uint64_t phase_delta(Cycle start_cycle, Cycle end_cycle) const;
-    void incr_cntr(int &cntr);
+    void incr_cntr(int& cntr);
     void set_cycle(Cycle cycle) { last_cycle = cycle; }
 
     std::array<int, util::enum_size<chi::CBusyState>()> num_cbusy;

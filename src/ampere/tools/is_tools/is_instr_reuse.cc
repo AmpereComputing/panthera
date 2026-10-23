@@ -16,7 +16,7 @@
 using namespace ampere::is;
 namespace po = boost::program_options;
 
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
     uint64_t end_inst(0);
     unsigned window(32);

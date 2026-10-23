@@ -28,7 +28,7 @@ class DebugRegistry
     mutable std::map<std::string, Mode> modules;
     mutable std::map<std::pair<std::string, std::string>, bool> categories;
 
-    inline static auto key(const char *name, const char *category)
+    inline static auto key(const char* name, const char* category)
     {
         return std::make_pair<std::string, std::string>(name, category);
     }
@@ -37,22 +37,22 @@ class DebugRegistry
     std::optional<Cycle> start;
     std::optional<Cycle> stop;
 
-    bool within_enabled_range(const Clock *clock) const;
+    bool within_enabled_range(const Clock* clock) const;
 
 public:
-    void add(const sc_core::sc_module &module, const char *category);
+    void add(const sc_core::sc_module& module, const char* category);
 
-    bool enabled(const sc_core::sc_module &module, const Clock *clock = nullptr) const;
-    bool enabled(const sc_core::sc_module &module, const char *category, const Clock *clock = nullptr) const;
+    bool enabled(const sc_core::sc_module& module, const Clock* clock = nullptr) const;
+    bool enabled(const sc_core::sc_module& module, const char* category, const Clock* clock = nullptr) const;
 
     void set_enable_all() { all_enabled = true; }
     void set_enabled_at(Cycle cycle) { start = cycle; }
     void set_disabled_at(Cycle cycle) { stop = cycle; }
 
-    static void setup_main(Environment &env);
-    static void setup_main_with_start_stop(Environment &env);
+    static void setup_main(Environment& env);
+    static void setup_main_with_start_stop(Environment& env);
 
-    static void setup_module(const Module &m);
+    static void setup_module(const Module& m);
 };
 
 } // namespace ampere::sc

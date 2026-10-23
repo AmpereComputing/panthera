@@ -15,12 +15,12 @@ using ampere::sc::TestModule;
 
 struct A : Module
 {
-    explicit A(const sc_core::sc_module_name &name) : Module(name) {}
+    explicit A(const sc_core::sc_module_name& name) : Module(name) {}
 };
 struct B : Module
 {
     A a{"child"};
-    explicit B(const sc_core::sc_module_name &name) : Module(name) {}
+    explicit B(const sc_core::sc_module_name& name) : Module(name) {}
 };
 
 struct DebugRegistryTest : TestModule

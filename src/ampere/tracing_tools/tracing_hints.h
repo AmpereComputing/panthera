@@ -18,9 +18,9 @@
 #ifdef __aarch64__
 #define MACRO_STR(s) #s
 #define HINT_CALL(name, imm)                                \
-    static inline void do_hint_call_##name(const void *ptr) \
+    static inline void do_hint_call_##name(const void* ptr) \
     {                                                       \
-        register const void *localptr __asm__("x0") = ptr;  \
+        register const void* localptr __asm__("x0") = ptr;  \
         asm volatile ("stp x0, x1, [sp, #-16]!\n" \
         "hint #" MACRO_STR(imm) "\n" \
         "ldp x0, x1, [sp], #16\n" \
@@ -32,22 +32,22 @@ HINT_CALL(trace, TRACE_HINT_NUM)
 
 static inline void hint_start_tracing()
 {
-    do_hint_call_trace((void *)TRACE_HINT_START);
+    do_hint_call_trace((void*)TRACE_HINT_START);
 }
 
 static inline void hint_start_online_warmup()
 {
-    do_hint_call_trace((void *)TRACE_HINT_START_ONLINE_WARMUP);
+    do_hint_call_trace((void*)TRACE_HINT_START_ONLINE_WARMUP);
 }
 
 static inline void hint_start_measuring()
 {
-    do_hint_call_trace((void *)TRACE_HINT_START_MEASURE);
+    do_hint_call_trace((void*)TRACE_HINT_START_MEASURE);
 }
 
 static inline void hint_stop_tracing()
 {
-    do_hint_call_trace((void *)TRACE_HINT_STOP);
+    do_hint_call_trace((void*)TRACE_HINT_STOP);
 }
 
 #define HINT_ITERATION() asm volatile("hint #0x54" : /*no output*/)

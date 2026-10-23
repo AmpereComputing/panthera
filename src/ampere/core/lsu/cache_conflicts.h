@@ -35,11 +35,11 @@ struct L1DFill
     bool completes{false};
     bool valid{false};
 
-    inline static L1DFill from_store(const OFBEntry &ofb_entry, Uop uop, bool writeback, bool valid = true)
+    inline static L1DFill from_store(const OFBEntry& ofb_entry, Uop uop, bool writeback, bool valid = true)
     {
         return {uop, ofb_entry.virt_addr, ofb_entry.pipe_mask(), writeback, writeback, valid};
     }
-    inline static L1DFill from_load(const OFBEntry &ofb_entry, Uop uop, bool executes, bool valid = true)
+    inline static L1DFill from_load(const OFBEntry& ofb_entry, Uop uop, bool executes, bool valid = true)
     {
         return {uop,
                 ofb_entry.virt_addr,
@@ -48,7 +48,7 @@ struct L1DFill
                 ofb_entry.completes_uop(),
                 valid};
     }
-    inline static L1DFill from_atomic_load(const Uop &uop, uint8_t pipe_mask, bool valid = true)
+    inline static L1DFill from_atomic_load(const Uop& uop, uint8_t pipe_mask, bool valid = true)
     {
         return {uop, *uop->virt_addr, pipe_mask, true, true, valid};
     }
@@ -62,14 +62,14 @@ struct L2RefillArbitration
     std::vector<MemoryRange> addresses;
 
     L2RefillArbitration() = default;
-    void add(const L1DFill &fill)
+    void add(const L1DFill& fill)
     {
         uops.emplace_back(fill.valid, fill.completes, fill.uop);
         if (fill.valid) // speculative fill wakes don't cause tag conflicts
             addresses.emplace_back(fill.addr, VirtAddr::LINE_SIZE);
     }
 
-    void add_pipe(const L1DFill &fill)
+    void add_pipe(const L1DFill& fill)
     {
         AMPERE_ASSERT(!(pipes & fill.pipe_mask), "Uop already refilling on pipe {}", fill.pipe_mask);
         pipes |= fill.pipe_mask;
@@ -78,13 +78,13 @@ struct L2RefillArbitration
             addresses.emplace_back(fill.addr, VirtAddr::LINE_SIZE);
     }
 
-    void add_execution_only(const L1DFill &fill)
+    void add_execution_only(const L1DFill& fill)
     {
         if (fill.executes)
             add_pipe(fill);
     }
 
-    void add_cache_port(const L1DFill &fill, std::optional<unsigned> port = {})
+    void add_cache_port(const L1DFill& fill, std::optional<unsigned> port = {})
     {
         if (port)
             cache_ports |= 1U << *port;
@@ -118,7 +118,7 @@ class LSUCacheConflicts
         PortAccess(VirtAddr addr, unsigned size, unsigned port) : Access(addr, size), port(port) {}
     };
 
-    L1DCache &cache;
+    L1DCache& cache;
     std::vector<PortAccess> load_addresses;
     std::multimap<unsigned, Access> load_accesses;
     std::vector<Access> previous_load_accesses;
@@ -195,7 +195,7 @@ class LSUCacheConflicts
     static bool same_byte_in_block(uint64_t line_bytes);
 
 public:
-    LSUCacheConflicts(L1DCache &cache, size_t load_pipes);
+    LSUCacheConflicts(L1DCache& cache, size_t load_pipes);
 
     struct BackToBack
     {
@@ -234,28 +234,28 @@ public:
     bool is_read_read_chunk_conflict(VirtAddr virt_addr,
                                      unsigned size,
                                      unsigned dl1_port,
-                                     const std::vector<PortAccess> &inflights) const;
+                                     const std::vector<PortAccess>& inflights) const;
     bool is_write_read_chunk_bank_conflict(VirtAddr virt_addr,
                                            unsigned size,
                                            unsigned dl1_port,
-                                           const std::vector<Access> &inflights) const;
+                                           const std::vector<Access>& inflights) const;
 
-    bool can_load_combine(unsigned dl1_port, const Access &access);
+    bool can_load_combine(unsigned dl1_port, const Access& access);
     void load_cache_read(
-        const ConstUop &uop, VirtAddr virt_addr, unsigned datasize, unsigned dl1_port, const Conflicts &conflicts);
+        const ConstUop& uop, VirtAddr virt_addr, unsigned datasize, unsigned dl1_port, const Conflicts& conflicts);
     BackToBack is_back_to_back_cache_access(VirtAddr virt_addr,
                                             PhysAddr phys_addr,
                                             unsigned datasize,
                                             unsigned dl1_port) const;
     Conflicts load_cache_conflicts(
-        const ConstUop &uop, VirtAddr virt_addr, PhysAddr phys_addr, unsigned datasize, unsigned dl1_port);
+        const ConstUop& uop, VirtAddr virt_addr, PhysAddr phys_addr, unsigned datasize, unsigned dl1_port);
 
     void assign_refill_tag_conflicts() { l2c_refill_tag_conflict = {}; }
     void assign_refill_tag_conflicts(L2RefillArbitration refills) { l2c_refill_tag_conflict = refills; }
 
     bool refill_conflicts() const { return enable_refill_tag_conflict || enable_fill_read_chunk_bank_conflicts; }
     bool refill_conflicts_on_pipe(unsigned pipe) const { return pipe != 0 || !enable_fill_read_chunk_bank_conflicts; }
-    bool refills_participate_in_conflicts(const L2RefillArbitration &refills) const;
+    bool refills_participate_in_conflicts(const L2RefillArbitration& refills) const;
 
     bool load_refill_conflict_check() const;
     bool load_port1_refill_conflict(unsigned dl1_port) const;

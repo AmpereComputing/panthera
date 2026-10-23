@@ -35,7 +35,7 @@ struct FactorBounds
     FactorBounds(std::optional<int64_t> minimum,
                  std::optional<int64_t> maximum,
                  unsigned long granularity,
-                 const std::string &sequence)
+                 const std::string& sequence)
         : minimum(minimum), maximum(maximum), granularity(granularity)
     {
         if (sequence == "exp" || sequence == "exponential")
@@ -44,7 +44,7 @@ struct FactorBounds
 
     // spec in form of "[min:max]" or "[min:max:granularity]" or "[min:max:granularity:sequence]"
     // where values can be left out as long as ':' remains (e.g. [::granularity])
-    static FactorBounds from_spec(const std::string &spec)
+    static FactorBounds from_spec(const std::string& spec)
     {
         std::optional<int64_t> minimum;
         std::optional<int64_t> maximum;
@@ -89,7 +89,7 @@ struct FactorBounds
         return {minimum, maximum, granularity, spec.substr(granularity_sep + 1, end_sep - granularity_sep - 1)};
     }
 
-    static std::pair<std::string, std::unique_ptr<FactorBounds>> from_event_spec(const std::string &event_spec)
+    static std::pair<std::string, std::unique_ptr<FactorBounds>> from_event_spec(const std::string& event_spec)
     {
         auto bounds = event_spec.find_first_of('[');
         if (bounds == std::string::npos)

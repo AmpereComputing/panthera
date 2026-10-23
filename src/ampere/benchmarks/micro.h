@@ -40,7 +40,7 @@ protected:
     size_t cooldown_iterations{0};
 
     template<typename F, typename... Args>
-    void run_benchmark(F func, Args &&...args)
+    void run_benchmark(F func, Args&&... args)
     {
         start_timing();
         hint_start_tracing();
@@ -65,7 +65,7 @@ protected:
     }
 
     template<typename F, typename T, typename... Args>
-    void run_self_benchmark(T &self, F func, Args &&...args)
+    void run_self_benchmark(T& self, F func, Args&&... args)
     {
         start_timing();
         hint_start_tracing();
@@ -121,7 +121,7 @@ TEST_P(Microbenchmark, Measure)
 }
 
 // function(char *data, int iterations)
-using memory_micro_function = std::function<int(char *, int)>;
+using memory_micro_function = std::function<int(char*, int)>;
 
 struct MemoryMixin
 {
@@ -138,7 +138,7 @@ struct MemoryMixin
     }
 
     size_t size;
-    char *test_data_array = nullptr;
+    char* test_data_array = nullptr;
 };
 
 struct MicrobenchmarkWithMemory : public BenchmarkWithMicro<memory_micro_function>, public MemoryMixin

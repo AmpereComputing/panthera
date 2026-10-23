@@ -7,7 +7,7 @@
 
 namespace ampere::event_stream {
 
-void EventStreamRecorder::record_event(const RecorderEventHandle &event)
+void EventStreamRecorder::record_event(const RecorderEventHandle& event)
 {
     RecordedEvent e(event, this);
     if (callback_func)
@@ -33,7 +33,7 @@ EventHandle EventStreamRecorder::open_event(EventType event_type, std::uint64_t 
 
 void EventStreamRecorder::close_event(EventHandle event)
 {
-    auto *handle = static_cast<RecorderEventHandle *>(event);
+    auto* handle = static_cast<RecorderEventHandle*>(event);
     if (*handle)
         record_event(*handle);
     event_handle_pool.destroy(handle);
@@ -41,21 +41,21 @@ void EventStreamRecorder::close_event(EventHandle event)
 
 void EventStreamRecorder::add_int_data(EventHandle event, DataType event_data_type, std::int64_t value)
 {
-    auto *handle = static_cast<RecorderEventHandle *>(event);
+    auto* handle = static_cast<RecorderEventHandle*>(event);
     if (*handle)
         handle->data[event_data_type] = value;
 }
 
 void EventStreamRecorder::add_uint_data(EventHandle event, DataType event_data_type, std::uint64_t value)
 {
-    auto *handle = static_cast<RecorderEventHandle *>(event);
+    auto* handle = static_cast<RecorderEventHandle*>(event);
     if (*handle)
         handle->data[event_data_type] = value;
 }
 
-void EventStreamRecorder::add_string_data(EventHandle event, DataType event_data_type, const std::string &value)
+void EventStreamRecorder::add_string_data(EventHandle event, DataType event_data_type, const std::string& value)
 {
-    auto *handle = static_cast<RecorderEventHandle *>(event);
+    auto* handle = static_cast<RecorderEventHandle*>(event);
     if (*handle)
         handle->data[event_data_type] = value;
 }

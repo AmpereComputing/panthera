@@ -29,7 +29,7 @@ class DriverBS : public Driver
 {
 public:
     explicit DriverBS(std::string branch_stream_name);
-    ProgramCounter next_pc(bool *is_taken_branch = nullptr) override;
+    ProgramCounter next_pc(bool* is_taken_branch = nullptr) override;
     std::shared_ptr<Instruction> fetch(ProgramCounter pc) override;
     void commit(std::shared_ptr<Instruction> instruction) override;
     void recover(inum_t id) override;
@@ -41,8 +41,8 @@ public:
 
 private:
     void initialize_first_instruction();
-    void record_event(const bs::Event &event, InstructionIS &prev);
-    InstructionIS read_branch_stream(InstructionIS &prev);
+    void record_event(const bs::Event& event, InstructionIS& prev);
+    InstructionIS read_branch_stream(InstructionIS& prev);
     void read_next_instruction();
     Translation translate(VirtAddr va, bool is_instr);
     Translation translate(ProgramCounter pc);

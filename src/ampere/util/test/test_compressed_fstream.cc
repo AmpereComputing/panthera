@@ -19,9 +19,9 @@ using namespace std::filesystem;
 class CompressedFStreamTest : public ::testing::Test
 {
 protected:
-    std::filesystem::path test_file_name(const std::string &extension)
+    std::filesystem::path test_file_name(const std::string& extension)
     {
-        const ::testing::TestInfo *const test_info = ::testing::UnitTest::GetInstance()->current_test_info();
+        const ::testing::TestInfo* const test_info = ::testing::UnitTest::GetInstance()->current_test_info();
         path p(test_info->name());
         p.replace_extension(extension);
         return p;

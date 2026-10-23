@@ -72,7 +72,7 @@ uint64_t TLBTracker::fetch_descriptor(uint64_t pa)
         return desc->second;
     }
 
-    memory->read_memory(pa, (uint8_t *)&descriptor, 8);
+    memory->read_memory(pa, (uint8_t*)&descriptor, 8);
     return descriptor;
 }
 
@@ -90,7 +90,7 @@ void TLBTracker::cache_descriptor(uint64_t pa, uint64_t val)
     if (result.second) {
         is::Memory memory;
         memory.mutable_address()->set_pa(pa);
-        memory.set_value((char *)&val, 8 /*length in bytes*/);
+        memory.set_value((char*)&val, 8 /*length in bytes*/);
         writer->write(memory);
     }
 }

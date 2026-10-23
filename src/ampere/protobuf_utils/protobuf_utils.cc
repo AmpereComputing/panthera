@@ -6,7 +6,7 @@
 
 namespace ampere {
 
-bool writeHeaderTo(uint32_t magic, uint32_t version, google::protobuf::io::ZeroCopyOutputStream *rawOutput)
+bool writeHeaderTo(uint32_t magic, uint32_t version, google::protobuf::io::ZeroCopyOutputStream* rawOutput)
 {
     // We create a new coded stream for each message.  Don't worry, this is fast.
     google::protobuf::io::CodedOutputStream output(rawOutput);
@@ -17,7 +17,7 @@ bool writeHeaderTo(uint32_t magic, uint32_t version, google::protobuf::io::ZeroC
     return !output.HadError();
 }
 
-bool readHeaderFrom(google::protobuf::io::ZeroCopyInputStream *rawInput, uint32_t *magic, uint32_t *version)
+bool readHeaderFrom(google::protobuf::io::ZeroCopyInputStream* rawInput, uint32_t* magic, uint32_t* version)
 {
     // We create a new coded stream for each message.  Don't worry, this is fast,
     // and it makes sure the 64MB total size limit is imposed per-message rather
@@ -28,8 +28,8 @@ bool readHeaderFrom(google::protobuf::io::ZeroCopyInputStream *rawInput, uint32_
     return input.ReadLittleEndian32(magic) && input.ReadLittleEndian32(version);
 }
 
-bool writeDelimitedTo(const google::protobuf::MessageLite &message,
-                      google::protobuf::io::ZeroCopyOutputStream *rawOutput)
+bool writeDelimitedTo(const google::protobuf::MessageLite& message,
+                      google::protobuf::io::ZeroCopyOutputStream* rawOutput)
 {
     // We create a new coded stream for each message.  Don't worry, this is fast.
     google::protobuf::io::CodedOutputStream output(rawOutput);
@@ -38,7 +38,7 @@ bool writeDelimitedTo(const google::protobuf::MessageLite &message,
     const int size = message.ByteSizeLong();
     output.WriteLittleEndian32(size);
 
-    uint8_t *buffer = output.GetDirectBufferForNBytesAndAdvance(size);
+    uint8_t* buffer = output.GetDirectBufferForNBytesAndAdvance(size);
     if (buffer != nullptr) {
         // Optimization:  The message fits in one buffer, so use the faster
         // direct-to-array serialization path.
@@ -53,9 +53,9 @@ bool writeDelimitedTo(const google::protobuf::MessageLite &message,
     return true;
 }
 
-bool readDelimitedFrom(google::protobuf::io::ZeroCopyInputStream *rawInput,
-                       google::protobuf::MessageLite *message,
-                       bool *clean_eof)
+bool readDelimitedFrom(google::protobuf::io::ZeroCopyInputStream* rawInput,
+                       google::protobuf::MessageLite* message,
+                       bool* clean_eof)
 {
     // We create a new coded stream for each message.  Don't worry, this is fast,
     // and it makes sure the 64MB total size limit is imposed per-message rather

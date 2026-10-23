@@ -22,12 +22,12 @@
 namespace ampere {
 namespace uarch_common {
 
-void PrintTo(const MemReq &req, std::ostream *os)
+void PrintTo(const MemReq& req, std::ostream* os)
 {
     *os << "(id: " << req->id << ", addr: 0x" << req->phys_addr << ")";
 }
 
-void PrintTo(const MemResp &resp, std::ostream *os)
+void PrintTo(const MemResp& resp, std::ostream* os)
 {
     *os << "(id: " << resp->id << ", addr: 0x" << resp->phys_addr << ", value: " << resp->value << ")";
 }
@@ -96,7 +96,7 @@ public:
     }
 
     template<typename... Args>
-    std::pair<MemReq, MemResp> make_req_resp(uint64_t id, PhysAddr addr, Args &&...args)
+    std::pair<MemReq, MemResp> make_req_resp(uint64_t id, PhysAddr addr, Args&&... args)
     {
         auto req = make<MemReq>(id, addr, std::forward<Args>(args)...);
         auto resp = make<MemResp>(id, addr, true);
@@ -104,7 +104,7 @@ public:
     }
 
     template<typename... Args>
-    std::tuple<MemReq, MemResp, MemResp> make_req_miss_resp(uint64_t id, PhysAddr addr, Args &&...args)
+    std::tuple<MemReq, MemResp, MemResp> make_req_miss_resp(uint64_t id, PhysAddr addr, Args&&... args)
     {
         auto [req, hit_resp] = make_req_resp(id, addr, std::forward<Args>(args)...);
         auto miss_resp = make<MemResp>(id, addr, false);
@@ -463,11 +463,11 @@ public:
     void SetUp() override
     {
         L2CTest::SetUp();
-        prefetcher = dynamic_cast<L2P_Dummy *>(l2c.prefetcher.get());
+        prefetcher = dynamic_cast<L2P_Dummy*>(l2c.prefetcher.get());
     }
 
 protected:
-    L2P_Dummy *prefetcher;
+    L2P_Dummy* prefetcher;
 };
 
 class RequestQueuePrefetchTest : public TestModule

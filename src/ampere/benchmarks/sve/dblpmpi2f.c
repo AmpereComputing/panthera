@@ -2,14 +2,14 @@
 // Copyright (c) 2023 Ampere Computing. All rights reserved.
 // SPDX-License-Identifier: BSD-3-Clause
 //
-// /usr/local/gcc-12.1.0/bin/g++ -O3 -march=armv8.6-a+sve dblpmpi2f.c --static -o dblpmpi2f
-// /usr/local/bin/qemu-aarch64 -cpu max,sve128=on a.out
+// /usr/local/gcc-12.1.0/bin/g++ -O3 -march=armv8.6-a+sve dblpmpi2f.c --static
+// -o dblpmpi2f /usr/local/bin/qemu-aarch64 -cpu max,sve128=on a.out
 
 #include <stdint.h>
+
 #include "ampere/tracing_tools/tracing_hints.h"
 
-static void work()
-{
+static void work() {
     uint64_t i = 0;
     hint_start_tracing();
     hint_start_online_warmup();
@@ -34,10 +34,8 @@ static void work()
     hint_stop_tracing();
 }
 
-int main(int argc, char** argv)
-{
+int main(int argc, char** argv) {
     work();
     (void)argc;
     (void)argv;
 }
-
