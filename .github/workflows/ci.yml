@@ -23,9 +23,7 @@ jobs:
       - name: Install Python formatting dependencies
         run: python -m pip install ruff
       - name: Check formatting with clang-format 21
-        run: |
-          ln -s "$(command -v clang-format-21)" "$RUNNER_TEMP/clang-format"
-          PATH="$RUNNER_TEMP:$PATH" make check-format
+        run: make CLANG_FORMAT=clang-format-21 check-format
 
   unit-tests:
     name: Unit tests
