@@ -27,9 +27,8 @@ def find_root_dir(s: str) -> str:
 PAN_ROOT = find_root_dir(sys.argv[0])
 ampere_dirs = ["src/ampere/python/xlat/src"]
 sys.path += [os.path.join(PAN_ROOT, x) for x in ampere_dirs]
-import gen_inst_perf_info
-
 import ampere.xlat
+import gen_inst_perf_info
 
 
 def read_xls(input_xls: str) -> List[dict]:

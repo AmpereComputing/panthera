@@ -50,7 +50,7 @@ let in rec {
     stable.parallel
     stable.pcre2
     stable.ruby
-    latest.ruff
+    unstable.ruff
     stable.valgrind
     stable.texliveFull # for compiler guide
   ];
