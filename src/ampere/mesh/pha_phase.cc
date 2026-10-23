@@ -9,7 +9,7 @@
 
 using namespace ampere::mesh;
 
-PHAPhase::CommandEntry::CommandEntry(PHATrackerEntry *entry)
+PHAPhase::CommandEntry::CommandEntry(PHATrackerEntry* entry)
     : entry(entry),
       snoop_status{entry->snoop_status},
       core_valid_at_init{entry->snoop_status.core_valid_as_set()},
@@ -24,7 +24,7 @@ PHAPhase::CommandEntry::CommandEntry(PHATrackerEntry *entry)
     update_cmd_state();
 }
 
-static bool invalidate_l3_copy_hint(MeshSnp snp, PHATrackerEntry *entry)
+static bool invalidate_l3_copy_hint(MeshSnp snp, PHATrackerEntry* entry)
 {
     if (entry->input.PHA == pha_fsm::PHA_t::Pmha)
         return false;
@@ -65,7 +65,7 @@ void PHAPhase::CommandEntry::update_cmd_state()
         state = CommandState::IDLE;
 }
 
-MeshSnp PHAPhase::gen_common_snp(CommandEntry &cmd, SnoopOpcode snp_opcode, const NodeId &snoop_node)
+MeshSnp PHAPhase::gen_common_snp(CommandEntry& cmd, SnoopOpcode snp_opcode, const NodeId& snoop_node)
 {
     MeshSnp snp = nullptr;
     auto snp_id = cmd.entry->id;
@@ -79,7 +79,7 @@ MeshSnp PHAPhase::gen_common_snp(CommandEntry &cmd, SnoopOpcode snp_opcode, cons
     return snp;
 }
 
-std::optional<MeshSnp> PHAPhase::fsm_snp_pst(CommandEntry &cmd)
+std::optional<MeshSnp> PHAPhase::fsm_snp_pst(CommandEntry& cmd)
 {
     MeshSnp snp = nullptr;
     auto pst = cmd.snoop_status.primary_snoop_target();
@@ -114,7 +114,7 @@ std::optional<MeshSnp> PHAPhase::fsm_snp_pst(CommandEntry &cmd)
     return snp;
 }
 
-std::optional<MeshSnp> PHAPhase::fsm_snp_stvec(CommandEntry &cmd)
+std::optional<MeshSnp> PHAPhase::fsm_snp_stvec(CommandEntry& cmd)
 {
     MeshSnp snp = nullptr;
     if (!cmd.entry->output.TxSnpOpcode)
@@ -166,7 +166,7 @@ std::optional<MeshSnp> PHAPhase::fsm_snp_stvec(CommandEntry &cmd)
     return snp;
 }
 
-std::optional<MeshSnp> PHAPhase::fsm_snp_stash(CommandEntry &cmd)
+std::optional<MeshSnp> PHAPhase::fsm_snp_stash(CommandEntry& cmd)
 {
     MeshSnp snp = nullptr;
     auto snp_id = cmd.entry->id;
@@ -197,7 +197,7 @@ bool PHAPhase::run()
     // Processing current command is complete, get next from queue
     if (cmd.state == CommandState::IDLE) {
         if (phase_command_in->can_take()) {
-            auto *entry = phase_command_in->take();
+            auto* entry = phase_command_in->take();
             cmd = CommandEntry{entry};
         } else
             return false;
@@ -244,7 +244,7 @@ bool PHAPhase::run()
     return cmd.state != CommandState::IDLE;
 }
 
-void PHAPhase::dump(std::ostream &os) const
+void PHAPhase::dump(std::ostream& os) const
 {
     os << "= " << name() << " ===================================" << std::endl;
     os << "| Tracker ID | Phase State | SnpOpcode |" << std::endl;

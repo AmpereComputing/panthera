@@ -20,7 +20,7 @@ struct PatternsBenchmark : public BenchmarkWithSetup,
     size_t steps;
     size_t ops;
     size_t size;
-    T *data;
+    T* data;
     PatternsBenchmark()
     {
         std::tie(step, steps, ops) = GetParam();
@@ -76,7 +76,7 @@ TEST_P(CharArrayPatternBenchmark, StrideBackwards)
 }
 
 template<typename T>
-std::string param_names(const testing::TestParamInfo<typename T::ParamType> &info)
+std::string param_names(const testing::TestParamInfo<typename T::ParamType>& info)
 {
     return fmt::format(
         "step{}Xsteps{}Xops{}", std::get<0>(info.param), std::get<1>(info.param), std::get<2>(info.param));

@@ -5,7 +5,7 @@
 
 #include "ampere/tools/memory_tools/mem_analyzer.h"
 
-int main(int argc, char const **argv)
+int main(int argc, char const** argv)
 {
     try {
         ampere::tools::memory_tools::MemAnalyzer memAnalyzer(argc, argv);
@@ -20,7 +20,7 @@ int main(int argc, char const **argv)
         }
 
         memAnalyzer.StatsOutput();
-    } catch (const std::exception &e) {
+    } catch (const std::exception& e) {
         std::cout << "Exiting: " << e.what() << std::endl;
     }
 

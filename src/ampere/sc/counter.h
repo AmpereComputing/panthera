@@ -87,10 +87,10 @@ public:
 
     void operator-=(int64_t n) { (*this) += -n; }
 
-    bool operator<(const SaturatingCounter &other) const { return get_value() < other.get_value(); }
-    bool operator>(const SaturatingCounter &other) const { return get_value() > other.get_value(); }
-    bool operator==(const SaturatingCounter &other) const { return get_value() == other.get_value(); }
-    bool operator!=(const SaturatingCounter &other) const { return get_value() != other.get_value(); }
+    bool operator<(const SaturatingCounter& other) const { return get_value() < other.get_value(); }
+    bool operator>(const SaturatingCounter& other) const { return get_value() > other.get_value(); }
+    bool operator==(const SaturatingCounter& other) const { return get_value() == other.get_value(); }
+    bool operator!=(const SaturatingCounter& other) const { return get_value() != other.get_value(); }
 
 private:
     int64_t min;

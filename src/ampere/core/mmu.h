@@ -54,8 +54,8 @@ class MMU : public Module
     CreditPool walk_fsms{"walk_fsms"};
 
 public:
-    explicit MMU(const sc_core::sc_module_name &name);
-    MMU(const sc_core::sc_module_name &name, unsigned load_pipes, unsigned sta_pipes);
+    explicit MMU(const sc_core::sc_module_name& name);
+    MMU(const sc_core::sc_module_name& name, unsigned load_pipes, unsigned sta_pipes);
     bool run() override;
 
     // external ports
@@ -126,42 +126,42 @@ private:
     std::vector<unsigned> allocation_priority;
 
     /* Page walk handling */
-    void init_walk_fsm(OTBEntry &entry);
-    bool check_walk_done(OTBEntry &entry);
-    bool do_walk_stage(OTBEntry &entry);
+    void init_walk_fsm(OTBEntry& entry);
+    bool check_walk_done(OTBEntry& entry);
+    bool do_walk_stage(OTBEntry& entry);
 
-    MRU &select_mru(bool is_instruction) { return is_instruction && separate_mru ? imru : dmru; }
+    MRU& select_mru(bool is_instruction) { return is_instruction && separate_mru ? imru : dmru; }
 
-    void generate_response(OTBEntry &entry);
+    void generate_response(OTBEntry& entry);
     void do_s1tpc_lookups();
     void do_tlb_lookups();
     void do_invalidation();
     void handle_flush();
     void do_walks();
 
-    void accept_requests(InOpt<MMUReq> &mmu_request, OutOpt<MMUAck> &mmu_ack);
+    void accept_requests(InOpt<MMUReq>& mmu_request, OutOpt<MMUAck>& mmu_ack);
     void process_requests();
-    bool process_request(const MMUReq &mmureq, OutOpt<MMUAck> &mmu_ack);
+    bool process_request(const MMUReq& mmureq, OutOpt<MMUAck>& mmu_ack);
     void accept_invalidate_requests();
     void accept_pte_responses();
 
-    bool schedule_tlb_lookup(OTBEntry &otbentry);
+    bool schedule_tlb_lookup(OTBEntry& otbentry);
     void schedule_tlb_lookups();
     void schedule_tlb_invalidations();
-    bool schedule_walk(OTBEntry &otbentry);
+    bool schedule_walk(OTBEntry& otbentry);
     void schedule_walks();
 
     void send_pte_fetches();
-    void send_responses(std::deque<uint64_t> &response_queue, OutOpt<MMUResp> &mmu_response);
+    void send_responses(std::deque<uint64_t>& response_queue, OutOpt<MMUResp>& mmu_response);
 
     void collect_pmu_data();
 
-    void dump(std::ostream &) const override;
+    void dump(std::ostream&) const override;
 
     void end_of_elaboration() override;
 
-    TranslationContext context(const MMUReq &req) const;
-    Translation translation(const OTBEntry &otb_entry) const;
+    TranslationContext context(const MMUReq& req) const;
+    Translation translation(const OTBEntry& otb_entry) const;
 };
 
 } // namespace ampere::core

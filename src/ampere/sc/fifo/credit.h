@@ -27,20 +27,20 @@ protected:
         C credit;
     };
 
-    const Clock &clock;
+    const Clock& clock;
     unsigned credits;
     T return_latency;
     boost::circular_buffer<Return> credit_return;
 
 public:
-    QueueCreditsBase(const Clock &clock, size_t capacity, T return_latency)
+    QueueCreditsBase(const Clock& clock, size_t capacity, T return_latency)
         : clock(clock), credits(capacity), return_latency(return_latency), credit_return(return_latency + capacity)
     {
     }
 
     void add(C credit) { credit_return.push_back({this->clock.get_cycle() + this->return_latency, std::move(credit)}); }
 
-    bool return_ready(const Return &entry) const { return entry.ready <= clock.get_cycle(); }
+    bool return_ready(const Return& entry) const { return entry.ready <= clock.get_cycle(); }
 };
 
 template<typename C>
@@ -53,13 +53,13 @@ protected:
         C credit;
     };
 
-    const Clock &clock;
+    const Clock& clock;
     unsigned credits;
     sc_core::sc_time return_latency;
     std::deque<Return> credit_return;
 
 public:
-    QueueCreditsBase(const Clock &clock, size_t capacity, sc_core::sc_time return_latency)
+    QueueCreditsBase(const Clock& clock, size_t capacity, sc_core::sc_time return_latency)
         : clock(clock), credits(capacity), return_latency(return_latency)
     {
     }
@@ -71,14 +71,14 @@ public:
         credit_return.emplace_back(ready_time, std::move(credit));
     }
 
-    bool return_ready(const Return &entry) const { return entry.ready <= sc_core::sc_time_stamp().value(); }
+    bool return_ready(const Return& entry) const { return entry.ready <= sc_core::sc_time_stamp().value(); }
 };
 
 template<typename C = size_t, typename T = Cycle>
 class QueueCredits : public QueueCreditsBase<C, T>
 {
 public:
-    QueueCredits(const Clock &clock, size_t capacity, T return_latency)
+    QueueCredits(const Clock& clock, size_t capacity, T return_latency)
         : QueueCreditsBase<C>(clock, capacity, return_latency)
     {
     }
@@ -128,14 +128,14 @@ class QueueCredits<Credit, T> : public QueueCreditsBase<Credit, T>
     bool release_at_end{true};
 
 public:
-    QueueCredits(const Clock &clock, size_t capacity, T return_latency, bool release_at_end = true)
+    QueueCredits(const Clock& clock, size_t capacity, T return_latency, bool release_at_end = true)
         : QueueCreditsBase<Credit, T>(clock, capacity, return_latency), release_at_end(release_at_end)
     {
     }
 
     ~QueueCredits()
     {
-        for (auto &item : this->credit_return)
+        for (auto& item : this->credit_return)
             item.credit.release();
     }
 

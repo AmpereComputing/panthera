@@ -16,10 +16,10 @@ public:
     Param<bool> prefetch_favor_high_priority{
         "prefetch_favor_high_priority", "New prefetch buffer management algorithm for Ripley", false};
 
-    RequestQueuePrefetch(const sc_core::sc_module_name &name,
+    RequestQueuePrefetch(const sc_core::sc_module_name& name,
                          l2::RequestQueueName queue_name,
                          int depth,
-                         Prefetcher<MemReq> *prefetcher,
+                         Prefetcher<MemReq>* prefetcher,
                          unsigned capacity)
         : RequestQueue(name, queue_name, depth), prefetcher{prefetcher}
     {
@@ -31,11 +31,11 @@ public:
     void insert(Op op);
     ScheduledOp schedule(ScheduleCheck okay_to_schedule) override;
 
-    void dump(std::ostream &os) const override;
+    void dump(std::ostream& os) const override;
 
 private:
     Cycle first_cycle{-1};
-    Prefetcher<MemReq> *prefetcher;
+    Prefetcher<MemReq>* prefetcher;
 
     using Buffer = boost::circular_buffer<std::optional<Op>>;
 
@@ -46,6 +46,6 @@ private:
     Buffer::iterator get_write_location();
     Buffer::iterator get_first_valid_entry();
 
-    int request_priority(const MemReq &req) const;
+    int request_priority(const MemReq& req) const;
 };
 } // namespace ampere::core::l2

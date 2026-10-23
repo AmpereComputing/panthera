@@ -12,7 +12,7 @@
 
 namespace ampere::core {
 
-LSUCacheConflicts::LSUCacheConflicts(L1DCache &cache, size_t load_pipes)
+LSUCacheConflicts::LSUCacheConflicts(L1DCache& cache, size_t load_pipes)
     : cache(cache), previous_load_accesses(load_pipes), previous_load_bank_accesses(load_pipes * 8)
 {
     AMPERE_ASSERT_ERROR(
@@ -38,7 +38,7 @@ void LSUCacheConflicts::reset()
 
     if (back_to_back_any_way_bank) {
         for (auto [port, access] : load_accesses) {
-            const auto &[addr, size] = access;
+            const auto& [addr, size] = access;
             unsigned banks = banks_to_read_aligned(addr, size);
             for (unsigned b = offset_to_bank(addr), i = 0; i < banks; b = (b + 1) % banks, ++i)
                 previous_load_bank_accesses[banks * port + b] = access;
@@ -106,10 +106,10 @@ bool LSUCacheConflicts::same_byte_in_set_bank_check(const VirtAddr va1,
 bool LSUCacheConflicts::is_read_read_chunk_conflict(VirtAddr virt_addr,
                                                     unsigned size,
                                                     unsigned dl1_port,
-                                                    const std::vector<PortAccess> &inflights) const
+                                                    const std::vector<PortAccess>& inflights) const
 {
     if (enable_read_read_chunk_conflicts) {
-        for (const auto &access : inflights) {
+        for (const auto& access : inflights) {
             if ((duplicate_loads_allowed && virt_addr.same_cache_line(access.addr))
                 || (duplicate_exact_loads_allowed && virt_addr == access.addr && size == access.size))
                 continue;
@@ -130,10 +130,10 @@ bool LSUCacheConflicts::is_read_read_chunk_conflict(VirtAddr virt_addr,
 bool LSUCacheConflicts::is_write_read_chunk_bank_conflict(VirtAddr virt_addr,
                                                           unsigned size,
                                                           unsigned dl1_port,
-                                                          const std::vector<Access> &inflights) const
+                                                          const std::vector<Access>& inflights) const
 {
     if (enable_write_read_chunk_bank_conflicts) {
-        for (const auto &[addr, memsize] : inflights) {
+        for (const auto& [addr, memsize] : inflights) {
             if (threecyc_conflict) {
                 if (dl1_port == 0) {
                     // Port 0: conflict if writing same byte that load is reading AND address[13:7] matches
@@ -157,7 +157,7 @@ bool LSUCacheConflicts::same_set_any_way(VirtAddr set_addr, VirtAddr way_addr, P
 }
 
 void LSUCacheConflicts::load_cache_read(
-    const ConstUop &uop, VirtAddr virt_addr, unsigned datasize, unsigned dl1_port, const Conflicts &conflicts)
+    const ConstUop& uop, VirtAddr virt_addr, unsigned datasize, unsigned dl1_port, const Conflicts& conflicts)
 {
     // Software prefetches don't read the DL1 so they don't conflict with anything
     if (uop->is_sw_prefetch())
@@ -193,7 +193,7 @@ LSUCacheConflicts::BackToBack LSUCacheConflicts::is_back_to_back_cache_access(Vi
                 used = banks_read;
         } else if (datasize > 0) {
             for (unsigned b = offset_to_bank(virt_addr), i = 0; i < banks_read; b = (b + 1) % banks, ++i) {
-                const auto &previous_bank_addr = previous_load_bank_accesses[banks * dl1_port + b].addr;
+                const auto& previous_bank_addr = previous_load_bank_accesses[banks * dl1_port + b].addr;
                 auto bank_addr_offset = bank_offset(virt_addr, b);
                 auto previous_bank_addr_offset = bank_offset(previous_bank_addr, b);
                 if (bank_addr_offset == previous_bank_addr_offset
@@ -208,7 +208,7 @@ LSUCacheConflicts::BackToBack LSUCacheConflicts::is_back_to_back_cache_access(Vi
 }
 
 LSUCacheConflicts::Conflicts LSUCacheConflicts::load_cache_conflicts(
-    const ConstUop &uop, VirtAddr virt_addr, PhysAddr phys_addr, unsigned datasize, unsigned dl1_port)
+    const ConstUop& uop, VirtAddr virt_addr, PhysAddr phys_addr, unsigned datasize, unsigned dl1_port)
 {
     Conflicts conflicts;
 
@@ -258,7 +258,7 @@ bool LSUCacheConflicts::same_byte_in_block(uint64_t line_bytes)
     return false;
 }
 
-bool LSUCacheConflicts::can_load_combine(unsigned dl1_port, const Access &access)
+bool LSUCacheConflicts::can_load_combine(unsigned dl1_port, const Access& access)
 {
     auto this_first_byte = access.addr;
     auto access_range = access;
@@ -267,7 +267,7 @@ bool LSUCacheConflicts::can_load_combine(unsigned dl1_port, const Access &access
     auto [start, end] = load_accesses.equal_range(dl1_port);
 
     for (auto it = start; it != end; ++it) {
-        const auto &prev_access = it->second;
+        const auto& prev_access = it->second;
         access_range.expand(prev_access);
 
         if (!*combine_within || *combine_within > BLOCK_SIZE) {
@@ -291,7 +291,7 @@ bool LSUCacheConflicts::can_load_combine(unsigned dl1_port, const Access &access
     return can_combine;
 }
 
-bool LSUCacheConflicts::refills_participate_in_conflicts(const L2RefillArbitration &refills) const
+bool LSUCacheConflicts::refills_participate_in_conflicts(const L2RefillArbitration& refills) const
 {
     return ((enable_refill_tag_conflict || enable_fill_read_chunk_bank_conflicts)
             && (spec_fills_cause_conflicts || refills.guaranteed()));
@@ -331,7 +331,7 @@ bool LSUCacheConflicts::try_eviction(VirtAddr virt_set_addr)
 
 void LSUCacheConflicts::store_retired(VirtAddr virt_addr, unsigned datasize)
 {
-    for (auto &port : previous_load_accesses) {
+    for (auto& port : previous_load_accesses) {
         auto [addr, size] = port;
         if (address_range_a_intersects_b(addr, size, virt_addr, datasize, 1))
             port = {};

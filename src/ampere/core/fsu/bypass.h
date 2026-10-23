@@ -40,7 +40,7 @@ struct fsu_producer_unit
     uint8_t unit_suffix;
     bool dest_no_unrounded_bypass;
 
-    static fsu_producer_unit from_uop(const ConstUop &uop)
+    static fsu_producer_unit from_uop(const ConstUop& uop)
     {
         auto unit = uop->fsu_unit_producing();
         AMPERE_ASSERT(
@@ -57,7 +57,7 @@ struct fsu_consumer_src
     uint8_t src;
     archx::FsuSrcType src_type;
 
-    static fsu_consumer_src from_uop(const ConstUop &uop, uint8_t source)
+    static fsu_consumer_src from_uop(const ConstUop& uop, uint8_t source)
     {
         auto unit = uop->fsu_unit();
         AMPERE_ASSERT(
@@ -101,39 +101,39 @@ class FSUBypassDefinition
 
     class Unit
     {
-        static void normalize_bypass(bypass_array &bypass, const bypass_array &defaults);
-        static void dump_bypass_array(std::ostream &os, const bypass_array &bypass);
+        static void normalize_bypass(bypass_array& bypass, const bypass_array& defaults);
+        static void dump_bypass_array(std::ostream& os, const bypass_array& bypass);
 
         bypass_array defaults{};
         std::map<uint8_t, bypass_array> sources;
         std::map<uint8_t, bypass_array> suffixes;
 
     public:
-        void add(const json &j);
+        void add(const json& j);
         void finalize();
 
         bool level_exists(FSUBypassLevel level) const;
         uint8_t bypass_latency(uint8_t producer_unit_suffix, FSUBypassLevel level, uint8_t consumer_source) const;
 
-        void dump(std::ostream &os) const;
+        void dump(std::ostream& os) const;
 
-        void dump_matrix_header_portion(std::ostream &os, archx::FsuUnit unit) const;
-        void dump_matrix_row_portion(std::ostream &os, FSUBypassLevel level) const;
+        void dump_matrix_header_portion(std::ostream& os, archx::FsuUnit unit) const;
+        void dump_matrix_row_portion(std::ostream& os, FSUBypassLevel level) const;
     };
 
     std::array<Unit, util::enum_size<archx::FsuUnit>()> units;
     std::array<std::bitset<util::enum_size<archx::FsuUnit>()>, util::enum_size<archx::FsuUnit>()> locality;
 
     bool is_local(archx::FsuUnit from, archx::FsuUnit to) const;
-    FSUBypassLevel bypass_level(const fsu_producer_unit &producer, const fsu_consumer_src &consumer) const;
+    FSUBypassLevel bypass_level(const fsu_producer_unit& producer, const fsu_consumer_src& consumer) const;
 
 public:
-    uint8_t bypass_latency(const fsu_producer_unit &producer, const fsu_consumer_src &consumer) const;
+    uint8_t bypass_latency(const fsu_producer_unit& producer, const fsu_consumer_src& consumer) const;
 
-    void dump(std::ostream &os) const;
-    void dump_matrix(std::ostream &os) const;
+    void dump(std::ostream& os) const;
+    void dump_matrix(std::ostream& os) const;
 
-    friend void from_json(const json &j, FSUBypassDefinition &definition);
+    friend void from_json(const json& j, FSUBypassDefinition& definition);
 };
 
 } // namespace ampere::core

@@ -24,7 +24,7 @@ struct VerifiedValue
 
 template<typename T>
 using param_value_reference_type =
-    std::conditional_t<std::is_standard_layout_v<T> && std::is_trivial_v<T> && !std::is_pointer_v<T>, T, const T &>;
+    std::conditional_t<std::is_standard_layout_v<T> && std::is_trivial_v<T> && !std::is_pointer_v<T>, T, const T&>;
 
 template<typename T>
 class Value : public VerifiedValue

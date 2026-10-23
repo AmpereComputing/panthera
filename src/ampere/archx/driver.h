@@ -25,7 +25,7 @@ public:
      * dynamic instruction stream along with whether the current instruction is
      * a taken branch, and advance driver's pointer to the next instruction
      * (therefore, can only be called once for each instruction). */
-    virtual ProgramCounter next_pc(bool *is_taken_branch = nullptr) = 0;
+    virtual ProgramCounter next_pc(bool* is_taken_branch = nullptr) = 0;
 
     /* If the supplied PC matches that of the next instruction in the
      * right-path dynamic instruction stream, return the corresponding
@@ -62,14 +62,14 @@ public:
     virtual uint64_t committed_id() const = 0;
     // interface for returning arbitrary stats to modules that can emit events.
     // Used for emulation validation testing
-    virtual uint64_t validation(const std::string &key [[maybe_unused]]) const { return 0; }
+    virtual uint64_t validation(const std::string& key [[maybe_unused]]) const { return 0; }
 };
 
 // Dummy driver purely as a placeholder or for testing purposes
 class DummyDriver : public Driver
 {
 public:
-    ProgramCounter next_pc(bool *is_taken_branch [[maybe_unused]] = nullptr) override { return {}; }
+    ProgramCounter next_pc(bool* is_taken_branch [[maybe_unused]] = nullptr) override { return {}; }
     std::shared_ptr<Instruction> fetch(ProgramCounter pc [[maybe_unused]]) override { return nullptr; }
     void recover(inum_t id [[maybe_unused]]) override {}
     void commit(std::shared_ptr<Instruction> instruction [[maybe_unused]]) override {}

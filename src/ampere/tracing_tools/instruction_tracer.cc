@@ -82,19 +82,19 @@ struct TracerInfo
     uint64_t initial_instruction_count{0};                 // offset from traced_instructions
     uint64_t initial_trigger_stop_after_pc_occurrences{0}; // offset from trigger_stop_after_pc_occurrences
     bool sve_mode{false};
-    const char *type_str() const { return Tracer::type_str(type); }
+    const char* type_str() const { return Tracer::type_str(type); }
 };
 
 /* The following block of variables are all set from arguments, and should not
  * be otherwise modified */
-static const char *trace_filename_base = "trace";
+static const char* trace_filename_base = "trace";
 static bool trace_is = true;
 static bool trace_elf = false;
 static uint64_t max_traces = 1;
 static bool profile_el1 = false;
 static bool skip_async = false;
 static bool profile_children = false;
-static char *profile_comm = nullptr;
+static char* profile_comm = nullptr;
 static bool waiting_for_profile_comm = true;
 std::set<uint64_t> profiling_pids; // exception to the rule, can be modified by perf semihosting
 static bool profile_all_pids = false;
@@ -109,8 +109,8 @@ static uint32_t icache_filter_size_bytes = 32768;
 static uint64_t elf_section_span = 1024;
 std::uint32_t sve_agen_debug = 0;
 
-static const char *bbv_gen_log = nullptr;
-static const char *checkpoint_tag = nullptr;
+static const char* bbv_gen_log = nullptr;
+static const char* checkpoint_tag = nullptr;
 static bool force_stop_trigger = true;
 
 /* Triggers to start tracing (transition to WARMING_OFFLINE) */
@@ -161,8 +161,8 @@ static uint64_t last_trace_watched_instructions =
 static uint64_t traced_instructions = 1; // number of instructions which have been executed while tracers.size() > 0 in
                                          // the traced PID(s)/EL(s). Start counting at 1 to allow 0 to mean 'unset'
 static uint64_t trace_number = 0;
-static Context *context = nullptr;
-static tracer::QEMUStateAccessor *stateaccessor = nullptr;
+static Context* context = nullptr;
+static tracer::QEMUStateAccessor* stateaccessor = nullptr;
 static std::vector<struct TracerInfo> tracers;
 static bool ignoring_async = false;
 static bool resuming_from_async = false;
@@ -333,12 +333,12 @@ inline bool trigger_set(trigger trigger_value, bool instruction_set)
     return trigger_value != INSTRUCTION || instruction_set;
 }
 
-bool parse_args(int argc, char **argv)
+bool parse_args(int argc, char** argv)
 {
-    char *endptr;
+    char* endptr;
     for (int i = 0; i < argc; i++) {
-        char *opt = argv[i];
-        g_autofree char **tokens = g_strsplit(opt, "=", 2);
+        char* opt = argv[i];
+        g_autofree char** tokens = g_strsplit(opt, "=", 2);
         if (g_strcmp0(tokens[0], "trace-filename-base") == 0) {
             trace_filename_base = strdup(tokens[1]);
             if (!trace_filename_base) {
@@ -734,7 +734,7 @@ void update_tracing_status()
     next_instrcount_event.reset();
     next_pc_stop_event.reset();
 
-    for (auto &t : tracers) {
+    for (auto& t : tracers) {
         if (t.stopping_tracing) {
             continue;
         }
@@ -823,7 +823,7 @@ void update_tracing_status()
  */
 void handle_tracing_transition()
 {
-    for (auto &t : tracers) {
+    for (auto& t : tracers) {
         tracing_state next_state = t.state;
 
         if (t.starting_tracing || t.stopping_tracing)
@@ -942,7 +942,7 @@ void handle_tracing_transition()
 
     // Remove any stopped tracers from the vector
     auto tmp_end =
-        std::remove_if(tracers.begin(), tracers.end(), [](const TracerInfo &t) { return t.stopping_tracing; });
+        std::remove_if(tracers.begin(), tracers.end(), [](const TracerInfo& t) { return t.stopping_tracing; });
     tracers.erase(tmp_end, tracers.end());
 
     // Update the global tracing flags
@@ -1045,7 +1045,7 @@ void start_tracing()
     update_tracing_status();
 }
 
-void tracer_start_tracing(struct TracerInfo &tracer)
+void tracer_start_tracing(struct TracerInfo& tracer)
 {
     logf("Starting tracing {} using {}Tracer ({} total, {} watched instructions)",
          tracer.id,
@@ -1067,7 +1067,7 @@ void tracer_start_tracing(struct TracerInfo &tracer)
         tracer.starting_tracing = false;
         tracer.tracing = true;
         tracer.tracer->record_initial_state();
-    } catch (std::runtime_error &e) {
+    } catch (std::runtime_error& e) {
         log("Failed to start tracing %s with exception %s\n", tracer.id.c_str(), e.what());
         tracer.stopping_tracing = true;
         handle_tracing_transition();
@@ -1097,7 +1097,7 @@ void stop_plugin()
             watched_instructions);
     }
     // Finalize and clean up tracers
-    for (auto &t : tracers) {
+    for (auto& t : tracers) {
         if (t.tracing) {
             if (t.state == MEASURING) {
                 log("Stopping measurement for %s at plugin stop-time.\n", t.id.c_str());
@@ -1127,14 +1127,14 @@ uint64_t perf_semihosting_callback(uint16_t svc, unsigned int cpu_index)
 {
     struct perf_event_header header;
     uint64_t x0;
-    uint8_t *ptr;
+    uint8_t* ptr;
 
     if (!qemu_plugin_read_reg64(&x0, 0)) {
         log("Failed to read x0 for perf semihosting call\n");
         exit(0);
     }
 
-    if (qemu_plugin_read_memory(x0, (uint8_t *)&header, sizeof(header))) {
+    if (qemu_plugin_read_memory(x0, (uint8_t*)&header, sizeof(header))) {
         log("Failed to read semihosting perf_event_header\n");
         exit(0);
     }
@@ -1144,7 +1144,7 @@ uint64_t perf_semihosting_callback(uint16_t svc, unsigned int cpu_index)
         && header.type != PERF_RECORD_MMAP2)
         goto out;
 
-    ptr = (uint8_t *)malloc(header.size);
+    ptr = (uint8_t*)malloc(header.size);
     if (!ptr) {
         log("Failed to allocate memory for semihosting perf event body\n");
         exit(0);
@@ -1156,7 +1156,7 @@ uint64_t perf_semihosting_callback(uint16_t svc, unsigned int cpu_index)
     }
 
     if (header.type == PERF_RECORD_COMM) {
-        struct perf_comm_event *evt = (struct perf_comm_event *)ptr;
+        struct perf_comm_event* evt = (struct perf_comm_event*)ptr;
 
         if (debug_mode) {
             log("PID %" PRIu32 " spawned with command name: \"%s\" (%" PRIu64 " total, %" PRIu64
@@ -1173,7 +1173,7 @@ uint64_t perf_semihosting_callback(uint16_t svc, unsigned int cpu_index)
             waiting_for_profile_comm = false;
         }
     } else if (header.type == PERF_RECORD_EXIT) {
-        struct perf_task_event *evt = (struct perf_task_event *)ptr;
+        struct perf_task_event* evt = (struct perf_task_event*)ptr;
         if (debug_mode) {
             log("PID %" PRIu32 " exited (%" PRIu64 " total, %" PRIu64 " watched instructions)\n",
                 evt->tid,
@@ -1192,7 +1192,7 @@ uint64_t perf_semihosting_callback(uint16_t svc, unsigned int cpu_index)
             }
         }
     } else if (profile_children && header.type == PERF_RECORD_FORK) {
-        struct perf_task_event *evt = (struct perf_task_event *)ptr;
+        struct perf_task_event* evt = (struct perf_task_event*)ptr;
         if (debug_mode) {
             log("PID %" PRIu32 " forked from %" PRIu32 " (%" PRIu64 " total, %" PRIu64 " watched instructions)\n",
                 evt->tid,
@@ -1205,7 +1205,7 @@ uint64_t perf_semihosting_callback(uint16_t svc, unsigned int cpu_index)
             log("Profiling newly-forked PID %" PRIu32 " (child of %" PRIu32 ")\n", evt->tid, evt->ptid);
         }
     } else if (debug_mode && header.type == PERF_RECORD_MMAP2) {
-        struct perf_mmap2_event *evt = (struct perf_mmap2_event *)ptr;
+        struct perf_mmap2_event* evt = (struct perf_mmap2_event*)ptr;
         log("PID %" PRIu32 " mmapped %s at address 0x%" PRIx64 ", len: %" PRIu64 ", pgoff: %" PRIu64 " (%" PRIu64
             " total, %" PRIu64 " watched instructions)\n",
             evt->tid,
@@ -1285,7 +1285,7 @@ static void record_src_pred(uint8_t r)
 static void record_src_vfp(uint8_t v, unsigned first_vfp_regidx)
 {
     std::array<uint8_t, ampere::archx::MAXVL> value;
-    GByteArray *regval;
+    GByteArray* regval;
     unsigned read_bytes;
 
     regval = g_byte_array_new();
@@ -1320,11 +1320,11 @@ bool is_load_store(tracer::Instruction inst)
     return is_instr.is_load() || is_instr.is_store();
 }
 
-void before_insn_cb(unsigned int cpu_index, void *udata)
+void before_insn_cb(unsigned int cpu_index, void* udata)
 {
     uint64_t pc = (uint64_t)udata;
     uint32_t encoding;
-    if (qemu_plugin_read_memory(pc, (uint8_t *)&encoding, 4)) {
+    if (qemu_plugin_read_memory(pc, (uint8_t*)&encoding, 4)) {
         log("before_insn_cb failed to read from 0x%" PRIx64 "\n", pc);
     }
 
@@ -1438,7 +1438,7 @@ void before_insn_cb(unsigned int cpu_index, void *udata)
 
             /* Write previous instruction and state changes before clearing them */
             bool error = false;
-            for (auto &t : tracers) {
+            for (auto& t : tracers) {
                 if (t.tracing) {
                     if (new_el && !resuming_from_async) {
                         if (!t.tracer->el_change((archx::EL)new_el.value(), el_update_type)) {
@@ -1593,7 +1593,7 @@ void before_insn_cb(unsigned int cpu_index, void *udata)
     context->before_insn(cpu_index, pc, encoding);
 
     if (starting_tracing) {
-        for (auto &t : tracers) {
+        for (auto& t : tracers) {
             if (t.starting_tracing && total_instruction_count > t.starting_tracing_at) {
                 tracer_start_tracing(t);
             }
@@ -1602,7 +1602,7 @@ void before_insn_cb(unsigned int cpu_index, void *udata)
     }
 }
 
-static void mem_cb(unsigned int cpu_index, qemu_plugin_meminfo_t meminfo, uint64_t va, void *udata)
+static void mem_cb(unsigned int cpu_index, qemu_plugin_meminfo_t meminfo, uint64_t va, void* udata)
 {
 #ifndef NDEBUG
     uint64_t pc = (uint64_t)udata;
@@ -1617,7 +1617,7 @@ static void mem_cb(unsigned int cpu_index, qemu_plugin_meminfo_t meminfo, uint64
     unsigned size = 0x1 << size_shift;
     bool is_store = qemu_plugin_mem_is_store(meminfo);
 
-    struct qemu_plugin_hwaddr *hwaddr = qemu_plugin_get_hwaddr(meminfo, va);
+    struct qemu_plugin_hwaddr* hwaddr = qemu_plugin_get_hwaddr(meminfo, va);
     if (hwaddr) {
         uint64_t pa = qemu_plugin_hwaddr_phys_addr(hwaddr);
         bool is_io = qemu_plugin_hwaddr_is_io(hwaddr);
@@ -1639,7 +1639,7 @@ static void mem_cb(unsigned int cpu_index, qemu_plugin_meminfo_t meminfo, uint64
     }
 }
 
-void before_tb_cb(unsigned int cpu_index, void *udata)
+void before_tb_cb(unsigned int cpu_index, void* udata)
 {
     uint64_t num_insns = (uint64_t)udata;
 
@@ -1659,27 +1659,27 @@ void before_tb_cb(unsigned int cpu_index, void *udata)
     }
 }
 
-static void vcpu_tb_trans(qemu_plugin_id_t id, struct qemu_plugin_tb *tb)
+static void vcpu_tb_trans(qemu_plugin_id_t id, struct qemu_plugin_tb* tb)
 {
     size_t n = qemu_plugin_tb_n_insns(tb);
     size_t i;
 
     for (i = 0; i < n; i++) {
-        struct qemu_plugin_insn *insn = qemu_plugin_tb_get_insn(tb, i);
+        struct qemu_plugin_insn* insn = qemu_plugin_tb_get_insn(tb, i);
         uint64_t pc = qemu_plugin_insn_vaddr(insn);
-        uint32_t encoding = *((uint32_t *)qemu_plugin_insn_data(insn));
+        uint32_t encoding = *((uint32_t*)qemu_plugin_insn_data(insn));
 
         if (tracers.size() > 0 || context->needs_before_insn(id, pc, encoding)
             || ((start_trigger == HINT || stop_trigger == HINT) && IS_HINT(encoding, TRACE_HINT_NUM))
             || (start_trigger == PC && pc == trigger_start_after_pc)
             || (stop_trigger == PC && pc == trigger_stop_after_pc))
         {
-            qemu_plugin_register_vcpu_insn_exec_cb(insn, before_insn_cb, QEMU_PLUGIN_CB_R_REGS, (void *)pc);
+            qemu_plugin_register_vcpu_insn_exec_cb(insn, before_insn_cb, QEMU_PLUGIN_CB_R_REGS, (void*)pc);
         }
         if (tracing_instructions)
-            qemu_plugin_register_vcpu_mem_cb(insn, mem_cb, QEMU_PLUGIN_CB_NO_REGS, QEMU_PLUGIN_MEM_RW, (void *)pc);
+            qemu_plugin_register_vcpu_mem_cb(insn, mem_cb, QEMU_PLUGIN_CB_NO_REGS, QEMU_PLUGIN_MEM_RW, (void*)pc);
     }
-    qemu_plugin_register_vcpu_tb_exec_cb(tb, before_tb_cb, QEMU_PLUGIN_CB_NO_REGS, (void *)n);
+    qemu_plugin_register_vcpu_tb_exec_cb(tb, before_tb_cb, QEMU_PLUGIN_CB_NO_REGS, (void*)n);
 }
 
 bool checkpoint_context_init()
@@ -1688,7 +1688,7 @@ bool checkpoint_context_init()
     json jval;
     try {
         jval = json::parse(bbv_log_stream);
-    } catch (json::parse_error &e) {
+    } catch (json::parse_error& e) {
         log("Error parsing JSON from BBV generation log file: %s\n", e.what());
         return false;
     }
@@ -1715,7 +1715,7 @@ bool checkpoint_context_init()
     /* Discover and load up all of the PIDs that were profiled */
     if (settings.count("profile_pids")) {
         auto json_pids = settings["profile_pids"];
-        for (auto &pid : json_pids)
+        for (auto& pid : json_pids)
             profiling_pids.emplace(num_string(pid));
     } else {
         profiling_pids.emplace(num_string(settings["profile_pid"]));
@@ -1734,7 +1734,7 @@ bool checkpoint_context_init()
 
     bool context_initialized = false;
 
-    for (auto &ckpt : jval["checkpoints"]) {
+    for (auto& ckpt : jval["checkpoints"]) {
         if (!ckpt.count("context") || !ckpt.count("tag")) {
             log("Improperly formatted JSON checkpoint object\n");
             break;
@@ -1756,7 +1756,7 @@ bool checkpoint_context_init()
     return context_initialized;
 }
 
-static void plugin_exit(qemu_plugin_id_t id, void *p)
+static void plugin_exit(qemu_plugin_id_t id, void* p)
 {
     if (profile_comm && waiting_for_profile_comm) {
         logf("Failed to find profile command {}. Trace may be unsatisfactory", profile_comm);
@@ -1781,7 +1781,7 @@ void plugin_reset_callback(qemu_plugin_id_t id)
 }
 
 QEMU_PLUGIN_EXPORT
-int qemu_plugin_install(qemu_plugin_id_t id, const qemu_info_t *info, int argc, char **argv)
+int qemu_plugin_install(qemu_plugin_id_t id, const qemu_info_t* info, int argc, char** argv)
 {
     // Save ID at initialization-time, some later calls need it;
     plugin_id = id;

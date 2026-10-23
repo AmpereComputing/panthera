@@ -8,8 +8,7 @@
 
 extern void TEST_FUNC();
 
-int main(int argc, char** argv)
-{
+int main(int argc, char** argv) {
     take_sve_state_exception();
     hint_start_tracing();
     hint_start_online_warmup();

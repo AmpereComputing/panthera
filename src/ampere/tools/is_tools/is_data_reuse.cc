@@ -17,7 +17,7 @@ using namespace ampere;
 using namespace ampere::is;
 
 // Hacked version of is_validate.cc for analysis of data reuse
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
     int optll_size = 100;
     int optsl_size = 100;
@@ -270,7 +270,7 @@ int main(int argc, char *argv[])
     std::cout << "Store to load - instruction distance histogram" << std::endl;
     uint64_t counter = 0;
     // for (const auto &[key, count] : ls_idist) { //row of keys
-    for (const auto &item : ls_idist) { // row of keys
+    for (const auto& item : ls_idist) { // row of keys
         counter++;
         if (counter < ls_idist.size())
             std::cout << item.first << ",";
@@ -278,7 +278,7 @@ int main(int argc, char *argv[])
             std::cout << item.first << std::endl;
     }
     counter = 0;
-    for (const auto &item : ls_idist) { // row of counts
+    for (const auto& item : ls_idist) { // row of counts
         counter++;
         if (counter < ls_idist.size())
             std::cout << item.second << ",";
@@ -288,7 +288,7 @@ int main(int argc, char *argv[])
 
     std::cout << "Store to load - Store distance histogram" << std::endl;
     counter = 0;
-    for (const auto &item : ls_sdist) { // row of keys
+    for (const auto& item : ls_sdist) { // row of keys
         counter++;
         if (counter < ls_sdist.size())
             std::cout << item.first << ",";
@@ -296,7 +296,7 @@ int main(int argc, char *argv[])
             std::cout << item.first << std::endl;
     }
     counter = 0;
-    for (const auto &item : ls_sdist) { // row of counts
+    for (const auto& item : ls_sdist) { // row of counts
         counter++;
         if (counter < ls_sdist.size())
             std::cout << item.second << ",";
@@ -306,7 +306,7 @@ int main(int argc, char *argv[])
 
     std::cout << "Load to load - instruction distance histogram" << std::endl;
     counter = 0;
-    for (const auto &item : ll_idist) { // row of keys
+    for (const auto& item : ll_idist) { // row of keys
         counter++;
         if (counter < ll_idist.size())
             std::cout << item.first << ",";
@@ -314,7 +314,7 @@ int main(int argc, char *argv[])
             std::cout << item.first << std::endl;
     }
     counter = 0;
-    for (const auto &item : ll_idist) { // row of counts
+    for (const auto& item : ll_idist) { // row of counts
         counter++;
         if (counter < ll_idist.size())
             std::cout << item.second << ",";
@@ -324,7 +324,7 @@ int main(int argc, char *argv[])
 
     std::cout << "Load to load - load distance histogram" << std::endl;
     counter = 0;
-    for (const auto &item : ll_ldist) { // row of keys
+    for (const auto& item : ll_ldist) { // row of keys
         counter++;
         if (counter < ll_ldist.size())
             std::cout << item.first << ",";
@@ -332,7 +332,7 @@ int main(int argc, char *argv[])
             std::cout << item.first << std::endl;
     }
     counter = 0;
-    for (const auto &item : ll_ldist) { // row of counts
+    for (const auto& item : ll_ldist) { // row of counts
         counter++;
         if (counter < ll_ldist.size())
             std::cout << item.second << ",";

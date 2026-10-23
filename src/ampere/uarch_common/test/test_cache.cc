@@ -30,7 +30,7 @@ public:
     CLine() = default;
     explicit CLine(int id) : id(id) {}
     int id{0};
-    bool operator==(const CLine &other) const { return other.id == id; }
+    bool operator==(const CLine& other) const { return other.id == id; }
 };
 
 template<typename Addr, typename Value>

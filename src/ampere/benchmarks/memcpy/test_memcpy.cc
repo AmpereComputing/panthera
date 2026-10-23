@@ -17,8 +17,8 @@ namespace ampere::benchmarks {
 
 struct PatternsBenchmark : public BenchmarkWithSetup, public ::testing::WithParamInterface<std::tuple<size_t, bool>>
 {
-    char *data;
-    char *dest;
+    char* data;
+    char* dest;
     size_t size;
     bool dest_populated;
     PatternsBenchmark()
@@ -70,7 +70,7 @@ TEST_P(PatternsBenchmark, MemSet)
 }
 
 template<typename T>
-std::string param_names(const testing::TestParamInfo<typename T::ParamType> &info)
+std::string param_names(const testing::TestParamInfo<typename T::ParamType>& info)
 {
     if (std::get<1>(info.param))
         return fmt::format("size{}Xpopulated", std::get<0>(info.param));

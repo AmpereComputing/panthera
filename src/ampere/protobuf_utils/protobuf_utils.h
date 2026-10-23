@@ -9,17 +9,17 @@
 #pragma once
 
 namespace ampere {
-bool writeHeaderTo(uint32_t magic, uint32_t version, google::protobuf::io::ZeroCopyOutputStream *rawOutput);
-bool readHeaderFrom(google::protobuf::io::ZeroCopyInputStream *rawInput, uint32_t *magic, uint32_t *version);
-bool writeDelimitedTo(const google::protobuf::MessageLite &message,
-                      google::protobuf::io::ZeroCopyOutputStream *rawOutput);
-bool readDelimitedFrom(google::protobuf::io::ZeroCopyInputStream *rawInput,
-                       google::protobuf::MessageLite *message,
-                       bool *clean_eof);
+bool writeHeaderTo(uint32_t magic, uint32_t version, google::protobuf::io::ZeroCopyOutputStream* rawOutput);
+bool readHeaderFrom(google::protobuf::io::ZeroCopyInputStream* rawInput, uint32_t* magic, uint32_t* version);
+bool writeDelimitedTo(const google::protobuf::MessageLite& message,
+                      google::protobuf::io::ZeroCopyOutputStream* rawOutput);
+bool readDelimitedFrom(google::protobuf::io::ZeroCopyInputStream* rawInput,
+                       google::protobuf::MessageLite* message,
+                       bool* clean_eof);
 
-inline bool clearAndReadDelimitedFrom(google::protobuf::io::ZeroCopyInputStream *rawInput,
-                                      google::protobuf::MessageLite *message,
-                                      bool *clean_eof)
+inline bool clearAndReadDelimitedFrom(google::protobuf::io::ZeroCopyInputStream* rawInput,
+                                      google::protobuf::MessageLite* message,
+                                      bool* clean_eof)
 {
     message->Clear();
     return readDelimitedFrom(rawInput, message, clean_eof);

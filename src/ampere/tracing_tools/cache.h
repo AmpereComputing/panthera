@@ -58,7 +58,7 @@ public:
         if (index >= num_sets)
             throw std::logic_error("set index is larger than the number of sets");
         auto tag = this->calculate_tag(address);
-        auto &set = sets[index];
+        auto& set = sets[index];
         auto it = set.find(tag);
 
         if (it != set.end()) {
@@ -75,7 +75,7 @@ public:
         if (index >= num_sets)
             throw std::logic_error("set index is larger than the number of sets");
         auto tag = this->calculate_tag(address);
-        auto &set = sets[index];
+        auto& set = sets[index];
         auto it = set.find(tag);
 
         if (it != set.end()) {
@@ -91,7 +91,7 @@ public:
         set.insert_or_assign(tag, CacheContents{current_age++, code});
     }
 
-    bool append_to_memory_stream(ms::MemoryStreamWriter &mem_stream)
+    bool append_to_memory_stream(ms::MemoryStreamWriter& mem_stream)
     {
         struct MSContents
         {
@@ -103,15 +103,15 @@ public:
 
         // Insert each content into a multimap based on age to sort as we go
         for (uint64_t index = 0; index < sets.size(); index++) {
-            auto &set = sets[index];
-            for (auto &[tag, contents] : set) {
+            auto& set = sets[index];
+            for (auto& [tag, contents] : set) {
                 uint64_t pa = this->reconstruct_pa(tag, index);
                 l2c_contents.emplace(contents.age, MSContents{pa, contents.code, contents.modified});
             }
         }
 
         // Write out cache lines in order from LRU to MRU
-        for (auto &[age, contents] : l2c_contents) {
+        for (auto& [age, contents] : l2c_contents) {
             ms::Access ms_access;
 
             ms_access.set_type(contents.modified ? ms::Access_Type_WRITE : ms::Access_Type_READ);
@@ -144,7 +144,7 @@ protected:
 
     virtual uint64_t reconstruct_pa(uint64_t tag, uint64_t index) { return ((tag << set_bits) | index) << line_bits; }
 
-    Set::const_iterator find_victim(const Set &set) const
+    Set::const_iterator find_victim(const Set& set) const
     {
         auto victim = set.begin();
         for (auto it = set.begin(); it != set.end(); ++it) {

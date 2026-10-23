@@ -24,13 +24,13 @@ public:
     ArchState() : memory(), gp_registers(), vfp_registers(), pred_registers(), sysregs(), el(EL::EL0) {};
 
     uint64_t read(PhysAddr addr, size_t size = 8) const;
-    ArchState write(PhysAddr addr, const uint8_t *data, size_t size) const;
+    ArchState write(PhysAddr addr, const uint8_t* data, size_t size) const;
     ArchState write(PhysAddr addr, uint8_t value) const;
     ArchState write(PhysAddr addr, uint16_t value) const;
     ArchState write(PhysAddr addr, uint32_t value) const;
     ArchState write(PhysAddr addr, uint64_t value) const;
-    ArchState load_memory(std::istream &is) const;
-    ArchState load_elf(ELFIO::elfio &reader) const;
+    ArchState load_memory(std::istream& is) const;
+    ArchState load_elf(ELFIO::elfio& reader) const;
 
     // GPRs
     uint64_t read(LReg regno) const;

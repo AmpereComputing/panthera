@@ -20,14 +20,14 @@ using namespace boost::filesystem;
 class MemoryStreamWriterTest : public ::testing::Test
 {
 protected:
-    path test_file_name(const char *extension)
+    path test_file_name(const char* extension)
     {
-        const ::testing::TestInfo *const test_info = ::testing::UnitTest::GetInstance()->current_test_info();
+        const ::testing::TestInfo* const test_info = ::testing::UnitTest::GetInstance()->current_test_info();
         path p(test_info->name());
         p.replace_extension(extension);
         return p;
     }
-    google::protobuf::io::FileOutputStream *output_stream;
+    google::protobuf::io::FileOutputStream* output_stream;
 
     void TearDown() override
     {
@@ -38,7 +38,7 @@ protected:
 
 TEST_F(MemoryStreamWriterTest, testWrite)
 {
-    ms::MemoryStreamWriter *writer = new ms::MemoryStreamWriter(this->test_file_name("ms").string().c_str(), 1024, 512);
+    ms::MemoryStreamWriter* writer = new ms::MemoryStreamWriter(this->test_file_name("ms").string().c_str(), 1024, 512);
 
     ms::Control control;
     control.set_type(ms::Control_Type_START_MEMORY);
@@ -66,7 +66,7 @@ TEST_F(MemoryStreamWriterTest, testWrite)
     int fd = open(this->test_file_name("ms").string().c_str(), O_RDONLY);
     ASSERT_GT(fd, 2);
 
-    google::protobuf::io::FileInputStream *input_stream;
+    google::protobuf::io::FileInputStream* input_stream;
     input_stream = new google::protobuf::io::FileInputStream(fd);
 
     uint32_t magic, ms_version;
@@ -112,7 +112,7 @@ TEST_F(MemoryStreamWriterTest, testWrite)
 
 TEST_F(MemoryStreamWriterTest, testWriteXz)
 {
-    ms::MemoryStreamWriter *writer =
+    ms::MemoryStreamWriter* writer =
         new ms::MemoryStreamWriter(this->test_file_name("ms.xz").string().c_str(), 1024, 1024, true);
 
     ms::Access access;
@@ -132,7 +132,7 @@ TEST_F(MemoryStreamWriterTest, testWriteXz)
 
     delete writer;
 
-    ms::MemoryStreamReader *reader = new ms::MemoryStreamReader(test_file_name("ms.xz"));
+    ms::MemoryStreamReader* reader = new ms::MemoryStreamReader(test_file_name("ms.xz"));
 
     ASSERT_EQ(reader->version(), 4);
     ASSERT_EQ(reader->filter_dcache_size(), 1024);

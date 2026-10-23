@@ -277,9 +277,9 @@ TEST_F(QueueMovableTest, NonCopyableClearReturnsCreditsImmediately)
 
 struct QueueThingWithComplexClear
 {
-    int *called_ptr;
+    int* called_ptr;
     void fifo_clear() { ++*called_ptr; }
-    explicit QueueThingWithComplexClear(int *called) : called_ptr(called) {}
+    explicit QueueThingWithComplexClear(int* called) : called_ptr(called) {}
 };
 
 struct FifoClearQueueTest : QueueTestBase<QueueThingWithComplexClear>
@@ -355,7 +355,7 @@ TEST_F(QueueMidTest, PeekAtAllEntries)
 TEST_F(QueueMidTest, ClearIfSome)
 {
     tick();
-    queue.clear_if([](auto &e) { return e == 2112 || e == 4321; });
+    queue.clear_if([](auto& e) { return e == 2112 || e == 4321; });
     tick(3);
     EXPECT_TRUE(queue.can_take());
     EXPECT_EQ(queue.take(), 1234);
@@ -365,7 +365,7 @@ TEST_F(QueueMidTest, ClearIfSome)
 
 TEST_F(QueueMidTest, ClearIfIgnoresInSameCycle)
 {
-    queue.clear_if([](auto &e) { return e == 1234 || e == 4321; });
+    queue.clear_if([](auto& e) { return e == 1234 || e == 4321; });
     tick(3);
     queue.take();
     tick(2);

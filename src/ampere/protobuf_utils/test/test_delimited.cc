@@ -30,7 +30,7 @@ protected:
         ASSERT_EQ(0, unlink("example.es"));
         delete output_stream;
     }
-    google::protobuf::io::FileOutputStream *output_stream;
+    google::protobuf::io::FileOutputStream* output_stream;
 };
 
 TEST_F(DelimitedTest, testWriteDelimited)
@@ -54,7 +54,7 @@ TEST_F(DelimitedTest, testReadDelimited)
     ASSERT_TRUE(output_stream->Close());
 
     int fd = open("example.es", O_RDONLY);
-    google::protobuf::io::FileInputStream *input_stream;
+    google::protobuf::io::FileInputStream* input_stream;
     input_stream = new google::protobuf::io::FileInputStream(fd);
 
     example::Hello read_hello;

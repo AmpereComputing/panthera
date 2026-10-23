@@ -50,7 +50,7 @@ ArchState ArchState::write(PhysAddr addr, uint64_t value) const
     return state;
 }
 
-ArchState ArchState::write(PhysAddr addr, const uint8_t *data, size_t size) const
+ArchState ArchState::write(PhysAddr addr, const uint8_t* data, size_t size) const
 {
     ArchState state = *this;
 
@@ -60,13 +60,13 @@ ArchState ArchState::write(PhysAddr addr, const uint8_t *data, size_t size) cons
             state = std::move(state).write(addr, *data);
             written = 1;
         } else if (addr.extract_range(1, 0) || size < 4) {
-            state = std::move(state).write(addr, *(uint16_t *)data);
+            state = std::move(state).write(addr, *(uint16_t*)data);
             written = 2;
         } else if (addr.extract_range(2, 0) || size < 8) {
-            state = std::move(state).write(addr, *(uint32_t *)data);
+            state = std::move(state).write(addr, *(uint32_t*)data);
             written = 4;
         } else {
-            state = std::move(state).write(addr, *(uint64_t *)data);
+            state = std::move(state).write(addr, *(uint64_t*)data);
             written = 8;
         }
         size -= written;
@@ -76,7 +76,7 @@ ArchState ArchState::write(PhysAddr addr, const uint8_t *data, size_t size) cons
     return state;
 }
 
-ArchState ArchState::load_memory(std::istream &is) const
+ArchState ArchState::load_memory(std::istream& is) const
 {
     ArchState state = *this;
     std::vector<std::uint8_t> data;
@@ -85,11 +85,11 @@ ArchState ArchState::load_memory(std::istream &is) const
         std::uint64_t address;
         std::uint32_t size;
 
-        is.read((char *)&address, sizeof(address));
-        is.read((char *)&size, sizeof(size));
+        is.read((char*)&address, sizeof(address));
+        is.read((char*)&size, sizeof(size));
 
         data.resize(size);
-        is.read((char *)data.data(), size);
+        is.read((char*)data.data(), size);
 
         state = std::move(state).write(PhysAddr{address}, data.data(), size);
     }
@@ -97,10 +97,10 @@ ArchState ArchState::load_memory(std::istream &is) const
     return state;
 }
 
-ArchState ArchState::load_elf(ELFIO::elfio &reader) const
+ArchState ArchState::load_elf(ELFIO::elfio& reader) const
 {
     const uint64_t one = 1;
-    bool host_little_endian = (((uint8_t *)&one)[0] == 1);
+    bool host_little_endian = (((uint8_t*)&one)[0] == 1);
     bool elf_little_endian = (reader.get_encoding() == ELFDATA2LSB);
     ArchState state = *this;
 
@@ -108,19 +108,19 @@ ArchState ArchState::load_elf(ELFIO::elfio &reader) const
         throw std::runtime_error("Host and ELF byte order do not match");
 
     for (int i = 0; i < reader.segments.size(); ++i) {
-        const ELFIO::segment *seg = reader.segments[i];
+        const ELFIO::segment* seg = reader.segments[i];
         if (seg->get_type() != PT_LOAD)
             continue;
 
         state = std::move(state).write(
-            PhysAddr{seg->get_physical_address()}, (const uint8_t *)seg->get_data(), seg->get_memory_size());
+            PhysAddr{seg->get_physical_address()}, (const uint8_t*)seg->get_data(), seg->get_memory_size());
     }
     return state;
 }
 
 void ArchState::dump_memory() const
 {
-    for (auto &entry : memory)
+    for (auto& entry : memory)
         fmt::print("0x{:016x}: 0x{:016x}\n", entry.first, entry.second);
 }
 

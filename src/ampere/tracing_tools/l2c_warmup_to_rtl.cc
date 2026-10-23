@@ -12,7 +12,7 @@
 using namespace ampere::ms;
 using namespace ampere::tracer;
 
-int main(int argc, char **argv)
+int main(int argc, char** argv)
 {
     if (argc < 3) {
         std::cout << argv[0] << " [l2c warmup file] [l2c pav file]" << std::endl;

@@ -19,13 +19,13 @@ public:
     BSTracer(const std::string filename,
              const std::map<archx::SysReg, uint64_t> sysregs,
              const archx::EL el,
-             StateAccessor *stateaccessor)
+             StateAccessor* stateaccessor)
         : filename(filename), sysregs{sysregs}
     {
         writer = new bs::BranchStreamWriter(filename);
         assert(writer);
 
-        for (const auto &[sysreg, value] : sysregs)
+        for (const auto& [sysreg, value] : sysregs)
             sysreg_write(sysreg, value);
         el_change(el, ContextUpdateType::TRACING);
     }
@@ -90,7 +90,7 @@ public:
         return true;
     }
 
-    virtual bool instruction_exec(const Instruction &instruction, const ProgramCounter next_pc)
+    virtual bool instruction_exec(const Instruction& instruction, const ProgramCounter next_pc)
     {
         auto instr = archx::InstructionSimple(instruction.pc, instruction.opcode, next_pc);
 
@@ -115,7 +115,7 @@ public:
 
 private:
     std::string filename;
-    bs::BranchStreamWriter *writer = nullptr;
+    bs::BranchStreamWriter* writer = nullptr;
     std::map<SysReg, uint64_t> sysregs;
 };
 

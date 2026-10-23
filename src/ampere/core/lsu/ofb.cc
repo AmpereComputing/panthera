@@ -15,7 +15,7 @@
 
 namespace ampere::core {
 
-OFB::OFB(const sc_core::sc_module_name &name, size_t partitions)
+OFB::OFB(const sc_core::sc_module_name& name, size_t partitions)
     : Module(name), entries_allocated_per_partition(partitions, 0)
 {
 }
@@ -27,7 +27,7 @@ bool OFB::run()
     return true;
 }
 
-bool OFB::can_allocate(const L1PrefetchEntry &pfe) const
+bool OFB::can_allocate(const L1PrefetchEntry& pfe) const
 {
     bool has_alloc_bw = allocations_per_partition
                             // May not be necessarily correct, but handles cases where partitions != pipes
@@ -38,7 +38,7 @@ bool OFB::can_allocate(const L1PrefetchEntry &pfe) const
     return has_alloc_bw && can_allocate();
 }
 
-bool OFB::can_allocate(const ConstUop &uop) const
+bool OFB::can_allocate(const ConstUop& uop) const
 {
     bool has_space = !full();
     bool has_alloc_bw = allocations_per_partition && uop
@@ -56,7 +56,7 @@ bool OFB::can_allocate(const ConstUop &uop) const
     return has_space;
 }
 
-std::pair<bool, OFBEntry &> OFB::allocate(const MemReq &req, uint64_t pwc_id, PrefetchType prefetch_type)
+std::pair<bool, OFBEntry&> OFB::allocate(const MemReq& req, uint64_t pwc_id, PrefetchType prefetch_type)
 {
     auto line_addr = req->phys_addr.line_address();
     auto [iter, added] =
@@ -67,11 +67,11 @@ std::pair<bool, OFBEntry &> OFB::allocate(const MemReq &req, uint64_t pwc_id, Pr
     return {added, iter->second};
 }
 
-std::pair<bool, OFBEntry &> OFB::allocate(const MemReq &req,
-                                          const ConstUop &uop,
-                                          bool needs_data,
-                                          std::optional<UnableToFillReason> unable_to_fill,
-                                          PrefetchType prefetch_type)
+std::pair<bool, OFBEntry&> OFB::allocate(const MemReq& req,
+                                         const ConstUop& uop,
+                                         bool needs_data,
+                                         std::optional<UnableToFillReason> unable_to_fill,
+                                         PrefetchType prefetch_type)
 {
     auto line_addr = req->phys_addr.line_address();
     auto [iter, added] = entries.try_emplace(line_addr,
@@ -93,7 +93,7 @@ std::pair<bool, OFBEntry &> OFB::allocate(const MemReq &req,
     return {added, iter->second};
 }
 
-std::pair<bool, OFBEntry &> OFB::allocate(const MemReq &req, const L1PrefetchEntry &prefetch, PrefetchType type)
+std::pair<bool, OFBEntry&> OFB::allocate(const MemReq& req, const L1PrefetchEntry& prefetch, PrefetchType type)
 {
     auto line_addr = req->phys_addr.line_address();
     auto [iter, added] = entries.try_emplace(line_addr, type, prefetch, req->phys_addr, get_cycle());
@@ -116,7 +116,7 @@ void OFB::flush(uint64_t alloc_id)
 {
     // Ensure if an OFB entry references a flushed slob_entry
     // it is removed to indicate response to this OFB is flushed
-    for (auto &ofb_entry : std::views::values(entries))
+    for (auto& ofb_entry : std::views::values(entries))
         if (ofb_entry.buffer_id && *ofb_entry.buffer_id == alloc_id)
             ofb_entry.buffer_id = std::nullopt;
 
@@ -125,11 +125,11 @@ void OFB::flush(uint64_t alloc_id)
 
 void OFB::mark_l2_miss(PhysAddr phys_addr)
 {
-    if (auto *ofb_entry = find(phys_addr); ofb_entry)
+    if (auto* ofb_entry = find(phys_addr); ofb_entry)
         ofb_entry->l2_miss = true;
 }
 
-bool OFB::check_if_should_sleep(const ConstUop &uop, uint64_t non_spec_alloc_id, bool force)
+bool OFB::check_if_should_sleep(const ConstUop& uop, uint64_t non_spec_alloc_id, bool force)
 {
     auto is_full = full();
     if (force || is_full || (almost_full_sleep && reservation)) {
@@ -144,7 +144,7 @@ bool OFB::check_if_should_sleep(const ConstUop &uop, uint64_t non_spec_alloc_id,
     return false;
 }
 
-void OFB::dump(std::ostream &os) const
+void OFB::dump(std::ostream& os) const
 {
     uint idx{0};
     fmt::print(os, "\nOFB size: {}\n", size());
@@ -158,7 +158,7 @@ void OFB::dump(std::ostream &os) const
                    "virt_addr",
                    "slob_id",
                    "opportunistic");
-        for (const auto &ofb_handle : entries) {
+        for (const auto& ofb_handle : entries) {
             fmt::print(os,
                        "{1:<{0}} | {2:<{0}} | {3:<{0}} | {4:<{0}} | {5:<{0}}\n",
                        10,

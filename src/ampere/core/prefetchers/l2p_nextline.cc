@@ -52,7 +52,7 @@ void L2P_NextLine::train_impl(MemReq req, bool hit, bool prefetch, bool demand)
     }
 }
 
-void L2P_NextLine::table_print(std::ostream &os)
+void L2P_NextLine::table_print(std::ostream& os)
 {
     return;
 }

@@ -33,7 +33,7 @@ using namespace uarch_common;
 using uarch_common::MemOp::StoreType;
 
 template<typename T>
-inline static const MemReq &as_memreq(const T &req)
+inline static const MemReq& as_memreq(const T& req)
 {
     if constexpr (std::is_same_v<T, MemReq>) {
         return req;
@@ -62,8 +62,8 @@ struct PWCEntry
     {
     }
 
-    const auto &memreq() { return as_memreq(req); }
-    const auto &memreq() const { return as_memreq(req); }
+    const auto& memreq() { return as_memreq(req); }
+    const auto& memreq() const { return as_memreq(req); }
 
     PhysAddr phys_addr() const { return memreq()->phys_addr; }
     bool full_line() const { return byte_enables == util::mask(PhysAddr::LINE_SIZE); }
@@ -84,7 +84,7 @@ template<typename E>
 class PWC : public Module
 {
 public:
-    explicit PWC(const sc_core::sc_module_name &name) : Module{name} {}
+    explicit PWC(const sc_core::sc_module_name& name) : Module{name} {}
 
     Param<size_t> size{"size", "number of entries in the PWC", 8};
     Param<size_t> threshold{"threshold", "drain when occupied entries > threshold", 3};
@@ -107,10 +107,10 @@ public:
                                          "Partial address mask for detecting LD-ST conflicts",
                                          util::mask(31, PhysAddr::LINE_BITWIDTH)};
 
-    bool can_combine(const MemReq &req) const;
+    bool can_combine(const MemReq& req) const;
 
     template<typename T>
-    const E &allocate(T req, bool requires_combine = false);
+    const E& allocate(T req, bool requires_combine = false);
 
     void combine(MemReq req);
     bool try_combine(MemReq req);
@@ -174,7 +174,7 @@ protected:
     PhysAddr partial_address(PhysAddr addr) const { return addr & partial_address_mask; }
     uint64_t check_address_match(PhysAddr addr, bool partial, bool ordered_only = false);
 
-    pwc_reverse_iterator find_matching_entry(const MemReq &req, bool is_ordered);
+    pwc_reverse_iterator find_matching_entry(const MemReq& req, bool is_ordered);
     void combine_with(pwc_reverse_iterator entry, MemReq req);
     bool can_combine_with_wide_atomic(MemReq req) const;
     bool can_combine_with_youngest(MemReq req) const;
@@ -184,7 +184,7 @@ protected:
     std::optional<DrainReason> drain_reason() const;
     bool want_to_drain() const { return drain_reason().has_value(); }
 
-    void deallocate(const pwc_iterator &entry, DrainReason reason);
+    void deallocate(const pwc_iterator& entry, DrainReason reason);
     void deallocate_pending() { ++pending_deallocations; }
     void deallocate_no_longer_pending();
 
@@ -221,12 +221,12 @@ bool PWC<E>::run()
 
 template<typename E>
 template<typename T>
-const E &PWC<E>::allocate(T req, bool requires_combine)
+const E& PWC<E>::allocate(T req, bool requires_combine)
 {
-    const auto &memreq = as_memreq(req);
+    const auto& memreq = as_memreq(req);
     bool is_ordered = memreq->ordered();
 
-    auto &entry = entries.emplace_back(current_id++, req, memreq->bytemask, is_ordered, requires_combine);
+    auto& entry = entries.emplace_back(current_id++, req, memreq->bytemask, is_ordered, requires_combine);
     event.allocate(req, event.pwc_id(age_to_pwc_id(entry.id)), memreq->phys_addr, event.ordered(is_ordered));
 
     if (is_ordered)
@@ -276,9 +276,9 @@ bool PWC<E>::try_combine(MemReq req)
 }
 
 template<typename E>
-bool PWC<E>::can_combine(const MemReq &req) const
+bool PWC<E>::can_combine(const MemReq& req) const
 {
-    auto entry = const_cast<PWC *>(this)->find_matching_entry(req, req->ordered());
+    auto entry = const_cast<PWC*>(this)->find_matching_entry(req, req->ordered());
     return entry != entries.rend()
            && (entry->waiting_for_combine
                || (combining_allowed
@@ -302,7 +302,7 @@ bool PWC<E>::can_combine_with_youngest(MemReq req) const
 }
 
 template<typename E>
-typename PWC<E>::pwc_reverse_iterator PWC<E>::find_matching_entry(const MemReq &req, bool is_ordered)
+typename PWC<E>::pwc_reverse_iterator PWC<E>::find_matching_entry(const MemReq& req, bool is_ordered)
 {
     if (!entries.empty()) {
         if (!is_ordered) {
@@ -365,7 +365,7 @@ typename PWC<E>::pwc_iterator PWC<E>::pick_hit_entry()
 }
 
 template<typename E>
-void PWC<E>::deallocate(const pwc_iterator &entry, DrainReason reason)
+void PWC<E>::deallocate(const pwc_iterator& entry, DrainReason reason)
 {
     if (entry->ordered) {
         AMPERE_ASSERT(ordered_count > 0, "ordered_count dropped below 0");
@@ -405,14 +405,14 @@ void PWC<E>::deallocate_no_longer_pending()
 template<typename E>
 bool PWC<E>::has_address_match(PhysAddr addr) const
 {
-    return std::any_of(entries.begin(), entries.end(), [addr](const auto &e) { return e.line_matches(addr); });
+    return std::any_of(entries.begin(), entries.end(), [addr](const auto& e) { return e.line_matches(addr); });
 }
 
 template<typename E>
 bool PWC<E>::has_partial_address_match(PhysAddr addr) const
 {
     auto partial_addr = partial_address(addr);
-    return std::any_of(entries.begin(), entries.end(), [this, partial_addr](const auto &e) {
+    return std::any_of(entries.begin(), entries.end(), [this, partial_addr](const auto& e) {
         return partial_address(e.phys_addr()).same_cache_line(partial_addr);
     });
 }
@@ -421,7 +421,7 @@ template<typename E>
 uint64_t PWC<E>::check_address_match(PhysAddr addr, bool partial, bool ordered_only)
 {
     auto partial_addr = partial_address(addr);
-    for (auto &entry : entries) {
+    for (auto& entry : entries) {
         auto match_addr = partial ? partial_address(entry.phys_addr()) : entry.phys_addr();
         if (match_addr.same_cache_line(partial_addr) && (!ordered_only || entry.ordered)) {
             if (!entry.read_hit) {
@@ -441,7 +441,7 @@ template<typename E>
 unsigned PWC<E>::store_types() const
 {
     unsigned flags{0};
-    for (const auto &entry : entries)
+    for (const auto& entry : entries)
         flags |= entry.memreq()->store_types();
 
     return flags;

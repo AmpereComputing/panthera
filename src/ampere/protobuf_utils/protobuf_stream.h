@@ -19,7 +19,7 @@ public:
     ProtobufStreamWriter(boost::filesystem::path filepath, uint32_t magic_number, uint32_t version, bool force = false);
     ~ProtobufStreamWriter();
     template<typename Item>
-    bool write(const Item &item);
+    bool write(const Item& item);
     bool flush();
 
 protected:
@@ -27,11 +27,11 @@ protected:
     std::unique_ptr<google::protobuf::io::FileOutputStream> output_stream;
 
 private:
-    FILE *fp{nullptr};
+    FILE* fp{nullptr};
 };
 
 template<typename Item>
-bool ProtobufStreamWriter::write(const Item &item)
+bool ProtobufStreamWriter::write(const Item& item)
 {
     return writeDelimitedTo(item, output_stream.get());
 }
@@ -44,21 +44,21 @@ public:
     ~ProtobufStreamReader();
     uint32_t version() const { return stream_version; }
     template<typename Item>
-    bool read(Item &item);
+    bool read(Item& item);
 
 protected:
     boost::filesystem::path filepath;
     std::unique_ptr<google::protobuf::io::FileInputStream> input_stream;
 
 private:
-    FILE *fp{nullptr};
+    FILE* fp{nullptr};
     int fd{-1};
     void verify_file_version(uint32_t magic_number, uint32_t max_version);
     uint32_t stream_version;
 };
 
 template<typename Item>
-bool ProtobufStreamReader::read(Item &item)
+bool ProtobufStreamReader::read(Item& item)
 {
     bool status = true;
     status = readDelimitedFrom(input_stream.get(), &item, nullptr);

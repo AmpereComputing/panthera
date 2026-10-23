@@ -35,7 +35,7 @@ std::string disasm(std::uint32_t bytes, std::uint64_t pc)
 
 #if defined(USING_CAPSTONE)
     size_t count(0);
-    cs_insn *insn;
+    cs_insn* insn;
     std::string inst_dis;
 
     // place the instruction bytes into the format required by capstone
