@@ -1,0 +1,20 @@
+{
+  "dependencies": [
+    "boost-filesystem",
+    "boost-iostreams",
+    "boost-program-options",
+    "boost-python",
+    "boost-regex",
+    "boost-serialization",
+    "boost-system",
+    "capstone",
+    "fmt",
+    "glib",
+    "gtest",
+    "immer",
+    "keystone",
+    "nlohmann-json",
+    "protobuf",
+    "systemc"
+  ]
+}
