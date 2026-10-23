@@ -33,9 +33,6 @@ jobs:
     env:
       VCPKG_INSTALLED_DIR: ${{ github.workspace }}/vcpkg_installed
       PKG_CONFIG_PATH: ${{ github.workspace }}/vcpkg_installed/x64-linux/lib/pkgconfig
-      CMAKE_ARGS: >-
-        -DCMAKE_TOOLCHAIN_FILE=$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake
-        -DVCPKG_INSTALLED_DIR=${{ github.workspace }}/vcpkg_installed
     steps:
       - uses: actions/checkout@v4
         with:
@@ -69,4 +66,7 @@ jobs:
           print("\n".join(project["dependencies"] + project["optional-dependencies"]["dev"]))
           PY
       - name: Run unit tests
-        run: make unit-test
+        run: |
+          make \
+            CMAKE_ARGS="-DCMAKE_TOOLCHAIN_FILE=$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake -DVCPKG_INSTALLED_DIR=$VCPKG_INSTALLED_DIR" \
+            unit-test
