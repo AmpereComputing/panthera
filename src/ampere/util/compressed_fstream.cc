@@ -16,7 +16,7 @@
 #include <boost/iostreams/filter/bzip2.hpp>
 #include <boost/iostreams/filter/gzip.hpp>
 #include <boost/iostreams/filter/zlib.hpp>
-#include <boost/process/search_path.hpp>
+#include <boost/process/v1/search_path.hpp>
 #include <memory>
 
 #include "compressed_fstream.h"
@@ -128,7 +128,7 @@ std::unique_ptr<std::istream> open_compressed_istream(const char* filename, std:
 
 FILE* open_xz_output_file(const char* filename)
 {
-    auto xzpath = boost::process::search_path("xz");
+    auto xzpath = boost::process::v1::search_path("xz");
     if (xzpath.empty())
         throw std::system_error(errno, std::system_category(), "Cannot find `xz` on $PATH");
 
@@ -143,7 +143,7 @@ FILE* open_xz_output_file(const char* filename)
 
 FILE* open_xz_input_file(const char* filename)
 {
-    auto xzcatpath = boost::process::search_path("xzcat");
+    auto xzcatpath = boost::process::v1::search_path("xzcat");
     if (xzcatpath.empty())
         throw std::system_error(errno, std::system_category(), "Cannot find `xzcat` on $PATH");
 
