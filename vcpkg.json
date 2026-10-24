@@ -1,6 +1,7 @@
 {
   "dependencies": [
     "boost-filesystem",
+    "boost-format",
     "boost-iostreams",
     "boost-multiprecision",
     "boost-process",
