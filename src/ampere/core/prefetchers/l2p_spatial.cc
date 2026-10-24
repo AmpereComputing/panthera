@@ -47,7 +47,7 @@ void L2P_Spatial::train_impl(MemReq req, bool hit, bool prefetch, bool demand)
     }
 }
 
-void L2P_Spatial::table_print(std::ostream &os)
+void L2P_Spatial::table_print(std::ostream& os)
 {
     return;
 }

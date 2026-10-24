@@ -73,13 +73,13 @@ private:
         uint64_t remove_offset(uint64_t line_addr) const { return line_addr - offset; }
     };
 
-    void table_print(std::ostream &os) const;
+    void table_print(std::ostream& os) const;
     void table_print() const;
-    void dump(std::ostream &os) const override;
+    void dump(std::ostream& os) const override;
     void learn_best_offset(uint64_t line_addr, MemReq req, PageSize::Size page_size);
     static PageSize::Size consolidated_page_size(MemReq req);
     PageSize::Size resolve_page_size(MemReq req);
-    void generate_offset_prefetch(MemReq req, PickedOffset &offset, PageSize::Size page_size, MemOp::PrefetchType type);
+    void generate_offset_prefetch(MemReq req, PickedOffset& offset, PageSize::Size page_size, MemOp::PrefetchType type);
     bool try_launch_request(MemReq req,
                             VirtAddr virt_addr,
                             PhysAddr phys_addr,

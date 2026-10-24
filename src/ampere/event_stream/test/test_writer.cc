@@ -39,7 +39,7 @@ protected:
         return std::make_unique<EventStreamProto>(fd);
     }
 
-    static void verify_file_version(google::protobuf::io::ZeroCopyInputStream *stream)
+    static void verify_file_version(google::protobuf::io::ZeroCopyInputStream* stream)
     {
         std::uint32_t magic;
         std::uint32_t es_version;
@@ -69,9 +69,9 @@ protected:
     std::unique_ptr<google::protobuf::io::FileInputStream> input_stream;
 
 public:
-    static const char *test_file_name()
+    static const char* test_file_name()
     {
-        const ::testing::TestInfo *const test_info = ::testing::UnitTest::GetInstance()->current_test_info();
+        const ::testing::TestInfo* const test_info = ::testing::UnitTest::GetInstance()->current_test_info();
         return test_info->name();
     }
 };

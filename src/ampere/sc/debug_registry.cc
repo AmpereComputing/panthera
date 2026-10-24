@@ -11,16 +11,16 @@
 
 namespace ampere::sc {
 
-void DebugRegistry::add(const sc_core::sc_module &module, const char *category)
+void DebugRegistry::add(const sc_core::sc_module& module, const char* category)
 {
     auto mode = (std::strcmp(category, "*") == 0) ? ALL : FILTERED;
-    auto &module_mode = modules.try_emplace(module.name()).first->second;
+    auto& module_mode = modules.try_emplace(module.name()).first->second;
     if (module_mode < mode)
         module_mode = mode;
     categories.emplace(key(module.name(), category), true);
 }
 
-bool DebugRegistry::within_enabled_range(const Clock *clock) const
+bool DebugRegistry::within_enabled_range(const Clock* clock) const
 {
     if (clock && (start || stop)) {
         auto cycle = clock->get_cycle();
@@ -32,7 +32,7 @@ bool DebugRegistry::within_enabled_range(const Clock *clock) const
     return true;
 }
 
-bool DebugRegistry::enabled(const sc_core::sc_module &module, const Clock *clock) const
+bool DebugRegistry::enabled(const sc_core::sc_module& module, const Clock* clock) const
 {
     if (!within_enabled_range(clock))
         return false;
@@ -44,14 +44,14 @@ bool DebugRegistry::enabled(const sc_core::sc_module &module, const Clock *clock
         return it->second == ALL;
 
     bool module_enabled = false;
-    if (const auto *parent = dynamic_cast<Module *>(module.get_parent_object()); parent) {
+    if (const auto* parent = dynamic_cast<Module*>(module.get_parent_object()); parent) {
         module_enabled = enabled(*parent);
     }
     modules.emplace(module.name(), module_enabled ? ALL : NONE);
     return module_enabled;
 }
 
-bool DebugRegistry::enabled(const sc_core::sc_module &module, const char *category, const Clock *clock) const
+bool DebugRegistry::enabled(const sc_core::sc_module& module, const char* category, const Clock* clock) const
 {
     if (enabled(module))
         return true;
@@ -64,17 +64,17 @@ bool DebugRegistry::enabled(const sc_core::sc_module &module, const char *catego
         return it->second;
 
     bool category_enabled = false;
-    if (const auto *parent = dynamic_cast<Module *>(module.get_parent_object()); parent) {
+    if (const auto* parent = dynamic_cast<Module*>(module.get_parent_object()); parent) {
         category_enabled = enabled(*parent, category);
     }
     categories.emplace(category_key, category_enabled);
     return category_enabled;
 }
 
-void DebugRegistry::setup_main(Environment &env)
+void DebugRegistry::setup_main(Environment& env)
 {
 #ifndef NDEBUG
-    auto &registry = env.debug;
+    auto& registry = env.debug;
     Param<bool> debug(env, "debug", "Enable all debug messages", false);
     if (*debug) {
         registry.set_enable_all();
@@ -83,12 +83,12 @@ void DebugRegistry::setup_main(Environment &env)
 #endif
 }
 
-void DebugRegistry::setup_main_with_start_stop(Environment &env)
+void DebugRegistry::setup_main_with_start_stop(Environment& env)
 {
 #ifndef NDEBUG
     setup_main(env);
 
-    auto &registry = env.debug;
+    auto& registry = env.debug;
     Param<std::optional<Cycle>> debug_start(env, "debug_start", "Cycle to start debug", {});
     Param<std::optional<Cycle>> debug_stop(env, "debug_start", "Cycle to stop debug", {});
 
@@ -99,12 +99,12 @@ void DebugRegistry::setup_main_with_start_stop(Environment &env)
 #endif
 }
 
-void DebugRegistry::setup_module(const Module &m)
+void DebugRegistry::setup_module(const Module& m)
 {
 #ifndef NDEBUG
-    auto &registry = m.get_environment()->debug;
+    auto& registry = m.get_environment()->debug;
     Param<std::vector<std::string>> debug("debug", "Enabled debug categories at hierarchy", std::vector<std::string>{});
-    for (const auto &category : *debug)
+    for (const auto& category : *debug)
         registry.add(m, category.c_str());
 
     if (!debug->empty())

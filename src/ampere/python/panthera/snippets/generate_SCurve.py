@@ -398,8 +398,9 @@ def main():
     if ignore:
         rtl_panthera_df = rtl_panthera_df[
             rtl_panthera_df.apply(
-                lambda r: r["trace"] not in ignore
-                or not isclose(r["RTL_IPC/Panthera_IPC"], ignore[r["trace"]], rel_tol=0.05),
+                lambda r: (
+                    r["trace"] not in ignore or not isclose(r["RTL_IPC/Panthera_IPC"], ignore[r["trace"]], rel_tol=0.05)
+                ),
                 axis=1,
             )
         ]

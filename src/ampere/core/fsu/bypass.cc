@@ -16,10 +16,10 @@
 
 namespace ampere::core {
 
-void FSUBypassDefinition::Unit::add(const json &j)
+void FSUBypassDefinition::Unit::add(const json& j)
 {
     bypass_array bypass_latencies{};
-    for (const auto &[level, bypass] : j["levels"].items()) {
+    for (const auto& [level, bypass] : j["levels"].items()) {
         auto l = util::Enumeration<FSUBypassLevel>(level).value();
         bypass_latencies[static_cast<size_t>(l)] = bypass.get<uint8_t>();
     }
@@ -32,15 +32,15 @@ void FSUBypassDefinition::Unit::add(const json &j)
         defaults = bypass_latencies;
 }
 
-void FSUBypassDefinition::Unit::normalize_bypass(FSUBypassDefinition::bypass_array &bypass,
-                                                 const FSUBypassDefinition::bypass_array &defaults)
+void FSUBypassDefinition::Unit::normalize_bypass(FSUBypassDefinition::bypass_array& bypass,
+                                                 const FSUBypassDefinition::bypass_array& defaults)
 {
     for (size_t level = 0; level < util::enum_size<FSUBypassLevel>(); ++level) {
-        auto &bypass_latency = bypass[level];
+        auto& bypass_latency = bypass[level];
         if (bypass_latency)
             continue;
 
-        if (const auto &default_bypass_latency = defaults[level]; default_bypass_latency) {
+        if (const auto& default_bypass_latency = defaults[level]; default_bypass_latency) {
             bypass_latency = default_bypass_latency;
         } else if (auto default_level = bypass_level_defaults[level];
                    default_level && bypass[static_cast<size_t>(*default_level)])
@@ -52,10 +52,10 @@ void FSUBypassDefinition::Unit::normalize_bypass(FSUBypassDefinition::bypass_arr
 
 void FSUBypassDefinition::Unit::finalize()
 {
-    for (auto &[_, bypass] : sources)
+    for (auto& [_, bypass] : sources)
         normalize_bypass(bypass, defaults);
 
-    for (auto &[_, bypass] : suffixes)
+    for (auto& [_, bypass] : suffixes)
         normalize_bypass(bypass, defaults);
 
     normalize_bypass(defaults, {});
@@ -64,7 +64,7 @@ void FSUBypassDefinition::Unit::finalize()
 bool FSUBypassDefinition::Unit::level_exists(FSUBypassLevel level) const
 {
     auto level_index = static_cast<size_t>(level);
-    for (const auto &[_, latencies] : suffixes)
+    for (const auto& [_, latencies] : suffixes)
         if (latencies[level_index])
             return true;
 
@@ -87,7 +87,7 @@ uint8_t FSUBypassDefinition::Unit::bypass_latency(uint8_t producer_unit_suffix,
     return defaults[level_index];
 }
 
-void FSUBypassDefinition::Unit::dump_bypass_array(std::ostream &os, const bypass_array &bypass)
+void FSUBypassDefinition::Unit::dump_bypass_array(std::ostream& os, const bypass_array& bypass)
 {
     for (auto level : util::each_enum<FSUBypassLevel>()) {
         if (auto b = bypass[static_cast<size_t>(level)]; b)
@@ -95,14 +95,14 @@ void FSUBypassDefinition::Unit::dump_bypass_array(std::ostream &os, const bypass
     }
 }
 
-void FSUBypassDefinition::Unit::dump(std::ostream &os) const
+void FSUBypassDefinition::Unit::dump(std::ostream& os) const
 {
     os << "  defaults: ";
     dump_bypass_array(os, defaults);
     os << "\n";
 
     if (!sources.empty()) {
-        for (const auto &[s, b] : sources) {
+        for (const auto& [s, b] : sources) {
             os << "  source " << static_cast<unsigned>(s) << ": ";
             dump_bypass_array(os, b);
             os << "\n";
@@ -110,7 +110,7 @@ void FSUBypassDefinition::Unit::dump(std::ostream &os) const
     }
 
     if (!suffixes.empty()) {
-        for (const auto &[l, b] : suffixes) {
+        for (const auto& [l, b] : suffixes) {
             os << "  suffix " << static_cast<unsigned>(l) << ": ";
             dump_bypass_array(os, b);
             os << "\n";
@@ -118,16 +118,16 @@ void FSUBypassDefinition::Unit::dump(std::ostream &os) const
     }
 }
 
-void FSUBypassDefinition::Unit::dump_matrix_header_portion(std::ostream &os, archx::FsuUnit unit) const
+void FSUBypassDefinition::Unit::dump_matrix_header_portion(std::ostream& os, archx::FsuUnit unit) const
 {
     if (defaults != bypass_array{})
         fmt::print(os, " {:>3}", unit);
 
-    for (const auto &[suffix, _] : suffixes)
+    for (const auto& [suffix, _] : suffixes)
         fmt::print(os, " {:>2}{}", unit, suffix);
 }
 
-void dump_matrix_latency(std::ostream &os, uint8_t latency)
+void dump_matrix_latency(std::ostream& os, uint8_t latency)
 {
     if (latency)
         fmt::print(os, " {:>3}", latency);
@@ -135,12 +135,12 @@ void dump_matrix_latency(std::ostream &os, uint8_t latency)
         fmt::print(os, " {:>3}", 'X');
 }
 
-void FSUBypassDefinition::Unit::dump_matrix_row_portion(std::ostream &os, FSUBypassLevel level) const
+void FSUBypassDefinition::Unit::dump_matrix_row_portion(std::ostream& os, FSUBypassLevel level) const
 {
     if (defaults != bypass_array{})
         dump_matrix_latency(os, defaults[static_cast<size_t>(level)]);
 
-    for (const auto &[_, latencies] : suffixes)
+    for (const auto& [_, latencies] : suffixes)
         dump_matrix_latency(os, latencies[static_cast<size_t>(level)]);
 }
 
@@ -149,8 +149,8 @@ bool FSUBypassDefinition::is_local(archx::FsuUnit from, archx::FsuUnit to) const
     return (from == to) || locality[static_cast<size_t>(from)][static_cast<size_t>(to)];
 }
 
-FSUBypassLevel FSUBypassDefinition::bypass_level(const fsu_producer_unit &producer,
-                                                 const fsu_consumer_src &consumer) const
+FSUBypassLevel FSUBypassDefinition::bypass_level(const fsu_producer_unit& producer,
+                                                 const fsu_consumer_src& consumer) const
 {
     if (!is_local(producer.unit, consumer.unit) || consumer.src_type == archx::FsuSrcType::NO_LOCAL_BYP)
         return FSUBypassLevel::NORMAL;
@@ -164,7 +164,7 @@ FSUBypassLevel FSUBypassDefinition::bypass_level(const fsu_producer_unit &produc
     return FSUBypassLevel::LOCAL;
 }
 
-uint8_t FSUBypassDefinition::bypass_latency(const fsu_producer_unit &producer, const fsu_consumer_src &consumer) const
+uint8_t FSUBypassDefinition::bypass_latency(const fsu_producer_unit& producer, const fsu_consumer_src& consumer) const
 {
     auto level = bypass_level(producer, consumer);
     auto bypass = units[static_cast<size_t>(producer.unit)].bypass_latency(producer.unit_suffix, level, consumer.src);
@@ -187,7 +187,7 @@ char level_abbreviation(FSUBypassLevel level)
     return '?';
 }
 
-void FSUBypassDefinition::dump(std::ostream &os) const
+void FSUBypassDefinition::dump(std::ostream& os) const
 {
     for (auto e : util::each_enum<FsuUnit>()) {
         os << e << ":\n";
@@ -195,7 +195,7 @@ void FSUBypassDefinition::dump(std::ostream &os) const
     }
 }
 
-void FSUBypassDefinition::dump_matrix(std::ostream &os) const
+void FSUBypassDefinition::dump_matrix(std::ostream& os) const
 {
     const std::vector<FSUBypassLevel> levels = {
         FSUBypassLevel::LOCAL,
@@ -229,25 +229,25 @@ void FSUBypassDefinition::dump_matrix(std::ostream &os) const
     }
 }
 
-void from_json(const json &j, FSUBypassDefinition &definition)
+void from_json(const json& j, FSUBypassDefinition& definition)
 {
     if (auto latencies = j.find("latencies"); latencies != j.end()) {
-        for (const auto &[_name, e] : latencies->items()) {
+        for (const auto& [_name, e] : latencies->items()) {
             auto unit = e["unit"].get<archx::FsuUnit>();
             definition.units[static_cast<size_t>(unit)].add(e);
         }
     }
 
     if (auto locality = j.find("locality"); locality != j.end()) {
-        for (const auto &[unit_name, e] : j["locality"].items()) {
+        for (const auto& [unit_name, e] : j["locality"].items()) {
             auto unit = util::Enumeration<archx::FsuUnit>(unit_name).value();
-            auto &local = definition.locality[static_cast<size_t>(unit)];
-            for (const auto &u : e)
+            auto& local = definition.locality[static_cast<size_t>(unit)];
+            for (const auto& u : e)
                 local.set(static_cast<size_t>(u.get<archx::FsuUnit>()));
         }
     }
 
-    for (auto &unit : definition.units)
+    for (auto& unit : definition.units)
         unit.finalize();
 }
 

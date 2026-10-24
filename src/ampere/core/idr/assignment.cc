@@ -14,17 +14,17 @@
 
 namespace ampere::core {
 
-unsigned AssignmentProperties::partition_of(const ConstUop &uop) const
+unsigned AssignmentProperties::partition_of(const ConstUop& uop) const
 {
     return uses_pre_swizzle_partition ? uop->decode.pre_swizzle_partition : uop->decode.partition;
 }
 
-unsigned AssignmentProperties::lane_of(const ConstUop &uop) const
+unsigned AssignmentProperties::lane_of(const ConstUop& uop) const
 {
     return uses_pre_swizzle_partition ? uop->decode.pre_swizzle_lane : uop->decode.lane;
 }
 
-Scheduler LeastLoadedScheduler::assign(const Uop &uop)
+Scheduler LeastLoadedScheduler::assign(const Uop& uop)
 {
     auto partition = properties.partition_of(uop);
     auto eligible = Scheduler::eligible_schedulers(uop->allowed_pipes());
@@ -84,21 +84,21 @@ Scheduler LeastLoadedScheduler::assign(const Uop &uop)
 
 void MultipleIDRSchedulerAssignment::stalled()
 {
-    for (auto &assignment : assignments)
+    for (auto& assignment : assignments)
         assignment->stalled();
 }
 
 void MultipleIDRSchedulerAssignment::start_assignment()
 {
-    for (auto &assignment : assignments)
+    for (auto& assignment : assignments)
         assignment->start_assignment();
 }
 
 std::vector<IDRSchedulerAssignment::assignment_t> MultipleIDRSchedulerAssignment::assign_uops(
-    const std::vector<Uop> &uops)
+    const std::vector<Uop>& uops)
 {
     std::vector<IDRSchedulerAssignment::assignment_t> result(uops.size());
-    for (auto &assignment : assignments) {
+    for (auto& assignment : assignments) {
         auto assign_result = assignment->assign_uops(uops);
 
         unsigned assigned = 0;
@@ -116,7 +116,7 @@ std::vector<IDRSchedulerAssignment::assignment_t> MultipleIDRSchedulerAssignment
 }
 
 std::vector<IDRSchedulerAssignment::assignment_t> BalancingIDRSchedulerAssignment::assign_uops(
-    const std::vector<Uop> &uops)
+    const std::vector<Uop>& uops)
 {
     if (uops.empty())
         return {};
@@ -126,16 +126,16 @@ std::vector<IDRSchedulerAssignment::assignment_t> BalancingIDRSchedulerAssignmen
     all_uops.reserve(uops.size());
 
     size_t index = 0;
-    for (const auto &uop : uops)
+    for (const auto& uop : uops)
         all_uops.emplace_back(++index, Scheduler::eligible_scheduler_types(uop->allowed_pipes()));
 
-    std::sort(all_uops.begin(), all_uops.end(), [](const auto &a, const auto &b) {
+    std::sort(all_uops.begin(), all_uops.end(), [](const auto& a, const auto& b) {
         return a.second.size() < b.second.size();
     });
 
     std::vector<assignment_t> picked;
     std::set<SchedulerType> used;
-    for (auto &[index, eligible] : all_uops) {
+    for (auto& [index, eligible] : all_uops) {
         for (auto sch : used)
             eligible.erase(sch);
 
@@ -143,10 +143,10 @@ std::vector<IDRSchedulerAssignment::assignment_t> BalancingIDRSchedulerAssignmen
         SchedulerType bind = *eligible.begin();
         if (eligible.size() > 1) {
             std::vector<std::pair<SchedulerType, unsigned>> counts;
-            for (const auto &s : eligible)
+            for (const auto& s : eligible)
                 counts.emplace_back(s, properties.sch[Scheduler::normalized(s, partition).scheduler()].get_count());
 
-            std::sort(counts.begin(), counts.end(), [](const auto &a, const auto &b) { return a.second < b.second; });
+            std::sort(counts.begin(), counts.end(), [](const auto& a, const auto& b) { return a.second < b.second; });
 
             auto threshold = counts.back().second - counts.front().second;
             if (threshold >= balancing_threshold) {
@@ -184,7 +184,7 @@ bool BinaryAssignment::second_has_more_credits() const
             || (avoid_full && first_available == 0));
 }
 
-IDRSchedulerAssignment::assignment_t BinaryAssignment::assign_uop(const Uop &uop)
+IDRSchedulerAssignment::assignment_t BinaryAssignment::assign_uop(const Uop& uop)
 {
     auto eligible = Scheduler::eligible_scheduler_types(uop->allowed_pipes());
     bool uop_first_only = eligible.size() == 1 && eligible.contains(*first_scheduler_type);
@@ -209,8 +209,8 @@ IDRSchedulerAssignment::assignment_t BinaryAssignment::assign_uop(const Uop &uop
 }
 
 IDRSchedulerAssignment::assignment_t BinaryAssignment::fallback_uop_assignment(unsigned index,
-                                                                               const Uop &uop,
-                                                                               const assignment_t &neighbor)
+                                                                               const Uop& uop,
+                                                                               const assignment_t& neighbor)
 {
     if (neighbor) {
         // if uop has a neighbor which can only go to A/B then go to B/A
@@ -221,7 +221,7 @@ IDRSchedulerAssignment::assignment_t BinaryAssignment::fallback_uop_assignment(u
     return (index & 1) ? second_scheduler : first_scheduler;
 }
 
-std::vector<IDRSchedulerAssignment::assignment_t> BinaryAssignment::assign_uops(const std::vector<Uop> &uops)
+std::vector<IDRSchedulerAssignment::assignment_t> BinaryAssignment::assign_uops(const std::vector<Uop>& uops)
 {
     if (uops.empty())
         return {};
@@ -231,7 +231,7 @@ std::vector<IDRSchedulerAssignment::assignment_t> BinaryAssignment::assign_uops(
         return {single_uop_assignment(uops[0])};
 
     auto partition = partition_of(uops[0]);
-    for (const auto &uop : uops) {
+    for (const auto& uop : uops) {
         AMPERE_ASSERT(partition_of(uop) == partition, "IDR: uops not in same partition");
     }
 
@@ -241,7 +241,7 @@ std::vector<IDRSchedulerAssignment::assignment_t> BinaryAssignment::assign_uops(
     initial_assignment.reserve(uops.size());
 
     // Assign uops only based upon individual uop
-    for (const auto &uop : uops)
+    for (const auto& uop : uops)
         initial_assignment.emplace_back(assign_uop(uop));
 
     // Assign uops based upon previous decision and neighboring uop
@@ -257,7 +257,7 @@ std::vector<IDRSchedulerAssignment::assignment_t> BinaryAssignment::assign_uops(
     return final_assignment;
 }
 
-IDRSchedulerAssignment::assignment_t BinaryPingPongIDRSchedulerAssignment::single_uop_assignment(const Uop &uop)
+IDRSchedulerAssignment::assignment_t BinaryPingPongIDRSchedulerAssignment::single_uop_assignment(const Uop& uop)
 {
     if (use_ping_pong(uop)) {
         auto partition = partition_of(uop);
@@ -274,7 +274,7 @@ IDRSchedulerAssignment::assignment_t BinaryPingPongIDRSchedulerAssignment::singl
 }
 
 IDRSchedulerAssignment::assignment_t BinaryPingPongIDRSchedulerAssignment::fallback_uop_assignment(
-    unsigned index, const Uop &uop, const assignment_t &neighbor)
+    unsigned index, const Uop& uop, const assignment_t& neighbor)
 {
     if (use_ping_pong(uop)) {
         auto partition = partition_of(uop);
@@ -285,7 +285,7 @@ IDRSchedulerAssignment::assignment_t BinaryPingPongIDRSchedulerAssignment::fallb
     return BinaryAssignment::fallback_uop_assignment(index, uop, neighbor);
 }
 
-IDRSchedulerAssignment::assignment_t PingPongAssignment::assign_uop(const Uop &uop)
+IDRSchedulerAssignment::assignment_t PingPongAssignment::assign_uop(const Uop& uop)
 {
     if (uop->allowed_pipes() == *pipe) {
         auto partition = partition_of(uop);
@@ -296,7 +296,7 @@ IDRSchedulerAssignment::assignment_t PingPongAssignment::assign_uop(const Uop &u
     return {};
 }
 
-IDRSchedulerAssignment::assignment_t FSUUnitPingPongAssignment::assign_uop(const Uop &uop)
+IDRSchedulerAssignment::assignment_t FSUUnitPingPongAssignment::assign_uop(const Uop& uop)
 {
     auto eligible = Scheduler::eligible_scheduler_types(uop->allowed_pipes());
     if (uop->fsu_unit() == *unit && eligible.contains(*first_scheduler_type)

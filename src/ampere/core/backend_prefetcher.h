@@ -141,7 +141,7 @@ struct BackendMemReq
     unsigned pipe{0};
 
     BackendMemReq() = default;
-    BackendMemReq(const Uop &uop)
+    BackendMemReq(const Uop& uop)
         : transaction(uop),
           alloc_id(uop->alloc_id),
           virt_addr(*uop->virt_addr),
@@ -155,7 +155,7 @@ struct BackendMemReq
     {
     }
 
-    BackendMemReq(const MemReq &req)
+    BackendMemReq(const MemReq& req)
         : transaction(req),
           alloc_id(req->id),
           virt_addr(req->virt_addr),
@@ -178,7 +178,7 @@ struct BackendMemReq
 
     BackendMemReq(VirtAddr virt_addr,
                   std::optional<PhysAddr> phys_addr,
-                  const Uop &trigger_uop,
+                  const Uop& trigger_uop,
                   PrefetchType prefetch_type = PrefetchType::NONE)
         : transaction(trigger_uop),
           alloc_id(trigger_uop ? trigger_uop->alloc_id : 0),
@@ -198,7 +198,7 @@ struct BackendMemReq
 
     BackendMemReq(VirtAddr virt_addr,
                   std::optional<PhysAddr> phys_addr,
-                  const BackendMemReq &req,
+                  const BackendMemReq& req,
                   PrefetchType prefetch_type = PrefetchType::NONE)
         : transaction(req),
           alloc_id(req.alloc_id),
@@ -215,14 +215,14 @@ struct BackendMemReq
     {
     }
 
-    BackendMemReq(const L1PrefetchEntry &entry, PrefetchType prefetch_type);
+    BackendMemReq(const L1PrefetchEntry& entry, PrefetchType prefetch_type);
 
     explicit operator Txn() const { return transaction; }
 
     L1PrefetchEntry as_entry() const;
 };
 
-inline ampere::sc::EventArg<std::uint64_t> to_event_arg(const BackendMemReq &req)
+inline ampere::sc::EventArg<std::uint64_t> to_event_arg(const BackendMemReq& req)
 {
     return to_event_arg(req.transaction);
 }
@@ -266,7 +266,7 @@ struct L1PrefetchEntry
 
     /* create a mmureq id for prefetch-induced translation request
         by OR-ing upper 32 bits of trigger uop's alloc id with prefetch id */
-    uint64_t mmu_req_id(uint64_t &prefetch_id) const
+    uint64_t mmu_req_id(uint64_t& prefetch_id) const
     {
         prefetch_id++;
         uint64_t m_id = (prefetch_id << 32) | parent_txn->txid().value;

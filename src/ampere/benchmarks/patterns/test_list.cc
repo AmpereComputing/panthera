@@ -68,7 +68,7 @@ TEST_P(ListofCharsPatternBenchmark, StrideBackwards)
 }
 
 template<typename T>
-std::string param_names(const testing::TestParamInfo<typename T::ParamType> &info)
+std::string param_names(const testing::TestParamInfo<typename T::ParamType>& info)
 {
     return fmt::format("size{}Xops{}", std::get<0>(info.param), std::get<1>(info.param));
 }

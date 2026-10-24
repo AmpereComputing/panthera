@@ -11,7 +11,7 @@
 
 namespace ampere::tigris {
 
-static inline bool is_memory_op_pair(const archx::Instruction &instruction)
+static inline bool is_memory_op_pair(const archx::Instruction& instruction)
 {
     if (instruction.num_addresses() % 2 == 0 && !instruction.is_sve()
         && (instruction.is_load() || instruction.is_store()))
@@ -26,12 +26,12 @@ static inline bool is_memory_op_pair(const archx::Instruction &instruction)
     return false;
 }
 
-static inline bool should_prefetch(const archx::Instruction &instruction, unsigned int index)
+static inline bool should_prefetch(const archx::Instruction& instruction, unsigned int index)
 {
     return !(instruction.is_prefetch() || instruction.is_dc_zva() || instruction.is_dc_gzva());
 }
 
-static inline uint32_t memory_op_size(const archx::Instruction &instruction, unsigned index)
+static inline uint32_t memory_op_size(const archx::Instruction& instruction, unsigned index)
 {
     if (!instruction.is_prefetch() && !instruction.is_dc_zva() && !instruction.is_dc_gzva()) {
         auto size = instruction.memop_bytes(index);
@@ -47,7 +47,7 @@ static inline uint32_t memory_op_size(const archx::Instruction &instruction, uns
     return 1;
 }
 
-static inline bool valid_memory_operation(const archx::Instruction &instruction, unsigned int index)
+static inline bool valid_memory_operation(const archx::Instruction& instruction, unsigned int index)
 {
     if (instruction.is_prefetch() || instruction.is_dc_zva() || instruction.is_dc_gzva())
         return instruction.virtual_address(index) != archx::VirtAddr(0)
@@ -65,7 +65,7 @@ static inline bool valid_memory_operation(const archx::Instruction &instruction,
     return true;
 }
 
-static inline ampere::archx::Translation translate(const archx::Instruction &instruction, archx::VirtAddr virt_addr)
+static inline ampere::archx::Translation translate(const archx::Instruction& instruction, archx::VirtAddr virt_addr)
 {
     bool data = !instruction.is_prefetch();
     auto tr = ampere::archx::Translation(virt_addr,
@@ -83,7 +83,7 @@ static inline ampere::archx::Translation translate(const archx::Instruction &ins
     return tr;
 }
 
-static inline ampere::archx::PageSize::Size translate_page(const archx::Instruction &instruction,
+static inline ampere::archx::PageSize::Size translate_page(const archx::Instruction& instruction,
                                                            archx::VirtAddr virt_addr)
 {
     auto tr = translate(instruction, virt_addr);

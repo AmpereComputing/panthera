@@ -15,7 +15,7 @@ namespace ampere::sc {
 AMPERE_EVENT_DEFN(assert, "Assert fired")
 AMPERE_EVENT_DATA_DEFN(assert_message, "Assert message")
 
-void post_assert_event(Transaction &txn, const std::string &message)
+void post_assert_event(Transaction& txn, const std::string& message)
 {
     if (txn.event_stream_) {
         auto eh = txn.event_stream_->open_event(AMPERE_EVENT_DEFN_NAME(assert), sc_core::sc_time_stamp().value());

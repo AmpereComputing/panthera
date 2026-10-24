@@ -54,7 +54,7 @@ class L1P_Oracle : public OracleBackendPrefetcher<BackendMemReq>,
 public:
     explicit L1P_Oracle(sc_core::sc_module_name name);
 
-    std::optional<int64_t> instruction_access_hint(const archx::Instruction &instruction) const override
+    std::optional<int64_t> instruction_access_hint(const archx::Instruction& instruction) const override
     {
         if (use_instruction_id_as_hint)
             return instruction.inum().id();

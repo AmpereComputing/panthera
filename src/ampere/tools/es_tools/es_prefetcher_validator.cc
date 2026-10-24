@@ -45,11 +45,11 @@ class EventDefinition
     int definition_id{-1};
 
 public:
-    EventDefinition(const std::string &prefix, const std::string &name)
+    EventDefinition(const std::string& prefix, const std::string& name)
         : name(prefix.empty() ? name : prefix + "." + name)
     {
     }
-    EventDefinition(const std::string &prefix, const std::optional<std::string> &name)
+    EventDefinition(const std::string& prefix, const std::optional<std::string>& name)
         : name(name ? (prefix.empty() ? *name : prefix + "." + *name) : "")
     {
     }
@@ -59,14 +59,14 @@ public:
     int id() const { return definition_id; }
     explicit operator bool() const { return !name.empty(); }
 
-    void associate(const ampere::event_stream_proto::Definition &definition)
+    void associate(const ampere::event_stream_proto::Definition& definition)
     {
         if (enabled() && definition.name() == name)
             definition_id = definition.id();
     }
 
     template<typename T>
-    bool matches(const T &record) const
+    bool matches(const T& record) const
     {
         return enabled() && record.definition_id() == definition_id;
     }
@@ -75,8 +75,8 @@ public:
 class ValueDefinitionBase : public EventDefinition
 {
 public:
-    ValueDefinitionBase(const std::string &prefix, const std::string &name) : EventDefinition(prefix, name) {}
-    ValueDefinitionBase(std::vector<ValueDefinitionBase *> &all, const std::string &prefix, const std::string &name)
+    ValueDefinitionBase(const std::string& prefix, const std::string& name) : EventDefinition(prefix, name) {}
+    ValueDefinitionBase(std::vector<ValueDefinitionBase*>& all, const std::string& prefix, const std::string& name)
         : ValueDefinitionBase(prefix, name)
     {
         all.emplace_back(this);
@@ -84,7 +84,7 @@ public:
 
     virtual ~ValueDefinitionBase() = default;
 
-    virtual bool populate(const event_stream_proto::Value &value) = 0;
+    virtual bool populate(const event_stream_proto::Value& value) = 0;
 };
 
 template<typename T>
@@ -93,13 +93,13 @@ class ValueDefinition : public ValueDefinitionBase
     T last_value{};
 
 public:
-    ValueDefinition(const std::string &prefix, const std::string &name) : ValueDefinitionBase(prefix, name) {}
-    ValueDefinition(std::vector<ValueDefinitionBase *> &all, const std::string &prefix, const std::string &name)
+    ValueDefinition(const std::string& prefix, const std::string& name) : ValueDefinitionBase(prefix, name) {}
+    ValueDefinition(std::vector<ValueDefinitionBase*>& all, const std::string& prefix, const std::string& name)
         : ValueDefinitionBase(all, prefix, name)
     {
     }
 
-    bool populate(const event_stream_proto::Value &value) override
+    bool populate(const event_stream_proto::Value& value) override
     {
         if (!matches(value))
             return false;
@@ -120,7 +120,7 @@ public:
         return true;
     }
 
-    const T &operator*() const { return last_value; }
+    const T& operator*() const { return last_value; }
 };
 
 struct PrefetcherEvent : sc_core::sc_module
@@ -142,7 +142,7 @@ struct PrefetcherEvent : sc_core::sc_module
         uint64_t matched{0};
     } counts;
 
-    PrefetcherEvent(const std::string &scope, const sc_core::sc_module_name &name, bool required = false)
+    PrefetcherEvent(const std::string& scope, const sc_core::sc_module_name& name, bool required = false)
         : sc_core::sc_module(name),
           event_name("event_name",
                      fmt::format("{} event name", name),
@@ -151,9 +151,9 @@ struct PrefetcherEvent : sc_core::sc_module
     {
     }
 
-    explicit PrefetcherEvent(std::vector<PrefetcherEvent *> &all,
-                             const std::string &scope,
-                             const sc_core::sc_module_name &name,
+    explicit PrefetcherEvent(std::vector<PrefetcherEvent*>& all,
+                             const std::string& scope,
+                             const sc_core::sc_module_name& name,
                              bool required = false)
         : PrefetcherEvent(scope, name, required)
     {
@@ -167,7 +167,7 @@ struct PrefetcherEvent : sc_core::sc_module
     }
 
     template<typename T>
-    bool matches(const T &record) const
+    bool matches(const T& record) const
     {
         auto matched = definition.matches(record);
         if (matched)
@@ -176,7 +176,7 @@ struct PrefetcherEvent : sc_core::sc_module
     }
 
     template<typename T>
-    bool matches(const T &record, const sc::Txn &tr)
+    bool matches(const T& record, const sc::Txn& tr)
     {
         auto matched = matches(record);
         if (matched)
@@ -185,13 +185,13 @@ struct PrefetcherEvent : sc_core::sc_module
     }
 
     void triggered() { ++counts.triggered; }
-    void matched(const sc::Txn &tr)
+    void matched(const sc::Txn& tr)
     {
         event.matched(tr);
         ++counts.matched;
     }
 
-    void dump(std::ostream &os) const override
+    void dump(std::ostream& os) const override
     {
         if (definition.enabled() && counts.replayed > 0) {
             os << name() << ": replayed ";
@@ -219,7 +219,7 @@ class PrefetcherValidator : sc::Module
 
     sc::Param<std::string> event_scope{"scope", "Prefetcher event scope", ""};
 
-    std::vector<PrefetcherEvent *> all_events;
+    std::vector<PrefetcherEvent*> all_events;
     PrefetcherEvent train{all_events, *event_scope, "train", true};
     PrefetcherEvent fill{all_events, *event_scope, "fill"};
     PrefetcherEvent launch{all_events, *event_scope, "launch"};
@@ -257,30 +257,30 @@ class PrefetcherValidator : sc::Module
     sc::Param<std::string> addr_data_name{"addr_data_name", "Address data name", "virt_addr"};
     sc::Param<std::string> hit_data_name{"hit_data_name", "Hit data name", "hit"};
 
-    std::vector<ValueDefinitionBase *> all_data;
+    std::vector<ValueDefinitionBase*> all_data;
     ValueDefinition<addr_t> addr{all_data, *event_scope, *addr_data_name};
     ValueDefinition<bool> hit{all_data, *event_scope, *hit_data_name};
 
-    event_stream::EventStreamRecorder *recorder;
+    event_stream::EventStreamRecorder* recorder;
 
-    inline static const auto *replay_src = "[REPLAY]";
-    inline static const auto *events_src = "[EVENTS]";
+    inline static const auto* replay_src = "[REPLAY]";
+    inline static const auto* events_src = "[EVENTS]";
 
-    std::string attach_scope(const std::string &name) const
+    std::string attach_scope(const std::string& name) const
     {
         if (event_scope->empty())
             return name;
         return *event_scope + "." + name;
     }
 
-    std::string strip_scope(const std::string &name) const
+    std::string strip_scope(const std::string& name) const
     {
         return (!event_scope->empty() && name.find(*event_scope) == std::string::npos)
                    ? name
                    : name.substr(event_scope->size() + 1);
     }
 
-    std::string strip_prefix(const std::string &name) const
+    std::string strip_prefix(const std::string& name) const
     {
         if (auto dot = name.rfind('.'); dot != std::string::npos)
             return name.substr(dot + 1);
@@ -288,7 +288,7 @@ class PrefetcherValidator : sc::Module
     }
 
     template<typename... Args>
-    void debug_print(const char *source, const char *fmt_str, Args &&...args) const
+    void debug_print(const char* source, const char* fmt_str, Args&&... args) const
     {
         if (!debug_enabled())
             return;
@@ -299,18 +299,18 @@ class PrefetcherValidator : sc::Module
 
     T request();
 
-    void prefetcher_event(const event_stream::EventStreamRecorder::RecordedEvent &event)
+    void prefetcher_event(const event_stream::EventStreamRecorder::RecordedEvent& event)
     {
         std::vector<std::string> values;
-        for (const auto &[id, value] : event.data) {
+        for (const auto& [id, value] : event.data) {
             auto name = strip_prefix(event.data_name(id));
             if (name == "txid")
                 continue;
-            if (const std::string *v = std::get_if<std::string>(&value))
+            if (const std::string* v = std::get_if<std::string>(&value))
                 values.emplace_back(fmt::format("{}={}", name, *v));
-            else if (const int64_t *v = std::get_if<int64_t>(&value))
+            else if (const int64_t* v = std::get_if<int64_t>(&value))
                 values.emplace_back(fmt::format("{}={}", name, *v));
-            else if (const uint64_t *v = std::get_if<uint64_t>(&value))
+            else if (const uint64_t* v = std::get_if<uint64_t>(&value))
                 values.emplace_back(fmt::format("{}={}", name, *v));
         }
 
@@ -323,39 +323,39 @@ class PrefetcherValidator : sc::Module
     }
 
 public:
-    explicit PrefetcherValidator(const sc_core::sc_module_name &name)
+    explicit PrefetcherValidator(const sc_core::sc_module_name& name)
         : Module(name), phase(start_at_events->empty() ? NO_WAIT : WAIT_TILL_TRAIN)
     {
         sc::connect(prefetcher->prefetch_request, prefetcher_request).name("prefetch_request").bandwidth(64);
 
-        auto *es = static_cast<event_stream::EventStreamBroadcast *>(get_environment()->event_stream.get());
+        auto* es = static_cast<event_stream::EventStreamBroadcast*>(get_environment()->event_stream.get());
         recorder = es->emplace<event_stream::EventStreamRecorder>();
         recorder->callback(
-            [this](const event_stream::EventStreamRecorder::RecordedEvent &event) { this->prefetcher_event(event); });
+            [this](const event_stream::EventStreamRecorder::RecordedEvent& event) { this->prefetcher_event(event); });
 
-        for (const auto &event : *print_events)
+        for (const auto& event : *print_events)
             recorder->record(fmt::format("{}.{}", prefetcher->name(), strip_scope(event)));
 
-        for (const auto &event : *dump_on_events) {
+        for (const auto& event : *dump_on_events) {
             auto name = fmt::format("{}.{}", prefetcher->name(), strip_scope(event));
             recorder->record(name);
             dump_event_names.emplace(name);
         }
     }
 
-    void definition(const ampere::event_stream_proto::Definition &definition)
+    void definition(const ampere::event_stream_proto::Definition& definition)
     {
-        for (auto *event : all_events)
+        for (auto* event : all_events)
             event->definition.associate(definition);
 
-        for (auto *value : all_data)
+        for (auto* value : all_data)
             value->associate(definition);
 
-        for (const auto &name : *print_events)
+        for (const auto& name : *print_events)
             if (definition.name() == attach_scope(name))
                 print_event_definitions[definition.id()] = strip_scope(name);
 
-        for (const auto &name : *start_at_events)
+        for (const auto& name : *start_at_events)
             if (definition.name() == attach_scope(name))
                 start_events.emplace(definition.id());
 
@@ -366,34 +366,34 @@ public:
 
     void start()
     {
-        for (auto *event : all_events) {
+        for (auto* event : all_events) {
             event->verify();
             if (event->definition && event->definition.id() >= 0)
                 listened_events.emplace(event->definition.id());
         }
 
-        for (const auto &[id, _] : print_event_definitions)
+        for (const auto& [id, _] : print_event_definitions)
             listened_events.emplace(id);
 
-        for (const auto &id : start_events)
+        for (const auto& id : start_events)
             listened_events.emplace(id);
 
         AMPERE_ASSERT(!listened_events.empty(), "No listened events");
 
         unsigned listened_data = 0;
-        for (auto *data : all_data)
+        for (auto* data : all_data)
             listened_data += *data && data->id() >= 0;
 
         AMPERE_ASSERT(listened_data > 0, "No listened data");
     }
 
-    void event(const ampere::event_stream_proto::Event &event)
+    void event(const ampere::event_stream_proto::Event& event)
     {
         if (!listened_events.contains(event.definition_id()))
             return;
 
-        for (auto *data : all_data) {
-            for (const auto &value : event.values())
+        for (auto* data : all_data) {
+            for (const auto& value : event.values())
                 if (data->populate(value))
                     break;
         }
@@ -429,7 +429,7 @@ public:
             }
         } else if (auto e = print_event_definitions.find(event.definition_id()); e != print_event_definitions.end()) {
             std::vector<std::string> values;
-            for (const auto &value : event.values()) {
+            for (const auto& value : event.values()) {
                 if (auto d = data_names.find(value.definition_id()); d != data_names.end()) {
                     if (value.has_string_value())
                         values.emplace_back(fmt::format("{}={}", d->second, value.string_value()));
@@ -461,11 +461,11 @@ public:
         return true;
     }
 
-    void dump(std::ostream &os) const override { prefetcher->dump(os); }
+    void dump(std::ostream& os) const override { prefetcher->dump(os); }
 
-    void summarize(std::ostream &os) const
+    void summarize(std::ostream& os) const
     {
-        for (const auto *event : all_events)
+        for (const auto* event : all_events)
             event->dump(os);
     }
 };
@@ -491,14 +491,14 @@ struct PrefetcherRunner : sc::Module
     PrefetcherValidator<uarch_common::MemReq> l2_prefetcher{"l2c"};
 
     bool started{false};
-    ampere::event_stream::EventStreamReader &es_reader;
+    ampere::event_stream::EventStreamReader& es_reader;
     ampere::event_stream_proto::Record record;
     int64_t last_time{0};
 
-    PrefetcherRunner(const sc_core::sc_module_name &name,
-                     sc::Clock &clock,
-                     sc::Environment &env,
-                     ampere::event_stream::EventStreamReader &es_reader)
+    PrefetcherRunner(const sc_core::sc_module_name& name,
+                     sc::Clock& clock,
+                     sc::Environment& env,
+                     ampere::event_stream::EventStreamReader& es_reader)
         : sc::Module(name, &clock, &env), es_reader(es_reader)
     {
     }
@@ -542,7 +542,7 @@ struct PrefetcherRunner : sc::Module
     }
 };
 
-int sc_main(int argc, char **argv)
+int sc_main(int argc, char** argv)
 {
     sc::Clock clock{"main", {1, sc_core::SC_NS}};
     sc::Environment env{"system"};
@@ -558,7 +558,7 @@ int sc_main(int argc, char **argv)
     ampere::event_stream::EventStreamReader es_reader{*input_event_stream};
 
     env.event_stream = std::make_unique<event_stream::EventStreamBroadcast>();
-    auto *es = static_cast<event_stream::EventStreamBroadcast *>(env.event_stream.get());
+    auto* es = static_cast<event_stream::EventStreamBroadcast*>(env.event_stream.get());
 
     if (resp_stream_fd != -1 && event_stream_fd != -1)
         es->emplace<event_stream::EventStreamProto>(event_stream_fd, resp_stream_fd);

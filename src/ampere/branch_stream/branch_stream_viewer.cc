@@ -16,7 +16,7 @@
 using namespace ampere;
 using namespace ampere::bs;
 
-int main(int argc, char **argv)
+int main(int argc, char** argv)
 {
     if (argc < 2) {
         std::cout << "branch_stream_viewer [branch stream]" << std::endl;

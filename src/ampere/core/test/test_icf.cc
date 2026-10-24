@@ -103,7 +103,7 @@ protected:
 
         if (next_pc != exit_pc + 4) {
             fetch->update_prediction({branch_type, exit_pc, next_pc});
-            auto &p = fetch->line_prediction[fetch->start_instruction_offset() + num_instructions - 1];
+            auto& p = fetch->line_prediction[fetch->start_instruction_offset() + num_instructions - 1];
             p.branch_type = branch_type;
             p.primary.taken = true;
             p.primary.target = next_pc;

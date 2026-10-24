@@ -14,7 +14,7 @@ set(TESTS test/test_delimited.cc)
 add_library(protobuf_utils ${SOURCES} ${PROTO_SRCS} ${PROTO_HDRS})
 set_property(TARGET protobuf_utils PROPERTY POSITION_INDEPENDENT_CODE ON)
 set_property(TARGET protobuf_utils PROPERTY PUBLIC_HEADER protobuf_utils.h protobuf_stream.h)
-target_link_libraries(protobuf_utils PUBLIC protobuf::libprotobuf Boost::filesystem)
+target_link_libraries(protobuf_utils PUBLIC protobuf::libprotobuf Boost::filesystem Boost::process)
 target_link_libraries(protobuf_utils PRIVATE util)
 
 add_cpp_test(protobuf_utils_unit SOURCES ${TESTS})

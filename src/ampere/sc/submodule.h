@@ -22,11 +22,11 @@ namespace ampere::sc {
 
 struct SubmoduleSettingsHelper
 {
-    const char *name;
-    Module *parent_module = nullptr;
-    ParameterRegistry *registry = nullptr;
+    const char* name;
+    Module* parent_module = nullptr;
+    ParameterRegistry* registry = nullptr;
 
-    explicit SubmoduleSettingsHelper(const char *name) : name(name), parent_module(get_nearest<Module>())
+    explicit SubmoduleSettingsHelper(const char* name) : name(name), parent_module(get_nearest<Module>())
     {
         if (!parent_module)
             throw std::runtime_error{std::string{"Submodule "} + name + " used outside of module"};
@@ -35,7 +35,7 @@ struct SubmoduleSettingsHelper
     }
 
     template<typename T, typename... Args>
-    auto &add_param(const char *param, Args &&...args)
+    auto& add_param(const char* param, Args&&... args)
     {
         return registry->add_parameter_with_type<T>(
             std::string{parent_module->name()} + "." + std::string{this->name} + "." + std::string{param},
@@ -48,11 +48,11 @@ class Submodule : public std::unique_ptr<T>
 {
 public:
     template<typename... Args>
-    explicit Submodule(const char *name, Args &&...args)
+    explicit Submodule(const char* name, Args&&... args)
     {
         auto settings = SubmoduleSettingsHelper(name);
         auto args_type = poly_constructor<Args...>::type();
-        auto &type =
+        auto& type =
             settings.add_param<Submodule<T, Default>>("type",
                                                       "module type",
                                                       class_name<Default>(),
@@ -63,7 +63,7 @@ public:
         if (!submod_maker)
             throw_find_module_error<Args...>(type.value());
 
-        auto *p = dynamic_cast<T *>(submod_maker.template make<T>(name, std::forward<Args>(args)...));
+        auto* p = dynamic_cast<T*>(submod_maker.template make<T>(name, std::forward<Args>(args)...));
         if (!p)
             throw std::runtime_error{std::string{"invalid type for Submodule "} + name + "; not a subclass?"};
 
@@ -76,10 +76,10 @@ class EnabledSubmodule : public std::unique_ptr<T>
 {
 public:
     template<typename... Args>
-    explicit EnabledSubmodule(const char *name, bool enabled = true, Args &&...args)
+    explicit EnabledSubmodule(const char* name, bool enabled = true, Args&&... args)
     {
         auto settings = SubmoduleSettingsHelper(name);
-        if (auto &enable = settings.add_param<bool>("enable", "module enabled", enabled, "default");
+        if (auto& enable = settings.add_param<bool>("enable", "module enabled", enabled, "default");
             enable.value().get<bool>())
         {
             auto p = std::make_unique<T>(name, std::forward<Args>(args)...);
@@ -99,7 +99,7 @@ class Type<Submodule<T, U>, void>
 
 public:
     Type() = default;
-    explicit Type(const std::type_index &type) : type(type) {}
+    explicit Type(const std::type_index& type) : type(type) {}
 
     std::string name() const { return class_name<T>(); }
     std::string specification() const
@@ -109,10 +109,10 @@ public:
         return fmt::format(
             "{}", fmt::join(find_registered_modules_for_constructor_type<T>(*type) | std::views::values, ", "));
     }
-    static void value_to_event_stream(EventStream &event_stream,
-                                      const std::string &name,
-                                      const std::string &description,
-                                      const json &value)
+    static void value_to_event_stream(EventStream& event_stream,
+                                      const std::string& name,
+                                      const std::string& description,
+                                      const json& value)
     {
         value_to_event_stream_json(event_stream, name, description, value);
     }

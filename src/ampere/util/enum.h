@@ -72,7 +72,7 @@ public:
     }
 
     constexpr value_type operator*() const { return static_cast<value_type>(it); }
-    constexpr ConstEnumIterator &operator++()
+    constexpr ConstEnumIterator& operator++()
     {
         ++it;
         return *this;
@@ -84,7 +84,7 @@ public:
         return incr;
     }
 
-    constexpr bool operator==(const ConstEnumIterator &other) const { return it == other.it; }
+    constexpr bool operator==(const ConstEnumIterator& other) const { return it == other.it; }
 };
 
 template<ConstEnumerationWithValuesT E>
@@ -105,7 +105,7 @@ public:
     inline static constexpr auto end() { return ConstEnumIterator(definition_type::strings.end()); }
 
     constexpr value_type operator*() const { return static_cast<value_type>(it->second); }
-    constexpr ConstEnumIterator &operator++()
+    constexpr ConstEnumIterator& operator++()
     {
         ++it;
         return *this;
@@ -117,11 +117,11 @@ public:
         return incr;
     }
 
-    constexpr bool operator==(const ConstEnumIterator &other) const { return it == other.it; }
+    constexpr bool operator==(const ConstEnumIterator& other) const { return it == other.it; }
 };
 
 template<typename BasicJsonType>
-inline std::optional<size_t> _try_from_numeric_json(const BasicJsonType &j)
+inline std::optional<size_t> _try_from_numeric_json(const BasicJsonType& j)
 {
     static const std::regex integer_re{R"( *[-+]?[0-9]+)"};
     if (j.is_number())
@@ -137,13 +137,13 @@ inline std::optional<size_t> _try_from_numeric_json(const BasicJsonType &j)
 template<class E>
 struct _Enumeration
 {
-    friend std::ostream &operator<<(std::ostream &os, const E &enumeration)
+    friend std::ostream& operator<<(std::ostream& os, const E& enumeration)
     {
         return os << static_cast<std::string_view>(enumeration);
     }
 
     template<typename BasicJsonType>
-    static E _from_json(const BasicJsonType &j)
+    static E _from_json(const BasicJsonType& j)
     {
         if (auto number = _try_from_numeric_json(j); number)
             return E(*number);
@@ -151,7 +151,7 @@ struct _Enumeration
     }
 
     template<typename BasicJsonType>
-    friend void from_json(const BasicJsonType &j, E &enumeration)
+    friend void from_json(const BasicJsonType& j, E& enumeration)
     {
         enumeration = _from_json(j);
     }
@@ -175,7 +175,7 @@ public:
     explicit Enumeration(size_t value) : _value(static_cast<value_type>(value)) {}
     explicit Enumeration(std::string_view name)
     {
-        for (const auto &[enum_name, enum_value] : definition_type::strings) {
+        for (const auto& [enum_name, enum_value] : definition_type::strings) {
             if (enum_name == name) {
                 _value = static_cast<value_type>(enum_value);
                 return;
@@ -199,7 +199,7 @@ public:
                 exploded_index<definition_type::uniformity, underlying_type, definition_type::offset>(
                     std::to_underlying(_value)));
         } else {
-            for (const auto &[enum_name, enum_value] : definition_type::strings)
+            for (const auto& [enum_name, enum_value] : definition_type::strings)
                 if (enum_value == std::to_underlying(_value))
                     return enum_name;
 
@@ -210,12 +210,12 @@ public:
     constexpr operator value_type() const { return value(); }
     constexpr explicit operator std::string_view() const { return name(); }
 
-    bool operator==(const Enumeration &other) const { return _value == other._value; }
-    bool operator!=(const Enumeration &other) const { return _value != other._value; }
+    bool operator==(const Enumeration& other) const { return _value == other._value; }
+    bool operator!=(const Enumeration& other) const { return _value != other._value; }
     bool operator==(value_type other) const { return _value == other; }
     bool operator!=(value_type other) const { return _value != other; }
 
-    inline static constexpr auto &string_to_value_mapping() { return definition_type::strings; }
+    inline static constexpr auto& string_to_value_mapping() { return definition_type::strings; }
 
     using iterator = ConstEnumIterator<E>;
     static_assert(std::forward_iterator<iterator>);
@@ -252,16 +252,16 @@ public:
     public:
         Value() = default;
         explicit operator value_type() const { return (*iter)->first; }
-        explicit operator const std::string &() const { return (*iter)->second; }
+        explicit operator const std::string&() const { return (*iter)->second; }
         explicit operator std::string_view() const { return (*iter)->second; }
 
-        friend std::ostream &operator<<(std::ostream &os, const Value &value)
+        friend std::ostream& operator<<(std::ostream& os, const Value& value)
         {
             return os << static_cast<std::string>(value);
         }
 
-        bool operator==(const Value &other) const { return iter == other.iter; }
-        bool operator!=(const Value &other) const { return iter != other.iter; }
+        bool operator==(const Value& other) const { return iter == other.iter; }
+        bool operator!=(const Value& other) const { return iter != other.iter; }
     };
 
     inline static bool bounded() { return MAX_SIZE != std::numeric_limits<T>::max(); }
@@ -269,7 +269,7 @@ public:
 
     bool empty() const { return values.empty(); }
     auto size() const { return values.size(); }
-    const auto &mapping() const { return values; }
+    const auto& mapping() const { return values; }
 
     auto at(value_type value) const
     {
@@ -277,15 +277,15 @@ public:
             return Value(iter);
         throw std::out_of_range("No enumeration for value");
     }
-    auto at(const std::string &name) const
+    auto at(const std::string& name) const
     {
-        if (auto iter = std::find_if(values.begin(), values.end(), [&](const auto &e) { return e.second == name; });
+        if (auto iter = std::find_if(values.begin(), values.end(), [&](const auto& e) { return e.second == name; });
             iter != values.end())
             return Value(iter);
         throw std::out_of_range(fmt::format("No enumeration for name: {}", name));
     }
 
-    const std::string &to_string(value_type value) const { return values.at(value); }
+    const std::string& to_string(value_type value) const { return values.at(value); }
 
     auto begin() const { return values.cbegin(); }
     auto end() const { return values.cend(); }
@@ -324,7 +324,7 @@ public:
         extend<E>(from, to);
     }
     template<ConstructibleEnumerationT<T> U>
-    explicit DynamicEnumeration(const Enumeration<U> &enumeration,
+    explicit DynamicEnumeration(const Enumeration<U>& enumeration,
                                 bool with_values,
                                 std::optional<Enumeration<U>> from,
                                 std::optional<Enumeration<U>> to)
@@ -332,7 +332,7 @@ public:
         extend(enumeration, with_values, from, to);
     }
 
-    value_type add(const std::string &name, value_type value)
+    value_type add(const std::string& name, value_type value)
     {
         if (value > static_cast<T>(0) && static_cast<size_t>(value) >= MAX_SIZE)
             throw std::logic_error("Value outside max");
@@ -341,17 +341,17 @@ public:
         return value;
     }
 
-    value_type add(const std::string &name)
+    value_type add(const std::string& name)
     {
         value_type value = this->values.empty() ? 0 : this->values.rbegin()->first + 1;
-        if (std::find_if(this->values.begin(), this->values.end(), [&](const auto &e) { return e.second == name; })
+        if (std::find_if(this->values.begin(), this->values.end(), [&](const auto& e) { return e.second == name; })
             != this->values.end())
             throw std::logic_error("Enum value name already added");
         return add(name, value);
     }
 
 private:
-    void add(const std::string &name, value_type value, bool with_value)
+    void add(const std::string& name, value_type value, bool with_value)
     {
         if (with_value)
             add(name, value);
@@ -363,8 +363,8 @@ private:
     void extend(bool with_values, std::optional<E> from, std::optional<E> to, std::string prefix)
     {
         bool started = !from;
-        const auto &mappings = Enumeration<E>::string_to_value_mapping();
-        for (const auto &[enum_name, enum_value] : mappings) {
+        const auto& mappings = Enumeration<E>::string_to_value_mapping();
+        for (const auto& [enum_name, enum_value] : mappings) {
             started = started || enum_value == std::to_underlying(*from);
             if (started) {
                 add(prefix + std::string(enum_name), static_cast<value_type>(enum_value), with_values);
@@ -378,8 +378,8 @@ private:
     void extend(bool with_values, std::optional<E> from, std::optional<E> to, std::string prefix)
     {
         bool started = !from;
-        const auto &mappings = E::string_to_value_mapping();
-        for (const auto &[enum_value, enum_name] : mappings) {
+        const auto& mappings = E::string_to_value_mapping();
+        for (const auto& [enum_value, enum_name] : mappings) {
             started = started || enum_value == from->underlying();
             if (started) {
                 add(prefix + enum_name, enum_value, with_values);
@@ -390,9 +390,9 @@ private:
     }
 
     template<typename U, size_t S>
-    void extend_all(bool with_values, const ConstDynamicEnumeration<U, S> &e, std::string prefix)
+    void extend_all(bool with_values, const ConstDynamicEnumeration<U, S>& e, std::string prefix)
     {
-        for (const auto &[enum_value, enum_name] : e.mapping())
+        for (const auto& [enum_value, enum_name] : e.mapping())
             add(prefix + enum_name, enum_value, with_values);
     }
 
@@ -410,13 +410,13 @@ public:
     }
 
     template<typename U, size_t S>
-    void extend_all_values(const ConstDynamicEnumeration<U, S> &enumeration, std::string prefix = {})
+    void extend_all_values(const ConstDynamicEnumeration<U, S>& enumeration, std::string prefix = {})
     {
         extend_all(true, enumeration, prefix);
     }
 
     template<typename U, size_t S>
-    void extend_all_names(const ConstDynamicEnumeration<U, S> &enumeration, std::string prefix = {})
+    void extend_all_names(const ConstDynamicEnumeration<U, S>& enumeration, std::string prefix = {})
     {
         extend_all(false, enumeration, prefix);
     }
@@ -433,9 +433,9 @@ protected:
 
 public:
     FrozenEnumeration() = default;
-    explicit FrozenEnumeration(builder_type &&builder) { this->values = std::move(builder.values); }
+    explicit FrozenEnumeration(builder_type&& builder) { this->values = std::move(builder.values); }
 
-    FrozenEnumeration &operator=(builder_type &&builder)
+    FrozenEnumeration& operator=(builder_type&& builder)
     {
         this->values = std::move(builder.values);
         return *this;
@@ -464,7 +464,7 @@ public:
 template<ConstDynamicEnumerationT T>
 class Enumeration<T> : public EnumerationDefinition<T>
 {
-    T const *enumeration = nullptr;
+    T const* enumeration = nullptr;
     typename T::Value _value;
 
 public:
@@ -473,13 +473,13 @@ public:
     using underlying_type = T::value_type;
 
     Enumeration() = default;
-    explicit Enumeration(const enumeration_type &enumeration) : enumeration(&enumeration) {}
+    explicit Enumeration(const enumeration_type& enumeration) : enumeration(&enumeration) {}
     constexpr explicit Enumeration(value_type value) : _value(value) {}
-    explicit Enumeration(underlying_type value, const enumeration_type &enumeration)
+    explicit Enumeration(underlying_type value, const enumeration_type& enumeration)
         : enumeration(&enumeration), _value(enumeration.at(value))
     {
     }
-    explicit Enumeration(std::string_view name, const enumeration_type &enumeration)
+    explicit Enumeration(std::string_view name, const enumeration_type& enumeration)
         : enumeration(&enumeration), _value(enumeration.at(std::string(name)))
     {
     }
@@ -491,26 +491,26 @@ public:
     constexpr std::string_view name() const { return static_cast<std::string_view>(_value); }
 
     constexpr operator value_type() const { return value(); }
-    constexpr explicit operator const std::string &() const { return static_cast<const std::string &>(_value); }
+    constexpr explicit operator const std::string&() const { return static_cast<const std::string&>(_value); }
     constexpr explicit operator std::string_view() const { return name(); }
 
-    bool operator==(const Enumeration &other) const { return _value == other._value; }
-    bool operator!=(const Enumeration &other) const { return _value != other._value; }
-    bool operator==(const value_type &other) const { return _value == other; }
-    bool operator!=(const value_type &other) const { return _value != other; }
+    bool operator==(const Enumeration& other) const { return _value == other._value; }
+    bool operator!=(const Enumeration& other) const { return _value != other._value; }
+    bool operator==(const value_type& other) const { return _value == other; }
+    bool operator!=(const value_type& other) const { return _value != other; }
 
-    auto &string_to_value_mapping() const { return enumeration->mapping(); }
+    auto& string_to_value_mapping() const { return enumeration->mapping(); }
 
     auto begin() const { return enumeration->begin(); }
     auto end() const { return enumeration->end(); }
 
-    friend std::ostream &operator<<(std::ostream &os, const Enumeration<enumeration_type> &enumeration)
+    friend std::ostream& operator<<(std::ostream& os, const Enumeration<enumeration_type>& enumeration)
     {
         return os << static_cast<std::string_view>(enumeration);
     }
 
     template<typename BasicJsonType>
-    static Enumeration<enumeration_type> _from_json(const BasicJsonType &j, const enumeration_type &e)
+    static Enumeration<enumeration_type> _from_json(const BasicJsonType& j, const enumeration_type& e)
     {
         if (auto number = _try_from_numeric_json(j); number)
             return Enumeration<enumeration_type>(*number, e);
@@ -518,7 +518,7 @@ public:
     }
 
     template<typename BasicJsonType>
-    friend void from_json(const BasicJsonType &j, Enumeration<enumeration_type> &enumeration)
+    friend void from_json(const BasicJsonType& j, Enumeration<enumeration_type>& enumeration)
     {
         enumeration = _from_json(j, *enumeration.enumeration);
     }
@@ -535,11 +535,11 @@ public:
     using builder_type = typename Base::builder_type;
 
     StaticEnumeration() = default;
-    explicit StaticEnumeration(builder_type &&builder) : Base(std::move(builder)) {}
+    explicit StaticEnumeration(builder_type&& builder) : Base(std::move(builder)) {}
 
     using Base::operator=;
 
-    inline static void finalize(builder_type &&builder);
+    inline static void finalize(builder_type&& builder);
 };
 
 template<typename T, typename UT, size_t MAX_SIZE>
@@ -563,7 +563,7 @@ public:
 private:
     using frozen_type = StaticEnumeration<T, UT, MAX_SIZE>;
 
-    inline static auto &builder()
+    inline static auto& builder()
     {
         static std::unique_ptr<builder_type> _builder;
         if (!_builder)
@@ -571,15 +571,15 @@ private:
         return _builder;
     }
 
-    inline static auto &values()
+    inline static auto& values()
     {
         static frozen_type _values;
         return _values;
     }
 
-    inline static auto &final_values()
+    inline static auto& final_values()
     {
-        if (auto &v = values(); !v.empty())
+        if (auto& v = values(); !v.empty())
             return v;
         throw std::logic_error("Enumeration not finalized");
     }
@@ -602,9 +602,9 @@ public:
         finalize(std::move(b));
     }
 
-    inline static const frozen_type &finalize(builder_type &&builder)
+    inline static const frozen_type& finalize(builder_type&& builder)
     {
-        auto &v = values();
+        auto& v = values();
         if (v.empty())
             v = std::move(builder);
         else if (v.mapping() != builder.mapping())
@@ -613,10 +613,10 @@ public:
     }
 
     Enumeration() = default;
-    explicit Enumeration(const value_type &value) : _value(value) {}
+    explicit Enumeration(const value_type& value) : _value(value) {}
     explicit Enumeration(underlying_type value) : _value(final_values().at(value)) {}
     explicit Enumeration(std::string_view name) : _value(final_values().at(std::string(name))) {}
-    explicit Enumeration(const std::string &name) : _value(final_values().at(name)) {}
+    explicit Enumeration(const std::string& name) : _value(final_values().at(name)) {}
 
     value_type value() const { return _value; }
     underlying_type underlying() const { return static_cast<underlying_type>(_value); }
@@ -628,19 +628,19 @@ public:
     operator value_type() const { return value(); }
     explicit operator std::string_view() const { return name(); }
 
-    inline static const auto &string_to_value_mapping() { return final_values().mapping(); }
+    inline static const auto& string_to_value_mapping() { return final_values().mapping(); }
 
     auto begin() const { return final_values().begin(); }
     auto end() const { return final_values().end(); }
 
-    friend std::ostream &operator<<(std::ostream &os, const Enumeration &enumeration)
+    friend std::ostream& operator<<(std::ostream& os, const Enumeration& enumeration)
     {
         return os << static_cast<std::string_view>(enumeration);
     }
 };
 
 template<typename T, typename UT, size_t MAX_SIZE>
-void StaticEnumeration<T, UT, MAX_SIZE>::finalize(StaticEnumeration<T, UT, MAX_SIZE>::builder_type &&builder)
+void StaticEnumeration<T, UT, MAX_SIZE>::finalize(StaticEnumeration<T, UT, MAX_SIZE>::builder_type&& builder)
 {
     Enumeration<StaticEnumeration<T, UT, MAX_SIZE>>::finalize(std::move(builder));
 }
@@ -735,13 +735,13 @@ template<class E>
 struct fmt::formatter<ampere::util::Enumeration<E>> : fmt::formatter<string_view>
 {
     template<typename FormatContext>
-    constexpr auto format(E value, FormatContext &ctx) const
+    constexpr auto format(E value, FormatContext& ctx) const
     {
         return fmt::formatter<string_view>::format(::ampere::util::enum_to_string(value), ctx);
     }
 
     template<typename FormatContext>
-    constexpr auto format(ampere::util::Enumeration<E> value, FormatContext &ctx) const
+    constexpr auto format(ampere::util::Enumeration<E> value, FormatContext& ctx) const
     {
         return fmt::formatter<string_view>::format(std::string_view(value), ctx);
     }
@@ -752,7 +752,7 @@ struct fmt::formatter<E, std::enable_if_t<ampere::util::has_enum_definition_v<E>
     : fmt::formatter<std::string_view>
 {
     template<typename FormatContext>
-    auto format(E value, FormatContext &ctx) const
+    auto format(E value, FormatContext& ctx) const
     {
         return fmt::formatter<std::string_view>::format(::ampere::util::enum_to_string(value), ctx);
     }
@@ -763,7 +763,7 @@ struct fmt::formatter<std::optional<E>, std::enable_if_t<ampere::util::has_enum_
     : formatter<std::string_view>
 {
     template<typename FormatContext>
-    auto format(std::optional<E> value, FormatContext &ctx) const
+    auto format(std::optional<E> value, FormatContext& ctx) const
     {
         return fmt::formatter<std::string_view>::format(value ? ::ampere::util::enum_to_string(*value) : "none"sv, ctx);
     }
@@ -775,19 +775,19 @@ template<typename E>
 struct adl_serializer<E, std::enable_if_t<::ampere::util::has_enum_definition_v<E>, void>>
 {
     template<typename BasicJsonType>
-    static void from_json(BasicJsonType &&j, E &val)
+    static void from_json(BasicJsonType&& j, E& val)
     {
         val = ::ampere::util::Enumeration<E>::_from_json(j);
     }
 
     template<typename BasicJsonType>
-    static E from_json(BasicJsonType &&j)
+    static E from_json(BasicJsonType&& j)
     {
         return ::ampere::util::Enumeration<E>::_from_json(j);
     }
 
     template<typename BasicJsonType>
-    static void to_json(BasicJsonType &j, const E &value)
+    static void to_json(BasicJsonType& j, const E& value)
     {
         j = ::ampere::util::enum_to_string<E>(value);
     }
@@ -796,15 +796,15 @@ struct adl_serializer<E, std::enable_if_t<::ampere::util::has_enum_definition_v<
 NLOHMANN_JSON_NAMESPACE_END
 
 template<class E>
-inline auto operator<<(std::ostream &os, const E &value)
-    -> std::enable_if_t<ampere::util::has_enum_definition_v<E>, std::ostream &>
+inline auto operator<<(std::ostream& os, const E& value)
+    -> std::enable_if_t<ampere::util::has_enum_definition_v<E>, std::ostream&>
 {
     return os << ::ampere::util::enum_to_string(value);
 }
 
 template<class E>
-inline auto operator<<(std::ostream &os, const std::optional<E> &value)
-    -> std::enable_if_t<ampere::util::has_enum_definition_v<E>, std::ostream &>
+inline auto operator<<(std::ostream& os, const std::optional<E>& value)
+    -> std::enable_if_t<ampere::util::has_enum_definition_v<E>, std::ostream&>
 {
     if (value)
         return os << ::ampere::util::enum_to_string(*value);

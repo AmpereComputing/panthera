@@ -21,7 +21,7 @@ namespace ampere::core {
 
 using namespace uarch_common;
 
-MMU::MMU(const sc_core::sc_module_name &name) : Module(name), otb{"otb"}
+MMU::MMU(const sc_core::sc_module_name& name) : Module(name), otb{"otb"}
 {
     connect(tlb_lookup).name("tlb_lookup_pipe").latency(lookup_pipe_latency);
     connect(s1tpc_lookup).name("s1tpc_lookup_pipe").latency(s1tpc_pipe_latency);
@@ -39,7 +39,7 @@ MMU::MMU(const sc_core::sc_module_name &name) : Module(name), otb{"otb"}
     }
 }
 
-MMU::MMU(const sc_core::sc_module_name &name, unsigned load_pipes, unsigned sta_pipes) : MMU(name)
+MMU::MMU(const sc_core::sc_module_name& name, unsigned load_pipes, unsigned sta_pipes) : MMU(name)
 {
     AMPERE_ASSERT(!otb.is_sectioned() || (otb.lsu_sections() >= load_pipes && otb.lsu_sections() >= sta_pipes),
                   "LSU sections must be greater or equal to both load and STA pipes");
@@ -84,9 +84,9 @@ bool MMU::run()
 
 /* Initialize the WalkFSM and return true iff the table walk is already
  * complete based on information found in the S1TPC */
-void MMU::init_walk_fsm(OTBEntry &otbentry)
+void MMU::init_walk_fsm(OTBEntry& otbentry)
 {
-    auto &entry = otbentry.pwt;
+    auto& entry = otbentry.pwt;
     auto req = otbentry.request;
 
     auto el = driver_port->exception_level();
@@ -165,9 +165,9 @@ void MMU::init_walk_fsm(OTBEntry &otbentry)
 
 /* Return whether the walk is done after the current stage, and set `done =
  * true` if so. */
-bool MMU::check_walk_done(OTBEntry &otbentry)
+bool MMU::check_walk_done(OTBEntry& otbentry)
 {
-    auto &entry = otbentry.pwt;
+    auto& entry = otbentry.pwt;
     Bitfield descriptor(entry.pte[entry.level]);
 
     /* Detect invalid/empty descriptors */
@@ -209,9 +209,9 @@ bool MMU::check_walk_done(OTBEntry &otbentry)
 }
 
 /* Returns whether the walk is done after the current stage */
-bool MMU::do_walk_stage(OTBEntry &otbentry)
+bool MMU::do_walk_stage(OTBEntry& otbentry)
 {
-    auto &entry = otbentry.pwt;
+    auto& entry = otbentry.pwt;
     Bitfield descriptor(entry.pte[entry.level]);
 
     /*
@@ -242,7 +242,7 @@ bool MMU::do_walk_stage(OTBEntry &otbentry)
     return false;
 }
 
-void MMU::generate_response(OTBEntry &otbentry)
+void MMU::generate_response(OTBEntry& otbentry)
 {
     if (otbentry.request->is_instruction)
         inst_response_queue.push_back(otbentry.otb_id);
@@ -253,7 +253,7 @@ void MMU::generate_response(OTBEntry &otbentry)
 void MMU::do_s1tpc_lookups()
 {
     while (s1tpc_lookup.can_take()) {
-        auto &otbentry = otb.at(s1tpc_lookup.take());
+        auto& otbentry = otb.at(s1tpc_lookup.take());
 
         otbentry.executing = false;
         otbentry.ready = true;
@@ -269,7 +269,7 @@ void MMU::do_s1tpc_lookups()
 void MMU::do_tlb_lookups()
 {
     while (tlb_lookup.can_take()) {
-        auto &otbentry = otb.at(tlb_lookup.take());
+        auto& otbentry = otb.at(tlb_lookup.take());
 
         // Should only happen when MRU is uninitialized because we haven't seen
         // a TLB hit yet
@@ -355,11 +355,11 @@ void MMU::do_invalidation()
         if (data_tlbi_request_out.bind_count())
             data_tlbi_request_out->put(tlbi);
 
-        auto &ainst = tlbi->insn->archx_instruction;
+        auto& ainst = tlbi->insn->archx_instruction;
         if (ainst->is_tlbi_by_va()) {
             auto victims =
                 tlb.invalidate_by_va(ainst->tlbi_by_va_asid(), ainst->tlbi_by_va_ttl(), ainst->tlbi_by_va_addr());
-            for (const auto &victim : victims) {
+            for (const auto& victim : victims) {
                 select_mru(victim.is_instr).decrement_page_counter(victim.page_size);
             }
 
@@ -386,9 +386,9 @@ void MMU::do_invalidation()
         // Restart all in-progress translations
         auto new_asid = driver_port->asid();
 
-        for (auto &[_, otb_entry] : otb) {
+        for (auto& [_, otb_entry] : otb) {
             auto tr = context(otb_entry.request);
-            auto &mru = select_mru(otb_entry.request->is_instruction);
+            auto& mru = select_mru(otb_entry.request->is_instruction);
             otb_entry.reset(mru, {new_asid, tr});
         }
     }
@@ -397,7 +397,7 @@ void MMU::do_invalidation()
 void MMU::do_walks()
 {
     while (table_walk.can_take()) {
-        auto &otbentry = otb.at(table_walk.take());
+        auto& otbentry = otb.at(table_walk.take());
         otbentry.fsm_credit->release();
         do_walk_stage(otbentry);
         if (otbentry.pwt.done) {
@@ -430,7 +430,7 @@ void MMU::do_walks()
                                         tlb.get_set_bits()),
                                L2TLBEntry(otbentry.phys_addr, otbentry.page_size, otbentry.request->is_instruction));
 
-                auto &mru = select_mru(otbentry.request->is_instruction);
+                auto& mru = select_mru(otbentry.request->is_instruction);
                 mru.increment_page_counter(otbentry.page_size);
                 mru.set_mru(otbentry.page_size);
 
@@ -522,12 +522,12 @@ void MMU::accept_pte_responses()
         // Ignore L2 responses for non-existent OTB entries. This is possible
         // after invalidates since we re-start translations, and don't have a
         // way of telling the L2 to throw out previous requests.
-        auto *entry = otb.find(memresp->id);
+        auto* entry = otb.find(memresp->id);
         if (!entry)
             continue;
 
-        auto &otbentry = *entry;
-        auto &pwt = otbentry.pwt;
+        auto& otbentry = *entry;
+        auto& pwt = otbentry.pwt;
 
         // Ignore L2 response if we are not currently waiting on a PTE response from this PA
         if (otbentry.op != MMUOp::PageWalk || otbentry.ready || otbentry.executing || pwt.done
@@ -555,13 +555,13 @@ void MMU::accept_pte_responses()
     }
 }
 
-void MMU::accept_requests(InOpt<MMUReq> &mmu_request, OutOpt<MMUAck> &mmu_ack)
+void MMU::accept_requests(InOpt<MMUReq>& mmu_request, OutOpt<MMUAck>& mmu_ack)
 {
     /* Accept new lookup requests */
     while (mmu_request.bind_count() && mmu_request->can_take() && mmu_ack->can_put()) {
         auto mmureq = mmu_request->take();
         if (allocation_fairness) {
-            auto &section = mmureq->section;
+            auto& section = mmureq->section;
             section = (mmureq->is_instruction) ? otb.lsu_sections() : mmureq->channel % otb.lsu_sections();
             AMPERE_ASSERT(!requests[section], "Request already present in section");
             requests[section] = std::move(mmureq);
@@ -574,7 +574,7 @@ void MMU::accept_requests(InOpt<MMUReq> &mmu_request, OutOpt<MMUAck> &mmu_ack)
 void MMU::process_requests()
 {
     if (!allocation_fairness) {
-        for (auto &req : requests) {
+        for (auto& req : requests) {
             if (req)
                 process_request(req, req->is_instruction ? inst_mmu_ack : data_mmu_ack);
         }
@@ -585,7 +585,7 @@ void MMU::process_requests()
         allocation_priority.reserve(current_priority.size());
         auto front = allocation_priority.begin();
         for (auto section : current_priority) {
-            if (auto &req = requests[section]; req) {
+            if (auto& req = requests[section]; req) {
                 if (process_request(req, req->is_instruction ? inst_mmu_ack : data_mmu_ack)) {
                     allocation_priority.emplace_back(section);
                     continue;
@@ -598,7 +598,7 @@ void MMU::process_requests()
     }
 }
 
-bool MMU::process_request(const MMUReq &mmureq, OutOpt<MMUAck> &mmu_ack)
+bool MMU::process_request(const MMUReq& mmureq, OutOpt<MMUAck>& mmu_ack)
 {
     /* If we recently flushed, do not allocate any new OTBs. The ICF/LSU
      * must re-request any translation requests made during this time
@@ -618,7 +618,7 @@ bool MMU::process_request(const MMUReq &mmureq, OutOpt<MMUAck> &mmu_ack)
     if (!otb_id) {
         // If no duplicate was found and the OTB is not full, allocate a
         // new entry
-        auto &mru = select_mru(mmureq->is_instruction);
+        auto& mru = select_mru(mmureq->is_instruction);
         otb_id = otb.try_allocate(mmureq, mru, state, duplicated);
         if (otb_id)
             ev_pmu(mmureq, ev_num(mmureq->is_instruction ? archx::PMU::L2I_TLB : archx::PMU::L2D_TLB));
@@ -641,7 +641,7 @@ void MMU::accept_invalidate_requests()
     }
 }
 
-bool MMU::schedule_tlb_lookup(OTBEntry &otbentry)
+bool MMU::schedule_tlb_lookup(OTBEntry& otbentry)
 {
     if (!tlb_lookup.can_put())
         return false;
@@ -655,8 +655,8 @@ bool MMU::schedule_tlb_lookup(OTBEntry &otbentry)
 void MMU::schedule_tlb_lookups()
 {
     if (tlb_lookup.can_put())
-        otb.schedule_entries([this](OTBEntry &e) { return this->schedule_tlb_lookup(e); },
-                             [](const OTBEntry &e) { return e.can_schedule_lookup(); },
+        otb.schedule_entries([this](OTBEntry& e) { return this->schedule_tlb_lookup(e); },
+                             [](const OTBEntry& e) { return e.can_schedule_lookup(); },
                              lookup_candidate);
 }
 
@@ -667,7 +667,7 @@ void MMU::schedule_tlb_invalidations()
     if (invalidation_executing)
         return;
 
-    for (auto &[_, otb_entry] : otb)
+    for (auto& [_, otb_entry] : otb)
         if (otb_entry.executing)
             return;
 
@@ -675,7 +675,7 @@ void MMU::schedule_tlb_invalidations()
     tlb_lookup.put(0);
 }
 
-bool MMU::schedule_walk(OTBEntry &otbentry)
+bool MMU::schedule_walk(OTBEntry& otbentry)
 {
     if (!walk_fsms.can_acquire() || !table_walk.can_put())
         return false;
@@ -689,16 +689,16 @@ bool MMU::schedule_walk(OTBEntry &otbentry)
 void MMU::schedule_walks()
 {
     if (walk_fsms.can_acquire() && table_walk.can_put())
-        otb.schedule_entries([this](OTBEntry &e) { return this->schedule_walk(e); },
-                             [](const OTBEntry &e) { return e.can_schedule_walk(); },
+        otb.schedule_entries([this](OTBEntry& e) { return this->schedule_walk(e); },
+                             [](const OTBEntry& e) { return e.can_schedule_walk(); },
                              walk_candidate);
 }
 
-void MMU::send_responses(std::deque<uint64_t> &response_queue, OutOpt<MMUResp> &mmu_response)
+void MMU::send_responses(std::deque<uint64_t>& response_queue, OutOpt<MMUResp>& mmu_response)
 {
     while (mmu_response.bind_count() && !response_queue.empty() && mmu_response->can_put()) {
         auto otb_id = response_queue.front();
-        auto &otbentry = otb.at(otb_id);
+        auto& otbentry = otb.at(otb_id);
         auto mmu_req = otbentry.request;
         auto mmu_resp = make_child<MMUResp>(mmu_req,
                                             otbentry.otb_id,
@@ -718,7 +718,7 @@ void MMU::send_responses(std::deque<uint64_t> &response_queue, OutOpt<MMUResp> &
 void MMU::collect_pmu_data()
 {
     if (enable_per_cycle_pmu) {
-        for (auto &[_, otb_entry] : otb) {
+        for (auto& [_, otb_entry] : otb) {
             if (otb_entry.op == MMUOp::PageWalk) {
                 ev_pmu(otb_entry.request,
                        ev_num(otb_entry.request->is_instruction ? archx::PMU::ITLB_WALK_PERCYC
@@ -728,7 +728,7 @@ void MMU::collect_pmu_data()
     }
 }
 
-void MMU::dump(std::ostream &os) const
+void MMU::dump(std::ostream& os) const
 {
     fmt::print(os, "= MMU ======================================================\n");
     otb.dump(os);
@@ -744,12 +744,12 @@ void MMU::end_of_elaboration()
     unified_mmu = inst_mmu_request.bind_count() && data_mmu_request.bind_count();
 }
 
-TranslationContext MMU::context(const MMUReq &req) const
+TranslationContext MMU::context(const MMUReq& req) const
 {
     return {req->virt_addr, Bitfield{driver_port->read_sysreg(TCR_EL1)}, req->is_instruction};
 }
 
-Translation MMU::translation(const OTBEntry &otb_entry) const
+Translation MMU::translation(const OTBEntry& otb_entry) const
 {
     return {otb_entry.request->virt_addr,
             Bitfield{driver_port->read_sysreg(TCR_EL1)},

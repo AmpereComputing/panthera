@@ -95,7 +95,7 @@ TEST(TestFrame, CanIterateOverRow)
     for (size_t row = 0; row < 3; ++row) {
         size_t col = 0;
 
-        for (auto &v : frame.row(row))
+        for (auto& v : frame.row(row))
             EXPECT_EQ(v, row_expected[row][col++]);
     }
 }
@@ -110,7 +110,7 @@ TEST(TestFrame, CanIterateOverConstRow)
     for (size_t row = 0; row < 3; ++row) {
         size_t col = 0;
 
-        for (auto &v : frame.row(row))
+        for (auto& v : frame.row(row))
             EXPECT_EQ(v, row_expected[row][col++]);
     }
 }

@@ -43,7 +43,7 @@ struct InstructionStreamRunnerConfig
     sc::Param<std::string> event_stream_name;
     sc::Param<bool> event_stream_always;
 
-    explicit InstructionStreamRunnerConfig(sc::Environment &env)
+    explicit InstructionStreamRunnerConfig(sc::Environment& env)
         : instruction_stream_name{env, "instruction_stream", "path to an instruction stream", ""},
           memory_stream_name{env, "memory_stream", "path to a memory stream for warmup", ""},
           max_instructions{env,
@@ -70,10 +70,10 @@ template<class Base>
 class InstructionStreamHandler : public sc::Module
 {
 public:
-    InstructionStreamHandler(const sc_core::sc_module_name &name,
-                             sc::Clock *clk,
-                             sc::Environment *env,
-                             const InstructionStreamRunnerConfig &config)
+    InstructionStreamHandler(const sc_core::sc_module_name& name,
+                             sc::Clock* clk,
+                             sc::Environment* env,
+                             const InstructionStreamRunnerConfig& config)
         : Module{name, clk, env}, config(config)
     {
     }
@@ -85,9 +85,9 @@ public:
     bool can_process() const { return true; }
     bool is_complete() const { return true; }
 
-    void run_instruction(const boost::local_shared_ptr<archx::Instruction> &instruction)
+    void run_instruction(const boost::local_shared_ptr<archx::Instruction>& instruction)
     {
-        static_cast<Base *>(this)->handle_instruction(instruction);
+        static_cast<Base*>(this)->handle_instruction(instruction);
 
         if constexpr (Base::needs_uops()) {
             auto uops = instruction->decode();
@@ -97,8 +97,8 @@ public:
             }
 
             std::ostringstream uop_name;
-            for (const auto &uop : uops) {
-                static_cast<Base *>(this)->handle_uop(*uop, instruction);
+            for (const auto& uop : uops) {
+                static_cast<Base*>(this)->handle_uop(*uop, instruction);
 
                 uop_name.str(std::string());
                 uop_name << uop->opcode;
@@ -114,7 +114,7 @@ protected:
     auto make_driver() const { return archx::makeDriver(config.instruction_stream_name, 0); }
 
 private:
-    const InstructionStreamRunnerConfig &config;
+    const InstructionStreamRunnerConfig& config;
 
     struct
     {
@@ -131,7 +131,7 @@ class InstructionStreamRunner : sc::Module, InstructionStreamRunnerConfig
     static inline bool needs_sysreg_updates = T::needs_sysregs_updates();
     static inline bool needs_memory_updates = T::needs_memory_updates();
 
-    sc::Environment &env;
+    sc::Environment& env;
 
     std::unique_ptr<T> handler;
 
@@ -144,7 +144,7 @@ class InstructionStreamRunner : sc::Module, InstructionStreamRunnerConfig
     boost::local_shared_ptr<archx::InstructionIS> last_instr;
 
 public:
-    InstructionStreamRunner(sc::Clock &clock, sc::Environment &env)
+    InstructionStreamRunner(sc::Clock& clock, sc::Environment& env)
         : Module("runner", &clock, &env), InstructionStreamRunnerConfig(env), env(env)
     {
         if (resp_stream_fd != -1 && event_stream_fd != -1)
@@ -157,7 +157,7 @@ public:
         AMPERE_ASSERT(instructions_per_cycle == 0 || cycles_per_instruction == 0,
                       "Only one of instructions_per_cycle or cycles_per_instruction should be provided");
 
-        handler = std::make_unique<T>("top", &clock, &env, static_cast<const InstructionStreamRunnerConfig &>(*this));
+        handler = std::make_unique<T>("top", &clock, &env, static_cast<const InstructionStreamRunnerConfig&>(*this));
     }
 
     void warmup_memory()
@@ -275,7 +275,7 @@ public:
                                fmt::group_digits(instruction_count));
                 }
 
-                const auto &instr = event.instruction();
+                const auto& instr = event.instruction();
                 auto current_instr = boost::make_local_shared<archx::InstructionIS>(instr, instruction_count, state);
 
                 if (last_instr) {
@@ -296,23 +296,23 @@ public:
 
             } else if (needs_memory_updates && event.has_memory()) {
                 // process memory update
-                const auto &mem = event.memory();
+                const auto& mem = event.memory();
                 auto addr = archx::PhysAddr(mem.address().pa());
-                state = std::move(state).write(addr, (uint8_t *)mem.value().data(), mem.value().size());
+                state = std::move(state).write(addr, (uint8_t*)mem.value().data(), mem.value().size());
             } else if (needs_sysreg_updates && event.has_sysreg()) {
                 // process sysreg update
-                const auto &s = event.sysreg();
+                const auto& s = event.sysreg();
                 archx::SysReg sysreg = archx::SysReg(s.op0(), s.op1(), s.crn(), s.crm(), s.op2());
                 state = std::move(state).write(sysreg, s.value());
             } else if (event.has_context()) {
                 // process context update
-                const auto &c = event.context();
+                const auto& c = event.context();
                 if (c.type() == is::Context::EL) {
                     state = std::move(state).set_exception_level(static_cast<archx::EL>(c.value()));
                 }
             } else if (event.has_control()) {
                 // process control change
-                const auto &control = event.control();
+                const auto& control = event.control();
                 if (control.type() == Control::START_MEASUREMENT) {
                     measurement_started = true;
                     env.event_stream->enable();
@@ -345,10 +345,10 @@ public:
         }
     }
 
-    static int init_and_run(int argc, char **argv)
+    static int init_and_run(int argc, char** argv)
     {
-        auto &clock = *ampere::sc::Clock::get_root();
-        auto &env = *ampere::sc::Environment::get_root();
+        auto& clock = *ampere::sc::Clock::get_root();
+        auto& env = *ampere::sc::Environment::get_root();
 
         env.parameters.load_from_args(argc, argv);
         InstructionStreamRunner runner(clock, env);
@@ -365,7 +365,7 @@ public:
         bool error = false;
         try {
             runner.start();
-        } catch (std::runtime_error &err) {
+        } catch (std::runtime_error& err) {
             std::cerr << err.what() << std::endl;
             error = true;
         }

@@ -40,24 +40,24 @@ struct CounterBalancingTest : sc::TestModule
 
     void TearDown() override
     {
-        for (auto &credit : allocated)
+        for (auto& credit : allocated)
             credit->release();
     }
 
-    void balance(DecodedUopGroup &uop_group) { balancer->balance(uop_group, sch); }
-    void dispatch(const std::vector<core::Scheduler> &group_sched)
+    void balance(DecodedUopGroup& uop_group) { balancer->balance(uop_group, sch); }
+    void dispatch(const std::vector<core::Scheduler>& group_sched)
     {
-        for (const auto &sched : group_sched)
+        for (const auto& sched : group_sched)
             allocated.emplace_back(sch[sched.scheduler()].acquire());
     }
 
-    void balance_and_dispatch(DecodedUopGroup &uop_group, const std::vector<core::Scheduler> &group_sched)
+    void balance_and_dispatch(DecodedUopGroup& uop_group, const std::vector<core::Scheduler>& group_sched)
     {
         balancer->balance(uop_group, sch);
         dispatch(group_sched);
     }
 
-    static void cleave(core::Uop &uop0, core::Uop &uop1)
+    static void cleave(core::Uop& uop0, core::Uop& uop1)
     {
         uop0->instructions.front()->has_internal_cleaving = uop1->instructions.front()->has_internal_cleaving = true;
         uop0->uop_number = 0;

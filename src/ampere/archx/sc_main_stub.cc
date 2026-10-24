@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: BSD-3-Clause
 //
 
-extern "C" int sc_main(int argc, char **argv)
+extern "C" int sc_main(int argc, char** argv)
 {
     return 1;
 }

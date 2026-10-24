@@ -55,7 +55,7 @@ struct BothTag : TLBTag<archx::VirtAddr>
 
 struct BothEntry : TLBEntry<>
 {
-    BothEntry(const archx::PhysAddr &pa, const ampere::archx::PageSize &ps, bool is_instr)
+    BothEntry(const archx::PhysAddr& pa, const ampere::archx::PageSize& ps, bool is_instr)
         : TLBEntry<>(pa, ps), is_instr(is_instr)
     {
     }

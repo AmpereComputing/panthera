@@ -33,19 +33,19 @@ typedef std::map<unsigned, ampere::archx::pred_reg_t> pred_map_t;
 // using same map for SVE and AdvSIMD registers while only supporing VL=128
 typedef std::map<unsigned, std::array<uint8_t, ampere::archx::MAXVL>> vec_map_t;
 
-void log(const char *str, ...);
+void log(const char* str, ...);
 #define logf(format_str, ...)                                                                                     \
     log(fmt::format(                                                                                              \
             "{}:{}:{}:\n\t{}\n", __FILE__, __LINE__, __PRETTY_FUNCTION__, fmt::format(format_str, ##__VA_ARGS__)) \
             .c_str())
 
-bool qemu_plugin_read_reg64(uint64_t *dest, int reg);
-bool qemu_plugin_read_reg32(uint32_t *dest, int reg);
+bool qemu_plugin_read_reg64(uint64_t* dest, int reg);
+bool qemu_plugin_read_reg32(uint32_t* dest, int reg);
 
 // reg should be 0...15. This function adds appropriate offset to get
 // to QEMU's GDB register name.
-void read_pred_from_qemu(ampere::archx::preg_t &dest, unsigned regid, unsigned first_predicate_idx);
-void read_zreg_from_qemu(ampere::archx::vector_t &dest, unsigned regid, unsigned first_zreg_idx);
+void read_pred_from_qemu(ampere::archx::preg_t& dest, unsigned regid, unsigned first_predicate_idx);
+void read_zreg_from_qemu(ampere::archx::vector_t& dest, unsigned regid, unsigned first_zreg_idx);
 
 #define THROW(fmtstr, ...) \
     throw std::runtime_error(fmt::format("{}:{}: " fmtstr "\n", __FILE__, __LINE__, ##__VA_ARGS__))
@@ -87,7 +87,7 @@ public:
      * address `pa` and extending for `len` bytes into a buffer starting at
      * `result`, returning true if the memory read was successful.
      */
-    virtual bool read_memory(uint64_t pa, uint8_t *result, size_t len) = 0;
+    virtual bool read_memory(uint64_t pa, uint8_t* result, size_t len) = 0;
 };
 
 class StateAccessor : public MemoryAccessor
@@ -114,7 +114,7 @@ class QEMUMemoryAccessor : public MemoryAccessor
 public:
     QEMUMemoryAccessor() = default;
 
-    bool read_memory(uint64_t pa, uint8_t *result, size_t len) override
+    bool read_memory(uint64_t pa, uint8_t* result, size_t len) override
     {
         return qemu_plugin_read_phys_memory(pa, result, len, 0 /* ARMASIdx_NS */) == 0;
     }
@@ -130,7 +130,7 @@ public:
         find_core_register_names();
     }
 
-    bool read_memory(uint64_t pa, uint8_t *result, size_t len) override
+    bool read_memory(uint64_t pa, uint8_t* result, size_t len) override
     {
         return QEMUMemoryAccessor::read_memory(pa, result, len);
     }
@@ -181,7 +181,7 @@ public:
     std::optional<vec_map_t> read_vfp_registers() override
     {
         vec_map_t vfp_regs;
-        GByteArray *regval;
+        GByteArray* regval;
         unsigned read_bytes;
 
         regval = g_byte_array_new();
@@ -215,7 +215,7 @@ public:
     std::optional<std::map<SysReg, uint64_t>> read_sysregs() override
     {
         std::map<SysReg, uint64_t> sysreg_values;
-        for (const auto &[sysreg, index] : sysreg_index_map) {
+        for (const auto& [sysreg, index] : sysreg_index_map) {
             uint64_t val;
             if (!qemu_plugin_read_reg64(&val, index)) {
                 log(fmt::format("Failed to read sysreg {} from QEMU\n", sysreg.name).c_str());
@@ -310,17 +310,17 @@ private:
         std::set<SysReg> tracing_sysregs(required_tracing_sysregs);
         tracing_sysregs.insert(optional_tracing_sysregs.begin(), optional_tracing_sysregs.end());
 
-        const char *xml = qemu_plugin_read_gdb_xml("system-registers.xml");
+        const char* xml = qemu_plugin_read_gdb_xml("system-registers.xml");
         if (xml) {
             boost::property_tree::ptree pt;
             auto str = std::stringstream(xml);
             boost::property_tree::xml_parser::read_xml(str, pt, boost::property_tree::xml_parser::trim_whitespace);
             auto elements = pt.get_child("feature");
-            for (auto &element : elements) {
+            for (auto& element : elements) {
                 if (element.first == "reg") {
                     auto xml_sysreg = element.second;
                     auto xml_name = xml_sysreg.get<std::string>("<xmlattr>.name");
-                    for (auto &tracing_sysreg : tracing_sysregs) {
+                    for (auto& tracing_sysreg : tracing_sysregs) {
                         if (xml_name == tracing_sysreg.name) {
                             size_t regnum = xml_sysreg.get<size_t>("<xmlattr>.regnum");
                             size_t bitsize = xml_sysreg.get<size_t>("<xmlattr>.bitsize");
@@ -334,7 +334,7 @@ private:
         }
 
         // Ensure we found indices for all the sysregs we need to report
-        for (auto &tracing_sysreg : required_tracing_sysregs) {
+        for (auto& tracing_sysreg : required_tracing_sysregs) {
             if (sysreg_index_map.count(tracing_sysreg) != 1) {
                 log(fmt::format("Failed to find mapping in QEMU's GDB XML for sysreg {}\n", tracing_sysreg.name)
                         .c_str());
@@ -362,7 +362,7 @@ private:
         // some variant with a different SVE vector length) that turns
         // on SVE when invoking QEMU, sve-registers.xml will be
         // used. Otherwise aarch64-fpu.xml is used as a fallback.
-        const char *xml = qemu_plugin_read_gdb_xml("sve-registers.xml");
+        const char* xml = qemu_plugin_read_gdb_xml("sve-registers.xml");
         if (!xml) {
             xml = qemu_plugin_read_gdb_xml("aarch64-fpu.xml");
         }
@@ -376,7 +376,7 @@ private:
             boost::property_tree::xml_parser::read_xml(str, pt, boost::property_tree::xml_parser::trim_whitespace);
             auto elements = pt.get_child("feature");
             unsigned last_regidx = 0;
-            for (auto &element : elements) {
+            for (auto& element : elements) {
                 if (element.first == "reg") {
                     // pick off SVE regs (z0...z31, p0...p15, ffr) or AdvSIMD regs (v0...v31), and fpcr, fscr
                     auto xml_reg = element.second;
@@ -417,8 +417,8 @@ private:
 
     void find_core_register_names()
     {
-        const char *xml_fn = "aarch64-core.xml";
-        const char *xml = qemu_plugin_read_gdb_xml(xml_fn);
+        const char* xml_fn = "aarch64-core.xml";
+        const char* xml = qemu_plugin_read_gdb_xml(xml_fn);
         if (!xml) {
             THROW("Cannot read {}", xml_fn);
         }
@@ -427,7 +427,7 @@ private:
         boost::property_tree::xml_parser::read_xml(str, pt, boost::property_tree::xml_parser::trim_whitespace);
         auto elements = pt.get_child("feature");
         unsigned last_regidx = 0;
-        for (auto &element : elements) {
+        for (auto& element : elements) {
             if (element.first == "reg") {
                 auto xml_reg = element.second;
                 auto xml_name = xml_reg.get<std::string>("<xmlattr>.name");

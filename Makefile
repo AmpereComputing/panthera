@@ -5,6 +5,7 @@ CMAKE:=cmake
 CMAKE_ARGS:=
 CCACHE:=ccache
 NINJA:=$(shell command -v ninja 2> /dev/null)
+CLANG_FORMAT:=$(shell command -v clang-format 2> /dev/null)
 PYTHON:=python3
 
 PROJECT_DIR=$(realpath $(dir $(realpath $(lastword $(MAKEFILE_LIST)))))
@@ -673,7 +674,7 @@ text-format-check:
 
 .PHONY: .clang-format
 .clang-format:
-	$(FIND_AMPERE_SRCS) $(CPP_FILES) | parallel -j $(LINT_JOBS) clang-format -i
+	$(FIND_AMPERE_SRCS) $(CPP_FILES) | parallel -j $(LINT_JOBS) $(CLANG_FORMAT) -i
 
 .PHONY: clang-format
 clang-format: .require-clean
@@ -682,16 +683,16 @@ clang-format: .require-clean
 
 .PHONY: clang-format-changed
 clang-format-changed:
-	$(FIND_CHANGED_AMPERE_SRCS) $(CPP_FILES) | parallel -j $(LINT_JOBS) clang-format -i
+	$(FIND_CHANGED_AMPERE_SRCS) $(CPP_FILES) | parallel -j $(LINT_JOBS) $(CLANG_FORMAT) -i
 
 .PHONY: clang-format-check
 clang-format-check:
 	@# Check C++ formatting
-	$(FIND_AMPERE_SRCS) $(CPP_FILES) | parallel -j $(LINT_JOBS) clang-format -n -Werror
+	$(FIND_AMPERE_SRCS) $(CPP_FILES) | parallel -j $(LINT_JOBS) $(CLANG_FORMAT) -n -Werror
 
 .PHONY: clang-format-check-changed
 clang-format-check-changed:
-	$(FIND_CHANGED_AMPERE_SRCS) $(CPP_FILES) | parallel -j $(LINT_JOBS) clang-format -n -Werror
+	$(FIND_CHANGED_AMPERE_SRCS) $(CPP_FILES) | parallel -j $(LINT_JOBS) $(CLANG_FORMAT) -n -Werror
 
 # Python
 

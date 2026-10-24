@@ -21,19 +21,19 @@ using namespace boost::filesystem;
 class BranchStreamWriterTest : public ::testing::Test
 {
 protected:
-    path test_file_name(const char *extension)
+    path test_file_name(const char* extension)
     {
-        const ::testing::TestInfo *const test_info = ::testing::UnitTest::GetInstance()->current_test_info();
+        const ::testing::TestInfo* const test_info = ::testing::UnitTest::GetInstance()->current_test_info();
         path p(test_info->name());
         p.replace_extension(extension);
         return p;
     }
-    google::protobuf::io::FileOutputStream *output_stream;
+    google::protobuf::io::FileOutputStream* output_stream;
 };
 
 TEST_F(BranchStreamWriterTest, testWrite)
 {
-    bs::BranchStreamWriter *writer = new bs::BranchStreamWriter(this->test_file_name("bs").string().c_str());
+    bs::BranchStreamWriter* writer = new bs::BranchStreamWriter(this->test_file_name("bs").string().c_str());
 
     is::Context context;
     context.set_type(is::Context_Type_EL);
@@ -78,7 +78,7 @@ TEST_F(BranchStreamWriterTest, testWrite)
     int fd = open(this->test_file_name("bs").string().c_str(), O_RDONLY);
     ASSERT_GT(fd, 2);
 
-    google::protobuf::io::FileInputStream *input_stream;
+    google::protobuf::io::FileInputStream* input_stream;
     input_stream = new google::protobuf::io::FileInputStream(fd);
 
     uint32_t magic, bs_version;
@@ -142,7 +142,7 @@ TEST_F(BranchStreamWriterTest, testWrite)
 
 TEST_F(BranchStreamWriterTest, testWriteXz)
 {
-    bs::BranchStreamWriter *writer = new bs::BranchStreamWriter(this->test_file_name("bs.xz").string().c_str());
+    bs::BranchStreamWriter* writer = new bs::BranchStreamWriter(this->test_file_name("bs.xz").string().c_str());
 
     is::Context context;
     context.set_type(is::Context_Type_EL);
@@ -184,7 +184,7 @@ TEST_F(BranchStreamWriterTest, testWriteXz)
 
     delete writer;
 
-    bs::BranchStreamReader *reader = new bs::BranchStreamReader(test_file_name("bs.xz"));
+    bs::BranchStreamReader* reader = new bs::BranchStreamReader(test_file_name("bs.xz"));
 
     ASSERT_EQ(reader->version(), 1);
 

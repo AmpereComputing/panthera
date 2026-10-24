@@ -2,18 +2,18 @@
 // Copyright (c) 2023-2025 Ampere Computing. All rights reserved.
 // SPDX-License-Identifier: BSD-3-Clause
 //
-#include "ampere/benchmarks/common/ops.h"
-#include "ampere/tracing_tools/tracing_hints.h"
-#include <stdint.h>
-#include <stdlib.h>
-#include <stdio.h>
 #include <assert.h>
-#include <unistd.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <sys/mman.h>
+#include <unistd.h>
 
-int main(int argc, char** argv)
-{
+#include "ampere/benchmarks/common/ops.h"
+#include "ampere/tracing_tools/tracing_hints.h"
+
+int main(int argc, char** argv) {
     const uint64_t kb = 1024;
     const uint64_t limit = kb * kb * kb;
     const size_t alignment = kb * kb * kb;
@@ -28,7 +28,8 @@ int main(int argc, char** argv)
         printf("Madvise() failure: %s\n", strerror(err_code));
         exit(EXIT_FAILURE);
     }
-    // added volatile to prevent compiler's optimizer from summarizing the loop effects
+    // added volatile to prevent compiler's optimizer from summarizing the loop
+    // effects
     volatile uint8_t* q = 0;
     q = (uint8_t*)p;
     // try to take any page faults before tracing
@@ -41,7 +42,8 @@ int main(int argc, char** argv)
     uint64_t total = 0;
     hint_start_tracing();
     hint_start_online_warmup();
-    for (i = 0; i < dl1_cache_lines * cache_wipes_per_inner_loop; i++) { // load L1 and L2 cache once. Avoid L2 misses
+    for (i = 0; i < dl1_cache_lines * cache_wipes_per_inner_loop;
+         i++) {  // load L1 and L2 cache once. Avoid L2 misses
         int idx = i * dl1_line_size;
         total += q[idx];
     }

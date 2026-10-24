@@ -29,7 +29,7 @@ class IDRPartition;
 struct ThrottlingProperties
 {
     unsigned width;
-    const SchedulerCredits &sch;
+    const SchedulerCredits& sch;
 };
 
 class IDRSchedulerThrottle : public Module
@@ -38,7 +38,7 @@ protected:
     ThrottlingProperties properties;
 
 public:
-    IDRSchedulerThrottle(const sc_core::sc_module_name &name, const ThrottlingProperties &properties)
+    IDRSchedulerThrottle(const sc_core::sc_module_name& name, const ThrottlingProperties& properties)
         : Module(name), properties(properties)
     {
     }
@@ -46,22 +46,22 @@ public:
     // Is scheduler on partition currently throttled
     virtual bool throttled(SchedulerType sched, unsigned partition) const = 0;
     // Adjust (add or remove) eligible schedulers for partition
-    virtual void adjust(std::set<SchedulerType> &eligible, unsigned partition) = 0;
+    virtual void adjust(std::set<SchedulerType>& eligible, unsigned partition) = 0;
 };
 
 using IDRSchedulerThrottlePolyDef =
-    sc::poly_definition<IDRSchedulerThrottle, sc::poly_constructor<const ThrottlingProperties &>>;
+    sc::poly_definition<IDRSchedulerThrottle, sc::poly_constructor<const ThrottlingProperties&>>;
 
 class IDRSchedulerThrottleNone : public IDRSchedulerThrottle,
                                  IDRSchedulerThrottlePolyDef::implementation<IDRSchedulerThrottleNone>
 {
 public:
-    IDRSchedulerThrottleNone(const sc_core::sc_module_name &name, const ThrottlingProperties &properties)
+    IDRSchedulerThrottleNone(const sc_core::sc_module_name& name, const ThrottlingProperties& properties)
         : IDRSchedulerThrottle(name, properties)
     {
     }
     bool throttled(SchedulerType sched, unsigned partition) const override { return false; }
-    void adjust(std::set<SchedulerType> &eligible, unsigned partition) override {}
+    void adjust(std::set<SchedulerType>& eligible, unsigned partition) override {}
 };
 
 // Always exclude/replace scheduler throttling
@@ -72,13 +72,13 @@ class IDRSchedulerThrottleAlways : public IDRSchedulerThrottle,
     Param<std::optional<SchedulerType>> replace_scheduler{"replace", "Replace with scheduler", {}};
 
 public:
-    IDRSchedulerThrottleAlways(const sc_core::sc_module_name &name, const ThrottlingProperties &properties)
+    IDRSchedulerThrottleAlways(const sc_core::sc_module_name& name, const ThrottlingProperties& properties)
         : IDRSchedulerThrottle(name, properties)
     {
     }
 
     bool throttled(SchedulerType sched, unsigned partition) const override { return sched == exclude_scheduler; }
-    void adjust(std::set<SchedulerType> &eligible, unsigned partition) override
+    void adjust(std::set<SchedulerType>& eligible, unsigned partition) override
     {
         if (eligible.erase(exclude_scheduler) && replace_scheduler)
             eligible.emplace(*replace_scheduler);
@@ -104,7 +104,7 @@ class IDRSchedulerThrottleWatermark : public IDRSchedulerThrottle,
     bool is_throttling(unsigned partition) const;
 
 public:
-    explicit IDRSchedulerThrottleWatermark(const sc_core::sc_module_name &name, const ThrottlingProperties &properties)
+    explicit IDRSchedulerThrottleWatermark(const sc_core::sc_module_name& name, const ThrottlingProperties& properties)
         : IDRSchedulerThrottle(name, properties)
     {
     }
@@ -113,7 +113,7 @@ public:
     {
         return sched == throttle_scheduler && is_throttling(partition);
     }
-    void adjust(std::set<SchedulerType> &eligible, unsigned partition) override;
+    void adjust(std::set<SchedulerType>& eligible, unsigned partition) override;
 };
 
 class IDRWidthThrottle : public Module
@@ -122,7 +122,7 @@ protected:
     ThrottlingProperties properties;
 
 public:
-    IDRWidthThrottle(const sc_core::sc_module_name &name, const ThrottlingProperties &properties)
+    IDRWidthThrottle(const sc_core::sc_module_name& name, const ThrottlingProperties& properties)
         : Module(name), properties(properties)
     {
     }
@@ -134,12 +134,12 @@ public:
 };
 
 using IDRWidthThrottlePolyDef =
-    sc::poly_definition<IDRWidthThrottle, sc::poly_constructor<const ThrottlingProperties &>>;
+    sc::poly_definition<IDRWidthThrottle, sc::poly_constructor<const ThrottlingProperties&>>;
 
 class IDRWidthThrottleNone : public IDRWidthThrottle, IDRWidthThrottlePolyDef::implementation<IDRWidthThrottleNone>
 {
 public:
-    IDRWidthThrottleNone(const sc_core::sc_module_name &name, const ThrottlingProperties &properties)
+    IDRWidthThrottleNone(const sc_core::sc_module_name& name, const ThrottlingProperties& properties)
         : IDRWidthThrottle(name, properties)
     {
     }
@@ -159,7 +159,7 @@ public:
     sc::In<bool> ixu_throttle{"ixu_throttle"};
     sc::In<bool> fsu_throttle{"fsu_throttle"};
 
-    IDRWidthThrottleIXUFSUThroughput(const sc_core::sc_module_name &name, const ThrottlingProperties &properties)
+    IDRWidthThrottleIXUFSUThroughput(const sc_core::sc_module_name& name, const ThrottlingProperties& properties)
         : IDRWidthThrottle(name, properties)
     {
     }

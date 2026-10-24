@@ -16,12 +16,12 @@ SEMIHOSTING_CALL(trace, TRACE_SEMIHOSTING_NUM)
 
 static inline void semihosting_start_tracing()
 {
-    do_semihosting_call_trace((void *)TRACE_SEMIHOSTING_START);
+    do_semihosting_call_trace((void*)TRACE_SEMIHOSTING_START);
 }
 
 static inline void semihosting_stop_tracing()
 {
-    do_semihosting_call_trace((void *)TRACE_SEMIHOSTING_STOP);
+    do_semihosting_call_trace((void*)TRACE_SEMIHOSTING_STOP);
 }
 #endif /* __aarch64__ */
 

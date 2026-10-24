@@ -34,14 +34,14 @@ std::vector<std::string> OTB::section_names(unsigned lsu_sections)
     return names;
 }
 
-OTB::OTB(const sc_core::sc_module_name &name)
+OTB::OTB(const sc_core::sc_module_name& name)
     : Module(name), shared_section{total_sections() - 1}, sections{"sections", section_names(lsu_sections())}
 {
     connect(deallocation).name("deallocation_delay").latency(deallocation_latency).bandwidth(total_entries);
 
     if (sectioned) {
         unsigned sectioned_entries = 0;
-        for (const auto &section : sections)
+        for (const auto& section : sections)
             sectioned_entries += section.get_size();
 
         AMPERE_ASSERT(sectioned_entries == total_entries,
@@ -84,7 +84,7 @@ std::optional<uint64_t> OTB::allocate_id() const
     return std::nullopt;
 }
 
-std::pair<std::optional<uint64_t>, bool> OTB::try_combine(MMUReq mmureq, const TranslationState &state)
+std::pair<std::optional<uint64_t>, bool> OTB::try_combine(MMUReq mmureq, const TranslationState& state)
 {
     if (!combine_duplicates)
         return {std::nullopt, false};
@@ -92,8 +92,8 @@ std::pair<std::optional<uint64_t>, bool> OTB::try_combine(MMUReq mmureq, const T
     bool duplicated = false;
     std::optional<uint64_t> otb_id;
 
-    for (auto &[_, otb_entry] : entries) {
-        auto &req = otb_entry.request;
+    for (auto& [_, otb_entry] : entries) {
+        auto& req = otb_entry.request;
         bool same_page = (_64k_duplicate_check && state.granule_size == 16)
                              ? req->virt_addr.same_page_64k(mmureq->virt_addr)
                              : req->virt_addr.same_page_4k(mmureq->virt_addr);
@@ -117,7 +117,7 @@ std::pair<std::optional<uint64_t>, bool> OTB::try_combine(MMUReq mmureq, const T
     return {otb_id, duplicated};
 }
 
-std::optional<uint64_t> OTB::try_allocate(MMUReq mmureq, MMUMRU &mru, const TranslationState &state, bool duplicated)
+std::optional<uint64_t> OTB::try_allocate(MMUReq mmureq, MMUMRU& mru, const TranslationState& state, bool duplicated)
 {
     auto otb_id = allocate_id();
     bool reserved = reservation == mmureq->id;
@@ -132,7 +132,7 @@ std::optional<uint64_t> OTB::try_allocate(MMUReq mmureq, MMUMRU &mru, const Tran
         auto section = mmureq->section;
         if (!sections[section].can_acquire())
             section = shared_section;
-        if (auto &s = sections[section]; s.can_acquire()) {
+        if (auto& s = sections[section]; s.can_acquire()) {
             section_credit = s.acquire();
         } else {
             otb_id.reset();
@@ -140,7 +140,7 @@ std::optional<uint64_t> OTB::try_allocate(MMUReq mmureq, MMUMRU &mru, const Tran
     }
 
     if (otb_id) {
-        auto &entry = entries
+        auto& entry = entries
                           .emplace(std::piecewise_construct,
                                    std::forward_as_tuple(*otb_id),
                                    std::forward_as_tuple(*otb_id, std::move(section_credit), mmureq, mru, state))
@@ -166,12 +166,12 @@ std::optional<uint64_t> OTB::try_allocate(MMUReq mmureq, MMUMRU &mru, const Tran
     return otb_id;
 }
 
-void OTB::deallocate_only(OTBEntry &otbentry)
+void OTB::deallocate_only(OTBEntry& otbentry)
 {
     if (otbentry.section)
         otbentry.section->release();
 
-    auto &mmu_req = otbentry.request;
+    auto& mmu_req = otbentry.request;
     event.deallocate(mmu_req,
                      event.otb_id(otbentry.otb_id),
                      event.page_bits(otbentry.page_bits()),
@@ -181,11 +181,11 @@ void OTB::deallocate_only(OTBEntry &otbentry)
         available->put(true);
 }
 
-void OTB::deallocate(OTBEntry &otbentry, bool now)
+void OTB::deallocate(OTBEntry& otbentry, bool now)
 {
     // This loop for unblocking OTB entries have been stalled because other entry is bringing the page
     if (!otbentry.deallocating && stall_same_page_duplicates) {
-        for (auto &[_, otb_entry] : entries) {
+        for (auto& [_, otb_entry] : entries) {
             if (otb_entry.op == MMUOp::DuplicateStall) {
                 bool same_page = (_64k_duplicate_check && otb_entry.granule_size == 16)
                                      ? otb_entry.request->virt_addr.same_page_64k(otbentry.request->virt_addr)
@@ -208,12 +208,12 @@ void OTB::deallocate(OTBEntry &otbentry, bool now)
     }
 }
 
-OTB::otb_iterator OTB::schedule(std::function<bool(const OTBEntry &)> pred, ScheduleInfo &info)
+OTB::otb_iterator OTB::schedule(std::function<bool(const OTBEntry&)> pred, ScheduleInfo& info)
 {
     auto to_schedule = entries.end();
     // pick non-speculative if ready and present
     if (prioritize_scheduling_non_spec) {
-        to_schedule = std::find_if(entries.begin(), entries.end(), [&](const auto &e) {
+        to_schedule = std::find_if(entries.begin(), entries.end(), [&](const auto& e) {
             return e.second.non_speculative() && pred(e.second);
         });
     }
@@ -229,9 +229,9 @@ OTB::otb_iterator OTB::schedule(std::function<bool(const OTBEntry &)> pred, Sche
     return to_schedule;
 }
 
-void OTB::schedule_entries(std::function<bool(OTBEntry &)> func,
-                           std::function<bool(const OTBEntry &)> pred,
-                           OTB::ScheduleInfo &info)
+void OTB::schedule_entries(std::function<bool(OTBEntry&)> func,
+                           std::function<bool(const OTBEntry&)> pred,
+                           OTB::ScheduleInfo& info)
 {
     bool use_last = info.use_last;
     if (auto prioritized = schedule(pred, info); prioritized != entries.end()) {
@@ -242,11 +242,11 @@ void OTB::schedule_entries(std::function<bool(OTBEntry &)> func,
     }
 
     if (use_last) {
-        for (auto &[_, otb_entry] : boost::adaptors::reverse(entries))
+        for (auto& [_, otb_entry] : boost::adaptors::reverse(entries))
             if (pred(otb_entry) && !func(otb_entry))
                 break;
     } else {
-        for (auto &[_, otb_entry] : entries)
+        for (auto& [_, otb_entry] : entries)
             if (pred(otb_entry) && !func(otb_entry))
                 break;
     }
@@ -257,7 +257,7 @@ void OTB::flush(Flush flush)
     remaining_allocation_lockout_cycles = flush_allocation_lockout_cycles;
 
     for (auto it = entries.begin(); it != entries.end();) {
-        auto &otbentry = it->second;
+        auto& otbentry = it->second;
         otbentry.flushing = true;
         if (!otbentry.executing && otbentry.ready && !otbentry.deallocating) {
             deallocate_only(otbentry);
@@ -279,7 +279,7 @@ void OTB::clear()
     }
 }
 
-void OTB::dump(std::ostream &os) const
+void OTB::dump(std::ostream& os) const
 {
     fmt::print(os, "\nOTB size: {}\n", entries.size());
 
@@ -295,7 +295,7 @@ void OTB::dump(std::ostream &os) const
                    "ready",
                    "executing",
                    "phys_addr");
-        for (const auto &[_, otb_entry] : entries) {
+        for (const auto& [_, otb_entry] : entries) {
             fmt::print(os,
                        fmt::runtime("{1:<7} | {2:<{0}} | {3:<{0}} | {5:<16} | {6:<7} | {7:<5} | {8:<{0}} | {9:<16}\n"),
                        10,

@@ -19,11 +19,11 @@ constexpr size_t MAX_EXPLODED_ARRAY = 512;
 
 // Gather range (min, max) for values in an std::array<std::pair<K, V>>
 template<size_t N, typename K, typename V>
-inline static constexpr std::pair<V, V> array_pair_value_range(const std::array<std::pair<K, V>, N> &array)
+inline static constexpr std::pair<V, V> array_pair_value_range(const std::array<std::pair<K, V>, N>& array)
 {
     auto min_value = std::numeric_limits<V>::max();
     auto max_value = std::numeric_limits<V>::min();
-    for (const auto &[_, value] : array) {
+    for (const auto& [_, value] : array) {
         if (value > max_value)
             max_value = value;
         if (value < min_value)
@@ -34,14 +34,14 @@ inline static constexpr std::pair<V, V> array_pair_value_range(const std::array<
 }
 
 template<size_t N, typename K, typename V>
-inline static constexpr bool incremental_range_within_limits(const std::array<std::pair<K, V>, N> &array, V limit)
+inline static constexpr bool incremental_range_within_limits(const std::array<std::pair<K, V>, N>& array, V limit)
 {
     auto [min_value, max_value] = array_pair_value_range(array);
     return (max_value - min_value) < limit;
 }
 
 template<size_t N, typename K, typename V>
-inline static constexpr bool exponential_range_within_limits(const std::array<std::pair<K, V>, N> &array, V limit)
+inline static constexpr bool exponential_range_within_limits(const std::array<std::pair<K, V>, N>& array, V limit)
 {
     auto last = array[0].second;
     if (last != 0 && !util::is_power_of_two(last))
@@ -69,7 +69,7 @@ enum class RangeUniformity {
 };
 
 template<size_t N, typename K, typename V>
-inline static constexpr RangeUniformity uniform_range(const std::array<std::pair<K, V>, N> &array)
+inline static constexpr RangeUniformity uniform_range(const std::array<std::pair<K, V>, N>& array)
 {
     if (exponential_range_within_limits(array, static_cast<V>(MAX_EXPLODED_ARRAY)))
         return RangeUniformity::EXPONENTIAL;
@@ -101,11 +101,11 @@ template<size_t M,
          V OFFSET = 0,
          RangeUniformity R = RangeUniformity::NONE,
          bool MUST_BE_UNIQUE = false>
-inline static constexpr auto explode_array_pair_values(const std::array<std::pair<K, V>, N> &array)
+inline static constexpr auto explode_array_pair_values(const std::array<std::pair<K, V>, N>& array)
     -> std::enable_if_t<can_explode_array_values_v<M, N, V, OFFSET, R>, std::array<K, M + 1>>
 {
     std::array<K, M + 1> exploded{};
-    for (const auto &[name, value] : array) {
+    for (const auto& [name, value] : array) {
         const auto index = exploded_index<R, V, OFFSET>(value);
         if (MUST_BE_UNIQUE && !exploded.at(index).empty())
             throw std::logic_error("Values are not unique");
@@ -123,7 +123,7 @@ template<size_t M,
          V OFFSET = 0,
          RangeUniformity R = RangeUniformity::NONE,
          bool MUST_BE_UNIQUE = false>
-inline static constexpr auto explode_array_pair_values(const std::array<std::pair<K, V>, N> &array [[maybe_unused]])
+inline static constexpr auto explode_array_pair_values(const std::array<std::pair<K, V>, N>& array [[maybe_unused]])
     -> std::enable_if_t<!can_explode_array_values_v<M, N, V, OFFSET, R>, bool>
 {
     // Too many values after explosion

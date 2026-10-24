@@ -14,7 +14,7 @@ namespace ampere::mesh {
 using namespace sc;
 using namespace chi;
 
-inline int get_snoop_count(PHATrackerEntry *entry)
+inline int get_snoop_count(PHATrackerEntry* entry)
 {
     int cnt = 0;
 
@@ -61,16 +61,16 @@ protected:
         SNP_ST_VEC,
         SNP_STASH
     };
-    const char *s[4] = {"Idle", "SnpPst", "SnpStVect", "SnpStash"};
+    const char* s[4] = {"Idle", "SnpPst", "SnpStVect", "SnpStash"};
 
     struct CommandEntry
     {
         CommandEntry() : entry(nullptr), state(CommandState::IDLE) {}
-        CommandEntry(PHATrackerEntry *entry);
+        CommandEntry(PHATrackerEntry* entry);
 
         void update_cmd_state();
 
-        PHATrackerEntry *entry;
+        PHATrackerEntry* entry;
         SnoopStatus snoop_status;
         SnoopStatus::NodeIdSet core_valid_at_init;
         CommandState state;
@@ -82,18 +82,18 @@ protected:
 
     NodeId node_id;
 
-    MeshSnp gen_common_snp(CommandEntry &cmd, SnoopOpcode snp_opcode, const NodeId &snoop_node);
-    std::optional<MeshSnp> fsm_snp_pst(CommandEntry &cmd);
-    std::optional<MeshSnp> fsm_snp_stvec(CommandEntry &cmd);
-    std::optional<MeshSnp> fsm_snp_stash(CommandEntry &cmd);
+    MeshSnp gen_common_snp(CommandEntry& cmd, SnoopOpcode snp_opcode, const NodeId& snoop_node);
+    std::optional<MeshSnp> fsm_snp_pst(CommandEntry& cmd);
+    std::optional<MeshSnp> fsm_snp_stvec(CommandEntry& cmd);
+    std::optional<MeshSnp> fsm_snp_stash(CommandEntry& cmd);
 
 public:
-    In<PHATrackerEntry *> phase_command_in{"phase_command_in"};
+    In<PHATrackerEntry*> phase_command_in{"phase_command_in"};
     Out<MeshSnp> phase_snp_out{"phase_snoop_out"};
 
-    explicit PHAPhase(const sc_core::sc_module_name &name, NodeId node_id) : Module{name}, node_id{node_id} {}
+    explicit PHAPhase(const sc_core::sc_module_name& name, NodeId node_id) : Module{name}, node_id{node_id} {}
 
     bool run() override;
-    void dump(std::ostream &os) const override;
+    void dump(std::ostream& os) const override;
 };
 } // namespace ampere::mesh

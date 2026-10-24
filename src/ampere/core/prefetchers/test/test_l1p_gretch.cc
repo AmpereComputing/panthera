@@ -20,7 +20,7 @@ using namespace ::testing;
 struct FakePCP : sc::Module
 {
     sc_core::sc_port<PCPTraining> training;
-    explicit FakePCP(const sc_core::sc_module_name &name) : Module{name} {}
+    explicit FakePCP(const sc_core::sc_module_name& name) : Module{name} {}
 };
 
 struct GRETCHTest : TestModule
@@ -93,7 +93,7 @@ TEST_F(GRETCHTest, ADTTriggerSuccessful)
     EXPECT_EQ(gretch.get_state(), GretchState::POPULATE_ADT);
     EXPECT_EQ(gretch.get_num_addr(), 1);
 
-    const auto &adt_table = gretch.get_adt_table();
+    const auto& adt_table = gretch.get_adt_table();
     EXPECT_EQ(adt_table.size(), 1);
 
     auto adt_entry = adt_table[0];
@@ -114,7 +114,7 @@ TEST_F(GRETCHTest, ADT2AddrPerPC)
     EXPECT_EQ(gretch.get_state(), GretchState::POPULATE_ADT);
     EXPECT_EQ(gretch.get_num_addr(), 2);
 
-    const auto &adt_table = gretch.get_adt_table();
+    const auto& adt_table = gretch.get_adt_table();
     EXPECT_EQ(adt_table.size(), 1);
 
     auto adt_entry = adt_table[0];
@@ -138,7 +138,7 @@ TEST_F(GRETCHTest, ADT3AddrPerPC)
     EXPECT_EQ(gretch.get_state(), GretchState::POPULATE_ADT);
     EXPECT_EQ(gretch.get_num_addr(), 3);
 
-    const auto &adt_table = gretch.get_adt_table();
+    const auto& adt_table = gretch.get_adt_table();
     EXPECT_EQ(adt_table.size(), 1);
 
     auto adt_entry = adt_table[0];
@@ -160,7 +160,7 @@ TEST_F(GRETCHTest, ADTNewEntry)
     EXPECT_EQ(gretch.get_state(), GretchState::POPULATE_ADT);
     EXPECT_EQ(gretch.get_num_addr(), 2);
 
-    const auto &adt_table = gretch.get_adt_table();
+    const auto& adt_table = gretch.get_adt_table();
     EXPECT_EQ(adt_table.size(), 2);
 
     auto adt_entry = adt_table[0];
@@ -186,7 +186,7 @@ TEST_F(GRETCHTest, ADTFull)
     gretch.handle_load_committed_from_lsu(create_uop(0xff40_pc, 0xabcd_va), true);
     gretch.handle_load_committed_from_lsu(create_uop(0xff48_pc, 0xaecd_va), true);
 
-    const auto &adt_table = gretch.get_adt_table();
+    const auto& adt_table = gretch.get_adt_table();
     EXPECT_EQ(adt_table.size(), 2);
 
     auto adt_entry = adt_table[0];
@@ -221,7 +221,7 @@ TEST_F(GRETCHTest, ADTThreshold)
     // this should get ADT into threshold condition
     gretch.handle_load_committed_from_lsu(create_uop(0xff98_pc, 0xdfc2_va), true);
 
-    const auto &adt_table = gretch.get_adt_table();
+    const auto& adt_table = gretch.get_adt_table();
     EXPECT_EQ(adt_table.size(), 2);
 
     auto adt_entry = adt_table[0];

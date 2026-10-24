@@ -45,12 +45,12 @@ let in rec {
     stable.curl
     stable.gdb
     stable.lcov
-    latest.llvmPackages_21.clang-unwrapped
+    unstable.llvmPackages_21.clang-unwrapped
     stable.openssh
     stable.parallel
     stable.pcre2
     stable.ruby
-    latest.ruff
+    unstable.ruff
     stable.valgrind
     stable.texliveFull # for compiler guide
   ];

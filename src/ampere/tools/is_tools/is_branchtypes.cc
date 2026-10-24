@@ -22,7 +22,7 @@ enum branch_category {
 
 struct branch_desc
 {
-    const char *instr_name; // name of instruction used for printing purposes
+    const char* instr_name; // name of instruction used for printing purposes
     uint32_t opcode;        // Op code of branch instruction
     uint32_t bitmask;       // 0 = care, 1 = don't care
     branch_category conditional;
@@ -55,7 +55,7 @@ struct branch_desc branches[] = {{"CBZ", 0x34000000, 0x80ffffff, NO_PSTATE, 0},
                                  {"B.AL", 0x5400000e, 0x00ffffe1, UNCONDITIONAL, 0},
                                  {nullptr, 0, 0, CALL_RET, 0}};
 
-void usage(int argc, char **argv)
+void usage(int argc, char** argv)
 {
     printf("Usage: %s INSTRUCTION_STREAM [option] <trace>\n", argv[0]);
     printf("  --csv   output csv format\n");
@@ -63,12 +63,12 @@ void usage(int argc, char **argv)
     printf("  --help  display this help and exit\n");
 }
 
-int main(int argc, char **argv)
+int main(int argc, char** argv)
 {
     bool opt_csv = false;
     bool opt_header = false;
 
-    const char *const short_opts = "cdh";
+    const char* const short_opts = "cdh";
     const option long_opts[] = {{"csv", no_argument, nullptr, 'c'},
                                 {"header", no_argument, nullptr, 'd'},
                                 {"help", no_argument, nullptr, 'h'},
@@ -109,7 +109,7 @@ int main(int argc, char **argv)
     }
 
     // Main program
-    InstructionStreamReader *reader = new InstructionStreamReader(argv[optind]);
+    InstructionStreamReader* reader = new InstructionStreamReader(argv[optind]);
     Instruction instruction;
     unsigned long total_instr = 0;
     unsigned long unconditional = 0;
@@ -122,7 +122,7 @@ int main(int argc, char **argv)
         uint32_t opcode = instruction.opcode();
         total_instr++;
 
-        struct branch_desc *bp = branches;
+        struct branch_desc* bp = branches;
         while (bp->instr_name != nullptr) {
             if ((opcode & ~bp->bitmask) == bp->opcode) {
                 bp->count++;
@@ -152,7 +152,7 @@ int main(int argc, char **argv)
     unsigned long total_branches = 0;
     if (!opt_csv) {
         printf("Branch types\n");
-        struct branch_desc *bp = branches;
+        struct branch_desc* bp = branches;
         while (bp->instr_name != nullptr) {
             total_branches += bp->count;
             printf("  %4s: %lu\n", bp->instr_name, bp->count);
@@ -172,7 +172,7 @@ int main(int argc, char **argv)
     } else {
         if (opt_header) {
             // Print header
-            struct branch_desc *bp = branches;
+            struct branch_desc* bp = branches;
             while (bp->instr_name != nullptr) {
                 printf("%s, ", bp->instr_name);
                 bp++;
@@ -180,7 +180,7 @@ int main(int argc, char **argv)
             printf("total instructions, total branches, unconditional, conditional, indirect, Simple, ret\n");
         }
 
-        struct branch_desc *bp = branches;
+        struct branch_desc* bp = branches;
         while (bp->instr_name != nullptr) {
             total_branches += bp->count;
             printf("%lu, ", bp->count);

@@ -20,7 +20,7 @@ extern "C" {
 #include "ampere/tracing_tools/tracing_hints.h"
 }
 
-static void f(double *x, double *a, double *b, double *c, unsigned long n)
+static void f(double* x, double* a, double* b, double* c, unsigned long n)
 {
     unsigned long i = 0;
     asm("whilelo p0.d, %[i], %[n]              \n\
@@ -59,7 +59,7 @@ static void work1()
     fmt::print("\n");
 }
 
-int main(int argc, char **argv)
+int main(int argc, char** argv)
 {
     work1();
     (void)argc;

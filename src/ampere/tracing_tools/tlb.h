@@ -30,29 +30,29 @@ public:
 class TLBWriter
 {
 public:
-    virtual bool write(const is::Memory &memory) = 0;
-    virtual bool write(const is::SysReg &sysreg) = 0;
-    virtual bool write(const is::Context &context) = 0;
+    virtual bool write(const is::Memory& memory) = 0;
+    virtual bool write(const is::SysReg& sysreg) = 0;
+    virtual bool write(const is::Context& context) = 0;
 };
 
 class TLBWriteCombiner : public TLBWriter
 {
 public:
-    TLBWriteCombiner(TLBWriter *writer1, TLBWriter *writer2) : writers{writer1, writer2} {}
+    TLBWriteCombiner(TLBWriter* writer1, TLBWriter* writer2) : writers{writer1, writer2} {}
 
-    virtual bool write(const is::Memory &memory)
+    virtual bool write(const is::Memory& memory)
     {
         if (!writers[0]->write(memory))
             return false;
         return writers[1]->write(memory);
     }
-    virtual bool write(const is::SysReg &sysreg)
+    virtual bool write(const is::SysReg& sysreg)
     {
         if (!writers[0]->write(sysreg))
             return false;
         return writers[1]->write(sysreg);
     }
-    virtual bool write(const is::Context &context)
+    virtual bool write(const is::Context& context)
     {
         if (!writers[0]->write(context))
             return false;
@@ -65,26 +65,26 @@ public:
     }
 
 private:
-    TLBWriter *writers[2];
+    TLBWriter* writers[2];
 };
 
 class ISTLBWriter : public TLBWriter
 {
 public:
-    ISTLBWriter(is::InstructionStreamWriter *writer) : writer(writer) {}
-    virtual bool write(const is::Memory &memory)
+    ISTLBWriter(is::InstructionStreamWriter* writer) : writer(writer) {}
+    virtual bool write(const is::Memory& memory)
     {
         is::Event event;
         event.mutable_memory()->CopyFrom(memory);
         return writer->write(event);
     }
-    virtual bool write(const is::SysReg &sysreg)
+    virtual bool write(const is::SysReg& sysreg)
     {
         is::Event event;
         event.mutable_sysreg()->CopyFrom(sysreg);
         return writer->write(event);
     }
-    virtual bool write(const is::Context &context)
+    virtual bool write(const is::Context& context)
     {
         is::Event event;
         event.mutable_context()->CopyFrom(context);
@@ -93,7 +93,7 @@ public:
     virtual ~ISTLBWriter() { writer = nullptr; }
 
 private:
-    is::InstructionStreamWriter *writer;
+    is::InstructionStreamWriter* writer;
 };
 
 class TLBTracker
@@ -129,7 +129,7 @@ public:
         write_sysreg(TTBR1_EL1, value);
     }
 
-    void start_instruction_stream(tracer::MemoryAccessor *tlbmemory, TLBWriter *tlbwriter)
+    void start_instruction_stream(tracer::MemoryAccessor* tlbmemory, TLBWriter* tlbwriter)
     {
         assert(tlbmemory);
         assert(tlbwriter);
@@ -159,8 +159,8 @@ public:
 private:
     uint8_t el;
     uint64_t tcr_el1, ttbr0_el1, ttbr1_el1;
-    TLBWriter *writer;
-    tracer::MemoryAccessor *memory;
+    TLBWriter* writer;
+    tracer::MemoryAccessor* memory;
     bool writing;
 
     std::unordered_map<uint64_t, uint64_t> descriptors;

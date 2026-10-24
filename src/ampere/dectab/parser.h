@@ -19,13 +19,13 @@ namespace dectab {
 class Parser
 {
 public:
-    Parser(Builder &builder) : builder(builder) {}
-    RegexNode *parse(std::istream &input);
+    Parser(Builder& builder) : builder(builder) {}
+    RegexNode* parse(std::istream& input);
 
     class Error : public std::runtime_error
     {
     public:
-        Error(std::string &file, int lineno, int column, const std::string &msg)
+        Error(std::string& file, int lineno, int column, const std::string& msg)
             : std::runtime_error(msg), file(file), lineno(lineno), column(column)
         {
         }
@@ -36,8 +36,8 @@ public:
     };
 
 private:
-    Builder &builder;
-    std::istream *is;
+    Builder& builder;
+    std::istream* is;
     std::string current_file{"input"};
     std::string comment_text;
     int next;
@@ -45,16 +45,16 @@ private:
     int column;
     bool in_pattern;
 
-    RegexNode *parse_alt(int label);
-    RegexNode *parse_or();
-    RegexNode *parse_excl();
-    RegexNode *parse_cat();
-    RegexNode *parse_bit();
+    RegexNode* parse_alt(int label);
+    RegexNode* parse_or();
+    RegexNode* parse_excl();
+    RegexNode* parse_cat();
+    RegexNode* parse_bit();
 
     void advance();
     void skip_whitespace();
     bool take(char c);
-    bool handle_line_directive(std::string &comment);
+    bool handle_line_directive(std::string& comment);
 };
 
 } // namespace dectab

@@ -54,15 +54,15 @@ private:
         std::vector<Entry> table;
     };
 
-    void table_print(std::ostream &os) const;
+    void table_print(std::ostream& os) const;
     void table_print();
-    void dump(std::ostream &os) const override;
+    void dump(std::ostream& os) const override;
     unsigned calculate_index(archx::PhysAddr pa);
 
     std::vector<std::pair<ProgramCounter, bool>> seq_table;
     std::deque<Entry> rlu_queue;
     unsigned pc_bits{0};
-    RLUHistory *rlu{nullptr};
+    RLUHistory* rlu{nullptr};
 };
 
 } // namespace ampere::core

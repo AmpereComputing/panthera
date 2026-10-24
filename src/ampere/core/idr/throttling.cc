@@ -10,7 +10,7 @@ namespace ampere::core {
 bool IDRSchedulerThrottleWatermark::is_throttling(unsigned partition) const
 {
     auto count = properties.sch[Scheduler::normalized(watermark_scheduler, partition).scheduler()].get_count();
-    auto &partition_throttling = throttling[partition];
+    auto& partition_throttling = throttling[partition];
     if (partition_throttling) {
         if (count < unthrottle_watermark)
             partition_throttling = false;
@@ -20,7 +20,7 @@ bool IDRSchedulerThrottleWatermark::is_throttling(unsigned partition) const
     return partition_throttling;
 }
 
-void IDRSchedulerThrottleWatermark::adjust(std::set<SchedulerType> &eligible, unsigned partition)
+void IDRSchedulerThrottleWatermark::adjust(std::set<SchedulerType>& eligible, unsigned partition)
 {
     partition = Scheduler::normalized(watermark_scheduler, partition).partition;
     if (is_throttling(partition)) {

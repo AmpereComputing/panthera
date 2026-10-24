@@ -17,7 +17,7 @@ class MemoryTest : public ::testing::Test
 protected:
     void SetUp() override;
     void TearDown() override;
-    PhysPage *page;
+    PhysPage* page;
     PageContents contents;
 };
 
@@ -43,7 +43,7 @@ TEST_F(MemoryTest, testInitialization)
 TEST_F(MemoryTest, testWrites)
 {
     uint8_t buffer[256];
-    uint64_t *buffer_64 = (uint64_t *)buffer;
+    uint64_t* buffer_64 = (uint64_t*)buffer;
     buffer_64[0] = 0xf000baa7deadbeef;
 
     // initially empty
@@ -69,7 +69,7 @@ TEST_F(MemoryTest, testWrites)
 TEST_F(MemoryTest, testOverwriting)
 {
     uint8_t buffer[256];
-    uint64_t *buffer_64 = (uint64_t *)buffer;
+    uint64_t* buffer_64 = (uint64_t*)buffer;
     buffer_64[0] = 0xf000baa7deadbeef;
 
     // initially empty

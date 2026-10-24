@@ -17,9 +17,9 @@
 #ifdef __aarch64__
 #define MACRO_STR(s) #s
 #define SEMIHOSTING_CALL(name, imm)                                               \
-    static inline void do_semihosting_call_##name(const void *ptr)                \
+    static inline void do_semihosting_call_##name(const void* ptr)                \
     {                                                                             \
-        register const void *localptr __asm__("x0") = ptr;                        \
+        register const void* localptr __asm__("x0") = ptr;                        \
         /* The hardware can overwrite x0 on semihosting calls, so we make sure we \
          * preserve it */                                                         \
         asm volatile ("stp x0, x1, [sp, #-16]!\n" \

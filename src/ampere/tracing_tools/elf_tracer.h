@@ -31,7 +31,7 @@ namespace tracer {
 #define RAM_END ((4ULL << 30) - 1) // 4Gib (no reason)
 struct WalkInfo
 {
-    WalkInfo(PhysAddr &pa, std::uint64_t content) : pte_addr(pa), pte_content(content) {}
+    WalkInfo(PhysAddr& pa, std::uint64_t content) : pte_addr(pa), pte_content(content) {}
     PhysAddr pte_addr{0};
     std::uint64_t pte_content{0};
 };
@@ -43,7 +43,7 @@ public:
     // any particular reason)
     static const size_t ALIGNMENT_BITS = 6;
 
-    ElfSection(ELFIO::elfio *writer) : writer{writer} {}
+    ElfSection(ELFIO::elfio* writer) : writer{writer} {}
 
     void add_data(PhysAddr pa, uint64_t value)
     {
@@ -113,25 +113,25 @@ private:
 
         next_addr += 8;
         if (!data_initialized) {
-            section->set_data((char *)&value, 8);
+            section->set_data((char*)&value, 8);
             data_initialized = true;
         } else {
-            section->append_data((char *)&value, 8);
+            section->append_data((char*)&value, 8);
         }
     }
 
-    ELFIO::elfio *writer;
+    ELFIO::elfio* writer;
     bool section_initialized = false;
     bool data_initialized = false;
     bool finalized = false;
-    ELFIO::section *section;
+    ELFIO::section* section;
     PhysAddr init_addr, next_addr;
 };
 
 class InstructionWriter
 {
 public:
-    InstructionWriter(ProgramCounter pc, PhysPage &page, PageContents contents)
+    InstructionWriter(ProgramCounter pc, PhysPage& page, PageContents contents)
         : pc{pc}, pa{page.start}, pc_end{pc + page.size}, pa_end{pa + page.size}, contents{contents}
     {
     }
@@ -171,7 +171,7 @@ public:
      */
     void write_instruction_at(uint32_t opcode, Label at)
     {
-        contents->write(at.pa, sizeof(opcode), (uint8_t *)&opcode, true /*overwrite*/);
+        contents->write(at.pa, sizeof(opcode), (uint8_t*)&opcode, true /*overwrite*/);
     }
 
     /*
@@ -222,7 +222,7 @@ public:
         pu.p[dword_pos] = value;
 
         log(fmt::format("Logging p{}={:04x} to {:016x}\n", regno, value, pa_data.value()).c_str());
-        contents->write(pa_data, sizeof(pu.u64), (uint8_t *)&pu.u64);
+        contents->write(pa_data, sizeof(pu.u64), (uint8_t*)&pu.u64);
 
         int base_reg_offset = -offset + (dword_pos * sizeof(ampere::archx::pred_reg_t));
         return base_reg_offset;
@@ -301,9 +301,9 @@ public:
 
     void construct_vfp_register(uint8_t vfp_regno, uint8_t gp_regno, std::array<uint8_t, ampere::archx::MAXVL> value)
     {
-        construct_register(gp_regno, *(uint64_t *)value.data());
+        construct_register(gp_regno, *(uint64_t*)value.data());
         ins(vfp_regno, gp_regno, false /* lower bits */);
-        construct_register(gp_regno, *(uint64_t *)&value.data()[8]);
+        construct_register(gp_regno, *(uint64_t*)&value.data()[8]);
         ins(vfp_regno, gp_regno, true /* upper bits */);
     }
 
@@ -471,7 +471,7 @@ public:
               const archx::EL el,
               const uint32_t pstate,
               const uint32_t fpsr,
-              StateAccessor *stateaccessor,
+              StateAccessor* stateaccessor,
               bool flat_map,
               uint64_t elf_entry_point,
               const uint64_t arg_section_span = 1024,
@@ -541,7 +541,7 @@ public:
 
         ElfSection section = ElfSection(&writer);
         std::uint64_t sections = 1;
-        for (auto &pagecontents : memory) {
+        for (auto& pagecontents : memory) {
             for (auto pa = pagecontents.first.start; pa <= pagecontents.first.end(); pa += 8 /*64 bits*/) {
                 const uint64_t value = pagecontents.second->read(pa);
 
@@ -701,7 +701,7 @@ public:
         return true;
     }
 
-    virtual bool instruction_exec(const Instruction &instruction, const ProgramCounter next_pc)
+    virtual bool instruction_exec(const Instruction& instruction, const ProgramCounter next_pc)
     {
         instructions_seen++;
         if (!first_instruction)
@@ -713,7 +713,7 @@ public:
                            !instruction.pa.has_value(),
                            instruction.pa ? *instruction.pa : 0x0_pa,
                            4 /*4 bytes*/,
-                           (const uint8_t *)&instruction.opcode))
+                           (const uint8_t*)&instruction.opcode))
             return false;
 
         // If the instruction being executed is a semihosting HLT instruction,
@@ -728,7 +728,7 @@ public:
             overwrite_if_match(tr, instruction.opcode, 0xd503201f /*nop*/);
         }
 
-        for (const auto &memop : instruction.memops) {
+        for (const auto& memop : instruction.memops) {
             if (memop.is_io) {
                 log("ELF tracer saw IO (non-RAM) memory access to VA 0x%" PRIx64 ", aborting.\n", memop.va.value());
 #if !defined(NO_CONSISTENCY_CHECKS)
@@ -754,7 +754,7 @@ public:
                 Translation(va, Bitfield(sysregs[TCR_EL1]), Bitfield(sysregs[TTBR0_EL1]), Bitfield(sysregs[TTBR1_EL1]));
             record_translation(tr);
         } else if (adis::prefetch(adis_info)) {
-            const auto &[ok, va_opt] = prefetch_va("ELFTracer", instruction, adis_info);
+            const auto& [ok, va_opt] = prefetch_va("ELFTracer", instruction, adis_info);
             if (!ok) {
                 return false; // encountered an error
             }
@@ -789,7 +789,7 @@ public:
         // execution of this instruction, fill out the remainder of those pages
         // based on the current state of QEMU's memory.
         if (!newpages.empty()) {
-            for (auto &new_page_address : newpages) {
+            for (auto& new_page_address : newpages) {
                 auto newpage = memory.find(new_page_address);
                 populate_physical_page(new_page_address, newpage->second);
             }
@@ -801,7 +801,7 @@ public:
 
 private:
     // Populate the entire physical page from QEMU's current memory state
-    void populate_physical_page(const PhysPage &page_addr, PageContents contents)
+    void populate_physical_page(const PhysPage& page_addr, PageContents contents)
     {
         uint8_t buffer[256];
         for (PhysAddr pa = page_addr.start; pa < page_addr.start + page_addr.size; pa += sizeof(buffer)) {
@@ -813,7 +813,7 @@ private:
         }
     }
 
-    void overwrite_if_match(const archx::Translation &tr, uint32_t match, uint32_t replacement)
+    void overwrite_if_match(const archx::Translation& tr, uint32_t match, uint32_t replacement)
     {
         auto [pa, page_size] = tr.result();
         if (flat_map)
@@ -838,13 +838,13 @@ private:
         value = value & 0xffffffff;
 
         if (value == match)
-            page->second->write(pa, 4, (uint8_t *)&replacement, true /*overwrite*/);
+            page->second->write(pa, 4, (uint8_t*)&replacement, true /*overwrite*/);
     }
 
     // Save the data associated with this memory access if it is the first to
     // this address.
     void physical_memory_access(
-        VirtAddr va, PhysAddr pa, PageSize page_size, size_t bytes, const uint8_t *value, bool force_write = false)
+        VirtAddr va, PhysAddr pa, PageSize page_size, size_t bytes, const uint8_t* value, bool force_write = false)
     {
         if (flat_map)
             pa = PhysAddr(va.value());
@@ -889,13 +889,13 @@ private:
         }
     }
 
-    void record_translation(archx::Translation &translation)
+    void record_translation(archx::Translation& translation)
     {
         while (!translation.done()) {
             uint64_t pte;
             PhysAddr pte_addr = translation.next_pte();
             assert(!(pte_addr.value() & 0x7));
-            stateaccessor->read_memory(pte_addr.value(), (uint8_t *)(&pte), 8);
+            stateaccessor->read_memory(pte_addr.value(), (uint8_t*)(&pte), 8);
             translation.pte_fetched(pte);
 
             // Don't record page tables if we're going to force a flat mapping
@@ -906,7 +906,7 @@ private:
         }
     }
 
-    bool check_translation(archx::Translation &translation, bool faulted, const PhysAddr answer)
+    bool check_translation(archx::Translation& translation, bool faulted, const PhysAddr answer)
     {
         // Check translation for correctness
         if (faulted != translation.faulted()) {
@@ -931,7 +931,7 @@ private:
         return true;
     }
 
-    bool check_record_translation(archx::Translation &translation, bool faulted, const PhysAddr answer)
+    bool check_record_translation(archx::Translation& translation, bool faulted, const PhysAddr answer)
     {
         record_translation(translation);
 #if defined(NO_CONSISTENCY_CHECKS)
@@ -942,7 +942,7 @@ private:
 #endif
     }
 
-    bool memory_access(archx::Translation &tr, bool faulted, const PhysAddr answer, size_t bytes, const uint8_t *value)
+    bool memory_access(archx::Translation& tr, bool faulted, const PhysAddr answer, size_t bytes, const uint8_t* value)
     {
         if (!check_record_translation(tr, faulted, answer))
             return false;
@@ -996,7 +996,7 @@ private:
         auto [it, inserted] = page_descriptors.emplace(pa, value);
 
         // Add to physical memory, too
-        physical_memory_access(VirtAddr(pa.value()), pa, ps, sizeof(value), (uint8_t *)&value, force_write);
+        physical_memory_access(VirtAddr(pa.value()), pa, ps, sizeof(value), (uint8_t*)&value, force_write);
 #if defined(NO_CONSISTENCY_CHECKS)
         (void)it;
         (void)inserted;
@@ -1109,11 +1109,11 @@ private:
      *
      * Note: The translation object must have clean state!
      */
-    bool add_translation(Translation &tr, PhysAddr pa, AccessPermissions ap)
+    bool add_translation(Translation& tr, PhysAddr pa, AccessPermissions ap)
     {
         return check_add_translation_impl(tr, pa, ap, true /*really add translations check*/);
     }
-    bool can_add_translation(ProgramCounter &pc, PhysAddr pa, AccessPermissions ap)
+    bool can_add_translation(ProgramCounter& pc, PhysAddr pa, AccessPermissions ap)
     {
         auto tr = Translation(pc,
                               Bitfield(initial_sysregs[TCR_EL1]),
@@ -1121,7 +1121,7 @@ private:
                               Bitfield(initial_sysregs[TTBR1_EL1]));
         return check_add_translation_impl(tr, pa, ap, false /*check*/);
     }
-    bool check_add_translation_impl(Translation &tr, PhysAddr pa, AccessPermissions ap, bool add_trans = true)
+    bool check_add_translation_impl(Translation& tr, PhysAddr pa, AccessPermissions ap, bool add_trans = true)
     {
         auto begin = PhysAddr{RAM_BEGIN};
         auto end = PhysAddr{RAM_END};
@@ -1233,7 +1233,7 @@ private:
             // walk list of (pte addr,table descriptor content) and
             // rewrite them, clearing the PXN bits so they can execute
             // at EL1.
-            for (auto &rec : walk_info) {
+            for (auto& rec : walk_info) {
                 archx::TableDescriptorAttributes tda(rec.pte_content);
                 tda.s.PXNTable = 0;
                 auto new_td = TableDescriptor(page_size.page_bits(), tda.value());
@@ -1246,7 +1246,7 @@ private:
     // Attempt to new physical instruction page before creating the page/table
     // descriptors to point to it (because that process searches for empty
     // pages, and creating an empty page signifies that this page is used)
-    bool make_empty_instruction_page(PhysPage &page_address)
+    bool make_empty_instruction_page(PhysPage& page_address)
     {
         ProgramCounter pc(page_address.start.value());
         if (!can_add_translation(pc, page_address.start, RO_EL1)) {
@@ -1267,7 +1267,7 @@ private:
         return true;
     }
 
-    bool test_empty_instruction_page(const PhysPage &page)
+    bool test_empty_instruction_page(const PhysPage& page)
     {
         ProgramCounter pc(page.start.value());
         if (can_add_translation(pc, page.start, RO_EL1)) {
@@ -1294,7 +1294,7 @@ private:
 
     bool flat_map_all_pages()
     {
-        for (auto &physpage : memory) {
+        for (auto& physpage : memory) {
             if (!add_translation(VirtAddr(physpage.first.start.value()), physpage.first.start, RW_EL01)) {
                 return false;
             }
@@ -1603,7 +1603,7 @@ private:
     std::vector<SysRegAccess> sysreg_reads;
     archx::EL initial_el;
     uint32_t pstate, fpsr;
-    StateAccessor *stateaccessor;
+    StateAccessor* stateaccessor;
     // TODO perhaps this could be simplified so that `page_descriptors` wasn't
     // a partial duplicate of `memory`
     std::map<PhysAddr, uint64_t> page_descriptors;

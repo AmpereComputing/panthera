@@ -61,7 +61,7 @@ void L2C::arbitrate()
 
     auto can_sched = std::bind_front(&L2C::can_schedule, this);
 
-    for (auto &rq : requests[priority]) {
+    for (auto& rq : requests[priority]) {
         // We skip the prefetch queue if we are throttling based on cbusy feedback
         if (rq->queue_name == l2::RequestQueueName::PREFETCH && cbusy.prefetcher_throttled())
             continue;
@@ -71,7 +71,7 @@ void L2C::arbitrate()
 
         // Schedule Operation
         if (winner.op) {
-            auto &op = winner.op;
+            auto& op = winner.op;
             if (winner.any()) {
                 auto read_busy_mask = get_read_busy_mask(op->opcode);
                 auto write_busy_mask = get_write_busy_mask(op->opcode);
@@ -101,7 +101,7 @@ void L2C::arbitrate()
                     sys_op = op;
                     event.sys_schedule(sys_op, event.bank(sys_op->bank));
                 }
-            } else if (auto &last = bank_unable_to_schedule[op->bank]; !last) {
+            } else if (auto& last = bank_unable_to_schedule[op->bank]; !last) {
                 last = op;
             }
 
@@ -121,7 +121,7 @@ void L2C::arbitrate()
         bool any_unscheduled = false;
         bool fb_full_bank_stall = false;
         for (size_t i = 0; i < num_banks; ++i) {
-            const auto &op = bank_unable_to_schedule[i];
+            const auto& op = bank_unable_to_schedule[i];
             any_unscheduled |= static_cast<bool>(op);
             if (!op || !banks[i].is_available() || !needs_fill_buffer(op->opcode))
                 continue;
@@ -199,12 +199,12 @@ bool L2C::address_within_bank(PhysAddr addr) const
     if (fb.has_request_in_bank(addr, bank_id))
         return true;
 
-    if (std::any_of(read_pipe.begin(), read_pipe.end(), [&](const auto &op) {
+    if (std::any_of(read_pipe.begin(), read_pipe.end(), [&](const auto& op) {
             return op->addr == addr && op->bank == bank_id;
         }))
         return true;
 
-    if (std::any_of(write_pipe.begin(), write_pipe.end(), [&](const auto &op) {
+    if (std::any_of(write_pipe.begin(), write_pipe.end(), [&](const auto& op) {
             return op->addr == addr && op->bank == bank_id;
         }))
         return true;
@@ -230,7 +230,7 @@ PipelineArbitration L2C::can_schedule(l2::RequestQueueName queue_name, l2::Op op
 
     bool busses_free = (!read_op || !needs_read) && (!write_op || !needs_write) && (!sys_op || !needs_sys);
     auto bank_id = banks.select(op->addr);
-    const auto &bank = banks[bank_id];
+    const auto& bank = banks[bank_id];
 
     if (queue_name == l2::RequestQueueName::DMMU || queue_name == l2::RequestQueueName::IMMU
         || queue_name == l2::RequestQueueName::ICF)
