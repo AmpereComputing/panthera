@@ -12,7 +12,7 @@
 
 using namespace ampere::msrbrc;
 
-int main(int argc, char **argv)
+int main(int argc, char** argv)
 {
     if (argc < 2) {
         std::cout << "memory_stream_viewer [memory stream]" << std::endl;

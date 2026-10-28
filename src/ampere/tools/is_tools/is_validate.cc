@@ -19,8 +19,8 @@ typedef uint_fast32_t uint_t;
 
 // #define USING_CAPSTONE
 #if defined(USING_CAPSTONE)
-#include <capstone.h>
-#include <platform.h>
+#include <capstone/capstone.h>
+#include <capstone/platform.h>
 static csh disasm_handle;
 #else
 #define USING_ADIS
@@ -47,7 +47,7 @@ std::string disasm(std::uint32_t bytes, std::uint64_t pc)
 {
 #if defined(USING_CAPSTONE)
     size_t count(0);
-    cs_insn *insn;
+    cs_insn* insn;
     char inst_dis[256];
 
     // place the instruction bytes into the format required by capstone
@@ -77,13 +77,13 @@ std::string disasm(std::uint32_t bytes, std::uint64_t pc)
 #endif
 }
 
-void usage(char *progn)
+void usage(char* progn)
 {
     std::cout << progn << "[-q] instruction-stream-name\n";
     std::cout << "  -q = quiet output\n";
     exit(EXIT_FAILURE);
 }
-int main(int argc, char **argv)
+int main(int argc, char** argv)
 {
     std::string filename;
     bool verbose = true;
@@ -249,15 +249,15 @@ int main(int argc, char **argv)
                 div_sqrt_missing_registers++;
             }
         } else if (event.has_memory()) {
-            const is::Memory &mem = event.memory();
+            const is::Memory& mem = event.memory();
             archx::PhysAddr pa = archx::PhysAddr(mem.address().pa());
-            state = std::move(state).write(pa, (uint8_t *)mem.value().data(), mem.value().size());
+            state = std::move(state).write(pa, (uint8_t*)mem.value().data(), mem.value().size());
         } else if (event.has_sysreg()) {
-            const is::SysReg &s = event.sysreg();
+            const is::SysReg& s = event.sysreg();
             archx::SysReg sysreg = archx::SysReg(s.op0(), s.op1(), s.crn(), s.crm(), s.op2());
             state = std::move(state).write(sysreg, s.value());
         } else if (event.has_context()) {
-            const is::Context &c = event.context();
+            const is::Context& c = event.context();
             if (c.type() == is::Context::EL) {
                 state = std::move(state).set_exception_level(static_cast<archx::EL>(c.value()));
             }

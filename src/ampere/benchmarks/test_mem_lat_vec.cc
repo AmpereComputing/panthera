@@ -20,11 +20,11 @@ using namespace ::testing;
 class RandomStridedVector : public LatMemRd
 {
 protected:
-    RandomStridedVector() : LatMemRd() { random_stride_initialize((char **)start_ptr, size, stride); }
+    RandomStridedVector() : LatMemRd() { random_stride_initialize((char**)start_ptr, size, stride); }
 
     void perform_iterations(size_t read_iterations) const
     {
-        char **p = (char **)start_ptr;
+        char** p = (char**)start_ptr;
         while (read_iterations-- > 0) {
             for (size_t count = one_circuit_count; count > 0; count--) {
 #if 1
@@ -37,7 +37,7 @@ protected:
 #undef one_load
 #else
                 // std::cout << "p=" << p << std::endl;
-                p = (char **)*p;
+                p = (char**)*p;
 #endif
             }
             use_pointer(p);
@@ -53,21 +53,21 @@ protected:
 private:
     static size_t compute_random_offset(size_t offset, size_t stride)
     {
-        for (; stride; stride -= sizeof(char *)) {
+        for (; stride; stride -= sizeof(char*)) {
             size_t flip = (offset >> 31) ^ (offset >> 21) ^ (offset >> 2) ^ (offset);
             offset = (offset >> 1) | (flip << 31);
         }
         return offset;
     }
 
-    static void random_stride_initialize(char **start, size_t size, size_t stride)
+    static void random_stride_initialize(char** start, size_t size, size_t stride)
     {
         std::mt19937 g;
-        std::vector<char **> pointers;
+        std::vector<char**> pointers;
 
-        size_t num_pointers_per_stride = stride / sizeof(char *);
+        size_t num_pointers_per_stride = stride / sizeof(char*);
         size_t num_pointers = size / stride;
-        char **addr = start;
+        char** addr = start;
         for (size_t i = 0; i < num_pointers; i++) {
             pointers.push_back(addr);
             addr += num_pointers_per_stride;
@@ -76,14 +76,14 @@ private:
         std::shuffle(pointers.begin(), pointers.end(), g);
 
         auto it = pointers.begin();
-        char **first = *it++;
-        char **pointer = first;
+        char** first = *it++;
+        char** pointer = first;
         while (it != pointers.end()) {
-            *pointer = (char *)*it;
+            *pointer = (char*)*it;
             pointer = *it;
             it++;
         }
-        *pointer = (char *)first;
+        *pointer = (char*)first;
     }
 };
 
@@ -94,25 +94,25 @@ TEST_P(RandomStridedVector, Reads)
 
 INSTANTIATE_TEST_SUITE_P(LatMemVecRdTests,
                          RandomStridedVector,
-                         ::testing::Values(std::make_pair(sizeof(char *), sizeof(char *)), // pure dependent loads
-                                           std::make_pair(32 * 1024, 64),                  // L1 latency test
-                                           std::make_pair(128 * 1024, 64),                 // L2 latency test
-                                           std::make_pair(1024 * 1024, 64),                // L2 latency test
-                                           std::make_pair((512 + 1024) * 1024, 64),        // L2 latency test
-                                           std::make_pair(2 * 1024 * 1024, 64),            // L2 latency test
-                                           std::make_pair((512 + 2 * 1024) * 1024, 64),    // trans-L2 latency test
-                                           std::make_pair(3 * 1024 * 1024, 64),            // trans-L2 latency test
-                                           std::make_pair((512 + 3 * 1024) * 1024, 64),    // trans-L2 latency test
-                                           std::make_pair(4 * 1024 * 1024, 64),            // trans-L2 latency test
-                                           std::make_pair((512 + 4 * 1024) * 1024, 64),    // trans-L2 latency test
-                                           std::make_pair(5 * 1024 * 1024, 64),            // trans-L2 latency test
-                                           std::make_pair((512 + 5 * 1024) * 1024, 64),    // trans-L2 latency test
-                                           std::make_pair(6 * 1024 * 1024, 64),            // trans-L2 latency test
-                                           std::make_pair((512 + 6 * 1024) * 1024, 64),    // trans-L2 latency test
-                                           std::make_pair(7 * 1024 * 1024, 64),            // trans-L2 latency test
-                                           std::make_pair((512 + 7 * 1024) * 1024, 64),    // trans-L2 latency test
-                                           std::make_pair(8 * 1024 * 1024, 64),            // SLC latency test
-                                           std::make_pair(128 * 1024 * 1024, 64))          // DDR latency test
+                         ::testing::Values(std::make_pair(sizeof(char*), sizeof(char*)), // pure dependent loads
+                                           std::make_pair(32 * 1024, 64),                // L1 latency test
+                                           std::make_pair(128 * 1024, 64),               // L2 latency test
+                                           std::make_pair(1024 * 1024, 64),              // L2 latency test
+                                           std::make_pair((512 + 1024) * 1024, 64),      // L2 latency test
+                                           std::make_pair(2 * 1024 * 1024, 64),          // L2 latency test
+                                           std::make_pair((512 + 2 * 1024) * 1024, 64),  // trans-L2 latency test
+                                           std::make_pair(3 * 1024 * 1024, 64),          // trans-L2 latency test
+                                           std::make_pair((512 + 3 * 1024) * 1024, 64),  // trans-L2 latency test
+                                           std::make_pair(4 * 1024 * 1024, 64),          // trans-L2 latency test
+                                           std::make_pair((512 + 4 * 1024) * 1024, 64),  // trans-L2 latency test
+                                           std::make_pair(5 * 1024 * 1024, 64),          // trans-L2 latency test
+                                           std::make_pair((512 + 5 * 1024) * 1024, 64),  // trans-L2 latency test
+                                           std::make_pair(6 * 1024 * 1024, 64),          // trans-L2 latency test
+                                           std::make_pair((512 + 6 * 1024) * 1024, 64),  // trans-L2 latency test
+                                           std::make_pair(7 * 1024 * 1024, 64),          // trans-L2 latency test
+                                           std::make_pair((512 + 7 * 1024) * 1024, 64),  // trans-L2 latency test
+                                           std::make_pair(8 * 1024 * 1024, 64),          // SLC latency test
+                                           std::make_pair(128 * 1024 * 1024, 64))        // DDR latency test
 );
 } // namespace ampere::benchmarks
 

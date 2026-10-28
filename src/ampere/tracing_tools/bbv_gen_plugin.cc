@@ -33,12 +33,12 @@ using namespace tracer;
 
 /* The following block of variables are all set from arguments, and should not
  * be otherwise modified */
-static const char *bbv_filename;
-static const char *bbv_gen_log;
+static const char* bbv_filename;
+static const char* bbv_gen_log;
 static long unsigned bbv_interval;
 static bool profile_el1;
 static bool profile_children;
-static char *profile_comm;
+static char* profile_comm;
 static bool start_tracing_after_hint;     // false;
 static bool stop_tracing_after_hint;      // false;
 std::set<uint64_t> profiling_pids;        // exception to the rule, can be modified by perf semihosting
@@ -47,7 +47,7 @@ static long unsigned checkpoint_interval; // 0 = disabled by default
 static long unsigned heartbeat_interval;  // 0 = disabled by default
 static bool debug_mode = false;
 static bool mav_collection = false;
-static const char *mav_filename;
+static const char* mav_filename;
 static long unsigned mav_interval;
 static uint64_t mav_blocksize;
 
@@ -55,9 +55,9 @@ static uint64_t mav_blocksize;
 static uint64_t profiling_instrcount = 0;
 static uint64_t start_hint_seen = false;
 static bool profiling = false;
-static BBV *bbv;
-static Context *context;
-static FILE *bbv_gen_logfile;
+static BBV* bbv;
+static Context* context;
+static FILE* bbv_gen_logfile;
 static uint64_t current_pid;
 static uint64_t current_el;
 
@@ -69,7 +69,7 @@ struct id_count
 typedef union
 {
     struct id_count s;
-    void *ptr;
+    void* ptr;
 } id_count_t;
 #define NOT_A_BRANCH_ID UINT32_MAX
 
@@ -77,14 +77,14 @@ std::vector<uint64_t> id_to_addr;
 std::unordered_map<uint64_t, uint32_t> addr_to_id;
 
 /* Variables/objects directly related to MAV profiling */
-static FILE *mav_file = nullptr;
+static FILE* mav_file = nullptr;
 static uint64_t mav_inst_count = 0;
 static uint64_t page_mask;
 static enum qemu_plugin_mem_rw rw = QEMU_PLUGIN_MEM_RW;
 static bool track_only_io;
 
 static GMutex lock;
-static GHashTable *pages;
+static GHashTable* pages;
 
 typedef struct
 {
@@ -178,12 +178,12 @@ void reset()
     addr_to_id.clear();
 }
 
-bool parse_args(int argc, char **argv)
+bool parse_args(int argc, char** argv)
 {
-    char *endptr;
+    char* endptr;
     for (int i = 0; i < argc; i++) {
-        char *opt = argv[i];
-        g_autofree char **tokens = g_strsplit(opt, "=", 2);
+        char* opt = argv[i];
+        g_autofree char** tokens = g_strsplit(opt, "=", 2);
         if (g_strcmp0(tokens[0], "bbv-filename") == 0) {
             bbv_filename = strdup(tokens[1]);
             if (!bbv_filename) {
@@ -303,7 +303,7 @@ bool parse_args(int argc, char **argv)
  */
 bool write_settings_json()
 {
-    char *cwd;
+    char* cwd;
 
     if (fputs("\n],\n\"settings\": ", bbv_gen_logfile) < 0) {
         log("Error starting checkpoint file JSON object\n");
@@ -370,7 +370,7 @@ void update_profiling(uint64_t el, uint64_t pid, ContextUpdateType update_type)
                 && (!start_tracing_after_hint || start_hint_seen);
 }
 
-void final_ckpt_cb(long unsigned int error, void *cb_arg)
+void final_ckpt_cb(long unsigned int error, void* cb_arg)
 {
     if (error) {
         log("Error saving final checkpoint: %d\n", error);
@@ -387,14 +387,14 @@ uint64_t perf_semihosting_callback(uint16_t svc, unsigned int cpu_index)
 {
     struct perf_event_header header;
     uint64_t x0;
-    uint8_t *ptr;
+    uint8_t* ptr;
 
     if (!qemu_plugin_read_reg64(&x0, 0)) {
         log("Failed to read x0 for perf semihosting call\n");
         exit(0);
     }
 
-    if (qemu_plugin_read_memory(x0, (uint8_t *)&header, sizeof(header))) {
+    if (qemu_plugin_read_memory(x0, (uint8_t*)&header, sizeof(header))) {
         log("Failed to read semihosting perf_event_header\n");
         exit(0);
     }
@@ -403,7 +403,7 @@ uint64_t perf_semihosting_callback(uint16_t svc, unsigned int cpu_index)
     if (header.type != PERF_RECORD_COMM && header.type != PERF_RECORD_FORK && header.type != PERF_RECORD_EXIT)
         goto out;
 
-    ptr = (uint8_t *)malloc(header.size);
+    ptr = (uint8_t*)malloc(header.size);
     if (!ptr) {
         log("Failed to allocate memory for semihosting perf event body\n");
         exit(0);
@@ -415,7 +415,7 @@ uint64_t perf_semihosting_callback(uint16_t svc, unsigned int cpu_index)
     }
 
     if (header.type == PERF_RECORD_COMM) {
-        struct perf_comm_event *evt = (struct perf_comm_event *)ptr;
+        struct perf_comm_event* evt = (struct perf_comm_event*)ptr;
 
         if (debug_mode) {
             log("PID %" PRIu32 " spawned with command name: \"%s\" (%" PRIu64 " profiled instructions)\n",
@@ -431,7 +431,7 @@ uint64_t perf_semihosting_callback(uint16_t svc, unsigned int cpu_index)
         }
 
     } else if (header.type == PERF_RECORD_EXIT) {
-        struct perf_task_event *evt = (struct perf_task_event *)ptr;
+        struct perf_task_event* evt = (struct perf_task_event*)ptr;
 
         if (debug_mode) {
             log("PID %" PRIu32 " exited (%" PRIu64 " profiled instructions)\n", evt->tid, profiling_instrcount);
@@ -447,7 +447,7 @@ uint64_t perf_semihosting_callback(uint16_t svc, unsigned int cpu_index)
         }
 
     } else if (profile_children && header.type == PERF_RECORD_FORK) {
-        struct perf_task_event *evt = (struct perf_task_event *)ptr;
+        struct perf_task_event* evt = (struct perf_task_event*)ptr;
 
         if (debug_mode) {
             log("PID %" PRIu32 " forked from %" PRIu32 " (%" PRIu64 " profiled instructions)\n",
@@ -475,10 +475,10 @@ out:
 
 static uint64_t checkpoint_number = 0;
 static bool taking_checkpoint = false;
-void ckpt_cb(long unsigned int error, void *cb_arg)
+void ckpt_cb(long unsigned int error, void* cb_arg)
 {
     json ckpt_json, context_json;
-    std::string tag_str((char *)cb_arg);
+    std::string tag_str((char*)cb_arg);
 
     if (error) {
         log("Error saving checkpoint: %d\n", error);
@@ -491,10 +491,10 @@ void ckpt_cb(long unsigned int error, void *cb_arg)
     ckpt_json["context"] = context_json;
 
     if (fprintf(bbv_gen_logfile, checkpoint_number ? ",\n%s" : "\n%s", ckpt_json.dump(4).c_str()) < 0) {
-        log("Error printing %s,%" PRId64 " to BBV generation logfile\n", (char *)cb_arg, profiling_instrcount);
+        log("Error printing %s,%" PRId64 " to BBV generation logfile\n", (char*)cb_arg, profiling_instrcount);
         goto out;
     }
-    log("Printed %s,%" PRId64 " to BBV generation logfile\n", (char *)cb_arg, profiling_instrcount);
+    log("Printed %s,%" PRId64 " to BBV generation logfile\n", (char*)cb_arg, profiling_instrcount);
 
     log("Saved checkpoint %" PRId64 "\n", checkpoint_number);
 
@@ -510,7 +510,7 @@ void check_checkpoints(uint64_t num_insns)
 {
     if (checkpoint_interval && (profiling_instrcount > checkpoint_number * checkpoint_interval) && !taking_checkpoint) {
         log("Saving checkpoint %" PRId64 "\n", checkpoint_number);
-        char *checkpoint_name;
+        char* checkpoint_name;
         int strlen = snprintf(nullptr, 0, "bbv-%" PRId64, checkpoint_number);
         if (strlen < 0) {
             log("Failing to save checkpoint %" PRId64 " because initial snprintf returned %d\n",
@@ -518,7 +518,7 @@ void check_checkpoints(uint64_t num_insns)
                 strlen);
             return;
         }
-        checkpoint_name = (char *)malloc(sizeof(char) * (strlen + 1));
+        checkpoint_name = (char*)malloc(sizeof(char) * (strlen + 1));
         if (snprintf(checkpoint_name, strlen + 1, "bbv-%" PRId64, checkpoint_number) != strlen) {
             log("Failing to save checkpoint %" PRId64 " because second snprintf returned %d\n",
                 checkpoint_number,
@@ -556,18 +556,18 @@ void check_heartbeat(uint64_t num_insns)
     }
 }
 
-void context_before_insn(unsigned int cpu_index, void *udata)
+void context_before_insn(unsigned int cpu_index, void* udata)
 {
     uint64_t pc = (uint64_t)udata;
     uint32_t encoding;
-    if (qemu_plugin_read_memory(pc, (uint8_t *)&encoding, 4)) {
+    if (qemu_plugin_read_memory(pc, (uint8_t*)&encoding, 4)) {
         log("Error: context_before_insn failed to read from 0x%" PRIx64 "\n", pc);
         exit(1);
     }
     context->before_insn(cpu_index, pc, encoding);
 }
 
-void tracing_hint(unsigned int cpu_index, void *udata)
+void tracing_hint(unsigned int cpu_index, void* udata)
 {
     uint64_t x0;
     if (!qemu_plugin_read_reg64(&x0, 0)) {
@@ -597,11 +597,11 @@ static void mav_report_and_reset(void)
     g_autoptr(GString) report = g_string_new(nullptr);
     GHashTableIter iter;
     gpointer key, value;
-    PageCounters *pc;
+    PageCounters* pc;
     g_hash_table_iter_init(&iter, pages);
     g_string_append_printf(report, "P");
     while (g_hash_table_iter_next(&iter, &key, &value)) {
-        pc = (PageCounters *)value;
+        pc = (PageCounters*)value;
         if (pc->reads + pc->writes > 0) {
             // g_string_append_printf(report, ":0x%016ld:%ld ", pc->page_address, pc->reads+pc->writes);
             g_string_append_printf(report, ":0x%" PRIx64 ":%ld,%ld ", pc->page_address, pc->reads, pc->writes);
@@ -619,7 +619,7 @@ static void mav_report_and_reset(void)
     }
 }
 
-void count_block(unsigned int cpu_index, void *udata)
+void count_block(unsigned int cpu_index, void* udata)
 {
     static uint32_t bb_instrcount = 0;
 
@@ -658,11 +658,11 @@ uint32_t get_address_id(uint64_t address)
     return new_id;
 }
 
-static void vcpu_haddr(unsigned int cpu_index, qemu_plugin_meminfo_t meminfo, uint64_t vaddr, void *udata)
+static void vcpu_haddr(unsigned int cpu_index, qemu_plugin_meminfo_t meminfo, uint64_t vaddr, void* udata)
 {
-    struct qemu_plugin_hwaddr *hwaddr = qemu_plugin_get_hwaddr(meminfo, vaddr);
+    struct qemu_plugin_hwaddr* hwaddr = qemu_plugin_get_hwaddr(meminfo, vaddr);
     uint64_t page;
-    PageCounters *count;
+    PageCounters* count;
 
     /* We only get a hwaddr for system emulation */
     if (track_only_io) {
@@ -682,7 +682,7 @@ static void vcpu_haddr(unsigned int cpu_index, qemu_plugin_meminfo_t meminfo, ui
 
     if (profiling) {
         g_mutex_lock(&lock);
-        count = (PageCounters *)g_hash_table_lookup(pages, GUINT_TO_POINTER(page));
+        count = (PageCounters*)g_hash_table_lookup(pages, GUINT_TO_POINTER(page));
 
         if (!count) {
             count = g_new0(PageCounters, 1);
@@ -701,7 +701,7 @@ static void vcpu_haddr(unsigned int cpu_index, qemu_plugin_meminfo_t meminfo, ui
     }
 }
 
-static void vcpu_tb_trans(qemu_plugin_id_t id, struct qemu_plugin_tb *tb)
+static void vcpu_tb_trans(qemu_plugin_id_t id, struct qemu_plugin_tb* tb)
 {
     size_t n = qemu_plugin_tb_n_insns(tb);
     size_t i;
@@ -709,17 +709,17 @@ static void vcpu_tb_trans(qemu_plugin_id_t id, struct qemu_plugin_tb *tb)
 
     for (i = 0; i < n; i++) {
         ++count;
-        struct qemu_plugin_insn *insn = qemu_plugin_tb_get_insn(tb, i);
+        struct qemu_plugin_insn* insn = qemu_plugin_tb_get_insn(tb, i);
         if (mav_collection) {
             qemu_plugin_register_vcpu_mem_cb(insn, vcpu_haddr, QEMU_PLUGIN_CB_NO_REGS, rw, nullptr);
         }
         uint64_t pc = qemu_plugin_insn_vaddr(insn);
-        uint32_t encoding = *((uint32_t *)qemu_plugin_insn_data(insn));
+        uint32_t encoding = *((uint32_t*)qemu_plugin_insn_data(insn));
         if (context->needs_before_insn(id, pc, encoding)) {
-            qemu_plugin_register_vcpu_insn_exec_cb(insn, context_before_insn, QEMU_PLUGIN_CB_R_REGS, (void *)pc);
+            qemu_plugin_register_vcpu_insn_exec_cb(insn, context_before_insn, QEMU_PLUGIN_CB_R_REGS, (void*)pc);
         }
         if (IS_HINT(encoding, TRACE_HINT_NUM) && (start_tracing_after_hint || stop_tracing_after_hint)) {
-            qemu_plugin_register_vcpu_insn_exec_cb(insn, tracing_hint, QEMU_PLUGIN_CB_R_REGS, (void *)pc);
+            qemu_plugin_register_vcpu_insn_exec_cb(insn, tracing_hint, QEMU_PLUGIN_CB_R_REGS, (void*)pc);
         }
         if (is_branch(encoding) || IS_ERET(encoding) || IS_SVC(encoding) || IS_HVC(encoding) || IS_SMC(encoding)) {
             assert(i == n - 1);
@@ -739,7 +739,7 @@ static void vcpu_tb_trans(qemu_plugin_id_t id, struct qemu_plugin_tb *tb)
     }
 }
 
-static void plugin_exit(qemu_plugin_id_t id, void *p)
+static void plugin_exit(qemu_plugin_id_t id, void* p)
 {
     if (debug_mode) {
         log("plugin_exit() called (%" PRIu64 " profiled instructions)\n", profiling_instrcount);
@@ -771,7 +771,7 @@ void plugin_reset_callback(qemu_plugin_id_t id)
 }
 
 QEMU_PLUGIN_EXPORT
-int qemu_plugin_install(qemu_plugin_id_t id, const qemu_info_t *info, int argc, char **argv)
+int qemu_plugin_install(qemu_plugin_id_t id, const qemu_info_t* info, int argc, char** argv)
 {
     /* Reset args and state in case plugin_init is called multiple within the
      * lifetime of a binary using this code (testing) */
@@ -830,7 +830,7 @@ int qemu_plugin_install(qemu_plugin_id_t id, const qemu_info_t *info, int argc, 
     // Call the callback here manually to originally register the hooks we want
     plugin_reset_callback(id);
 
-    if (sizeof(uint64_t) != sizeof(void *)) {
+    if (sizeof(uint64_t) != sizeof(void*)) {
         log("Error: `void *` is not the same size as `uint64_t`, which is relied upon by the BBV plugin!");
         exit(1);
     }

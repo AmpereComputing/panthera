@@ -33,7 +33,7 @@ struct LSUCacheConflictsTest : ampere::sc::TestModule
 
     void SetUp() override { uop = core::create_load_uop(0x0_va); }
 
-    auto load_cache_conflicts(const core::ConstUop &uop, VirtAddr virt_addr, unsigned datasize)
+    auto load_cache_conflicts(const core::ConstUop& uop, VirtAddr virt_addr, unsigned datasize)
     {
         auto c = conflicts->load_cache_conflicts(
             uop, virt_addr, archx::PhysAddr(virt_addr.value()), datasize, uop->sch.lsu_scheduler_pipe());

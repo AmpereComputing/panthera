@@ -22,7 +22,7 @@ public:
     MSTracer() = delete;
     MSTracer(const std::string filename,
              const std::map<archx::SysReg, uint64_t> sysregs,
-             StateAccessor *stateaccessor,
+             StateAccessor* stateaccessor,
              uint32_t dcache_size_bytes,
              uint32_t icache_size_bytes)
         : filename(filename), sysregs{sysregs}, stateaccessor{stateaccessor}
@@ -97,13 +97,13 @@ public:
 
     virtual bool el_change(const archx::EL el, ContextUpdateType update_type) { return true; }
 
-    void do_translation(archx::Translation &translation)
+    void do_translation(archx::Translation& translation)
     {
         while (!translation.done()) {
             uint64_t pte;
             PhysAddr pte_addr = translation.next_pte();
             assert(!(pte_addr.value() & 0x7));
-            stateaccessor->read_memory(pte_addr.value(), (uint8_t *)(&pte), 8);
+            stateaccessor->read_memory(pte_addr.value(), (uint8_t*)(&pte), 8);
             translation.pte_fetched(pte);
         }
     }
@@ -138,7 +138,7 @@ public:
         }
     }
 
-    virtual bool instruction_exec(const Instruction &instruction, const ProgramCounter next_pc)
+    virtual bool instruction_exec(const Instruction& instruction, const ProgramCounter next_pc)
     {
         static uint64_t instruction_count = 0;
 
@@ -154,7 +154,7 @@ public:
                           instruction.pc.value());
         }
 
-        for (const auto &memop : instruction.memops) {
+        for (const auto& memop : instruction.memops) {
             if (memop.pa) {
                 memory_access(memop.is_store ? ms::Access_Type_WRITE : ms::Access_Type_READ,
                               ms::Access_Source_DATA,
@@ -194,7 +194,7 @@ public:
             // loads. TODO Should we change our treatment of these based on the
             // hints encoded in the instruction (i.e. target cache level,
             // streaming)?
-            const auto &[ok, va_opt] = prefetch_va("MSTracer", instruction, adis_info);
+            const auto& [ok, va_opt] = prefetch_va("MSTracer", instruction, adis_info);
             if (!ok) {
                 return false; // encountered an error
             }
@@ -234,10 +234,10 @@ public:
 private:
     std::string filename;
     std::map<SysReg, uint64_t> sysregs;
-    ms::MemoryStreamWriter *writer = nullptr;
-    Cache<PhysAddr> *dcache = nullptr;
-    Cache<PhysAddr> *icache = nullptr;
-    StateAccessor *stateaccessor = nullptr;
+    ms::MemoryStreamWriter* writer = nullptr;
+    Cache<PhysAddr>* dcache = nullptr;
+    Cache<PhysAddr>* icache = nullptr;
+    StateAccessor* stateaccessor = nullptr;
 };
 
 } // namespace tracer

@@ -29,7 +29,7 @@ public:
         FAIL
     };
 
-    RegexNode(Op op, int symbol, RegexNode *left, RegexNode *right) : op(op), symbol(symbol), left(left), right(right)
+    RegexNode(Op op, int symbol, RegexNode* left, RegexNode* right) : op(op), symbol(symbol), left(left), right(right)
     {
     }
 
@@ -38,18 +38,18 @@ public:
 
     Op op;
     int symbol;
-    RegexNode *left;
-    RegexNode *right;
+    RegexNode* left;
+    RegexNode* right;
 
     int inner_state{-1};
     int outer_state{-1};
     bool is_accepting{false};
 
-    std::vector<std::tuple<RegexNode *, int, int>> inner_edges;
-    std::vector<std::pair<RegexNode *, int>> outer_edges;
+    std::vector<std::tuple<RegexNode*, int, int>> inner_edges;
+    std::vector<std::pair<RegexNode*, int>> outer_edges;
 };
 
-std::ostream &operator<<(std::ostream &os, const RegexNode::Op op);
+std::ostream& operator<<(std::ostream& os, const RegexNode::Op op);
 
 } // namespace dectab
 } // namespace ampere

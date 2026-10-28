@@ -32,12 +32,12 @@ class IDRPartition;
 struct AssignmentProperties
 {
     unsigned width = 0;
-    const SchedulerCredits &sch;
+    const SchedulerCredits& sch;
     bool uses_pre_swizzle_partition = false;
     unsigned partitions = 1;
 
-    unsigned partition_of(const ConstUop &uop) const;
-    unsigned lane_of(const ConstUop &uop) const;
+    unsigned partition_of(const ConstUop& uop) const;
+    unsigned lane_of(const ConstUop& uop) const;
 };
 
 class IDRSchedulerAssignment : public Module
@@ -45,13 +45,13 @@ class IDRSchedulerAssignment : public Module
 protected:
     AssignmentProperties properties;
 
-    unsigned partition_of(const ConstUop &uop) const { return properties.partition_of(uop); }
-    unsigned lane_of(const ConstUop &uop) const { return properties.lane_of(uop); }
+    unsigned partition_of(const ConstUop& uop) const { return properties.partition_of(uop); }
+    unsigned lane_of(const ConstUop& uop) const { return properties.lane_of(uop); }
 
 public:
     using assignment_t = std::optional<Scheduler>;
 
-    IDRSchedulerAssignment(const sc_core::sc_module_name &name, const AssignmentProperties &properties)
+    IDRSchedulerAssignment(const sc_core::sc_module_name& name, const AssignmentProperties& properties)
         : Module(name), properties(properties)
     {
     }
@@ -66,12 +66,12 @@ public:
     // assign_uop on each, but can be overridden to handle multiple/cross-uop
     // assignment policies/rules. If no assignment for a uop is provided, one
     // will be provided by the caller (e.g. least loaded).
-    virtual std::vector<assignment_t> assign_uops(const std::vector<Uop> &uops)
+    virtual std::vector<assignment_t> assign_uops(const std::vector<Uop>& uops)
     {
         std::vector<assignment_t> assigned;
         assigned.reserve(uops.size());
 
-        for (const auto &uop : uops)
+        for (const auto& uop : uops)
             assigned.emplace_back(assign_uop(uop));
 
         return assigned;
@@ -80,11 +80,11 @@ public:
 protected:
     // Assign scheduler for a single uop, not taking into account any other uops
     // that may be in the group
-    virtual assignment_t assign_uop(const Uop &uop) { return {}; }
+    virtual assignment_t assign_uop(const Uop& uop) { return {}; }
 };
 
 using IDRSchedulerAssignmentPolyDef =
-    sc::poly_definition<IDRSchedulerAssignment, sc::poly_constructor<const AssignmentProperties &>>;
+    sc::poly_definition<IDRSchedulerAssignment, sc::poly_constructor<const AssignmentProperties&>>;
 
 // Assignment policy for layering other policies
 class MultipleIDRSchedulerAssignment : public IDRSchedulerAssignment,
@@ -92,11 +92,11 @@ class MultipleIDRSchedulerAssignment : public IDRSchedulerAssignment,
 {
     std::list<Submodule<IDRSchedulerAssignment>> assignments;
 
-    void add_assignment(std::string name, const json &params)
+    void add_assignment(std::string name, const json& params)
     {
-        auto &parameters = this->get_environment()->parameters;
+        auto& parameters = this->get_environment()->parameters;
         if (params.is_object()) {
-            for (const auto &[key, value] : params.items()) {
+            for (const auto& [key, value] : params.items()) {
                 if (key != "name")
                     parameters.add_setting(fmt::format("{}.{}.{}", this->name(), name, key), value, "param");
             }
@@ -108,15 +108,15 @@ class MultipleIDRSchedulerAssignment : public IDRSchedulerAssignment,
     }
 
 public:
-    MultipleIDRSchedulerAssignment(const sc_core::sc_module_name &name, const AssignmentProperties &properties)
+    MultipleIDRSchedulerAssignment(const sc_core::sc_module_name& name, const AssignmentProperties& properties)
         : IDRSchedulerAssignment(name, properties)
     {
-        auto &parameters = this->get_environment()->parameters;
-        if (auto *settings = parameters.match_setting(fmt::format("{}.assignments", this->name())); settings) {
+        auto& parameters = this->get_environment()->parameters;
+        if (auto* settings = parameters.match_setting(fmt::format("{}.assignments", this->name())); settings) {
             AMPERE_ASSERT(
                 settings->value().is_array(), "Expected array of assignments, got {}", settings->value().type_name());
 
-            for (const auto &params : settings->value()) {
+            for (const auto& params : settings->value()) {
                 AMPERE_ASSERT(params.is_object(), "Expected dict in array, got {}", params.type_name());
                 if (!params["type"].is_null())
                     add_assignment(params["name"], params);
@@ -126,7 +126,7 @@ public:
 
     void stalled() override;
     void start_assignment() override;
-    std::vector<assignment_t> assign_uops(const std::vector<Uop> &uops) override;
+    std::vector<assignment_t> assign_uops(const std::vector<Uop>& uops) override;
 };
 
 class LeastLoadedScheduler
@@ -138,7 +138,7 @@ class LeastLoadedScheduler
     std::vector<unsigned> sch_assigned_this_cycle;
 
 public:
-    explicit LeastLoadedScheduler(const AssignmentProperties &properties,
+    explicit LeastLoadedScheduler(const AssignmentProperties& properties,
                                   bool update_within_cycle = false,
                                   std::optional<SchedulerType> default_scheduler = {})
         : properties(properties),
@@ -149,7 +149,7 @@ public:
     }
 
     void reset() { std::fill(sch_assigned_this_cycle.begin(), sch_assigned_this_cycle.end(), 0); }
-    Scheduler assign(const Uop &uop);
+    Scheduler assign(const Uop& uop);
 };
 
 // Assignment policy which just provides the least loaded scheduler
@@ -169,7 +169,7 @@ class LeastLoadedIDRSchedulerAssignment
     LeastLoadedScheduler least_loaded;
 
 public:
-    LeastLoadedIDRSchedulerAssignment(const sc_core::sc_module_name &name, const AssignmentProperties &properties)
+    LeastLoadedIDRSchedulerAssignment(const sc_core::sc_module_name& name, const AssignmentProperties& properties)
         : IDRSchedulerAssignment(name, properties),
           least_loaded(properties, smart_least_loaded, *simple_default_scheduler)
     {
@@ -178,7 +178,7 @@ public:
     void reset() override { least_loaded.reset(); }
 
 protected:
-    assignment_t assign_uop(const Uop &uop) override { return least_loaded.assign(uop); }
+    assignment_t assign_uop(const Uop& uop) override { return least_loaded.assign(uop); }
 };
 
 // More generic scheduler balancing policy
@@ -191,12 +191,12 @@ class BalancingIDRSchedulerAssignment : public IDRSchedulerAssignment,
         "avoid_full", "Don't assign a uop to a full scheduler when the other scheduler has space", false};
 
 public:
-    BalancingIDRSchedulerAssignment(const sc_core::sc_module_name &name, const AssignmentProperties &properties)
+    BalancingIDRSchedulerAssignment(const sc_core::sc_module_name& name, const AssignmentProperties& properties)
         : IDRSchedulerAssignment(name, properties)
     {
     }
 
-    std::vector<assignment_t> assign_uops(const std::vector<Uop> &uops) override;
+    std::vector<assignment_t> assign_uops(const std::vector<Uop>& uops) override;
 };
 
 class ThisOrThatAssignment : public IDRSchedulerAssignment
@@ -206,7 +206,7 @@ protected:
     Param<SchedulerType> second_scheduler_type{"second_scheduler", "Second scheduler choice", "B"};
 
 public:
-    ThisOrThatAssignment(const sc_core::sc_module_name &name, const AssignmentProperties &properties)
+    ThisOrThatAssignment(const sc_core::sc_module_name& name, const AssignmentProperties& properties)
         : IDRSchedulerAssignment(name, properties)
     {
     }
@@ -229,7 +229,7 @@ protected:
     unsigned second_available{0};
 
 public:
-    BinaryAssignment(const sc_core::sc_module_name &name, const AssignmentProperties &properties)
+    BinaryAssignment(const sc_core::sc_module_name& name, const AssignmentProperties& properties)
         : ThisOrThatAssignment(name, properties),
           first_balancing_threshold("first_balancing_threshold",
                                     "If sched first - sched second credits are more than this, force uops to first",
@@ -241,17 +241,17 @@ public:
     }
 
 protected:
-    assignment_t assign_uop(const Uop &uop) override;
-    std::vector<assignment_t> assign_uops(const std::vector<Uop> &uops) override;
+    assignment_t assign_uop(const Uop& uop) override;
+    std::vector<assignment_t> assign_uops(const std::vector<Uop>& uops) override;
 
     void update_credits_for_partition(unsigned partition);
     bool first_has_more_credits() const;
     bool second_has_more_credits() const;
 
     // Assignment for a single uop
-    virtual assignment_t single_uop_assignment(const Uop &uop) { return std::nullopt; }
+    virtual assignment_t single_uop_assignment(const Uop& uop) { return std::nullopt; }
     // Fallback assignment used if assign_uop does not provide anything
-    virtual assignment_t fallback_uop_assignment(unsigned index, const Uop &uop, const assignment_t &neighbor);
+    virtual assignment_t fallback_uop_assignment(unsigned index, const Uop& uop, const assignment_t& neighbor);
 };
 
 // Binary (first or second) assignemnt policy with some optional balancing between
@@ -259,7 +259,7 @@ class BinaryIDRSchedulerAssignment : public BinaryAssignment,
                                      IDRSchedulerAssignmentPolyDef::implementation<BinaryIDRSchedulerAssignment>
 {
 public:
-    BinaryIDRSchedulerAssignment(const sc_core::sc_module_name &name, const AssignmentProperties &properties)
+    BinaryIDRSchedulerAssignment(const sc_core::sc_module_name& name, const AssignmentProperties& properties)
         : BinaryAssignment(name, properties)
     {
     }
@@ -282,7 +282,7 @@ public:
                                  unsigned partition)
     {
         partition = Scheduler::normalized(first_scheduler_type, partition).partition;
-        auto &next = next_scheduler_by_partition[partition];
+        auto& next = next_scheduler_by_partition[partition];
         auto sched = next ? second_scheduler_type : first_scheduler_type;
         next = !next;
         return sched;
@@ -300,7 +300,7 @@ class BinaryPingPongIDRSchedulerAssignment
     PingPong ping_pong;
 
 public:
-    BinaryPingPongIDRSchedulerAssignment(const sc_core::sc_module_name &name, const AssignmentProperties &properties)
+    BinaryPingPongIDRSchedulerAssignment(const sc_core::sc_module_name& name, const AssignmentProperties& properties)
         : BinaryAssignment(name, properties)
     {
     }
@@ -310,9 +310,9 @@ public:
 protected:
     void start_assignment() override { ping_pong.snapshot(); }
 
-    bool use_ping_pong(const Uop &uop) const { return ping_pong_pipe && uop->allowed_pipes() == *ping_pong_pipe; }
-    assignment_t single_uop_assignment(const Uop &uop) override;
-    assignment_t fallback_uop_assignment(unsigned index, const Uop &uop, const assignment_t &neighbor) override;
+    bool use_ping_pong(const Uop& uop) const { return ping_pong_pipe && uop->allowed_pipes() == *ping_pong_pipe; }
+    assignment_t single_uop_assignment(const Uop& uop) override;
+    assignment_t fallback_uop_assignment(unsigned index, const Uop& uop, const assignment_t& neighbor) override;
 };
 
 // Ping-pong only assignment for specific pipe
@@ -323,13 +323,13 @@ class PingPongAssignment : public ThisOrThatAssignment,
     PingPong ping_pong;
 
 public:
-    PingPongAssignment(const sc_core::sc_module_name &name, const AssignmentProperties &properties)
+    PingPongAssignment(const sc_core::sc_module_name& name, const AssignmentProperties& properties)
         : ThisOrThatAssignment(name, properties)
     {
     }
 
 protected:
-    assignment_t assign_uop(const Uop &uop) override;
+    assignment_t assign_uop(const Uop& uop) override;
 };
 
 // Ping-pong assignemnt for specific FSU unit
@@ -340,13 +340,13 @@ class FSUUnitPingPongAssignment : public ThisOrThatAssignment,
     PingPong ping_pong;
 
 public:
-    FSUUnitPingPongAssignment(const sc_core::sc_module_name &name, const AssignmentProperties &properties)
+    FSUUnitPingPongAssignment(const sc_core::sc_module_name& name, const AssignmentProperties& properties)
         : ThisOrThatAssignment(name, properties)
     {
     }
 
 protected:
-    assignment_t assign_uop(const Uop &uop) override;
+    assignment_t assign_uop(const Uop& uop) override;
 };
 
 } // namespace ampere::core

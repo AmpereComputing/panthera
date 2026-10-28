@@ -28,7 +28,7 @@ bool L1DCache::address_resident(PhysAddr addr) const
 {
     bool match = false;
     find_aliases(
-        [&](auto set_addr, const auto &entry) {
+        [&](auto set_addr, const auto& entry) {
             match = true;
             return true;
         },
@@ -47,7 +47,7 @@ std::vector<VirtAddr> L1DCache::aliases(VirtAddr virt_addr, PhysAddr phys_addr, 
 {
     std::vector<VirtAddr> matches;
     find_aliases(
-        [&](auto set_addr, const auto &entry) {
+        [&](auto set_addr, const auto& entry) {
             matches.emplace_back(set_addr);
             return false;
         },
@@ -63,7 +63,7 @@ std::vector<PhysAddr> L1DCache::aliased_set_addresses(VirtAddr addr) const
     std::vector<PhysAddr> entries;
     entries.reserve(num_ways * overlapping_sets());
     iter_aliases(
-        [&](auto set_addr, const auto &entry) {
+        [&](auto set_addr, const auto& entry) {
             entries.emplace_back(entry.addr);
             return false;
         },

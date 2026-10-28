@@ -251,7 +251,7 @@ void L2P_SPP::train_impl(MemReq req, bool hit, bool prefetch, bool demand)
     }
 
     // Update Pattern table probabilities
-    PtEntry &pt_entry = pattern_table[st_entry->signature];
+    PtEntry& pt_entry = pattern_table[st_entry->signature];
     auto dt_victim = pt_entry.update_index(delta);
     if (dt_victim) {
         ev_pattern_table_refill(req);

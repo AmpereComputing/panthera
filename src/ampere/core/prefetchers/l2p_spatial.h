@@ -24,7 +24,7 @@ protected:
     MemOp::PrefetchType prefetch_type() const override;
 
 private:
-    void table_print(std::ostream &os);
+    void table_print(std::ostream& os);
 };
 
 } // namespace ampere::core

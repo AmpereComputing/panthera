@@ -32,7 +32,7 @@ bool PCP::can_allocate_pob(BackendMemReq req, archx::EL current_level) const
  * On an event of a train, this function is used to insert or lookup the
  * entry for that pc in the stride table
  *************************************************************************/
-PCP::Table::Result PCP::Table::lookup_or_insert(const BackendMemReq &request)
+PCP::Table::Result PCP::Table::lookup_or_insert(const BackendMemReq& request)
 {
     if (auto hit = lookup(request.transaction, request.pc); hit)
         return hit;
@@ -47,7 +47,7 @@ PCP::Table::Result PCP::Table::lookup_or_insert(const BackendMemReq &request)
     return lookup(request.transaction, request.pc, false, true);
 }
 
-bool PCP::should_trigger(const Entry &entry) const
+bool PCP::should_trigger(const Entry& entry) const
 {
     return entry.state == PCP_ACTIVE_HI || (prefetch_in_active_lo && entry.state == PCP_ACTIVE_LO);
 }
@@ -56,7 +56,7 @@ bool PCP::should_trigger(const Entry &entry) const
  * Stride was found in active hi state, so here is the algorithm to
  * put a new request onto the on-deck circle.
  *************************************************************************/
-void PCP::trigger_pf(const BackendMemReq &request)
+void PCP::trigger_pf(const BackendMemReq& request)
 {
     // figure out which entry we need to prefetch for
     unsigned idx = table.compute_set(request.pc);
@@ -67,7 +67,7 @@ void PCP::trigger_pf(const BackendMemReq &request)
     auto hit = table.lookup(request.transaction, request.pc);
     if (!hit)
         AMPERE_ERROR("triggering pf for uop that was not trained in the table {}\n", idx);
-    auto &e = *hit;
+    auto& e = *hit;
 
     // Check and make sure confidences is high before putting opportunistic load on deck
     if (!should_trigger(e))
@@ -163,7 +163,7 @@ void PCP::train_impl(BackendMemReq request, bool hit, bool prefetch, bool demand
 
     // figure out the stride
     auto entry = table.lookup_or_insert(request);
-    auto &e = *entry;
+    auto& e = *entry;
     int stride = (request.virt_addr & addr_mask) - (e.last_vaddr & addr_mask);
     unsigned way = entry.way();
 
@@ -310,7 +310,7 @@ void PCP::execute_impl(
     if (signal_training)
         aggressive = training->should_inc_multiplier(prefetch_type);
 
-    auto *in_flight_req = get_inflight(req);
+    auto* in_flight_req = get_inflight(req);
     if (in_flight_req && should_inc_stride_mult(prefetch, in_flight_req->stride_mult_increase)) {
         in_flight_req->stride_mult_increase = stride_mult_once_per_ofb;
 
@@ -328,7 +328,7 @@ void PCP::drop_impl(BackendMemReq req, PrefetchDropReason reason)
             || reason == PrefetchDropReason::CACHE_MISS_PREFETCH_IN_FLIGHT))
     {
         bool prefetch = reason == PrefetchDropReason::CACHE_MISS_PREFETCH_IN_FLIGHT;
-        auto &in_flight_req = add_inflight(req);
+        auto& in_flight_req = add_inflight(req);
         // If a PCP prefetch hits a non-prefetch OFB, the prefetch was late -- increase the multiplier
         if (should_inc_stride_mult(!static_cast<bool>(prefetch), in_flight_req.stride_mult_increase)) {
             in_flight_req.stride_mult_increase = stride_mult_once_per_ofb;
@@ -372,7 +372,7 @@ void PCP::stride_mult_inc(BackendMemReq request, ProgramCounter pc, bool aggress
         ev_aliased_evicted(request.transaction);
         return;
     }
-    auto &e = *hit;
+    auto& e = *hit;
     unsigned way = hit.way();
 
     // If we are using 'enable_slow_stride_increase', only increase the
@@ -407,7 +407,7 @@ void PCP::stride_mult_inc(BackendMemReq request, ProgramCounter pc, bool aggress
     }
 }
 
-void PCP::dump(std::ostream &os) const
+void PCP::dump(std::ostream& os) const
 {
     fmt::print(os, "= LSU PCP ==================================================\n");
     table_print(os);
@@ -418,7 +418,7 @@ void PCP::dump(std::ostream &os) const
  * Function for observability. This is basically a watch window for the
  * PCP entries for inspecting the state machine for each index.
  *************************************************************************/
-void PCP::table_print(std::ostream &os) const
+void PCP::table_print(std::ostream& os) const
 {
     unsigned idx{0};
 
@@ -436,9 +436,9 @@ void PCP::table_print(std::ostream &os) const
                "last_vaddr",
                "alloc_id(0, 1)",
                15);
-    for (const auto &set : this->table.get_sets()) {
-        for (const auto &it : set) {
-            const auto &pcp_entry = it.second.value;
+    for (const auto& set : this->table.get_sets()) {
+        for (const auto& it : set) {
+            const auto& pcp_entry = it.second.value;
             // Convert enum to string
             std::string state_str;
             switch (pcp_entry.state) {
@@ -499,7 +499,7 @@ void PCP::end_of_simulation()
         ev_active_lo_entries();
 }
 
-L1P_PCP::L1P_PCP(const sc_core::sc_module_name &name) : PCP(name)
+L1P_PCP::L1P_PCP(const sc_core::sc_module_name& name) : PCP(name)
 {
     connect(pipe).name("pipe");
 }
@@ -524,12 +524,12 @@ void L1P_PCP::issue_impl(uint64_t id, BackendMemReq req)
 
 void L1P_PCP::flush_impl(Flush flush_info)
 {
-    pipe.clear_if([&](const auto &e) { return e.uop && e.alloc_id >= flush_info->alloc_id; });
+    pipe.clear_if([&](const auto& e) { return e.uop && e.alloc_id >= flush_info->alloc_id; });
 }
 
 bool L1P_PCP::commit_impl(uint64_t id, BackendMemReq req)
 {
-    pipe.clear_if([&](const auto &e) { return e.uop && e.alloc_id == id; });
+    pipe.clear_if([&](const auto& e) { return e.uop && e.alloc_id == id; });
     return true;
 }
 

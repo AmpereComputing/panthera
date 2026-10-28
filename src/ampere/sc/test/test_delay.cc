@@ -210,9 +210,9 @@ TEST_F(DelayTwoBandwidthTest, DelayCanTakeBeforeClear)
 
 struct ThingWithComplexClear
 {
-    bool *called_ptr;
+    bool* called_ptr;
     void fifo_clear() { *called_ptr = true; }
-    explicit ThingWithComplexClear(bool *called) : called_ptr(called) {}
+    explicit ThingWithComplexClear(bool* called) : called_ptr(called) {}
 };
 
 struct DelayComplexClearTest : DelayTestBase<ThingWithComplexClear>
@@ -232,9 +232,9 @@ TEST_F(DelayComplexClearTest, ClearWillInvokeFifoClearMethod)
 
 struct CounterWithClear
 {
-    int *called_ptr;
+    int* called_ptr;
     void fifo_clear() { *called_ptr = *called_ptr + 1; }
-    explicit CounterWithClear(int *called) : called_ptr(called) {}
+    explicit CounterWithClear(int* called) : called_ptr(called) {}
 };
 
 using DelayClearTest = DelayTestBase<CounterWithClear>;

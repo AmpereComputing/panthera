@@ -20,7 +20,7 @@ DriverBS::DriverBS(std::string branch_stream_name)
 {
 }
 
-ProgramCounter DriverBS::next_pc(bool *is_taken_branch)
+ProgramCounter DriverBS::next_pc(bool* is_taken_branch)
 {
     if (!instructions.contains(next_pc_id))
         read_next_instruction();
@@ -64,7 +64,7 @@ void DriverBS::commit(std::shared_ptr<Instruction> instruction)
 {
     if (instructions.empty())
         throw std::runtime_error("Commit called with an empty instructions buffer.");
-    const auto &begin = instructions.begin();
+    const auto& begin = instructions.begin();
     if (instruction == begin->second) {
         arch_state = instruction->state();
         instructions.erase(begin);
@@ -108,15 +108,15 @@ void DriverBS::read_next_instruction()
 /* Check if event needs to update architectural state (memory, sysregs, etc.),
  * and record any needed updates. This requires that the previous instruction
  * be passed in because memory updates must be recorded for its state. */
-void DriverBS::record_event(const bs::Event &event, InstructionIS &prev)
+void DriverBS::record_event(const bs::Event& event, InstructionIS& prev)
 {
     if (event.has_sysreg()) {
-        const is::SysReg &s = event.sysreg();
+        const is::SysReg& s = event.sysreg();
         SysReg sysreg = SysReg(s.op0(), s.op1(), s.crn(), s.crm(), s.op2());
         fetch_state = std::move(fetch_state).write(sysreg, s.value());
         fetch_state_updated = true;
     } else if (event.has_context()) {
-        const is::Context &c = event.context();
+        const is::Context& c = event.context();
         if (c.type() == is::Context::EL) {
             /* Because EL changes are immediately before the instruction which
              * needs to observe the change in the instruction stream, and will
@@ -137,7 +137,7 @@ void DriverBS::record_event(const bs::Event &event, InstructionIS &prev)
     }
 }
 
-InstructionIS DriverBS::read_branch_stream(InstructionIS &prev)
+InstructionIS DriverBS::read_branch_stream(InstructionIS& prev)
 {
     // Return add instructions until we reach the next branch in the stream
     if (sequence_id != 0 && prev.next_program_counter() < next_branch.program_counter()) {
@@ -152,7 +152,7 @@ InstructionIS DriverBS::read_branch_stream(InstructionIS &prev)
     bool el_change = false;
     while (status && !event.has_branch()) {
         if (event.has_context()) {
-            const is::Context &c = event.context();
+            const is::Context& c = event.context();
             if (c.type() == is::Context::EL) {
                 // Set the 'next pc' for the current instruction to the next
                 // branch instead of PC+4

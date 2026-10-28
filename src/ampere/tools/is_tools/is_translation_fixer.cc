@@ -30,7 +30,7 @@
 using namespace ampere;
 using namespace ampere::is;
 
-int main(int argc, char **argv)
+int main(int argc, char** argv)
 {
     if (argc != 3) {
         std::cerr << "is_translation_fixer INPUT_STREAM OUTPUT_STREAM" << std::endl;
@@ -45,13 +45,13 @@ int main(int argc, char **argv)
 
     while (reader.read(event)) {
         if (event.has_memory()) {
-            const Memory &memory = event.memory();
+            const Memory& memory = event.memory();
             // memory.address().pa()
             auto pa = archx::PhysAddr(memory.address().pa());
             translation_state =
-                std::move(translation_state).write(pa, (uint8_t *)memory.value().data(), memory.value().size());
+                std::move(translation_state).write(pa, (uint8_t*)memory.value().data(), memory.value().size());
         } else if (event.has_sysreg()) {
-            const SysReg &s = event.sysreg();
+            const SysReg& s = event.sysreg();
             archx::SysReg sysreg = archx::SysReg(s.op0(), s.op1(), s.crn(), s.crm(), s.op2());
             translation_state = std::move(translation_state).write(sysreg, s.value());
         }

@@ -10,9 +10,9 @@
 
 namespace ampere::core {
 
-const LSUPWCEntry &LSUPWC::allocate(MemReq req, bool write_through, bool requires_combine)
+const LSUPWCEntry& LSUPWC::allocate(MemReq req, bool write_through, bool requires_combine)
 {
-    auto &entry = const_cast<LSUPWCEntry &>(Base::allocate(req, requires_combine));
+    auto& entry = const_cast<LSUPWCEntry&>(Base::allocate(req, requires_combine));
     entry.write_through = write_through;
     return entry;
 }
@@ -23,7 +23,7 @@ void LSUPWC::deallocate(PhysAddr addr)
         deallocate(it);
 }
 
-void LSUPWC::deallocate(const pwc_iterator &entry)
+void LSUPWC::deallocate(const pwc_iterator& entry)
 {
     auto reason = entry->draining ? static_cast<DrainReason>(*entry->draining) : DrainReason::TIMEOUT;
     store_deallocate->put({entry->id, entry->phys_addr()});
@@ -73,7 +73,7 @@ void LSUPWC::schedule_and_request()
         if (!store_request->can_put())
             break;
 
-        auto &entry = *it;
+        auto& entry = *it;
         if (entry.fills() && entry.filling()) {
             if (drain_in_order && !prefetch_misses)
                 break;
@@ -83,7 +83,7 @@ void LSUPWC::schedule_and_request()
         if (it == entries.begin()
             || std::find_if(std::next(std::make_reverse_iterator(it)),
                             entries.rend(),
-                            [&](const auto &e) { return e.phys_addr().same_cache_line(entry.phys_addr()); })
+                            [&](const auto& e) { return e.phys_addr().same_cache_line(entry.phys_addr()); })
                    == entries.rend())
         {
             bool prefetch = prefetch_misses && it != entries.begin();

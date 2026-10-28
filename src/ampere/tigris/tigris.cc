@@ -87,11 +87,11 @@ void BiAddrTranslator::dump() const
 {
     std::ofstream output_file("tlbMapVa2Pa.txt");
     output_file << "VA2PA" << std::endl;
-    for (const auto &pair : virt2phys) {
+    for (const auto& pair : virt2phys) {
         output_file << pair.first.value() << ": " << pair.second.value() << std::endl;
     }
     output_file << "PA2VA" << std::endl;
-    for (const auto &pair : phys2virt) {
+    for (const auto& pair : phys2virt) {
         output_file << pair.first.value() << ": " << pair.second.value() << std::endl;
     }
 }
@@ -104,7 +104,7 @@ uint64_t PhysicallyTaggedCache<addr_t, value>::compute_tag(addr_t address) const
 }
 
 template<typename upper_addr_t, typename prefetcher_t>
-bool Tigris::CacheLevel<upper_addr_t, prefetcher_t>::should_train(bool hit, const TMemReq &req) const
+bool Tigris::CacheLevel<upper_addr_t, prefetcher_t>::should_train(bool hit, const TMemReq& req) const
 {
     return req->getMemReq()->barrier_type == BAR_NONE && (train_on_non_temporal || !req->getMemReq()->nontemporal)
            && ((train_on_loads && req->getMemReq()->type == READ)
@@ -114,7 +114,7 @@ bool Tigris::CacheLevel<upper_addr_t, prefetcher_t>::should_train(bool hit, cons
 
 template<typename upper_addr_t, typename prefetcher_t>
 template<typename addr_to_extract_t>
-addr_to_extract_t Tigris::CacheLevel<upper_addr_t, prefetcher_t>::extract_addr(const TMemReq &req) const
+addr_to_extract_t Tigris::CacheLevel<upper_addr_t, prefetcher_t>::extract_addr(const TMemReq& req) const
 {
     auto memreq = req->getMemReq();
     if constexpr (std::is_same<addr_to_extract_t, VirtAddr>::value) {
@@ -131,8 +131,8 @@ addr_to_extract_t Tigris::CacheLevel<upper_addr_t, prefetcher_t>::extract_addr(c
 }
 
 template<typename upper_addr_t, typename prefetcher_t>
-const Tigris::CacheLevel<upper_addr_t, prefetcher_t>::prefetch_req_t &
-Tigris::CacheLevel<upper_addr_t, prefetcher_t>::extract_prefetch_req(const TMemReq &req) const
+const Tigris::CacheLevel<upper_addr_t, prefetcher_t>::prefetch_req_t&
+Tigris::CacheLevel<upper_addr_t, prefetcher_t>::extract_prefetch_req(const TMemReq& req) const
 {
     if constexpr (std::is_same<prefetch_req_t, BackendMemReq>::value) {
         return req->getBackendMemReq();
@@ -143,7 +143,7 @@ Tigris::CacheLevel<upper_addr_t, prefetcher_t>::extract_prefetch_req(const TMemR
 
 template<typename upper_addr_t, typename prefetcher_t>
 const Tigris::CacheLevel<upper_addr_t, prefetcher_t>::prefetch_t
-Tigris::CacheLevel<upper_addr_t, prefetcher_t>::extract_prefetch_type(const TMemReq &req) const
+Tigris::CacheLevel<upper_addr_t, prefetcher_t>::extract_prefetch_type(const TMemReq& req) const
 {
     if constexpr (std::is_same<prefetch_req_t, BackendMemReq>::value) {
         return req->getBackendMemReq().prefetch_type;
@@ -170,7 +170,7 @@ to_addr_t Tigris::CacheLevel<upper_addr_t, prefetcher_t>::translate_addr(from_ad
 }
 
 template<typename upper_addr_t, typename prefetcher_t>
-Tigris::CacheLevel<upper_addr_t, prefetcher_t>::CacheLevel(const sc_core::sc_module_name &name,
+Tigris::CacheLevel<upper_addr_t, prefetcher_t>::CacheLevel(const sc_core::sc_module_name& name,
                                                            Requester type,
                                                            bool physically_tagged,
                                                            bool aligned)
@@ -189,18 +189,18 @@ Tigris::CacheLevel<upper_addr_t, prefetcher_t>::CacheLevel(const sc_core::sc_mod
 }
 
 template<typename upper_addr_t, typename prefetcher_t>
-void Tigris::CacheLevel<upper_addr_t, prefetcher_t>::setup(const Tigris &tigris)
+void Tigris::CacheLevel<upper_addr_t, prefetcher_t>::setup(const Tigris& tigris)
 {
     core::OraclePrefetcher<prefetch_req_t>::try_owned_setup(prefetcher.get(), [&]() { return tigris.make_driver(); });
 }
 
 template<typename upper_addr_t, typename prefetcher_t>
-void Tigris::CacheLevel<upper_addr_t, prefetcher_t>::connect_source(const std::string &name,
-                                                                    OutOpt<MemoryRequest> &requests,
-                                                                    InOpt<MemoryRequest> &responses,
+void Tigris::CacheLevel<upper_addr_t, prefetcher_t>::connect_source(const std::string& name,
+                                                                    OutOpt<MemoryRequest>& requests,
+                                                                    InOpt<MemoryRequest>& responses,
                                                                     LevelSettings settings)
 {
-    auto &level = lower.emplace(Requester::ANY, std::make_unique<Lower>(name, settings)).first->second;
+    auto& level = lower.emplace(Requester::ANY, std::make_unique<Lower>(name, settings)).first->second;
     connect(requests, level->request)
         .bandwidth(incoming_per_cycle)
         .capacity(incoming_per_cycle)
@@ -217,7 +217,7 @@ void Tigris::CacheLevel<upper_addr_t, prefetcher_t>::connect_source(const std::s
 template<typename upper_addr_t, typename prefetcher_t>
 template<typename upper_level_upper_addr_t, typename upper_level_prefetcher_t>
 void Tigris::CacheLevel<upper_addr_t, prefetcher_t>::connect_upper(
-    Tigris::CacheLevel<upper_level_upper_addr_t, upper_level_prefetcher_t> &upper_level, Requester type)
+    Tigris::CacheLevel<upper_level_upper_addr_t, upper_level_prefetcher_t>& upper_level, Requester type)
 {
     using upper_level_addr_t = typename upper_level_prefetcher_t::addr_t;
     static_assert(std::is_same<upper_level_addr_t, upper_addr_t>::value,
@@ -225,11 +225,11 @@ void Tigris::CacheLevel<upper_addr_t, prefetcher_t>::connect_upper(
     const std::string lower_name = basename();
     LevelSettings merged;
     merged.needs_load_responses =
-        fill_loads || std::any_of(lower.begin(), lower.end(), [](auto &e) { return e.second->needs_load_responses; });
+        fill_loads || std::any_of(lower.begin(), lower.end(), [](auto& e) { return e.second->needs_load_responses; });
     merged.needs_store_responses =
-        fill_stores || std::any_of(lower.begin(), lower.end(), [](auto &e) { return e.second->needs_store_responses; });
+        fill_stores || std::any_of(lower.begin(), lower.end(), [](auto& e) { return e.second->needs_store_responses; });
 
-    auto &level =
+    auto& level =
         upper_level.lower
             .emplace(type,
                      std::make_unique<typename CacheLevel<upper_level_upper_addr_t, upper_level_prefetcher_t>::Lower>(
@@ -277,7 +277,7 @@ bool Tigris::CacheLevel<addr_t, prefetcher_t>::can_put_outstanding() const
 }
 
 template<typename upper_addr_t, typename prefetcher_t>
-bool Tigris::CacheLevel<upper_addr_t, prefetcher_t>::can_request(const TMemReq &req) const
+bool Tigris::CacheLevel<upper_addr_t, prefetcher_t>::can_request(const TMemReq& req) const
 {
     return ((req && !should_fill(req)) || can_put_outstanding()) && fill_request->can_put();
 }
@@ -302,8 +302,8 @@ template<typename upper_addr_t, typename prefetcher_t>
 std::tuple<uarch_common::CacheResult<typename Tigris::CacheLevel<upper_addr_t, prefetcher_t>::Line>, bool, bool>
 Tigris::CacheLevel<upper_addr_t, prefetcher_t>::lookup_and_request(PhysAddr phys_addr,
                                                                    VirtAddr virt_addr,
-                                                                   const TMemReq &req,
-                                                                   Lower *requester)
+                                                                   const TMemReq& req,
+                                                                   Lower* requester)
 {
     bool prefetch = !requester;
     bool should_fill_request = prefetch || should_fill(req);
@@ -334,7 +334,7 @@ Tigris::CacheLevel<upper_addr_t, prefetcher_t>::lookup_and_request(PhysAddr phys
         if (auto e = outstanding_requests.find(upper_addr.line_address()); e != outstanding_requests.end()) {
             bool upgraded = false;
             if (!prefetch) {
-                auto &entry = e->second;
+                auto& entry = e->second;
                 if (entry.opportunisitic) {
                     entry.req = req;
                     entry.needed = req->getMemReq()->origin;
@@ -364,7 +364,7 @@ Tigris::CacheLevel<upper_addr_t, prefetcher_t>::lookup_and_request(PhysAddr phys
     if (requested) {
         // create a new tigris request who's memreq attribute is a child
         // of req->getMemReq()
-        MemReq outgoing_memreq = make_child<MemReq>(const_cast<MemReq &>(req->getMemReq()),
+        MemReq outgoing_memreq = make_child<MemReq>(const_cast<MemReq&>(req->getMemReq()),
                                                     req->getMemReq()->id,
                                                     phys_addr.line_address(),
                                                     request_type,
@@ -383,7 +383,7 @@ Tigris::CacheLevel<upper_addr_t, prefetcher_t>::lookup_and_request(PhysAddr phys
 
         if (should_fill_request && can_put_outstanding()) {
             unsigned needed = prefetch ? 0 : req->getMemReq()->origin;
-            auto &entry =
+            auto& entry =
                 outstanding_requests
                     .emplace(upper_addr.line_address(), Outstanding{req, extract_prefetch_type(req), prefetch, needed})
                     .first->second;
@@ -407,7 +407,7 @@ bool Tigris::CacheLevel<upper_addr_t, prefetcher_t>::can_accept(Requester type) 
 }
 
 template<typename upper_addr_t, typename prefetcher_t>
-void Tigris::CacheLevel<upper_addr_t, prefetcher_t>::handle_request(Lower &requester, const TMemReq &req, bool split)
+void Tigris::CacheLevel<upper_addr_t, prefetcher_t>::handle_request(Lower& requester, const TMemReq& req, bool split)
 {
     auto [hit, requested, upgraded] =
         lookup_and_request(req->getMemReq()->phys_addr, req->getMemReq()->virt_addr, req, &requester);
@@ -459,7 +459,7 @@ void Tigris::CacheLevel<upper_addr_t, prefetcher_t>::handle_prefetch_requests()
 template<typename upper_addr_t, typename prefetcher_t>
 void Tigris::CacheLevel<upper_addr_t, prefetcher_t>::handle_requests()
 {
-    for (auto &[type, level] : lower) {
+    for (auto& [type, level] : lower) {
         while (level->request->can_take() && level->response->can_put() && can_request()) {
             auto [req, split] = level->request->take();
             handle_request(*level, req, split);
@@ -468,7 +468,7 @@ void Tigris::CacheLevel<upper_addr_t, prefetcher_t>::handle_requests()
 }
 
 template<typename upper_addr_t, typename prefetcher_t>
-void Tigris::CacheLevel<upper_addr_t, prefetcher_t>::evict(const Line &victim, const TMemReq &req)
+void Tigris::CacheLevel<upper_addr_t, prefetcher_t>::evict(const Line& victim, const TMemReq& req)
 {
     auto prefetched = static_cast<bool>(victim.prefetch_type);
     if (!victim.used && !victim.warmup && prefetched) {
@@ -480,7 +480,7 @@ void Tigris::CacheLevel<upper_addr_t, prefetcher_t>::evict(const Line &victim, c
     // virtual addrs
     prefetcher->evict(magic_addr_map->get_phys_addr(victim.addr), prefetched, !prefetched || victim.used);
 
-    for (auto &[type, level] : lower) {
+    for (auto& [type, level] : lower) {
         if (level->evict_request) {
             (*level->evict_request)->put(victim.addr);
         }
@@ -490,7 +490,7 @@ void Tigris::CacheLevel<upper_addr_t, prefetcher_t>::evict(const Line &victim, c
 template<typename upper_addr_t, typename prefetcher_t>
 bool Tigris::CacheLevel<upper_addr_t, prefetcher_t>::can_evict() const
 {
-    for (const auto &[type, level] : lower)
+    for (const auto& [type, level] : lower)
         if (level->evict_request && !(*level->evict_request)->can_put())
             return false;
 
@@ -516,7 +516,7 @@ void Tigris::CacheLevel<upper_addr_t, prefetcher_t>::handle_responses()
 {
     for (auto it = remaining_responses.begin(); it != remaining_responses.end();) {
         auto lit = lower.find((*it)->getMemReq()->origin);
-        auto &level = lit != lower.end() ? lit->second : lower.at(Requester::ANY);
+        auto& level = lit != lower.end() ? lit->second : lower.at(Requester::ANY);
         if (level->response->can_put()) {
             level->response->put({*it, false});
             it = remaining_responses.erase(it);
@@ -532,10 +532,10 @@ bool Tigris::CacheLevel<upper_addr_t, prefetcher_t>::can_fill() const
     if (!fill_response->can_take() || !can_evict())
         return false;
 
-    const auto &[req, _split] = fill_response->peek();
+    const auto& [req, _split] = fill_response->peek();
     upper_addr_t upper_addr = extract_addr<upper_addr_t>(req);
     if (auto e = outstanding_requests.find(upper_addr.line_address()); e != outstanding_requests.end()) {
-        for (const auto &[type, level] : lower) {
+        for (const auto& [type, level] : lower) {
             if ((e->second.needed & type) != 0 && !level->response->can_put())
                 return false;
         }
@@ -545,13 +545,13 @@ bool Tigris::CacheLevel<upper_addr_t, prefetcher_t>::can_fill() const
 }
 
 template<typename upper_addr_t, typename prefetcher_t>
-bool Tigris::CacheLevel<upper_addr_t, prefetcher_t>::should_fill(const TMemReq &req) const
+bool Tigris::CacheLevel<upper_addr_t, prefetcher_t>::should_fill(const TMemReq& req) const
 {
     return req->getMemReq()->type == WRITE ? fill_stores : fill_loads;
 }
 
 template<typename upper_addr_t, typename prefetcher_t>
-bool Tigris::CacheLevel<upper_addr_t, prefetcher_t>::needs_response(Lower &requester, const TMemReq &req) const
+bool Tigris::CacheLevel<upper_addr_t, prefetcher_t>::needs_response(Lower& requester, const TMemReq& req) const
 {
     return req->getMemReq()->type == WRITE ? requester.needs_store_responses : requester.needs_load_responses;
 }
@@ -571,9 +571,9 @@ void Tigris::CacheLevel<upper_addr_t, prefetcher_t>::handle_fills()
 
         // If we have the address requested
         if (auto e = outstanding_requests.find(upper_addr.line_address()); e != outstanding_requests.end()) {
-            auto &entry = e->second;
+            auto& entry = e->second;
             if (!entry.opportunisitic) {
-                for (const auto &[type, level] : lower) {
+                for (const auto& [type, level] : lower) {
                     for (auto it = entry.responses.begin(); it != entry.responses.end();) {
                         if (((*it)->getMemReq()->origin & type) == 0) {
                             ++it;
@@ -651,7 +651,7 @@ void Tigris::handle_code_requests()
 {
     size_t i = 0;
     for (; i < code_requests_per_cycle && i < code_requests.size(); ++i) {
-        auto &inst = code_requests[i];
+        auto& inst = code_requests[i];
         if (!handle_code(*inst))
             break;
     }
@@ -668,7 +668,7 @@ void Tigris::handle_requests()
 
     size_t i = 0;
     for (; i < requests_per_cycle && i < requests.size();) {
-        auto &[inst, index, split_hi_half] = requests[i];
+        auto& [inst, index, split_hi_half] = requests[i];
         if (auto [req, complete] = handle_memory_op(*inst, index, split_hi_half); req) {
             if (req->getMemReq()->type == WRITE ? require_store_response() : require_load_response()) {
                 waiting_requests.emplace(req->getMemReq()->id, std::make_pair(req, false));
@@ -760,7 +760,7 @@ BarrierType Tigris::barrier_type(archx::Barrier_Type type)
     }
 }
 
-core::MemOp::Type Tigris::memop_type(const archx::Instruction &instruction)
+core::MemOp::Type Tigris::memop_type(const archx::Instruction& instruction)
 {
     if (instruction.is_load())
         return core::MemOp::READ;
@@ -769,7 +769,7 @@ core::MemOp::Type Tigris::memop_type(const archx::Instruction &instruction)
     return core::MemOp::NO_TYPE;
 }
 
-uint32_t Tigris::memop_size(const archx::Instruction &instruction, unsigned index) const
+uint32_t Tigris::memop_size(const archx::Instruction& instruction, unsigned index) const
 {
     auto size = memory_op_size(instruction, index);
     if (size > 1 && !is_memory_op_pair(instruction)) {
@@ -781,7 +781,7 @@ uint32_t Tigris::memop_size(const archx::Instruction &instruction, unsigned inde
     return size;
 }
 
-Tigris::TMemReq Tigris::handle_code(const archx::Instruction &instruction)
+Tigris::TMemReq Tigris::handle_code(const archx::Instruction& instruction)
 {
     if (!code_memory_request->can_put() || !memory_model->can_accept_code())
         return nullptr;
@@ -812,7 +812,7 @@ Tigris::TMemReq Tigris::handle_code(const archx::Instruction &instruction)
     return req;
 }
 
-Tigris::MemoryRequest Tigris::handle_memory_op(const archx::Instruction &instruction,
+Tigris::MemoryRequest Tigris::handle_memory_op(const archx::Instruction& instruction,
                                                unsigned index,
                                                bool split_hi_half)
 {
@@ -873,7 +873,7 @@ Tigris::MemoryRequest Tigris::handle_memory_op(const archx::Instruction &instruc
     return {req, split_hi_half || !line_split};
 }
 
-bool Tigris::supported_memory_op(const archx::Instruction &instruction)
+bool Tigris::supported_memory_op(const archx::Instruction& instruction)
 {
     if (!needs_memory_updates() || !needs_sysregs_updates())
         return !instruction.is_cache_maint() && !instruction.is_prefetch();
@@ -887,7 +887,7 @@ void Tigris::warmup_memory(PhysAddr addr, unsigned int size, bool write, bool co
     //     memory_model->preload(addr, size, write, code);
 }
 
-unsigned Tigris::scatter_gather_parts(const archx::Instruction &instruction) const
+unsigned Tigris::scatter_gather_parts(const archx::Instruction& instruction) const
 {
     if (instruction.num_addresses() <= 2)
         return 0;
@@ -897,7 +897,7 @@ unsigned Tigris::scatter_gather_parts(const archx::Instruction &instruction) con
     return (total_size + request_granularity - 1) / request_granularity;
 }
 
-bool Tigris::should_execute_memop(const archx::Instruction &instruction, unsigned int index) const
+bool Tigris::should_execute_memop(const archx::Instruction& instruction, unsigned int index) const
 {
     if (!valid_memory_operation(instruction, index))
         return false;
@@ -909,7 +909,7 @@ bool Tigris::should_execute_memop(const archx::Instruction &instruction, unsigne
     return true;
 }
 
-void Tigris::handle_instruction(const boost::local_shared_ptr<archx::Instruction> &instruction)
+void Tigris::handle_instruction(const boost::local_shared_ptr<archx::Instruction>& instruction)
 {
     if (memory_model->accepts_code()
         && (code_requests.empty()

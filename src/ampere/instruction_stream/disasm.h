@@ -9,8 +9,8 @@
 
 #define USING_CAPSTONE
 #if defined(USING_CAPSTONE)
-#include <platform.h>
-#include <capstone.h>
+#include <capstone/platform.h>
+#include <capstone/capstone.h>
 #endif
 
 #define USING_ADIS

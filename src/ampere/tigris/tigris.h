@@ -103,7 +103,7 @@ template<typename addr_t, typename value>
 class PhysicallyTaggedCache : public uarch_common::Cache<addr_t, value, uint64_t>
 {
 public:
-    explicit PhysicallyTaggedCache(const sc_core::sc_module_name &name,
+    explicit PhysicallyTaggedCache(const sc_core::sc_module_name& name,
                                    boost::shared_ptr<BiAddrTranslator> cacheAddrTranslator)
         : uarch_common::Cache<addr_t, value>(name, uarch_common::CacheEntry::default_entry_value<value>()),
           cacheAddrTranslator{cacheAddrTranslator}
@@ -142,14 +142,14 @@ public:
     class TigrisMemReq
     {
     public:
-        TigrisMemReq(const MemReq &memreq, const BackendMemReq &backend_req)
+        TigrisMemReq(const MemReq& memreq, const BackendMemReq& backend_req)
             : backend_req_(backend_req), memreq_(memreq)
         {
         }
 
         // These two constructors are only used for prefetches. some params
         // are hardcoded appropriately
-        explicit TigrisMemReq(const BackendMemReq &backend_req)
+        explicit TigrisMemReq(const BackendMemReq& backend_req)
             : backend_req_(backend_req),
               memreq_(new core::MemReqObj(backend_req.transaction->txid().value,
                                           backend_req.phys_addr.value(),
@@ -176,10 +176,10 @@ public:
             }
         }
 
-        explicit TigrisMemReq(const MemReq &memreq) : backend_req_(memreq), memreq_(memreq) {}
+        explicit TigrisMemReq(const MemReq& memreq) : backend_req_(memreq), memreq_(memreq) {}
 
-        const BackendMemReq &getBackendMemReq() const { return backend_req_; }
-        const MemReq &getMemReq() const { return memreq_; }
+        const BackendMemReq& getBackendMemReq() const { return backend_req_; }
+        const MemReq& getMemReq() const { return memreq_; }
 
     private:
         BackendMemReq backend_req_;
@@ -248,16 +248,16 @@ public:
         std::unordered_map<upper_addr_t, Outstanding> outstanding_requests;
         std::unordered_set<addr_t> unused_eviction;
 
-        bool should_train(bool hit, const TMemReq &req) const;
+        bool should_train(bool hit, const TMemReq& req) const;
 
         /*
          * Functions for translating between physical and virtual addresses, and
          * for selecting the appropriate fields from MemReq
          */
         template<typename addr_to_extract_t>
-        addr_to_extract_t extract_addr(const TMemReq &req) const;
-        const prefetch_req_t &extract_prefetch_req(const TMemReq &req) const;
-        const prefetch_t extract_prefetch_type(const TMemReq &req) const;
+        addr_to_extract_t extract_addr(const TMemReq& req) const;
+        const prefetch_req_t& extract_prefetch_req(const TMemReq& req) const;
+        const prefetch_t extract_prefetch_type(const TMemReq& req) const;
         template<typename from_addr_t, typename to_addr_t>
         to_addr_t translate_addr(from_addr_t addr);
 
@@ -268,7 +268,7 @@ public:
             std::string response_name;
             Out<MemoryRequest> response;
             std::unique_ptr<Out<addr_t>> evict_request;
-            Lower(const std::string &level, LevelSettings settings)
+            Lower(const std::string& level, LevelSettings settings)
                 : LevelSettings(settings),
                   request_name(level + "_request"),
                   request(request_name.c_str()),
@@ -332,16 +332,16 @@ public:
          * If you specify physically_tagged then addresses are translated to
          * physical before computing the tag
          */
-        CacheLevel(const sc_core::sc_module_name &name,
+        CacheLevel(const sc_core::sc_module_name& name,
                    Requester type,
                    bool physically_tagged = false,
                    bool aligned = false);
 
-        void setup(const Tigris &tigris);
+        void setup(const Tigris& tigris);
 
-        void connect_source(const std::string &name,
-                            OutOpt<MemoryRequest> &requests,
-                            InOpt<MemoryRequest> &responses,
+        void connect_source(const std::string& name,
+                            OutOpt<MemoryRequest>& requests,
+                            InOpt<MemoryRequest>& responses,
                             LevelSettings settings);
 
         /*
@@ -350,13 +350,13 @@ public:
          * ports to this
          */
         template<typename upper_level_upper_addr_t, typename upper_level_prefetcher_t>
-        void connect_upper(CacheLevel<upper_level_upper_addr_t, upper_level_prefetcher_t> &upper_level, Requester type);
+        void connect_upper(CacheLevel<upper_level_upper_addr_t, upper_level_prefetcher_t>& upper_level, Requester type);
 
         void connect_memory();
 
         bool can_put_outstanding() const;
 
-        bool can_request(const TMemReq &req = nullptr) const;
+        bool can_request(const TMemReq& req = nullptr) const;
 
         unsigned max_request_parts() const { return aligned ? 1 : 2; }
         bool empty() const { return outstanding_requests.empty(); }
@@ -365,18 +365,18 @@ public:
 
         std::tuple<uarch_common::CacheResult<Line>, bool, bool> lookup_and_request(PhysAddr phys_addr,
                                                                                    VirtAddr virt_addr,
-                                                                                   const TMemReq &req,
-                                                                                   Lower *requester = nullptr);
+                                                                                   const TMemReq& req,
+                                                                                   Lower* requester = nullptr);
 
         bool can_accept(Requester type = Requester::ANY) const;
 
-        void handle_request(Lower &requester, const TMemReq &req, bool split);
+        void handle_request(Lower& requester, const TMemReq& req, bool split);
 
         void handle_prefetch_requests();
 
         void handle_requests();
 
-        void evict(const Line &victim, const TMemReq &req);
+        void evict(const Line& victim, const TMemReq& req);
 
         bool can_evict() const;
 
@@ -386,9 +386,9 @@ public:
 
         bool can_fill() const;
 
-        bool should_fill(const TMemReq &req) const;
+        bool should_fill(const TMemReq& req) const;
 
-        bool needs_response(Lower &requester, const TMemReq &req) const;
+        bool needs_response(Lower& requester, const TMemReq& req) const;
 
         void handle_fills();
 
@@ -442,25 +442,25 @@ public:
 
     struct MemoryModel : sc::Module
     {
-        explicit MemoryModel(const sc_core::sc_module_name &name) : sc::Module(name) {}
+        explicit MemoryModel(const sc_core::sc_module_name& name) : sc::Module(name) {}
 
         virtual bool accepts_code() const { return false; }
         virtual bool can_accept_code() const { return true; }
-        virtual void connect_code(OutOpt<MemoryRequest> &requests,
-                                  InOpt<MemoryRequest> &responses,
+        virtual void connect_code(OutOpt<MemoryRequest>& requests,
+                                  InOpt<MemoryRequest>& responses,
                                   LevelSettings settings)
         {
         }
 
         virtual bool accepts_data() const { return false; }
         virtual bool can_accept_data() const { return true; }
-        virtual void connect_data(OutOpt<MemoryRequest> &requests,
-                                  InOpt<MemoryRequest> &responses,
+        virtual void connect_data(OutOpt<MemoryRequest>& requests,
+                                  InOpt<MemoryRequest>& responses,
                                   LevelSettings setting)
         {
         }
 
-        virtual void setup(const Tigris &tigris) {}
+        virtual void setup(const Tigris& tigris) {}
 
         virtual bool has_work() const { return false; }
         virtual void preload(PhysAddr addr, unsigned int size, bool write, bool code) {}
@@ -471,18 +471,18 @@ public:
         // TODO Eventually this needs to be updated to use Prefetcher<Fetch>
         CacheLevel<PhysAddr, Prefetcher<MemReq>> l1i;
 
-        explicit CodeOnlyCache(const sc_core::sc_module_name &name, bool memory_connected = true)
+        explicit CodeOnlyCache(const sc_core::sc_module_name& name, bool memory_connected = true)
             : MemoryModel(name), l1i("l1i", Requester::ICF)
         {
             if (memory_connected)
                 l1i.connect_memory();
         }
 
-        void setup(const Tigris &tigris) override { l1i.setup(tigris); }
+        void setup(const Tigris& tigris) override { l1i.setup(tigris); }
         bool accepts_code() const override { return true; }
         bool can_accept_code() const override { return l1i.can_accept(); }
-        void connect_code(OutOpt<MemoryRequest> &requests,
-                          InOpt<MemoryRequest> &responses,
+        void connect_code(OutOpt<MemoryRequest>& requests,
+                          InOpt<MemoryRequest>& responses,
                           LevelSettings settings) override
         {
             l1i.connect_source("icf", requests, responses, settings);
@@ -493,18 +493,18 @@ public:
     {
         CacheLevel<PhysAddr, core::BackendPrefetcher<BackendMemReq>> l1d;
 
-        explicit DataOnlyCache(const sc_core::sc_module_name &name, bool memory_connected = true)
+        explicit DataOnlyCache(const sc_core::sc_module_name& name, bool memory_connected = true)
             : MemoryModel(name), l1d("l1d", Requester::LSU, true)
         {
             if (memory_connected)
                 l1d.connect_memory();
         }
 
-        void setup(const Tigris &tigris) override { l1d.setup(tigris); }
+        void setup(const Tigris& tigris) override { l1d.setup(tigris); }
         bool accepts_data() const override { return true; }
         bool can_accept_data() const override { return l1d.can_accept(); }
-        void connect_data(OutOpt<MemoryRequest> &requests,
-                          InOpt<MemoryRequest> &responses,
+        void connect_data(OutOpt<MemoryRequest>& requests,
+                          InOpt<MemoryRequest>& responses,
                           LevelSettings settings) override
         {
             l1d.connect_source("lsu", requests, responses, settings);
@@ -520,11 +520,11 @@ public:
 
     struct SingleLevelCache : CodeOnlyCache, DataOnlyCache, implementation<SingleLevelCache, MemoryModel>
     {
-        explicit SingleLevelCache(const sc_core::sc_module_name &name)
+        explicit SingleLevelCache(const sc_core::sc_module_name& name)
             : MemoryModel(name), CodeOnlyCache(name), DataOnlyCache(name)
         {
         }
-        void setup(const Tigris &tigris) override
+        void setup(const Tigris& tigris) override
         {
             CodeOnlyCache::setup(tigris);
             DataOnlyCache::setup(tigris);
@@ -535,7 +535,7 @@ public:
     {
         CacheLevel<PhysAddr, Prefetcher<MemReq>> l2;
 
-        explicit MultiLevelCache(const sc_core::sc_module_name &name)
+        explicit MultiLevelCache(const sc_core::sc_module_name& name)
             : MemoryModel(name),
               CodeOnlyCache(name, false),
               DataOnlyCache(name, false),
@@ -546,7 +546,7 @@ public:
             l2.connect_memory();
         }
 
-        void setup(const Tigris &tigris) override
+        void setup(const Tigris& tigris) override
         {
             CodeOnlyCache::setup(tigris);
             DataOnlyCache::setup(tigris);
@@ -565,10 +565,10 @@ public:
     bool require_store_response() const { return commit_depth > 0 && wait_for_store_response; }
     bool require_any_response() const { return require_load_response() || require_store_response(); }
 
-    Tigris(const sc_core::sc_module_name &name,
-           sc::Clock *clk,
-           sc::Environment *env,
-           const InstructionStreamRunnerConfig &config)
+    Tigris(const sc_core::sc_module_name& name,
+           sc::Clock* clk,
+           sc::Environment* env,
+           const InstructionStreamRunnerConfig& config)
         : Base{name, clk, env, config},
           reorder_probability{*env, "reorder_probability", "Reorder probability", 0},
           reorder_amount{*env, "reorder_amount", "Distance of reordering between requests", 0},
@@ -609,22 +609,22 @@ public:
     bool run() override;
 
     static BarrierType barrier_type(archx::Barrier_Type type);
-    static core::MemOp::Type memop_type(const archx::Instruction &instruction);
-    static bool supported_memory_op(const archx::Instruction &instruction);
+    static core::MemOp::Type memop_type(const archx::Instruction& instruction);
+    static bool supported_memory_op(const archx::Instruction& instruction);
 
-    uint32_t memop_size(const archx::Instruction &instruction, unsigned index) const;
+    uint32_t memop_size(const archx::Instruction& instruction, unsigned index) const;
 
-    TMemReq handle_code(const archx::Instruction &instruction);
-    MemoryRequest handle_memory_op(const archx::Instruction &instruction, unsigned index, bool split_hi_half);
+    TMemReq handle_code(const archx::Instruction& instruction);
+    MemoryRequest handle_memory_op(const archx::Instruction& instruction, unsigned index, bool split_hi_half);
 
     bool can_process() const { return !request_depth || requests.size() < request_depth; }
     bool is_complete() const { return requests.empty() && !memory_model->has_work(); }
 
     void warmup_memory(PhysAddr addr, unsigned int size, bool write, bool code);
 
-    unsigned scatter_gather_parts(const archx::Instruction &instruction) const;
-    bool should_execute_memop(const archx::Instruction &instruction, unsigned int index) const;
-    void handle_instruction(const boost::local_shared_ptr<archx::Instruction> &instruction);
+    unsigned scatter_gather_parts(const archx::Instruction& instruction) const;
+    bool should_execute_memop(const archx::Instruction& instruction, unsigned int index) const;
+    void handle_instruction(const boost::local_shared_ptr<archx::Instruction>& instruction);
     void end_of_simulation() override;
 };
 

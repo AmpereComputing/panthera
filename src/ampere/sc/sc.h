@@ -40,7 +40,7 @@ class LocalRandom : public effolkronium::random_local
 {
 public:
     explicit LocalRandom(size_t seed_value) { seed(seed_value); }
-    explicit LocalRandom(const Module &module) : LocalRandom(std::hash<std::string>{}(module.name())) {}
+    explicit LocalRandom(const Module& module) : LocalRandom(std::hash<std::string>{}(module.name())) {}
 
     LocalRandom() : LocalRandom(0) {} // default seed is time
 };

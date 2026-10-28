@@ -10,7 +10,7 @@
 namespace ampere::util {
 
 template<typename Iterator>
-Iterator make_iterator(const std::reverse_iterator<Iterator> &it)
+Iterator make_iterator(const std::reverse_iterator<Iterator>& it)
 {
     return it.base() - 1;
 }

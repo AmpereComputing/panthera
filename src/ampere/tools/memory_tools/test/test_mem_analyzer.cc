@@ -21,9 +21,9 @@ protected:
 
     void TearDown() override { ASSERT_EQ(0, unlink(this->test_file_name())); }
 
-    const char *test_file_name()
+    const char* test_file_name()
     {
-        const ::testing::TestInfo *const test_info = ::testing::UnitTest::GetInstance()->current_test_info();
+        const ::testing::TestInfo* const test_info = ::testing::UnitTest::GetInstance()->current_test_info();
         return test_info->name();
     }
 
@@ -32,13 +32,13 @@ protected:
 
 TEST_F(MemAnalyzerTest, testConstructor)
 {
-    char const *arg[] = {"mem_analyzer", "--global_stats", "1"};
+    char const* arg[] = {"mem_analyzer", "--global_stats", "1"};
     ampere::tools::memory_tools::MemAnalyzer memAnalyzer(3, arg);
 }
 
 TEST_F(MemAnalyzerTest, testProcessInstrLD)
 {
-    char const *arg[] = {"mem_analyzer", "--window_size", "2"};
+    char const* arg[] = {"mem_analyzer", "--window_size", "2"};
     ampere::tools::memory_tools::MemAnalyzer memAnalyzer(3, arg);
 
     ampere::is::Instruction instruction;
@@ -53,7 +53,7 @@ TEST_F(MemAnalyzerTest, testProcessInstrLD)
 
 TEST_F(MemAnalyzerTest, testProcessInstrLDADDR)
 {
-    char const *arg[] = {"mem_analyzer", "--window_size", "2", "--load_addr_histogram", this->test_file_name()};
+    char const* arg[] = {"mem_analyzer", "--window_size", "2", "--load_addr_histogram", this->test_file_name()};
     ampere::tools::memory_tools::MemAnalyzer memAnalyzer(5, arg);
 
     ampere::is::Instruction instruction;
@@ -68,7 +68,7 @@ TEST_F(MemAnalyzerTest, testProcessInstrLDADDR)
 
 TEST_F(MemAnalyzerTest, testProcessInstrLDP)
 {
-    char const *arg[] = {"mem_analyzer", "--window_size", "2"};
+    char const* arg[] = {"mem_analyzer", "--window_size", "2"};
     ampere::tools::memory_tools::MemAnalyzer memAnalyzer(3, arg);
 
     ampere::is::Instruction instruction;
@@ -83,7 +83,7 @@ TEST_F(MemAnalyzerTest, testProcessInstrLDP)
 
 TEST_F(MemAnalyzerTest, testProcessInstrLDPADDR)
 {
-    char const *arg[] = {"mem_analyzer", "--window_size", "2", "--ldp_addr_histogram", this->test_file_name()};
+    char const* arg[] = {"mem_analyzer", "--window_size", "2", "--ldp_addr_histogram", this->test_file_name()};
     ampere::tools::memory_tools::MemAnalyzer memAnalyzer(5, arg);
 
     ampere::is::Instruction instruction;
@@ -99,7 +99,7 @@ TEST_F(MemAnalyzerTest, testProcessInstrLDPADDR)
 
 TEST_F(MemAnalyzerTest, testProcessInstrST)
 {
-    char const *arg[] = {"mem_analyzer", "--window_size", "2"};
+    char const* arg[] = {"mem_analyzer", "--window_size", "2"};
     ampere::tools::memory_tools::MemAnalyzer memAnalyzer(3, arg);
 
     ampere::is::Instruction instruction;
@@ -114,7 +114,7 @@ TEST_F(MemAnalyzerTest, testProcessInstrST)
 
 TEST_F(MemAnalyzerTest, testProcessInstrSTADDR)
 {
-    char const *arg[] = {"mem_analyzer", "--window_size", "2", "--store_addr_histogram", this->test_file_name()};
+    char const* arg[] = {"mem_analyzer", "--window_size", "2", "--store_addr_histogram", this->test_file_name()};
     ampere::tools::memory_tools::MemAnalyzer memAnalyzer(5, arg);
 
     ampere::is::Instruction instruction;
@@ -129,7 +129,7 @@ TEST_F(MemAnalyzerTest, testProcessInstrSTADDR)
 
 TEST_F(MemAnalyzerTest, testProcessWindow)
 {
-    char const *arg[] = {"mem_analyzer", "--window_size", "8"};
+    char const* arg[] = {"mem_analyzer", "--window_size", "8"};
     ampere::tools::memory_tools::MemAnalyzer memAnalyzer(3, arg);
 
     uint64_t num;
@@ -183,7 +183,7 @@ TEST_F(MemAnalyzerTest, testProcessWindow)
 
 TEST_F(MemAnalyzerTest, testProcessInstrWindow)
 {
-    char const *arg[] = {"mem_analyzer",         "--window_size",         "2",
+    char const* arg[] = {"mem_analyzer",         "--window_size",         "2",
                          "--load_pc_histogram",  this->test_file_name(),  "--load_pc_stats",
                          this->test_file_name(), "--load_addr_histogram", this->test_file_name(),
                          "--load_addr_stats",    this->test_file_name(),  "--ldp_pc_histogram",
@@ -346,7 +346,7 @@ TEST_F(MemAnalyzerTest, testProcessInstrWindow)
 
 TEST_F(MemAnalyzerTest, testCalcStdDev)
 {
-    char const *arg[] = {"mem_analyzer", "--window_size", "2"};
+    char const* arg[] = {"mem_analyzer", "--window_size", "2"};
     ampere::tools::memory_tools::MemAnalyzer memAnalyzer(3, arg);
 
     double stdDev = 0.0;

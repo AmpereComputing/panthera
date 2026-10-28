@@ -4,14 +4,14 @@
 //
 #include <stdint.h>
 #include <stdio.h>
+
 #include "ampere/benchmarks/common/ops.h"
 #include "ampere/tracing_tools/tracing_hints.h"
 #include "sve-exception.h"
 extern void TEST_FUNC();
 extern void* data_addr1();
 
-int main(int argc, char** argv)
-{
+int main(int argc, char** argv) {
     int i = 0;
     take_sve_state_exception();
     char* p1 = (char*)data_addr1();

@@ -19,7 +19,7 @@ struct Node
 {
     static constexpr bool indexed = INDEXED;
     static constexpr size_t radix = MAX_RADIX;
-    using node_t = std::conditional_t<INDEXED, size_t, Node *>;
+    using node_t = std::conditional_t<INDEXED, size_t, Node*>;
     size_t id = 0;
     size_t size = 0;
     std::array<node_t, MAX_RADIX> neighbors;
@@ -32,8 +32,8 @@ struct GraphBenchmark : public BenchmarkWithSetup, public ::testing::WithParamIn
     size_t size;
     size_t radix;
 
-    T *nodes;
-    size_t *seen;
+    T* nodes;
+    size_t* seen;
     GraphBenchmark()
     {
         std::tie(size, radix) = GetParam();
@@ -45,7 +45,7 @@ struct GraphBenchmark : public BenchmarkWithSetup, public ::testing::WithParamIn
     {
         reset();
         for (size_t i = 0, j = 0; i < size; j += i) {
-            auto &node = nodes[i];
+            auto& node = nodes[i];
             node.id = i;
 
             size_t neighbors = j % radix;
@@ -71,10 +71,10 @@ struct GraphBenchmark : public BenchmarkWithSetup, public ::testing::WithParamIn
     }
     void TearDown() override {}
 
-    inline std::pair<size_t, T *> get_neighbor(T *node, size_t index) const
+    inline std::pair<size_t, T*> get_neighbor(T* node, size_t index) const
     {
         size_t neighbor_id;
-        T *neighbor;
+        T* neighbor;
         if constexpr (T::indexed) {
             neighbor_id = node->neighbors[index];
             neighbor = &nodes[neighbor_id];
@@ -85,7 +85,7 @@ struct GraphBenchmark : public BenchmarkWithSetup, public ::testing::WithParamIn
         return {neighbor_id, neighbor};
     }
 
-    size_t depth_first_search_recursive(T *node)
+    size_t depth_first_search_recursive(T* node)
     {
         size_t sum = 0;
         for (size_t i = 0; i < node->size; ++i) {
@@ -100,13 +100,13 @@ struct GraphBenchmark : public BenchmarkWithSetup, public ::testing::WithParamIn
         return 1;
     }
 
-    size_t depth_first_search_iterative(T *node)
+    size_t depth_first_search_iterative(T* node)
     {
         size_t sum = 0;
-        std::deque<std::pair<T *, size_t>> stack{std::make_pair(node, 0)};
+        std::deque<std::pair<T*, size_t>> stack{std::make_pair(node, 0)};
 
         while (!stack.empty()) {
-            auto &[n, i] = stack.back();
+            auto& [n, i] = stack.back();
             if (i < n->size) {
                 auto [neighbor_id, neighbor] = get_neighbor(n, i);
                 if (seen[neighbor_id] == 0) {
@@ -123,14 +123,14 @@ struct GraphBenchmark : public BenchmarkWithSetup, public ::testing::WithParamIn
         return sum;
     }
 
-    size_t depth_first_search(T *node)
+    size_t depth_first_search(T* node)
     {
         if (size > BYTES_64K)
             return depth_first_search_iterative(node);
         return depth_first_search_recursive(node);
     }
 
-    std::pair<bool, size_t> breadth_first_search_step(T *node, size_t offset = 0, size_t level = 1)
+    std::pair<bool, size_t> breadth_first_search_step(T* node, size_t offset = 0, size_t level = 1)
     {
         bool remaining = false;
         size_t sum = 0;
@@ -149,7 +149,7 @@ struct GraphBenchmark : public BenchmarkWithSetup, public ::testing::WithParamIn
         return {remaining, sum + offset};
     }
 
-    size_t breadth_first_search_recursive(T *node)
+    size_t breadth_first_search_recursive(T* node)
     {
         size_t sum = 0;
         bool remaining = true;
@@ -162,13 +162,13 @@ struct GraphBenchmark : public BenchmarkWithSetup, public ::testing::WithParamIn
         return sum;
     }
 
-    size_t breadth_first_search_iterative(T *node)
+    size_t breadth_first_search_iterative(T* node)
     {
         size_t sum = 0;
-        std::deque<T *> frontier{node};
+        std::deque<T*> frontier{node};
         for (size_t depth = 1; frontier.empty(); ++depth) {
-            std::deque<T *> next_frontier;
-            for (auto *n : frontier) {
+            std::deque<T*> next_frontier;
+            for (auto* n : frontier) {
                 for (size_t i = 0; i < n->size; ++i) {
                     auto [neighbor_id, neighbor] = get_neighbor(n, i);
                     if (!seen[neighbor_id]) {
@@ -185,7 +185,7 @@ struct GraphBenchmark : public BenchmarkWithSetup, public ::testing::WithParamIn
         return sum;
     }
 
-    size_t breadth_first_search(T *node)
+    size_t breadth_first_search(T* node)
     {
         if (size > 32)
             return breadth_first_search_iterative(node);
@@ -224,7 +224,7 @@ TEST_P(IndexedGraphBenchmark, BreadthFirstSearch)
 }
 
 template<typename T>
-std::string param_names(const testing::TestParamInfo<typename T::ParamType> &info)
+std::string param_names(const testing::TestParamInfo<typename T::ParamType>& info)
 {
     return fmt::format("nodes{}Xradix{}", std::get<0>(info.param), std::get<1>(info.param));
 }

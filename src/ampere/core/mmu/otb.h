@@ -34,7 +34,7 @@ struct TranslationState
         : asid(asid), using_ttbr0(using_ttbr0), granule_size(granule_size)
     {
     }
-    TranslationState(uint16_t asid, const TranslationContext &context)
+    TranslationState(uint16_t asid, const TranslationContext& context)
         : TranslationState(asid, context.using_ttbr0(), context.granule_size)
     {
     }
@@ -67,7 +67,7 @@ struct OTBEntry
     PWTEntry pwt;
     Credit fsm_credit;
 
-    OTBEntry(uint64_t id, Credit &&section, MMUReq r, const MMUMRU &mru, const TranslationState &state)
+    OTBEntry(uint64_t id, Credit&& section, MMUReq r, const MMUMRU& mru, const TranslationState& state)
         : otb_id(id),
           section(std::move(section)),
           ready{true},
@@ -79,7 +79,7 @@ struct OTBEntry
     {
     }
 
-    void reset(const MMUMRU &new_mru, const TranslationState &state)
+    void reset(const MMUMRU& new_mru, const TranslationState& state)
     {
         op = MMUOp::TLBLkp;
         ready = true;
@@ -144,8 +144,8 @@ class OTB : public Module
 
     OutIn<uint64_t> deallocation{"deallocation"};
 
-    void deallocate(OTBEntry &otbentry, bool now);
-    void deallocate_only(OTBEntry &otbentry);
+    void deallocate(OTBEntry& otbentry, bool now);
+    void deallocate_only(OTBEntry& otbentry);
 
     static std::vector<std::string> section_names(unsigned lsu_sections);
 
@@ -176,7 +176,7 @@ public:
     OutOpt<bool> available{"available"};
 
     using otb_iterator = decltype(entries)::iterator;
-    explicit OTB(const sc_core::sc_module_name &name);
+    explicit OTB(const sc_core::sc_module_name& name);
 
     bool run() override;
     void end_of_elaboration() override;
@@ -189,27 +189,27 @@ public:
     std::optional<uint64_t> allocate_id() const;
     bool locked_out() const { return remaining_allocation_lockout_cycles; }
 
-    std::pair<std::optional<uint64_t>, bool> try_combine(MMUReq mmureq, const TranslationState &state);
+    std::pair<std::optional<uint64_t>, bool> try_combine(MMUReq mmureq, const TranslationState& state);
     std::optional<uint64_t> try_allocate(MMUReq mmureq,
-                                         MMUMRU &mru,
-                                         const TranslationState &state,
+                                         MMUMRU& mru,
+                                         const TranslationState& state,
                                          bool duplicated = false);
 
-    void deallocate(OTBEntry &otbentry) { deallocate(otbentry, false); }
-    void deallocate_immediately(OTBEntry &otbentry) { deallocate(otbentry, true); }
+    void deallocate(OTBEntry& otbentry) { deallocate(otbentry, false); }
+    void deallocate_immediately(OTBEntry& otbentry) { deallocate(otbentry, true); }
 
-    otb_iterator schedule(std::function<bool(const OTBEntry &)> pred, ScheduleInfo &info);
-    void schedule_entries(std::function<bool(OTBEntry &)> func,
-                          std::function<bool(const OTBEntry &)> pred,
-                          OTB::ScheduleInfo &info);
+    otb_iterator schedule(std::function<bool(const OTBEntry&)> pred, ScheduleInfo& info);
+    void schedule_entries(std::function<bool(OTBEntry&)> func,
+                          std::function<bool(const OTBEntry&)> pred,
+                          OTB::ScheduleInfo& info);
 
-    OTBEntry *find(uint64_t otb_id)
+    OTBEntry* find(uint64_t otb_id)
     {
         if (auto entry = entries.find(otb_id); entry != entries.end())
             return &entry->second;
         return nullptr;
     }
-    OTBEntry &at(uint64_t otb_id) { return entries.at(otb_id); }
+    OTBEntry& at(uint64_t otb_id) { return entries.at(otb_id); }
 
     auto begin() { return entries.begin(); }
     auto end() { return entries.end(); }
@@ -223,7 +223,7 @@ public:
     void clear();
     void flush(Flush flush);
 
-    void dump(std::ostream &) const override;
+    void dump(std::ostream&) const override;
 };
 
 } // namespace ampere::core

@@ -19,7 +19,7 @@ class CacheTest : public ::testing::Test
 protected:
     void SetUp() override;
     void TearDown() override;
-    Cache<PhysAddr> *cache;
+    Cache<PhysAddr>* cache;
 };
 
 void CacheTest::SetUp()
@@ -114,7 +114,7 @@ TEST_F(CacheTest, testRefillResident)
 
 TEST_F(CacheTest, testWriteMemoryStream)
 {
-    const ::testing::TestInfo *const test_info = ::testing::UnitTest::GetInstance()->current_test_info();
+    const ::testing::TestInfo* const test_info = ::testing::UnitTest::GetInstance()->current_test_info();
     path p(test_info->name());
     p.replace_extension("ms.xz");
 

@@ -8,7 +8,7 @@
 #include <cstdio>
 #include <boost/make_unique.hpp>
 #include <boost/format.hpp>
-#include <boost/process/search_path.hpp>
+#include <boost/process/v1/search_path.hpp>
 
 #include "ampere/util/compressed_fstream.h"
 
@@ -103,7 +103,7 @@ ProtobufStreamReader::ProtobufStreamReader(boost::filesystem::path filepath,
             throw std::system_error(errno, std::system_category(), filepath.string());
         }
 
-        auto gunzippath = boost::process::search_path("gunzip");
+        auto gunzippath = boost::process::v1::search_path("gunzip");
         if (gunzippath.empty()) {
             throw std::system_error(errno, std::system_category(), "Cannot find `gunzip` on $PATH");
         }

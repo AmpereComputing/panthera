@@ -15,6 +15,7 @@ compile_commands.json
 /build/
 /build-*/
 /build_*/
+/vcpkg_installed/
 /install/
 /install-*/
 /install_*/

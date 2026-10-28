@@ -9,8 +9,7 @@
 #endif
 extern void TEST_FUNC();
 
-int main(int argc, char** argv)
-{
+int main(int argc, char** argv) {
 #if defined(USE_SVE)
     take_sve_state_exception();
 #endif

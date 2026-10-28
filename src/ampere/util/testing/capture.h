@@ -9,12 +9,12 @@
 
 class CaptureStream
 {
-    std::ostream &os;
+    std::ostream& os;
     std::stringstream captured;
     decltype(os.rdbuf()) previous{nullptr};
 
 public:
-    explicit CaptureStream(std::ostream &os) : os(os), previous(os.rdbuf()) { os.rdbuf(captured.rdbuf()); }
+    explicit CaptureStream(std::ostream& os) : os(os), previous(os.rdbuf()) { os.rdbuf(captured.rdbuf()); }
     ~CaptureStream() { os.rdbuf(previous); }
     auto operator*() { return captured.str(); }
 };

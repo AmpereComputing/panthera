@@ -9,7 +9,7 @@ namespace ampere {
 namespace tools {
 namespace memory_tools {
 
-MemAnalyzer::MemAnalyzer(int argc, char const **argv)
+MemAnalyzer::MemAnalyzer(int argc, char const** argv)
 {
     boost::program_options::options_description options;
     Configure(argc, argv);
@@ -24,7 +24,7 @@ MemAnalyzer::MemAnalyzer(int argc, char const **argv)
 } // Constructor
 
 // Command-line options
-void MemAnalyzer::Configure(int argc, char const **argv)
+void MemAnalyzer::Configure(int argc, char const** argv)
 {
     options.add_options()("help", "Input stream from stdin")(
         "window_size",
@@ -82,7 +82,7 @@ void MemAnalyzer::Configure(int argc, char const **argv)
     try {
         boost::program_options::store(boost::program_options::parse_command_line(argc, argv, options), vm);
         boost::program_options::notify(vm);
-    } catch (std::exception &e) {
+    } catch (std::exception& e) {
         std::cout << std::endl << e.what() << std::endl;
         std::cout << options << std::endl;
         throw(std::runtime_error("Bad parameters"));
@@ -156,10 +156,10 @@ void MemAnalyzer::Configure(int argc, char const **argv)
 } // Configure
 
 void MemAnalyzer::ProcessWindow(bool stats,
-                                uint64_t &window_count,
-                                std::vector<uint64_t> &global_counts,
-                                std::vector<uint64_t> &window_elems,
-                                std::unordered_map<std::uint64_t, std::vector<uint64_t>> &total_map)
+                                uint64_t& window_count,
+                                std::vector<uint64_t>& global_counts,
+                                std::vector<uint64_t>& window_elems,
+                                std::unordered_map<std::uint64_t, std::vector<uint64_t>>& total_map)
 {
     //  Update stats structure
     if (stats) {
@@ -245,7 +245,7 @@ void MemAnalyzer::ProcessInstr(ampere::is::Instruction instruction)
     }
 } // ProcessInstr
 
-void MemAnalyzer::OutputHistogram(std::vector<uint64_t> &global_counts, std::ofstream &out_f)
+void MemAnalyzer::OutputHistogram(std::vector<uint64_t>& global_counts, std::ofstream& out_f)
 {
     double stddev = 0.0, mean = 0.0;
 
@@ -276,7 +276,7 @@ void MemAnalyzer::OutputHistogram(std::vector<uint64_t> &global_counts, std::ofs
               << "    window_min_num, " << min << std::endl;
 } // OutputHistogram
 
-void MemAnalyzer::OutputStats(std::unordered_map<std::uint64_t, std::vector<uint64_t>> &total_map, std::ofstream &out_f)
+void MemAnalyzer::OutputStats(std::unordered_map<std::uint64_t, std::vector<uint64_t>>& total_map, std::ofstream& out_f)
 {
     for (auto elem : total_map) {
         out_f << std::hex << elem.first << std::dec << ", ";
@@ -362,7 +362,7 @@ void MemAnalyzer::StatsOutput()
 
 } // StatsOutput
 
-void MemAnalyzer::CalcStdDev(std::vector<uint64_t> arr, double &stdDev, double &mean)
+void MemAnalyzer::CalcStdDev(std::vector<uint64_t> arr, double& stdDev, double& mean)
 {
     double sum = 0.0;
     uint64_t i;

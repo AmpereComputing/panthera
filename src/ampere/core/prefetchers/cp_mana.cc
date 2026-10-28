@@ -384,7 +384,7 @@ void CP_Mana::evict_impl(PhysAddr pa, bool prefetch, bool demand)
     }
 }
 
-void CP_Mana::table_print(std::ostream &os)
+void CP_Mana::table_print(std::ostream& os)
 {
     return;
 }

@@ -12,7 +12,7 @@
 namespace ampere::benchmarks {
 
 template<typename T>
-inline void populate_physical_pages(T *data, size_t size, size_t page_size = BYTES_4K)
+inline void populate_physical_pages(T* data, size_t size, size_t page_size = BYTES_4K)
 {
     // Commit physical backing pages
     // (for avoiding exceptions during measurement on kernel paging policies)
@@ -23,7 +23,7 @@ inline void populate_physical_pages(T *data, size_t size, size_t page_size = BYT
 
 void thrash_cache(size_t size)
 {
-    volatile char *c = new char[size];
+    volatile char* c = new char[size];
     for (size_t i = 0; i < size; ++i)
         c[i] = i;
     delete[] c;

@@ -11,8 +11,8 @@
 
 // #define USING_CAPSTONE
 #if defined(USING_CAPSTONE)
-#include <capstone.h>
-#include <platform.h>
+#include <capstone/capstone.h>
+#include <capstone/platform.h>
 #else
 #define USING_ADIS
 #include "ampere/adis/src/adis.h"

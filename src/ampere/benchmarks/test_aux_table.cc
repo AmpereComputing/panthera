@@ -11,7 +11,7 @@
 
 // The nops are just padding for the abovementioned pc aliasing
 
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
     int size = atoi(argv[1]);
     std::vector<int> v(500, 0);

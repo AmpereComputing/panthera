@@ -2,8 +2,8 @@
 // Copyright (c) 2021 Ampere Computing. All rights reserved.
 // SPDX-License-Identifier: BSD-3-Clause
 //
-#include <capstone.h>
-#include <platform.h>
+#include <capstone/capstone.h>
+#include <capstone/platform.h>
 
 #include <boost/algorithm/string/split.hpp>
 #include <boost/filesystem/path.hpp>
