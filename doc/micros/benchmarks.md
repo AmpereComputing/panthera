@@ -1,6 +1,6 @@
 # Micro Benchmarks
 
-The [src/ampere/benchmarks](/src/ampere/benchmarks) directory contains micro
+The [src/ampere/benchmarks](../../src/ampere/benchmarks) directory contains micro
 benchmarks, very small programs that exercise specific parts of a CPU micro
 architecture.
 

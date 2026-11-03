@@ -105,7 +105,7 @@ The files for this example are in `src/ampere/tracing_tools/examples/basic`.
 
 
 9. Create a json for the chrome or edge web viewer. Run the script shown.
-   For more information about tracing see [this link](analysis/events-tracing.md).
+   For more information about tracing see [this link](../analysis/events-tracing.md).
 
         % cat 04-json.sh
         #!/bin/bash

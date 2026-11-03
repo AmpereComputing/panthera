@@ -18,7 +18,7 @@ To use this plugin, you will need:
   root filesystem containing the workload you want to run and scripts to run
   it. There's an example script for creating an [Alpine
   Linux](https://alpinelinux.org/)-based image at
-  [tracing_tools/examples/build_qcow_image.sh](../src/ampere/tracing_tools/examples/old/build_qcow_image.sh)
+  [tracing_tools/examples/old/build_qcow_image.sh](../../src/ampere/tracing_tools/examples/old/build_qcow_image.sh)
 * Last but not least, a built and tested panthera checkout
 
 The supported way to provide this tool is Panthera's [Nix development

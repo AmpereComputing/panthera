@@ -34,7 +34,7 @@ a new metric called _wps_ using this formula:
 metric.wps = metric.widgets / metric.seconds
 ```
 
-The [rollup_formula.py](../src/ampere/core/config/rollup/rollup_formula.py) has more examples
+The [rollup_formula.py](../../src/ampere/config/rollup/rollup_formula.py) has more examples
 of this feature.
 
 It is important to note that the `rollup_formula`, the formulas are applied **after** all

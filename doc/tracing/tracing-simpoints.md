@@ -37,7 +37,7 @@ To use these tools, you will need:
   root filesystem containing the workload you want to run and scripts to run
   it. There's an example script for creating an [Alpine
   Linux](https://alpinelinux.org/)-based image at
-  [tracing_tools/examples/build_qcow_image.sh](./examples/build_qcow_image.sh)
+  [tracing_tools/examples/old/build_qcow_image.sh](../../src/ampere/tracing_tools/examples/old/build_qcow_image.sh)
 * Last but not least, a built and tested panthera checkout
 
 The supported way to provide these tools is Panthera's [Nix development
@@ -146,7 +146,7 @@ The above example QEMU invocation will create:
 ### Capturing Instruction Traces
 
 There is one script which handles the next few steps:
-[tracing_tools/scripts/capture_traces.py](./scripts/capture_traces.py). This
+[tracing_tools/scripts/capture_traces.py](../../src/ampere/tracing_tools/scripts/capture_traces.py). This
 script runs the `simpoint` tool on the .bbv file captured above to identify the
 intervals of interest and their weights, invokes QEMU to restore from the
 closest checkpoint, run to the beginning of the interval, and collect an

@@ -18,7 +18,7 @@ INFO/etc).
 
 ## Getting/viewing an event stream
 
-[Event streams](events-tracing.md) are typically the best first step to get a better idea of the interactions between different modules within the processor.
+[Event streams](../analysis/events-tracing.md) are typically the best first step to get a better idea of the interactions between different modules within the processor.
 
 ### How it works internally
 
@@ -84,7 +84,7 @@ Here is an example of a command-line to collect almost 6000 cycles of an event s
 
 ### Viewing an event stream
 
-Once collected, you can use the event stream to better understand what is happening for the bug/issue you are exploring. Event streams are primarily viewed using `chrome://tracing` after being converted to the JSON format using `panthera events.tracing`, as detailed in [the event stream documentation](analysis/events-tracing.md). You may also use the `./install/bin/es_viewer` binary to view a raw text-based version of the event stream if you need quick access to more detailed information.
+Once collected, you can use the event stream to better understand what is happening for the bug/issue you are exploring. Event streams are primarily viewed using `chrome://tracing` after being converted to the JSON format using `panthera events.tracing`, as detailed in [the event stream documentation](../analysis/events-tracing.md). You may also use the `./install/bin/es_viewer` binary to view a raw text-based version of the event stream if you need quick access to more detailed information.
 
 You can also use the event processor standalone on a previously generated event stream. Run it like this: `./install/bin/evp [options] <event stream>`. This is useful to quickly summarize events of your choice (with `--event <name>`), print events in text form with `+print` (like `es_viewer`, but with the ability to select events with `--event <name>`), or just list events and data that are in the stream using the `-l` switch. See the help output for more information.
 

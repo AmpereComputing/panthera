@@ -2,7 +2,7 @@
 
 The chrome and chromium browsers have a builtin performance analysis
 tool that can be accessed in the browser by loading the
-[tracing]([chrome://tracing]) URL. This system has an open standard
+`chrome://tracing` URL. This system has an open standard
 for providing data for visualization. We have created a tool called
 **events.tracing** that can generate an output file that can be loaded
 into the tracing tool.
@@ -67,7 +67,7 @@ Here are the steps to generate an event stream, process it with
 
         ./install/bin/panthera events.tracing events.es.xz --output events.rob.json @install/config/events.tracing/tx_rob.cfg --compress
 
-4. Open a tab in chrome and navigate to [chrome://tracing]([chrome://tracing])
+4. Open a tab in chrome and navigate to `chrome://tracing`
 5. Click on the load button and select the `events.json` file created in step 2
 6. Click on the load button and select the `events.rob.json` file created in step 3
 
