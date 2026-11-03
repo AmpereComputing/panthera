@@ -159,7 +159,7 @@ find_package(Protobuf REQUIRED)
 
 set(MINIMUM_PYTHON_VERSION 3.10)
 # Older boost cmake versions prefer smaller versions first
-set(BOOST_OPTIONAL_PYTHON_VERSIONS python310 python311 python312)
+set(BOOST_OPTIONAL_PYTHON_VERSIONS python310 python311 python312 python313)
 
 # FIXME: after cmake 3.29 FindBoost is no longer provided by CMake.
 # Since we currently use this, we use the OLD policy. But we need
